@@ -1,9 +1,11 @@
 // Sanity schema exports for Suptia MVP
-export { ingredient } from "./ingredient";
-export { product } from "./product";
-export { evidence } from "./evidence";
-export { rule } from "./rule";
-export { persona } from "./persona";
+import { ingredient } from "./ingredient";
+import { product } from "./product";
+import { evidence } from "./evidence";
+import { rule } from "./rule";
+import { persona } from "./persona";
+
+export { ingredient, product, evidence, rule, persona };
 export { deskStructure } from "./desk";
 
 // Schema array for Sanity config
