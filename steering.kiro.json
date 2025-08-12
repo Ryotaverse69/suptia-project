@@ -1,0 +1,42 @@
+{
+  "project": {
+    "name": "Suptia",
+    "description": "安全 × 価格 × 説明可能性のサプリ意思決定エンジン（MVP）",
+    "languages": [
+      "ja",
+      "en"
+    ]
+  },
+  "techStack": {
+    "frontend": "Next.js 14 + App Router + TypeScript",
+    "designSystem": "Tailwind CSS",
+    "cms": "Sanity v3",
+    "db": "Sanity（MVPでは外部DBなし）",
+    "lint": "ESLint + Prettier",
+    "test": "Vitest + Testing Library",
+    "ci": "GitHub Actions"
+  },
+  "codingStandards": {
+    "naming": {
+      "components": "PascalCase",
+      "files": "kebab-case",
+      "schemas": "PascalCase",
+      "sanityDocsId": "kebab-case"
+    },
+    "errorHandling": "ドメイン境界で try/catch、UIはToastとエラーページで通知",
+    "i18n": "コピーは日本語優先。後でi18n導入を想定し keys で抽象化",
+    "accessibility": "ARIA属性とキーボード操作対応を必須"
+  },
+  "security": {
+    "contentCompliance": "薬機法OK/NG辞書に基づくUIガード",
+    "dataPrivacy": "PIIは保持しない。価格トラッキングのみ（MVP）"
+  },
+  "acceptance": {
+    "definitionOfDone": [
+      "型安全（TypeScriptの型エラーゼロ）",
+      "ESLint/Prettierパス",
+      "Vitestの主要ユースケーステストが緑",
+      "Core Web Vitals（LCP/CLS/INP）合格を目標に"
+    ]
+  }
+}

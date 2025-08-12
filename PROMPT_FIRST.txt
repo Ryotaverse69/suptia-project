@@ -1,0 +1,1 @@
+Read `steering.kiro.json`, `requirements.md`, and `design.md`. Propose `tasks.md` for the MVP, then implement the minimal Next.js app in `apps/web` and Sanity schemas in `packages/schemas` accordingly. Include unit tests for cost normalization and the compliance checker. Ensure ESLint/Prettier pass.

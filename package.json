@@ -1,0 +1,33 @@
+{
+  "name": "suptia-kiro",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "cd apps/web && npm run dev",
+    "build": "cd apps/web && npm run build",
+    "start": "cd apps/web && npm run start",
+    "lint": "cd apps/web && npm run lint",
+    "format": "cd apps/web && npm run format",
+    "test": "cd apps/web && npm run test",
+    "test:watch": "cd apps/web && npm run test:watch",
+    "type-check": "cd apps/web && npm run type-check",
+    "precommit": "npm run format && npm run lint && npm run test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "packages/**/*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ]
+  }
+}

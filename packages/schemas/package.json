@@ -1,0 +1,13 @@
+{
+  "name": "@suptia/schemas",
+  "version": "0.1.0",
+  "description": "Sanity schemas for Suptia MVP",
+  "main": "index.ts",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "sanity": "^3.0.0"
+  }
+}
