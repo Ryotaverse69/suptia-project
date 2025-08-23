@@ -20,7 +20,7 @@
     "env:check:ci": "CI=true node scripts/check-env-sync.mjs",
     "preview:verify": "node scripts/verify-preview-env.mjs",
     "preview:url": "node scripts/get-preview-url.mjs",
-    "preview:test": "node scripts/test-preview-workflow.mjs",
+    "preview:workflow": "node scripts/test-preview-workflow.mjs",
     "deploy:monitor": "node scripts/monitor-production-deployment.mjs",
     "deploy:rollback": "node scripts/rollback-production.mjs",
     "deploy:notify": "node scripts/notify-deployment.mjs",
