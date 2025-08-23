@@ -4,6 +4,8 @@ import { execSync } from 'child_process';
 import { performance } from 'perf_hooks';
 import fs from 'fs';
 import path from 'path';
+import chalk from 'chalk';
+import ErrorHandler from './utils/error-handler.mjs';
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -37,6 +39,7 @@ class PreCommitChecker {
     // 緊急時のスキップオプション
     this.skipChecks = process.env.SKIP_PRE_COMMIT === 'true';
     this.skipTests = process.env.SKIP_TESTS === 'true';
+    this.errorHandler = new ErrorHandler();
   }
 
   log(message, color = 'reset', icon = '') {
@@ -73,17 +76,37 @@ class PreCommitChecker {
       
     } catch (error) {
       const stepTime = performance.now() - stepStart;
+      const errorInfo = this.errorHandler.analyzeError(error, `pre-commit-${name}`);
+      
       this.metrics.steps.push({
         name,
         time: stepTime,
         success: false,
-        error: error.message
+        error: errorInfo.message,
+        solution: errorInfo.solution,
+        commands: errorInfo.commands
       });
       
       this.log(`${name}が失敗しました (${Math.round(stepTime)}ms)`, 'red', ICONS.error);
+      this.log(`エラー: ${errorInfo.message}`, 'red');
       
-      if (options.errorHelp) {
+      // 解決方法を表示
+      if (errorInfo.solution) {
         this.log('解決方法:', 'yellow', ICONS.info);
+        this.log(`  ${errorInfo.solution}`, 'yellow');
+      }
+      
+      // 実行コマンドを表示
+      if (errorInfo.commands && errorInfo.commands.length > 0) {
+        this.log('実行コマンド:', 'blue', ICONS.info);
+        errorInfo.commands.forEach(cmd => {
+          this.log(`  $ ${cmd}`, 'green');
+        });
+      }
+      
+      // 従来のヘルプメッセージも表示
+      if (options.errorHelp) {
+        this.log('追加の解決方法:', 'yellow', ICONS.info);
         options.errorHelp.forEach(help => {
           this.log(`  • ${help}`, 'yellow');
         });

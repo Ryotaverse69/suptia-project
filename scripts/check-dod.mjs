@@ -9,6 +9,8 @@
 import { execSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import chalk from 'chalk';
+import ErrorHandler from './utils/error-handler.mjs';
 
 const DOD_CRITERIA = [
   {
@@ -84,16 +86,19 @@ const DOD_CRITERIA = [
 ];
 
 async function runDoDCheck() {
-  console.log('🔍 Running Definition of Done (DoD) Check...\n');
+  const errorHandler = new ErrorHandler();
+  
+  console.log(chalk.blue('🔍 Definition of Done (DoD) チェックを開始します...\n'));
   
   let totalChecks = 0;
   let passedChecks = 0;
   let failedChecks = 0;
   let skippedChecks = 0;
+  const failedItems = [];
   
   for (const category of DOD_CRITERIA) {
-    console.log(`📋 ${category.name}`);
-    console.log('─'.repeat(50));
+    console.log(chalk.bold(`📋 ${category.name}`));
+    console.log(chalk.gray('─'.repeat(50)));
     
     for (const check of category.checks) {
       totalChecks++;
@@ -103,29 +108,54 @@ async function runDoDCheck() {
         
         if (check.command) {
           // コマンド実行チェック
-          result = await runCommandCheck(check);
+          result = await runCommandCheck(check, errorHandler);
         } else if (check.function) {
           // カスタム関数チェック
           result = await check.function();
         }
         
         if (result.success) {
-          console.log(`  ✅ ${check.name}: ${check.description}`);
+          console.log(chalk.green(`  ✅ ${check.name}: ${check.description}`));
           passedChecks++;
         } else if (result.skipped) {
-          console.log(`  ⏭️  ${check.name}: ${result.reason || 'Skipped'}`);
+          console.log(chalk.yellow(`  ⏭️  ${check.name}: ${result.reason || 'スキップ'}`));
           skippedChecks++;
         } else {
-          console.log(`  ❌ ${check.name}: ${result.error || 'Failed'}`);
+          console.log(chalk.red(`  ❌ ${check.name}: ${result.error || '失敗'}`));
           if (result.details) {
-            console.log(`     ${result.details}`);
+            console.log(chalk.gray(`     詳細: ${result.details}`));
+          }
+          if (result.solution) {
+            console.log(chalk.blue(`     解決方法: ${result.solution}`));
+          }
+          if (result.commands && result.commands.length > 0) {
+            console.log(chalk.blue('     実行コマンド:'));
+            result.commands.forEach(cmd => {
+              console.log(chalk.green(`       $ ${cmd}`));
+            });
           }
           failedChecks++;
+          failedItems.push({
+            category: category.name,
+            check: check.name,
+            error: result.error,
+            solution: result.solution,
+            commands: result.commands
+          });
         }
         
       } catch (error) {
-        console.log(`  ❌ ${check.name}: ${error.message}`);
+        const errorInfo = errorHandler.analyzeError(error, `dod-${check.name}`);
+        console.log(chalk.red(`  ❌ ${check.name}: ${errorInfo.message}`));
+        console.log(chalk.blue(`     解決方法: ${errorInfo.solution}`));
         failedChecks++;
+        failedItems.push({
+          category: category.name,
+          check: check.name,
+          error: errorInfo.message,
+          solution: errorInfo.solution,
+          commands: errorInfo.commands
+        });
       }
     }
     
@@ -133,27 +163,59 @@ async function runDoDCheck() {
   }
   
   // 結果サマリー
-  console.log('📊 DoD Check Summary');
-  console.log('═'.repeat(50));
-  console.log(`Total Checks: ${totalChecks}`);
-  console.log(`✅ Passed: ${passedChecks}`);
-  console.log(`❌ Failed: ${failedChecks}`);
-  console.log(`⏭️  Skipped: ${skippedChecks}`);
+  console.log(chalk.bold('📊 DoD チェック結果'));
+  console.log(chalk.gray('═'.repeat(50)));
+  console.log(`合計チェック数: ${totalChecks}`);
+  console.log(chalk.green(`✅ 成功: ${passedChecks}`));
+  console.log(chalk.red(`❌ 失敗: ${failedChecks}`));
+  console.log(chalk.yellow(`⏭️  スキップ: ${skippedChecks}`));
   
   const successRate = ((passedChecks + skippedChecks) / totalChecks * 100).toFixed(1);
-  console.log(`📈 Success Rate: ${successRate}%`);
+  console.log(`📈 成功率: ${successRate}%`);
   
   if (failedChecks > 0) {
-    console.log('\n❌ Definition of Done check failed!');
-    console.log('Please fix the failing checks before merging this PR.');
+    console.log(chalk.red('\n❌ Definition of Done チェックが失敗しました！'));
+    console.log(chalk.red('PRをマージする前に、以下の問題を修正してください。\n'));
+    
+    // 失敗項目の詳細表示
+    console.log(chalk.bold('🔧 修正が必要な項目:'));
+    failedItems.forEach((item, index) => {
+      console.log(chalk.red(`\n${index + 1}. ${item.category} - ${item.check}`));
+      console.log(chalk.gray(`   問題: ${item.error}`));
+      if (item.solution) {
+        console.log(chalk.blue(`   解決方法: ${item.solution}`));
+      }
+      if (item.commands && item.commands.length > 0) {
+        console.log(chalk.blue('   実行コマンド:'));
+        item.commands.forEach(cmd => {
+          console.log(chalk.green(`     $ ${cmd}`));
+        });
+      }
+    });
+    
+    console.log(chalk.bold('\n🚀 推奨アクション:'));
+    console.log(chalk.blue('1. 上記のコマンドを実行して問題を修正'));
+    console.log(chalk.blue('2. 修正後、再度DoDチェックを実行: npm run dod:check'));
+    console.log(chalk.blue('3. 全て成功したらコミット・プッシュ'));
+    
+    console.log(chalk.gray('\n📚 参考資料:'));
+    console.log(chalk.gray('• docs/TROUBLESHOOTING.md - 詳細なトラブルシューティング'));
+    console.log(chalk.gray('• docs/DEVELOPMENT_WORKFLOW.md - 開発フロー'));
+    
     process.exit(1);
   } else {
-    console.log('\n✅ All Definition of Done criteria are satisfied!');
-    console.log('This PR is ready for review and merge.');
+    errorHandler.displaySuccess(
+      'すべてのDefinition of Done基準を満たしています！',
+      [
+        'このPRはレビューとマージの準備ができています',
+        'GitHub UIでdev → masterのPRを作成してください',
+        'CI/CDパイプラインが自動的に実行されます'
+      ]
+    );
   }
 }
 
-async function runCommandCheck(check) {
+async function runCommandCheck(check, errorHandler) {
   try {
     execSync(check.command, { 
       stdio: 'pipe',
@@ -162,10 +224,41 @@ async function runCommandCheck(check) {
     });
     return { success: true };
   } catch (error) {
+    const errorInfo = errorHandler.analyzeError(error, `command-${check.name}`);
+    
+    // チェック固有の解決方法を提供
+    let solution = errorInfo.solution;
+    let commands = errorInfo.commands;
+    
+    switch (check.name) {
+      case 'Format Check':
+        solution = 'コードを自動フォーマットしてください';
+        commands = ['npm run format'];
+        break;
+      case 'Lint Check':
+        solution = 'ESLintエラーを修正してください';
+        commands = ['npm run lint:fix'];
+        break;
+      case 'Type Check':
+        solution = 'TypeScript型エラーを修正してください';
+        commands = ['npm run typecheck'];
+        break;
+      case 'Unit Tests':
+        solution = 'テストエラーを修正してください';
+        commands = ['npm run test -- --reporter=verbose'];
+        break;
+      case 'Build Check':
+        solution = 'ビルドエラーを修正してください';
+        commands = ['npm run build'];
+        break;
+    }
+    
     return { 
       success: false, 
-      error: 'Command failed',
-      details: error.message
+      error: errorInfo.message,
+      details: error.message,
+      solution,
+      commands
     };
   }
 }
