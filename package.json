@@ -16,8 +16,17 @@
     "typecheck": "pnpm -C apps/web typecheck",
     "type-check": "pnpm -C apps/web typecheck",
     "env:check": "node scripts/check-env-sync.mjs",
+    "env:check:ci": "CI=true node scripts/check-env-sync.mjs",
+    "preview:verify": "node scripts/verify-preview-env.mjs",
+    "preview:url": "node scripts/get-preview-url.mjs",
+    "preview:test": "node scripts/test-preview-workflow.mjs",
+    "deploy:monitor": "node scripts/monitor-production-deployment.mjs",
+    "deploy:rollback": "node scripts/rollback-production.mjs",
+    "deploy:notify": "node scripts/notify-deployment.mjs",
+    "deploy:test": "node scripts/test-production-deployment.mjs",
     "sitemap": "next-sitemap",
     "precommit": "npm run format && npm run lint && npm run test && npm run env:check",
+    "commit:metrics": "node scripts/show-commit-metrics.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -27,9 +36,12 @@
   "lint-staged": {
     "apps/web/**/*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint --fix"
+      "eslint --fix --max-warnings 0"
     ],
     "packages/**/*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
       "prettier --write"
     ]
   },

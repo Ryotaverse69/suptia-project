@@ -35,22 +35,22 @@
   - ビルドコマンドと出力ディレクトリを正しく設定する
   - _Requirements: 5.1, 5.3_
 
-- [ ] 8. Vercel 環境変数同期
+- [x] 8. Vercel 環境変数同期
   - Production と Preview 環境の環境変数を同期する
   - 環境変数チェックスクリプトを CI に統合する
   - _Requirements: 5.5_
 
-- [ ] 9. Vercel Preview 環境自動デプロイ設定
+- [x] 9. Vercel Preview 環境自動デプロイ設定
   - dev ブランチの push で Preview 環境が自動更新されることを確認する
   - Preview URL の生成と通知機能を設定する
   - _Requirements: 5.1, 5.2_
 
-- [ ] 10. 本番デプロイ自動化設定
+- [x] 10. 本番デプロイ自動化設定
   - master ブランチのマージで本番環境が自動デプロイされることを確認する
   - デプロイ失敗時の通知とロールバック機能を設定する
   - _Requirements: 5.3, 5.4_
 
-- [ ] 11. pre-commit フック最適化
+- [-] 11. pre-commit フック最適化
   - husky と lint-staged の設定を最適化する
   - 開発者の作業効率を向上させるフック設定を実装する
   - _Requirements: 7.2, 8.1_

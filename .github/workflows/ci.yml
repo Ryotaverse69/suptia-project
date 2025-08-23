@@ -226,6 +226,36 @@ jobs:
       - name: Validate JSON-LD
         run: node scripts/validate-jsonld.mjs
 
+  env-sync:
+    name: env-sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # Set demo values for CI validation
+      NEXT_PUBLIC_SANITY_PROJECT_ID: demo
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      SANITY_API_TOKEN: demo-token
+      SANITY_API_VERSION: 2023-05-03
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Check environment variable synchronization
+        run: npm run env:check:ci
+
+      - name: Verify Preview Environment (if token available)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_NWkcnXBay0NvP9FEZUuXAICo0514
+        run: npm run preview:verify
+        continue-on-error: true
+
   audit:
     name: audit
     runs-on: ubuntu-latest
@@ -301,3 +331,194 @@ jobs:
 
       - name: Run Definition of Done Check
         run: node scripts/check-dod.mjs
+
+  preview-deployment:
+    name: preview-deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    outputs:
+      preview_url: ${{ steps.get-preview.outputs.preview_url }}
+      deployment_id: ${{ steps.get-preview.outputs.deployment_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Vercel Preview URL
+        id: get-preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_NWkcnXBay0NvP9FEZUuXAICo0514
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: node scripts/get-preview-url.mjs
+
+      - name: Comment Preview URL on Recent PRs
+        if: steps.get-preview.outputs.preview_url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.get-preview.outputs.preview_url }}
+          DEPLOYMENT_ID: ${{ steps.get-preview.outputs.deployment_id }}
+        run: |
+          # 最近のオープンなPRを取得してPreview URLをコメント
+          gh pr list --state open --limit 5 --json number,headRefName | \
+          jq -r '.[] | select(.headRefName == "dev") | .number' | \
+          while read pr_number; do
+            if [ -n "$pr_number" ]; then
+              echo "Adding preview URL comment to PR #$pr_number"
+              gh pr comment $pr_number --body "$(cat <<EOF
+🚀 **Preview Environment Updated**
+
+Preview URL: $PREVIEW_URL
+Deployment ID: \`$DEPLOYMENT_ID\`
+Commit: \`${{ github.sha }}\`
+
+The preview environment has been automatically updated with the latest changes from the \`dev\` branch.
+EOF
+)"
+            fi
+          done
+
+  pr-preview-comment:
+    name: pr-preview-comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Wait and Get Preview URL
+        id: get-preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_NWkcnXBay0NvP9FEZUuXAICo0514
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_REF_NAME: ${{ github.head_ref }}
+        run: |
+          # PR作成時は少し待ってからPreview URLを取得
+          sleep 30
+          node scripts/get-preview-url.mjs
+
+      - name: Comment Preview URL on PR
+        if: steps.get-preview.outputs.preview_url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.get-preview.outputs.preview_url }}
+          DEPLOYMENT_ID: ${{ steps.get-preview.outputs.deployment_id }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "$(cat <<EOF
+🔍 **Preview Environment Ready**
+
+Preview URL: $PREVIEW_URL
+Deployment ID: \`$DEPLOYMENT_ID\`
+
+You can now review the changes in the preview environment before merging to production.
+EOF
+)"
+
+  production-deployment:
+    name: production-deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: [format, lint, test, typecheck, build, headers, jsonld, env-sync, audit]
+    outputs:
+      deployment_url: ${{ steps.monitor-deploy.outputs.deployment_url }}
+      deployment_id: ${{ steps.monitor-deploy.outputs.deployment_id }}
+      success: ${{ steps.monitor-deploy.outputs.success }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Monitor Production Deployment
+        id: monitor-deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_NWkcnXBay0NvP9FEZUuXAICo0514
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: node scripts/monitor-production-deployment.mjs
+
+      - name: Update Deployment Status
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.monitor-deploy.outputs.deployment_url }}
+          SUCCESS: ${{ steps.monitor-deploy.outputs.success }}
+        run: |
+          if [ "$SUCCESS" = "true" ]; then
+            echo "✅ Production deployment successful"
+            gh api repos/:owner/:repo/deployments --method POST --field ref="${{ github.sha }}" --field environment="production" --field auto_merge=false --field required_contexts='[]' --field production_environment=true
+          else
+            echo "❌ Production deployment failed"
+          fi
+
+  rollback-on-failure:
+    name: rollback-on-failure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: always() && needs.production-deployment.result == 'failure' && github.ref == 'refs/heads/master'
+    needs: [production-deployment]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Execute Rollback
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_NWkcnXBay0NvP9FEZUuXAICo0514
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          AUTO_ROLLBACK: 'true'
+        run: node scripts/rollback-production.mjs
+
+      - name: Create Rollback Issue
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_BODY="$(cat <<EOF
+**Automatic rollback was executed due to production deployment failure.**
+
+**Details:**
+- Failed commit: \`${{ github.sha }}\`
+- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+- Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+**Next Steps:**
+1. Investigate the deployment failure
+2. Fix any issues in the code
+3. Test thoroughly before redeploying
+4. Consider if any hotfixes are needed
+
+**Rollback Status:** Check the rollback job logs for details.
+EOF
+)"
+          gh issue create \
+            --title "🔄 Production Rollback Executed - $(date '+%Y-%m-%d %H:%M')" \
+            --body "$ISSUE_BODY" \
+            --label "deployment,rollback,urgent" \
+            --assignee "${{ github.actor }}"

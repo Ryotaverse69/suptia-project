@@ -12,7 +12,9 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier . --check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "preview:verify": "node ../../scripts/verify-preview-env.mjs",
+    "preview:url": "node ../../scripts/get-preview-url.mjs"
   },
   "dependencies": {
     "next": "14.2.5",

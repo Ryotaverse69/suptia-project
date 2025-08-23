@@ -27,11 +27,13 @@ vercel env ls
 Vercelダッシュボードで以下を設定：
 
 #### Production Branch
+
 - **Branch**: `master`
 - **Domain**: `suptia.com`
 - **Auto Deploy**: ✅ Enabled
 
 #### Preview Branch
+
 - **Branch**: `dev`
 - **Domain**: `your-app-git-dev-your-team.vercel.app`
 - **Auto Deploy**: ✅ Enabled
@@ -39,6 +41,7 @@ Vercelダッシュボードで以下を設定：
 ### 3. 環境変数の設定
 
 #### Production環境
+
 ```bash
 # 本番用の環境変数を設定
 vercel env add NEXT_PUBLIC_SANITY_PROJECT_ID production
@@ -49,6 +52,7 @@ vercel env add SANITY_API_VERSION production
 ```
 
 #### Preview環境
+
 ```bash
 # Preview用の環境変数を設定
 vercel env add NEXT_PUBLIC_SANITY_PROJECT_ID preview
@@ -63,6 +67,7 @@ vercel env add SANITY_API_VERSION preview
 ### 自動デプロイ
 
 #### 本番環境（master）
+
 ```bash
 # PRをマージすると自動デプロイ
 git switch dev
@@ -73,6 +78,7 @@ git push origin dev
 ```
 
 #### Preview環境（dev）
+
 ```bash
 # devにプッシュすると自動デプロイ
 git switch dev
@@ -92,22 +98,70 @@ vercel --prod
 vercel
 ```
 
+## 環境変数同期
+
+### 自動チェック機能
+
+プロジェクトには環境変数の同期をチェックする自動化機能が組み込まれています：
+
+```bash
+# ローカルで環境変数同期をチェック
+npm run env:check
+
+# CI環境で環境変数同期をチェック
+npm run env:check:ci
+```
+
+### 同期チェックの内容
+
+1. **ローカル環境**: `.env.local` と `.env.local.example` の同期確認
+2. **CI環境**: 必須環境変数の存在確認
+3. **Vercel環境**: Production/Preview環境の設定検証
+
+### Production vs Preview 環境変数設定
+
+#### Production環境の設定例
+
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID=abc123def
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SITE_URL=https://suptia.com
+SANITY_API_TOKEN=sk_production_token_here
+SANITY_API_VERSION=2023-05-03
+```
+
+#### Preview環境の設定例
+
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID=abc123def
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SITE_URL=https://your-app-git-dev-your-team.vercel.app
+SANITY_API_TOKEN=sk_preview_token_here
+SANITY_API_VERSION=2023-05-03
+```
+
+### 重要な注意点
+
+- **NEXT_PUBLIC_SITE_URL**: Production では `suptia.com`、Preview では `vercel.app` ドメインを使用
+- **SANITY_API_TOKEN**: Production と Preview で異なるトークンを使用することを推奨
+- **プレースホルダー値**: `demo`, `your-project-id` などの値は本番環境では使用禁止
+
 ## 環境変数一覧
 
 ### 必須環境変数
 
-| 変数名 | 説明 | 例 |
-|--------|------|-----|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | SanityプロジェクトID | `abc123def` |
-| `NEXT_PUBLIC_SANITY_DATASET` | Sanityデータセット | `production` |
-| `NEXT_PUBLIC_SITE_URL` | サイトURL | `https://suptia.com` |
-| `SANITY_API_TOKEN` | Sanity APIトークン | `sk...` |
-| `SANITY_API_VERSION` | Sanity APIバージョン | `2023-05-03` |
+| 変数名                          | 説明                 | Production例         | Preview例                             |
+| ------------------------------- | -------------------- | -------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | SanityプロジェクトID | `abc123def`          | `abc123def`                           |
+| `NEXT_PUBLIC_SANITY_DATASET`    | Sanityデータセット   | `production`         | `production`                          |
+| `NEXT_PUBLIC_SITE_URL`          | サイトURL            | `https://suptia.com` | `https://app-git-dev-team.vercel.app` |
+| `SANITY_API_TOKEN`              | Sanity APIトークン   | `sk_prod_...`        | `sk_preview_...`                      |
+| `SANITY_API_VERSION`            | Sanity APIバージョン | `2023-05-03`         | `2023-05-03`                          |
 
 ### オプション環境変数
 
-| 変数名 | 説明 | 例 |
-|--------|------|-----|
+| 変数名              | 説明              | 例                      |
+| ------------------- | ----------------- | ----------------------- |
 | `SANITY_STUDIO_URL` | Sanity Studio URL | `http://localhost:3333` |
 
 ## ビルド設定
@@ -175,6 +229,46 @@ vercel env ls
 # 環境変数を再設定
 vercel env rm VARIABLE_NAME
 vercel env add VARIABLE_NAME
+
+# 環境変数同期チェックを実行
+npm run env:check
+
+# CI環境での環境変数チェック
+npm run env:check:ci
+```
+
+#### 5. 環境変数同期エラー
+
+```bash
+# ローカル環境変数の同期確認
+npm run env:check
+
+# .env.local.example と .env.local の差分確認
+diff apps/web/.env.local.example apps/web/.env.local
+
+# 不足している環境変数を .env.local に追加
+cp apps/web/.env.local.example apps/web/.env.local
+# 実際の値に編集
+
+# Vercel環境での環境変数確認
+vercel env ls
+```
+
+#### 6. Production/Preview環境の設定ミス
+
+```bash
+# Production環境の環境変数確認
+vercel env ls --environment production
+
+# Preview環境の環境変数確認
+vercel env ls --environment preview
+
+# 環境別に正しい値を設定
+vercel env add NEXT_PUBLIC_SITE_URL production
+# Production: https://suptia.com
+
+vercel env add NEXT_PUBLIC_SITE_URL preview
+# Preview: https://your-app-git-dev-your-team.vercel.app
 ```
 
 #### 3. デプロイが失敗する
@@ -219,30 +313,30 @@ vercel domains add suptia.com
 // next.config.js
 const securityHeaders = [
   {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on'
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
   },
   {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
   {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
+    key: "X-XSS-Protection",
+    value: "1; mode=block",
   },
   {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
   },
   {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
+    key: "X-Content-Type-Options",
+    value: "nosniff",
   },
   {
-    key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin'
-  }
-]
+    key: "Referrer-Policy",
+    value: "origin-when-cross-origin",
+  },
+];
 ```
 
 ### CSP設定
@@ -258,7 +352,7 @@ const ContentSecurityPolicy = `
   media-src 'none';
   connect-src *;
   font-src 'self' *.googleapis.com *.gstatic.com;
-`
+`;
 ```
 
 ## 参考リンク
