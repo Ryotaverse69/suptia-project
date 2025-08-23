@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "cd apps/web && npm run build",
   "outputDirectory": "apps/web/.next",
   "installCommand": "npm install",
+  "rootDirectory": "./",
   "framework": "nextjs",
   "regions": ["nrt1"],
   "functions": {
@@ -19,7 +20,8 @@
   "github": {
     "autoAlias": false,
     "silent": false,
-    "autoJobCancelation": false
+    "autoJobCancelation": false,
+    "enabled": true
   },
   "headers": [
     {

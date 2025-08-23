@@ -54,6 +54,10 @@
     "acceptance:run": "node scripts/run-acceptance-tests.mjs",
     "acceptance:report": "node scripts/generate-acceptance-report.mjs",
     "acceptance:full": "npm run acceptance:run && npm run acceptance:report",
+    "preview:ensure": "node scripts/ensure-vercel-preview.mjs",
+    "preview:diagnose": "node scripts/diagnose-vercel-preview.mjs",
+    "preview:get": "node scripts/get-preview-url.mjs",
+    "preview:test": "node scripts/test-vercel-preview-workflow.mjs",
     "prepare": "husky"
   },
   "devDependencies": {

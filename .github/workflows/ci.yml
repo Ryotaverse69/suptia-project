@@ -371,3 +371,103 @@ jobs:
 
       - name: Run Definition of Done Check
         run: node scripts/check-dod.mjs
+
+  # dev ブランチプッシュ時のPreview URL取得
+  preview-deployment:
+    name: preview-deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    needs: [format, lint, test, typecheck, build]
+    outputs:
+      preview_url: ${{ steps.get-preview.outputs.preview_url }}
+      deployment_id: ${{ steps.get-preview.outputs.deployment_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Wait for Vercel Deployment
+        id: get-preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: node scripts/get-preview-url.mjs
+
+      - name: Comment Preview URL on Recent PRs
+        if: steps.get-preview.outputs.preview_url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.get-preview.outputs.preview_url }}
+          DEPLOYMENT_ID: ${{ steps.get-preview.outputs.deployment_id }}
+        run: |
+          # 最近のオープンなPRを取得してPreview URLをコメント
+          gh pr list --state open --limit 5 --json number,headRefName | \
+          jq -r '.[] | select(.headRefName == "dev") | .number' | \
+          while read pr_number; do
+            if [ -n "$pr_number" ]; then
+              echo "Adding preview URL comment to PR #$pr_number"
+              gh pr comment $pr_number --body "$(cat <<EOF
+🚀 **Preview Environment Updated**
+
+Preview URL: $PREVIEW_URL
+Deployment ID: \`$DEPLOYMENT_ID\`
+Commit: \`${{ github.sha }}\`
+
+The preview environment has been automatically updated with the latest changes from the \`dev\` branch.
+EOF
+)"
+            fi
+          done
+
+  # PR作成時のPreview URL取得
+  pr-preview-comment:
+    name: pr-preview-comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
+    needs: [format, lint, test, typecheck, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Wait and Get Preview URL
+        id: get-preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_REF_NAME: ${{ github.head_ref }}
+        run: |
+          # PR作成/更新時は少し待ってからPreview URLを取得
+          sleep 30
+          node scripts/get-preview-url.mjs
+
+      - name: Comment Preview URL on PR
+        if: steps.get-preview.outputs.preview_url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.get-preview.outputs.preview_url }}
+          DEPLOYMENT_ID: ${{ steps.get-preview.outputs.deployment_id }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "$(cat <<EOF
+🔍 **Preview Environment Ready**
+
+Preview URL: $PREVIEW_URL
+Deployment ID: \`$DEPLOYMENT_ID\`
+Commit: \`${{ github.event.pull_request.head.sha }}\`
+
+You can now review the changes in the preview environment before merging to production.
+EOF
+)"
