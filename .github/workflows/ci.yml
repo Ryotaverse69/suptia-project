@@ -1,10 +1,14 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [master, dev]
   pull_request:
     branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: '20'
@@ -17,6 +21,7 @@ jobs:
   secrets-scan:
     name: secrets-scan
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +39,7 @@ jobs:
   format:
     name: format:check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +61,7 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,6 +83,7 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -97,6 +105,7 @@ jobs:
   typecheck:
     name: typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
       NEXT_PUBLIC_SANITY_PROJECT_ID: demo
@@ -122,6 +131,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
       NEXT_PUBLIC_SANITY_PROJECT_ID: demo
@@ -147,6 +157,7 @@ jobs:
   headers:
     name: headers
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     env:
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
@@ -177,11 +188,12 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: Check headers
-        run: node scripts/check-headers.mjs || echo "Headers check skipped - script not found"
+        run: node scripts/check-headers.mjs
 
   jsonld:
     name: jsonld
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     env:
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
@@ -212,7 +224,7 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: Validate JSON-LD
-        run: node scripts/validate-jsonld.mjs || echo "JSON-LD validation skipped - script not found"
+        run: node scripts/validate-jsonld.mjs
 
   audit:
     name: audit
@@ -270,3 +282,22 @@ jobs:
 
       - name: Run Lighthouse
         run: npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-results.json || echo "Lighthouse check completed"
+
+  pr-dod-check:
+    name: pr-dod-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run Definition of Done Check
+        run: node scripts/check-dod.mjs
