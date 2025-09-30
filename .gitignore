@@ -85,3 +85,6 @@ test-results-*.json
 
 # Debug files
 *.log.*
+
+# MCP Settings (contains secrets)
+.kiro/settings/mcp.json
