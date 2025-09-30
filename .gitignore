@@ -74,3 +74,14 @@ pids/
 tmp/
 temp/
 .vercel
+
+# Sanity
+.sanity/
+
+# Test reports
+acceptance-test-report.json
+security-audit-report.json
+test-results-*.json
+
+# Debug files
+*.log.*

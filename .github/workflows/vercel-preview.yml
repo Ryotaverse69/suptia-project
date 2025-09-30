@@ -226,7 +226,7 @@ EOF
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 過去24時間の失敗回数をチェック（簡易版）
-          RECENT_FAILURES=$(gh run list --workflow="Vercel Preview Deployment" --status=failure --created="$(date -d '24 hours ago' --iso-8601)" --limit=5 --json conclusion | jq length)
+          RECENT_FAILURES=$(gh run list --workflow="Vercel Preview Deployment" --status=failure --limit=5 --json conclusion | jq length)
           
           if [ "$RECENT_FAILURES" -ge "3" ]; then
             echo "🚨 Multiple preview deployment failures detected"
