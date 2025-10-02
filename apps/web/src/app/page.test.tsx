@@ -28,26 +28,28 @@ describe("Home Page", () => {
     const HomeComponent = await Home();
     render(HomeComponent);
     const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading).toHaveTextContent("サプティア");
+    expect(heading).toHaveTextContent("あなたに最適なサプリを見つけよう");
   });
 
   it("renders the description", async () => {
     const HomeComponent = await Home();
     render(HomeComponent);
     const description = screen.getByText(
-      "安全 × 価格 × 説明可能性のサプリ意思決定エンジン",
+      "科学的根拠に基づいた、信頼できるサプリメント比較サイト",
     );
     expect(description).toBeInTheDocument();
   });
 
-  it("renders the compare link", async () => {
+  it("renders the recommended products section", async () => {
     const HomeComponent = await Home();
     render(HomeComponent);
-    const compareLink = screen.getByRole("link", { name: "商品比較" });
-    expect(compareLink).toHaveAttribute("href", "/compare");
+    const heading = screen.getByRole("heading", {
+      name: "おすすめのサプリメント",
+    });
+    expect(heading).toBeInTheDocument();
   });
 
-  it("renders product table when products are available", async () => {
+  it("renders product cards when products are available", async () => {
     const HomeComponent = await Home();
     render(HomeComponent);
 
