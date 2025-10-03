@@ -3,6 +3,8 @@ import "@/env";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { getSiteUrl } from "@/lib/runtimeConfig";
+import { Header } from "@/components/Header";
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -24,6 +26,7 @@ export default function RootLayout({
         <Script id="website-jsonld" type="application/ld+json" nonce={nonce}>
           {JSON.stringify(websiteJsonLd)}
         </Script>
+        <Header />
         {children}
       </body>
     </html>

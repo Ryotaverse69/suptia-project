@@ -66,7 +66,7 @@ export default async function Home() {
 
       {/* Stats Bar */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-6 max-w-[1440px]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-blue-50 rounded-lg">
@@ -100,15 +100,15 @@ export default async function Home() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="mx-auto px-6 lg:px-12 xl:px-16 py-8 max-w-[1440px]">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="lg:sticky lg:top-4 h-fit">
+          <aside className="lg:sticky lg:top-20 h-fit w-full lg:w-72 flex-shrink-0">
             <FilterSidebar />
           </aside>
 
           {/* Products Grid */}
-          <main className="flex-1">
+          <main className="flex-1 min-w-0">
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -129,7 +129,7 @@ export default async function Home() {
             </div>
 
             {productsWithCost.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {productsWithCost.map((product, index) => (
                   <ProductCard key={index} product={product} />
                 ))}

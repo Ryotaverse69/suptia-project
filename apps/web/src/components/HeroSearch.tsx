@@ -13,10 +13,10 @@ export function HeroSearch() {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-20 px-4">
+    <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-16 px-6 lg:px-12 xl:px-16">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10"></div>
 
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative mx-auto max-w-[1200px]">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             あなたに最適なサプリを見つけよう
