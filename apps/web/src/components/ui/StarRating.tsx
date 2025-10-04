@@ -61,12 +61,12 @@ export function StarRating({
         })}
       </div>
       {showLabel && (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-sm font-medium text-primary-800">
           {rating.toFixed(1)}
         </span>
       )}
       {reviewCount !== undefined && (
-        <span className="text-sm text-gray-500">({reviewCount})</span>
+        <span className="text-sm text-primary-600">({reviewCount})</span>
       )}
     </div>
   );

@@ -39,9 +39,9 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${slug.current}`}>
       <Card className="group cursor-pointer overflow-hidden h-full flex flex-col">
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+        <div className="relative aspect-[4/3] overflow-hidden bg-primary-50">
           {/* Placeholder for product image */}
-          <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+          <div className="absolute inset-0 flex items-center justify-center text-primary-300">
             <Award size={48} />
           </div>
 
@@ -65,7 +65,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <CardContent className="flex-1 pt-4">
-          <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
             {name}
           </h3>
 
@@ -73,7 +73,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <StarRating rating={rating} reviewCount={reviewCount} size="sm" />
           </div>
 
-          <div className="space-y-1 text-sm text-gray-600">
+          <div className="space-y-1 text-sm text-primary-700">
             <div className="flex justify-between">
               <span>商品価格</span>
               <span className="font-medium">{formatCostJPY(priceJPY)}</span>
@@ -81,7 +81,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {effectiveCostPerDay && (
               <div className="flex justify-between">
                 <span>1日あたり</span>
-                <span className="font-medium text-green-600">
+                <span className="font-medium text-accent-mint">
                   {formatCostJPY(effectiveCostPerDay)}
                 </span>
               </div>
@@ -92,16 +92,16 @@ export function ProductCard({ product }: ProductCardProps) {
         <CardFooter className="pt-0 pb-4">
           <div className="w-full flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-primary-900">
                 {formatCostJPY(priceJPY)}
               </div>
               {effectiveCostPerDay && (
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-primary-600">
                   {formatCostJPY(effectiveCostPerDay)}/日
                 </div>
               )}
             </div>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors">
+            <button className="bg-accent-purple hover:bg-accent-purple/90 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors">
               詳細を見る
             </button>
           </div>

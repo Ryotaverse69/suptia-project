@@ -24,7 +24,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+    <header className="sticky top-0 z-50 w-full border-b border-primary-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
         <div className="flex h-16 items-center justify-between">
           {/* Left: Logo */}
@@ -32,14 +32,16 @@ export function Header() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-accent-purple rounded-lg">
               <span className="text-white font-bold text-xl">S</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-gray-900 leading-none">
+              <span className="font-bold text-lg text-primary-900 leading-none">
                 サプティア
               </span>
-              <span className="text-xs text-gray-500 leading-none">Suptia</span>
+              <span className="text-xs text-primary-600 leading-none">
+                Suptia
+              </span>
             </div>
           </Link>
 
@@ -49,16 +51,16 @@ export function Header() {
             <div className="relative">
               <button
                 onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-100 transition-colors text-sm"
               >
-                <Globe size={18} className="text-gray-600" />
-                <span className="text-gray-700">
+                <Globe size={18} className="text-primary-600" />
+                <span className="text-primary-800">
                   {currentLanguage} · {currentCurrency}
                 </span>
                 <ChevronDown
                   size={16}
                   className={cn(
-                    "text-gray-500 transition-transform",
+                    "text-primary-500 transition-transform",
                     languageMenuOpen && "rotate-180",
                   )}
                 />
@@ -70,15 +72,15 @@ export function Header() {
                     className="fixed inset-0 z-40"
                     onClick={() => setLanguageMenuOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-primary-200 py-2 z-50">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
                         onClick={() => handleLanguageChange(lang)}
                         className={cn(
-                          "w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors text-sm",
+                          "w-full px-4 py-2 text-left hover:bg-primary-50 transition-colors text-sm",
                           currentLanguage === lang.name &&
-                            "bg-blue-50 text-blue-600 font-medium",
+                            "bg-primary-100 text-primary font-medium",
                         )}
                       >
                         {lang.name} · {lang.currency}
@@ -92,7 +94,7 @@ export function Header() {
             {/* About Link */}
             <Link
               href="/about"
-              className="text-sm text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
             >
               サプティアとは
             </Link>
@@ -100,7 +102,7 @@ export function Header() {
             {/* Login Button */}
             <Link
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium"
             >
               <User size={18} />
               <span>ログイン</span>
@@ -110,22 +112,22 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-primary-100 rounded-lg transition-colors"
           >
             {mobileMenuOpen ? (
-              <X size={24} className="text-gray-600" />
+              <X size={24} className="text-primary-600" />
             ) : (
-              <Menu size={24} className="text-gray-600" />
+              <Menu size={24} className="text-primary-600" />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4 space-y-4">
+          <div className="md:hidden border-t border-primary-200 py-4 space-y-4">
             {/* Language & Currency - Mobile */}
             <div className="px-2">
-              <div className="text-xs font-medium text-gray-500 mb-2">
+              <div className="text-xs font-medium text-primary-600 mb-2">
                 言語と通貨
               </div>
               <div className="space-y-1">
@@ -139,8 +141,8 @@ export function Header() {
                     className={cn(
                       "w-full px-3 py-2 text-left rounded-lg transition-colors text-sm",
                       currentLanguage === lang.name
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : "hover:bg-gray-50",
+                        ? "bg-primary-100 text-primary font-medium"
+                        : "hover:bg-primary-50",
                     )}
                   >
                     {lang.name} · {lang.currency}
@@ -153,7 +155,7 @@ export function Header() {
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-2 py-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
             >
               サプティアとは
             </Link>
@@ -162,7 +164,7 @@ export function Header() {
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 mx-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="flex items-center justify-center gap-2 mx-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
             >
               <User size={18} />
               <span>ログイン</span>
