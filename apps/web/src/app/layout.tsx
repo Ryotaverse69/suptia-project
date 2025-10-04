@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Script from "next/script";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
         </Script>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
