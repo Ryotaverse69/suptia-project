@@ -128,7 +128,7 @@ export function Footer() {
           {/* ブランド・説明 */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/logo.svg" alt="Suptia Logo" width={32} height={40} />
+              <Image src="/logo.png" alt="Suptia Logo" width={32} height={40} />
               <h3 className="font-bold text-lg">Suptia</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-4">

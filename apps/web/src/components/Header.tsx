@@ -34,10 +34,10 @@ export function Header() {
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt="Suptia Logo"
               width={40}
-              height={48}
+              height={50}
               priority
             />
             <div className="flex flex-col">
