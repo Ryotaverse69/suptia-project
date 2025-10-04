@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState } from "react";
 import { Mail, MessageSquare, Send } from "lucide-react";
 

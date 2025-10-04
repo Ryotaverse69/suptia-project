@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 
