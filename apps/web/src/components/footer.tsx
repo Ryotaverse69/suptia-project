@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "./CookieSettingsButton";
 
 export function Footer() {
   return (
@@ -153,15 +154,7 @@ export function Footer() {
 
         {/* Cookie同意設定リンク */}
         <div className="border-t pt-6 mb-6">
-          <button
-            onClick={() => {
-              // Cookie同意マネージャーを開く処理（後で実装）
-              console.log("Open cookie consent manager");
-            }}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
-          >
-            Cookie設定を変更する
-          </button>
+          <CookieSettingsButton />
         </div>
 
         {/* Copyright */}

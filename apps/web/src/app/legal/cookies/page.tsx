@@ -1,9 +1,4 @@
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Cookieポリシー - Suptia",
-  description: "SuptiaのCookie使用に関するポリシーです。",
-};
+"use client";
 
 export default function CookiesPage() {
   return (
