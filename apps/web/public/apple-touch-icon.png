@@ -1,0 +1,26 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" fill="white" rx="40"/>
+  <path d="M58 32C58 16.536 70.536 4 86 4H122V110C122 125.464 109.464 138 94 138H58V32Z" fill="url(#blue)"/>
+  <path d="M72 72C72 64.268 78.268 58 86 58H130C137.732 58 144 64.268 144 72V84C144 91.732 137.732 98 130 98H86C78.268 98 72 91.732 72 84V72Z" fill="url(#green1)"/>
+  <circle cx="137" cy="78" r="7" fill="url(#green2)"/>
+  <path d="M58 118C33 118 14 137 14 162" stroke="url(#green3)" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <defs>
+    <linearGradient id="blue" x1="86" y1="4" x2="86" y2="138">
+      <stop stop-color="#1478C8"/>
+      <stop offset="1" stop-color="#2B5FA6"/>
+    </linearGradient>
+    <linearGradient id="green1" x1="72" y1="78" x2="144" y2="78">
+      <stop stop-color="#1BAAA0"/>
+      <stop offset="1" stop-color="#6DD400"/>
+    </linearGradient>
+    <linearGradient id="green2" x1="130" y1="78" x2="144" y2="78">
+      <stop stop-color="#8FD14F"/>
+      <stop offset="1" stop-color="#C4E538"/>
+    </linearGradient>
+    <linearGradient id="green3" x1="14" y1="140" x2="58" y2="140">
+      <stop stop-color="#1BAAA0"/>
+      <stop offset="0.5" stop-color="#26B87C"/>
+      <stop offset="1" stop-color="#6DD400"/>
+    </linearGradient>
+  </defs>
+</svg>

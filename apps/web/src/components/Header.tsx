@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Globe, User, ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -32,9 +33,13 @@ export function Header() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-accent-purple rounded-lg">
-              <span className="text-white font-bold text-xl">S</span>
-            </div>
+            <Image
+              src="/logo.svg"
+              alt="Suptia Logo"
+              width={40}
+              height={48}
+              priority
+            />
             <div className="flex flex-col">
               <span className="font-bold text-lg text-primary-900 leading-none">
                 サプティア

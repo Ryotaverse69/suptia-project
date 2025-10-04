@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CookieSettingsButton } from "./CookieSettingsButton";
 
 export function Footer() {
@@ -126,7 +127,10 @@ export function Footer() {
 
           {/* ブランド・説明 */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Suptia</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <Image src="/logo.svg" alt="Suptia Logo" width={32} height={40} />
+              <h3 className="font-bold text-lg">Suptia</h3>
+            </div>
             <p className="text-sm text-muted-foreground mb-4">
               科学的根拠に基づくサプリメント比較メタサーチ。
               あなたに最適なサプリメントを見つけるお手伝いをします。
