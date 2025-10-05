@@ -61,10 +61,18 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href="/about"
+                  href="/company"
                   className="hover:text-foreground transition-colors"
                 >
                   運営会社について
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="hover:text-foreground transition-colors"
+                >
+                  サプティアとは
                 </Link>
               </li>
               <li>
@@ -119,7 +127,7 @@ export function Footer() {
                   href="/how-it-works"
                   className="hover:text-foreground transition-colors"
                 >
-                  Suptiaの使い方
+                  サプティアの使い方
                 </Link>
               </li>
             </ul>
@@ -128,8 +136,13 @@ export function Footer() {
           {/* ブランド・説明 */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/logo.png" alt="Suptia Logo" width={32} height={40} />
-              <h3 className="font-bold text-lg">Suptia</h3>
+              <Image
+                src="/logo.png"
+                alt="サプティア Logo"
+                width={32}
+                height={40}
+              />
+              <h3 className="font-bold text-lg">サプティア</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               科学的根拠に基づくサプリメント比較メタサーチ。
@@ -163,7 +176,9 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Suptia. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} サプティア. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -27,7 +27,7 @@ export default function AboutPage() {
             <span>科学的根拠に基づくサプリメント選び</span>
           </div>
           <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-            Suptia（サプティア）とは
+            サプティアとは
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-primary-100">
             あなたに最適なサプリメントを見つける、日本最大級の比較検索プラットフォーム。
@@ -74,12 +74,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* What is Suptia */}
+      {/* What is サプティア */}
       <section className="py-20 px-6">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-primary-900">
-              Suptiaができること
+              サプティアができること
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-primary-700">
               複雑で分かりにくいサプリメント選びを、科学的根拠に基づいてシンプルに。
@@ -168,12 +168,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Why Suptia */}
+      {/* Why サプティア */}
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-primary-900">
-              なぜSuptiaなのか
+              なぜサプティアなのか
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-primary-700">
               他のサプリメントサイトとは、ここが違います
@@ -242,7 +242,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="sticky top-24 rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-accent-mint/10 p-8">
                 <h3 className="mb-6 text-2xl font-bold text-primary-900">
-                  Suptiaの約束
+                  サプティアの約束
                 </h3>
                 <ul className="space-y-4">
                   <li className="flex items-start gap-3">
