@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー - Suptia",
-  description: "Suptiaの個人情報保護方針です。",
+  title: "プライバシーポリシー - サプティア",
+  description: "サプティアの個人情報保護方針です。",
 };
 
 export default function PrivacyPage() {
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">1. 基本方針</h2>
           <p className="mb-4">
-            Suptia（以下「当サイト」といいます）は、ユーザーの個人情報の重要性を認識し、個人情報保護法その他の関連法令を遵守し、適切に取り扱います。
+            サプティア（以下「当サイト」といいます）は、ユーザーの個人情報の重要性を認識し、個人情報保護法その他の関連法令を遵守し、適切に取り扱います。
           </p>
         </section>
 

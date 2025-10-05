@@ -1,4 +1,4 @@
-// Cost calculation utilities for Suptia MVP
+// Cost calculation utilities for サプティア MVP
 
 export interface ProductCostData {
   priceJPY: number;

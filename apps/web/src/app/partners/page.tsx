@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { ExternalLink, ShoppingCart, TrendingUp, Shield } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "提携パートナー - Suptia",
-  description: "Suptiaの提携ECサイト、アフィリエイトプログラムについて。",
+  title: "提携パートナー - サプティア",
+  description: "サプティアの提携ECサイト、アフィリエイトプログラムについて。",
 };
 
 export default function PartnersPage() {
@@ -12,7 +12,7 @@ export default function PartnersPage() {
       <div className="max-w-4xl mx-auto mb-12">
         <h1 className="text-4xl font-bold mb-4">提携パートナー</h1>
         <p className="text-xl text-muted-foreground">
-          Suptiaが提携しているECサイト・サービスのご紹介
+          サプティアが提携しているECサイト・サービスのご紹介
         </p>
       </div>
 
@@ -196,7 +196,7 @@ export default function PartnersPage() {
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8">提携パートナー選定基準</h2>
         <p className="text-muted-foreground mb-6">
-          Suptiaは、ユーザーに最適な購入体験を提供するため、以下の基準でパートナーを選定しています：
+          サプティアは、ユーザーに最適な購入体験を提供するため、以下の基準でパートナーを選定しています：
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -247,7 +247,7 @@ export default function PartnersPage() {
         <h2 className="text-3xl font-bold mb-8">価格比較機能について</h2>
         <div className="border rounded-lg p-6">
           <p className="mb-4">
-            Suptiaは、複数の提携ECサイトから価格情報を収集し、ユーザーが最適な購入先を選択できるようサポートしています。
+            サプティアは、複数の提携ECサイトから価格情報を収集し、ユーザーが最適な購入先を選択できるようサポートしています。
           </p>
           <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
             <p className="font-semibold mb-2">価格表示に関する注意事項:</p>
@@ -267,7 +267,7 @@ export default function PartnersPage() {
         <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">提携パートナー募集中</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            サプリメント関連のEC事業者、製造・販売事業者の方で、Suptiaとの提携にご興味がある場合は、お気軽にお問い合わせください。
+            サプリメント関連のEC事業者、製造・販売事業者の方で、サプティアとの提携にご興味がある場合は、お気軽にお問い合わせください。
           </p>
           <a
             href="/contact"

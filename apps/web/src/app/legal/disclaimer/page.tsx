@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "免責事項 - Suptia",
-  description: "Suptiaの免責事項です。",
+  title: "免責事項 - サプティア",
+  description: "サプティアの免責事項です。",
 };
 
 export default function DisclaimerPage() {
@@ -18,7 +18,7 @@ export default function DisclaimerPage() {
         <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
           <h3 className="font-bold text-lg mb-3">⚠️ 重要な免責事項</h3>
           <p className="font-semibold mb-4">
-            Suptiaは医療・診断・治療・予防を目的としたサービスではありません。
+            サプティアは医療・診断・治療・予防を目的としたサービスではありません。
           </p>
           <ul className="space-y-2 text-sm">
             <li>

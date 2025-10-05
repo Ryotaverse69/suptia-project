@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { GraduationCap, Award, BookOpen, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "研究・監修者情報 - Suptia",
-  description: "Suptiaの科学的根拠、監修者、データソースについて。",
+  title: "研究・監修者情報 - サプティア",
+  description: "サプティアの科学的根拠、監修者、データソースについて。",
 };
 
 export default function AdvisoryPage() {
@@ -114,7 +114,7 @@ export default function AdvisoryPage() {
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8">データソース</h2>
         <p className="text-muted-foreground mb-6">
-          Suptiaは、以下の信頼できるデータソースから情報を収集しています：
+          サプティアは、以下の信頼できるデータソースから情報を収集しています：
         </p>
 
         <div className="space-y-6">
@@ -278,7 +278,7 @@ export default function AdvisoryPage() {
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8">エビデンスレベルの評価基準</h2>
         <p className="text-muted-foreground mb-6">
-          Suptiaでは、以下の基準で科学的エビデンスのレベルを評価しています：
+          サプティアでは、以下の基準で科学的エビデンスのレベルを評価しています：
         </p>
 
         <div className="space-y-4">

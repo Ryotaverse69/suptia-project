@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "利用規約 - Suptia",
-  description: "Suptiaサービスの利用規約です。",
+  title: "利用規約 - サプティア",
+  description: "サプティアサービスの利用規約です。",
 };
 
 export default function TermsPage() {
@@ -18,7 +18,7 @@ export default function TermsPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">第1条（適用）</h2>
           <p className="mb-4">
-            本利用規約（以下「本規約」といいます）は、Suptia（以下「当サイト」といいます）が提供するサプリメント比較・検索サービス（以下「本サービス」といいます）の利用条件を定めるものです。
+            本利用規約（以下「本規約」といいます）は、サプティア（以下「当サイト」といいます）が提供するサプリメント比較・検索サービス（以下「本サービス」といいます）の利用条件を定めるものです。
           </p>
           <p className="mb-4">
             利用者の皆様（以下「ユーザー」といいます）には、本規約に従って本サービスをご利用いただきます。

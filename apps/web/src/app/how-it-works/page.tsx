@@ -9,15 +9,15 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Suptiaの使い方 - Suptia",
-  description: "Suptiaの使い方と機能説明です。",
+  title: "サプティアの使い方 - サプティア",
+  description: "サプティアの使い方と機能説明です。",
 };
 
 export default function HowItWorksPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <div className="max-w-4xl mx-auto mb-12 text-center">
-        <h1 className="text-4xl font-bold mb-4">Suptiaの使い方</h1>
+        <h1 className="text-4xl font-bold mb-4">サプティアの使い方</h1>
         <p className="text-xl text-muted-foreground">
           科学的根拠に基づいた最適なサプリメントを見つける方法
         </p>
@@ -191,7 +191,7 @@ export default function HowItWorksPage() {
         </h2>
         <div className="max-w-4xl mx-auto">
           <p className="text-muted-foreground mb-6 text-center">
-            Suptiaの信頼スコアは、以下の要素を総合的に評価して算出されます：
+            サプティアの信頼スコアは、以下の要素を総合的に評価して算出されます：
           </p>
 
           <div className="space-y-4">

@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "サイトマップ - Suptia",
-  description: "Suptiaの全ページ一覧です。",
+  title: "サイトマップ - サプティア",
+  description: "サプティアの全ページ一覧です。",
 };
 
 export default function SitemapPage() {
@@ -20,7 +20,7 @@ export default function SitemapPage() {
       <div className="max-w-4xl mx-auto mb-12">
         <h1 className="text-4xl font-bold mb-4">サイトマップ</h1>
         <p className="text-xl text-muted-foreground">
-          Suptiaの全ページを一覧でご確認いただけます
+          サプティアの全ページを一覧でご確認いただけます
         </p>
       </div>
 
@@ -138,7 +138,7 @@ export default function SitemapPage() {
                 href="/how-it-works"
                 className="text-primary hover:underline"
               >
-                Suptiaの使い方
+                サプティアの使い方
               </Link>
             </li>
             <li>
