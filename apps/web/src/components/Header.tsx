@@ -35,7 +35,7 @@ export function Header() {
           >
             <Image
               src="/logo.png"
-              alt="Suptia Logo"
+              alt="サプティア Logo"
               width={40}
               height={50}
               priority

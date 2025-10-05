@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "特定商取引法に基づく表記 - Suptia",
+  title: "特定商取引法に基づく表記 - サプティア",
   description: "特定商取引法に基づく事業者情報の表記です。",
 };
 
@@ -28,7 +28,7 @@ export default function DisclosurePage() {
           <div className="border rounded-lg p-6 space-y-3">
             <div className="flex">
               <div className="font-semibold w-48">サービス名称</div>
-              <div>Suptia（サプティア）</div>
+              <div>サプティア (Suptia)</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">運営者</div>
