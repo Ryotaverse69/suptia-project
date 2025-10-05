@@ -54,7 +54,7 @@ describe("Home Page", () => {
     render(HomeComponent);
 
     await waitFor(() => {
-      expect(screen.getByText("Test Product")).toBeInTheDocument();
+      expect(screen.getAllByText("Test Product")).not.toHaveLength(0);
     });
   });
 });

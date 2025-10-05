@@ -3,6 +3,7 @@ import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { HeroSearch } from "@/components/HeroSearch";
 import { ProductCard } from "@/components/ProductCard";
 import { FilterSidebar } from "@/components/FilterSidebar";
+import { IngredientCarousel } from "@/components/IngredientCarousel";
 import { TrendingUp, Award, Shield } from "lucide-react";
 
 interface Product {
@@ -10,6 +11,16 @@ interface Product {
   priceJPY: number;
   servingsPerContainer: number;
   servingsPerDay: number;
+  slug: {
+    current: string;
+  };
+}
+
+interface Ingredient {
+  name: string;
+  nameEn: string;
+  category: string;
+  description: string;
   slug: {
     current: string;
   };
@@ -33,8 +44,27 @@ async function getProducts(): Promise<Product[]> {
   }
 }
 
+async function getIngredients(): Promise<Ingredient[]> {
+  const query = `*[_type == "ingredient"]{
+    name,
+    nameEn,
+    category,
+    description,
+    slug
+  }`;
+
+  try {
+    const ingredients = await sanity.fetch(query);
+    return ingredients || [];
+  } catch (error) {
+    console.error("Failed to fetch ingredients:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const products = await getProducts();
+  const ingredients = await getIngredients();
 
   // Calculate effective cost for each product
   const productsWithCost = products.map((product, index) => {
@@ -158,6 +188,9 @@ export default async function Home() {
           </main>
         </div>
       </div>
+
+      {/* Ingredient Carousel */}
+      <IngredientCarousel ingredients={ingredients} />
     </div>
   );
 }
