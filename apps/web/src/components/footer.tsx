@@ -108,6 +108,14 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
+                  href="/ingredients"
+                  className="hover:text-foreground transition-colors"
+                >
+                  成分ガイド
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/sitemap"
                   className="hover:text-foreground transition-colors"
                 >
