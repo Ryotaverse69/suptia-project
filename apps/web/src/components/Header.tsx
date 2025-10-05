@@ -104,6 +104,14 @@ export function Header() {
               サプティアとは
             </Link>
 
+            {/* Ingredients Guide Link */}
+            <Link
+              href="/ingredients"
+              className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
+            >
+              成分ガイド
+            </Link>
+
             {/* Login Button */}
             <Link
               href="/login"
@@ -163,6 +171,15 @@ export function Header() {
               className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
             >
               サプティアとは
+            </Link>
+
+            {/* Ingredients Guide - Mobile */}
+            <Link
+              href="/ingredients"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
+            >
+              成分ガイド
             </Link>
 
             {/* Login - Mobile */}
