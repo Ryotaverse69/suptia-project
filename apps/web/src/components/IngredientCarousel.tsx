@@ -88,7 +88,7 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
             {duplicatedItems.map((ingredient, index) => (
               <Link
                 key={`${ingredient.slug.current}-${index}`}
-                href={`/ingredient/${ingredient.slug.current}`}
+                href={`/ingredients/${ingredient.slug.current}`}
                 className="flex-shrink-0 w-80 group"
               >
                 <div className="bg-white border border-primary-200 rounded-xl p-6 hover:border-primary hover:shadow-lg transition-all duration-300 h-full">
@@ -129,7 +129,7 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
         {/* View All Button */}
         <div className="text-center mt-10">
           <Link
-            href="/ingredient"
+            href="/ingredients"
             className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors shadow-md hover:shadow-lg"
           >
             全ての成分ガイドを見る

@@ -76,8 +76,9 @@ export const ingredient = defineType({
       title: "概要説明",
       type: "text",
       rows: 4,
-      description: "成分の簡潔な説明（200-300文字程度）",
-      validation: (Rule) => Rule.required(),
+      description:
+        "成分の簡潔な説明（300-500文字程度）※記事全体で2,500〜3,500文字を目指してください",
+      validation: (Rule) => Rule.required().min(300).max(600),
       group: "content",
     }),
 
@@ -87,17 +88,19 @@ export const ingredient = defineType({
       title: "主な効果・効能",
       type: "array",
       of: [{ type: "string" }],
-      description: "箇条書きで効果を記載",
-      validation: (Rule) => Rule.required().min(3),
+      description:
+        "箇条書きで効果を記載（8〜10項目推奨）各項目は詳細に記述してください",
+      validation: (Rule) => Rule.required().min(5),
       group: "content",
     }),
     defineField({
       name: "recommendedDosage",
       title: "推奨摂取量",
       type: "text",
-      rows: 3,
-      description: "推奨摂取量の詳細な説明",
-      validation: (Rule) => Rule.required(),
+      rows: 8,
+      description:
+        "推奨摂取量の詳細な説明（500-800文字程度）具体的な数値、状況別の推奨量、摂取タイミングなどを含めてください",
+      validation: (Rule) => Rule.required().min(400),
       group: "content",
     }),
     defineField({
@@ -105,7 +108,9 @@ export const ingredient = defineType({
       title: "豊富に含まれる食品",
       type: "array",
       of: [{ type: "string" }],
-      description: "食品名と含有量を記載（例：サケ（100gあたり約25μg））",
+      description:
+        "食品名と含有量を記載（例：サケ（100gあたり約25μg））10〜15項目推奨",
+      validation: (Rule) => Rule.min(8),
       group: "content",
     }),
 
@@ -128,9 +133,10 @@ export const ingredient = defineType({
       name: "scientificBackground",
       title: "科学的背景・エビデンス",
       type: "text",
-      rows: 5,
-      description: "研究や科学的根拠についての詳細説明",
-      validation: (Rule) => Rule.required(),
+      rows: 10,
+      description:
+        "研究や科学的根拠についての詳細説明（800-1,200文字程度）具体的な研究名、年代、結果を含めてください",
+      validation: (Rule) => Rule.required().min(600),
       group: "scientific",
     }),
     defineField({
@@ -164,7 +170,9 @@ export const ingredient = defineType({
       title: "副作用・注意点",
       type: "array",
       of: [{ type: "string" }],
-      description: "副作用や注意事項を箇条書きで記載",
+      description:
+        "副作用や注意事項を箇条書きで記載（5〜7項目推奨）各項目は詳細に記述してください",
+      validation: (Rule) => Rule.min(3),
       group: "safety",
     }),
     defineField({
@@ -172,7 +180,9 @@ export const ingredient = defineType({
       title: "他の成分・医薬品との相互作用",
       type: "array",
       of: [{ type: "string" }],
-      description: "相互作用について記載",
+      description:
+        "相互作用について記載（5〜8項目推奨）具体的な薬剤名や影響の詳細を含めてください",
+      validation: (Rule) => Rule.min(3),
       group: "safety",
     }),
 
@@ -195,8 +205,9 @@ export const ingredient = defineType({
               name: "answer",
               title: "回答",
               type: "text",
-              rows: 4,
-              validation: (Rule) => Rule.required(),
+              rows: 8,
+              description: "各回答は200-400文字程度で詳細に記述してください",
+              validation: (Rule) => Rule.required().min(150),
             },
           ],
           preview: {
@@ -207,6 +218,8 @@ export const ingredient = defineType({
           },
         },
       ],
+      description: "5〜6項目推奨。SEO強化のため、詳細な回答を心がけてください",
+      validation: (Rule) => Rule.min(3).max(8),
       group: "content",
     }),
 
