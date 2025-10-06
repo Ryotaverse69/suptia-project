@@ -14,6 +14,9 @@ import {
   Pill,
 } from "lucide-react";
 
+// 開発中は常に最新データを取得
+export const dynamic = "force-dynamic";
+
 interface Ingredient {
   name: string;
   nameEn: string;

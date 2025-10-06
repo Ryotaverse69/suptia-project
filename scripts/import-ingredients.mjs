@@ -15,7 +15,7 @@ async function importIngredients() {
   console.log('🚀 Sanityに成分データをインポートします...\n');
 
   // JSONファイルを読み込み
-  const ingredientsData = JSON.parse(readFileSync('/tmp/ingredients.json', 'utf-8'));
+  const ingredientsData = JSON.parse(readFileSync('/tmp/ingredients-fresh.json', 'utf-8'));
 
   for (const ingredient of ingredientsData) {
     try {
