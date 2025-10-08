@@ -134,7 +134,7 @@ EOF
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [dev-preview]
-    if: needs.dev-preview.outputs.deployment_ready == 'true'
+    if: always() && needs.dev-preview.outputs.deployment_ready == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -195,7 +195,7 @@ EOF
     name: preview-diagnosis
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    if: failure() && (needs.dev-preview.result == 'failure' || needs.pr-preview.result == 'failure')
+    if: always() && (needs.dev-preview.result == 'failure' || needs.pr-preview.result == 'failure')
     needs: [dev-preview, pr-preview]
     steps:
       - name: Checkout
