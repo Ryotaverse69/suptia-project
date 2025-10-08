@@ -79,67 +79,69 @@ export function FilterSidebar() {
   };
 
   return (
-    <div className="w-full lg:w-72 bg-white rounded-lg border border-primary-200 shadow-sm">
-      <div className="p-4 border-b border-primary-200">
+    <div className="w-full lg:w-72 glass rounded-2xl border border-white/30 shadow-glass">
+      <div className="p-6 border-b border-white/20">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <SlidersHorizontal size={20} />
+          <h2 className="text-lg font-light flex items-center gap-2 text-primary-900 tracking-wide">
+            <SlidersHorizontal size={22} />
             フィルター
           </h2>
           {selectedFilters.size > 0 && (
             <button
               onClick={clearFilters}
-              className="text-sm text-primary hover:text-primary-700 font-medium"
+              className="text-sm text-primary hover:text-primary-700 font-light transition-colors"
             >
               クリア
             </button>
           )}
         </div>
         {selectedFilters.size > 0 && (
-          <div className="mt-2 text-sm text-primary-700">
+          <div className="mt-3 text-sm text-primary-700 font-light">
             {selectedFilters.size}件のフィルター適用中
           </div>
         )}
       </div>
 
-      <div className="divide-y divide-primary-200">
+      <div className="divide-y divide-white/20">
         {filterSections.map((section) => {
           const isExpanded = expandedSections.has(section.title);
 
           return (
-            <div key={section.title} className="p-4">
+            <div key={section.title} className="p-5">
               <button
                 onClick={() => toggleSection(section.title)}
-                className="w-full flex items-center justify-between mb-3 hover:text-primary transition-colors"
+                className="w-full flex items-center justify-between mb-4 hover:text-primary transition-colors font-light"
               >
-                <h3 className="font-semibold text-sm">{section.title}</h3>
+                <h3 className="font-light text-sm tracking-wide">
+                  {section.title}
+                </h3>
                 {isExpanded ? (
-                  <ChevronUp size={18} />
+                  <ChevronUp size={18} className="opacity-60" />
                 ) : (
-                  <ChevronDown size={18} />
+                  <ChevronDown size={18} className="opacity-60" />
                 )}
               </button>
 
               {isExpanded && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {section.options.map((option) => (
                     <label
                       key={option.value}
                       className="flex items-center justify-between cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
                           checked={selectedFilters.has(option.value)}
                           onChange={() => toggleFilter(option.value)}
-                          className="rounded border-primary-300 text-primary focus:ring-primary"
+                          className="rounded border-primary-300 text-primary focus:ring-primary/50 focus:ring-offset-0"
                         />
-                        <span className="text-sm text-primary-800 group-hover:text-primary-900">
+                        <span className="text-sm text-primary-800 group-hover:text-primary-900 font-light transition-colors">
                           {option.label}
                         </span>
                       </div>
                       {option.count !== undefined && (
-                        <span className="text-xs text-primary-600">
+                        <span className="text-xs text-primary-500 font-light px-2 py-0.5 glass-blue rounded-full">
                           {option.count}
                         </span>
                       )}

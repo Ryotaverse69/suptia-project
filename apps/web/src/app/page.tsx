@@ -90,43 +90,51 @@ export default async function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-pastel">
       {/* Hero Section with Search */}
       <HeroSearch />
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-primary-200">
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-6 max-w-[1440px]">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="glass shadow-glass border-b border-white/30">
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-8 max-w-[1440px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary-100 rounded-lg">
-                <TrendingUp className="text-primary" size={24} />
+              <div className="p-4 glass-blue rounded-2xl shadow-soft">
+                <TrendingUp className="text-primary" size={28} />
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary-900">
+                <div className="text-3xl font-light text-primary-900 tracking-wide">
                   1,200+
                 </div>
-                <div className="text-sm text-primary-700">検証済みサプリ</div>
+                <div className="text-sm font-light text-primary-700 mt-1">
+                  検証済みサプリ
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-accent-mint/20 rounded-lg">
-                <Shield className="text-accent-mint" size={24} />
+              <div className="p-4 glass-mint rounded-2xl shadow-soft">
+                <Shield className="text-accent-mint" size={28} />
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary-900">98%</div>
-                <div className="text-sm text-primary-700">安全性スコア平均</div>
+                <div className="text-3xl font-light text-primary-900 tracking-wide">
+                  98%
+                </div>
+                <div className="text-sm font-light text-primary-700 mt-1">
+                  安全性スコア平均
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-accent-purple/20 rounded-lg">
-                <Award className="text-accent-purple" size={24} />
+              <div className="p-4 glass-purple rounded-2xl shadow-soft">
+                <Award className="text-accent-purple" size={28} />
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary-900">
+                <div className="text-3xl font-light text-primary-900 tracking-wide">
                   50,000+
                 </div>
-                <div className="text-sm text-primary-700">ユーザーレビュー</div>
+                <div className="text-sm font-light text-primary-700 mt-1">
+                  ユーザーレビュー
+                </div>
               </div>
             </div>
           </div>
@@ -134,7 +142,7 @@ export default async function Home() {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto px-6 lg:px-12 xl:px-16 py-8 max-w-[1440px]">
+      <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1440px]">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-20 h-fit w-full lg:w-72 flex-shrink-0">
@@ -143,17 +151,17 @@ export default async function Home() {
 
           {/* Products Grid */}
           <main className="flex-1 min-w-0">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-8 flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-primary-900">
+                <h2 className="text-3xl font-light text-primary-900 tracking-wide">
                   おすすめのサプリメント
                 </h2>
-                <p className="text-primary-700 mt-1">
+                <p className="text-primary-600 mt-2 font-light">
                   {productsWithCost.length}件の商品が見つかりました
                 </p>
               </div>
 
-              <select className="px-4 py-2 border border-primary-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              <select className="px-5 py-3 glass-blue rounded-xl text-sm font-light shadow-soft focus:outline-none focus:shadow-glass transition-shadow">
                 <option>おすすめ順</option>
                 <option>価格の安い順</option>
                 <option>価格の高い順</option>
@@ -163,24 +171,26 @@ export default async function Home() {
             </div>
 
             {productsWithCost.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {productsWithCost.map((product, index) => (
                   <ProductCard key={index} product={product} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16">
+              <div className="text-center py-20 glass rounded-3xl shadow-glass">
                 <div className="text-primary-300 mb-4">
                   <Award size={64} className="mx-auto" />
                 </div>
-                <p className="text-primary-700">商品データを読み込み中...</p>
+                <p className="text-primary-700 font-light">
+                  商品データを読み込み中...
+                </p>
               </div>
             )}
 
             {/* Load More Button */}
             {productsWithCost.length > 0 && (
-              <div className="mt-8 text-center">
-                <button className="px-8 py-3 bg-white border-2 border-primary-300 text-primary-800 font-semibold rounded-lg hover:border-primary hover:text-primary transition-colors">
+              <div className="mt-10 text-center">
+                <button className="px-10 py-4 glass-blue rounded-xl text-primary-800 font-light shadow-glass hover:shadow-glass-hover transition-all duration-300">
                   もっと見る
                 </button>
               </div>

@@ -38,16 +38,19 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${slug.current}`}>
-      <Card className="group cursor-pointer overflow-hidden h-full flex flex-col">
-        <div className="relative aspect-[4/3] overflow-hidden bg-primary-50">
+      <Card className="group cursor-pointer overflow-hidden h-full flex flex-col hover:scale-[1.02]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
           {/* Placeholder for product image */}
-          <div className="absolute inset-0 flex items-center justify-center text-primary-300">
-            <Award size={48} />
+          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+            <Award size={56} strokeWidth={1} />
           </div>
 
           {isBestValue && (
-            <div className="absolute top-3 left-3 z-10">
-              <Badge variant="bestValue" className="flex items-center gap-1">
+            <div className="absolute top-4 left-4 z-10">
+              <Badge
+                variant="bestValue"
+                className="flex items-center gap-1.5 glass-mint shadow-soft px-3 py-1.5 font-light"
+              >
                 <TrendingUp size={14} />
                 ベストバリュー
               </Badge>
@@ -55,8 +58,11 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           {safetyScore >= 90 && (
-            <div className="absolute top-3 right-3 z-10">
-              <Badge variant="success" className="flex items-center gap-1">
+            <div className="absolute top-4 right-4 z-10">
+              <Badge
+                variant="success"
+                className="flex items-center gap-1.5 glass-mint shadow-soft px-3 py-1.5 font-light"
+              >
                 <Shield size={14} />
                 高安全性
               </Badge>
@@ -64,24 +70,24 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        <CardContent className="flex-1 pt-4">
-          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
+        <CardContent className="flex-1 pt-5 px-5">
+          <h3 className="font-light text-lg mb-3 group-hover:text-primary transition-colors line-clamp-2 tracking-wide">
             {name}
           </h3>
 
-          <div className="mb-3">
+          <div className="mb-4">
             <StarRating rating={rating} reviewCount={reviewCount} size="sm" />
           </div>
 
-          <div className="space-y-1 text-sm text-primary-700">
+          <div className="space-y-2 text-sm text-primary-700 font-light">
             <div className="flex justify-between">
               <span>商品価格</span>
-              <span className="font-medium">{formatCostJPY(priceJPY)}</span>
+              <span className="font-normal">{formatCostJPY(priceJPY)}</span>
             </div>
             {effectiveCostPerDay && (
               <div className="flex justify-between">
                 <span>1日あたり</span>
-                <span className="font-medium text-accent-mint">
+                <span className="font-normal text-accent-mint">
                   {formatCostJPY(effectiveCostPerDay)}
                 </span>
               </div>
@@ -89,19 +95,19 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </CardContent>
 
-        <CardFooter className="pt-0 pb-4">
+        <CardFooter className="pt-0 pb-5 px-5">
           <div className="w-full flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-primary-900">
+              <div className="text-2xl font-light text-primary-900 tracking-wide">
                 {formatCostJPY(priceJPY)}
               </div>
               {effectiveCostPerDay && (
-                <div className="text-xs text-primary-600">
+                <div className="text-xs text-primary-600 mt-1 font-light">
                   {formatCostJPY(effectiveCostPerDay)}/日
                 </div>
               )}
             </div>
-            <button className="bg-accent-purple hover:bg-accent-purple/90 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors">
+            <button className="glass-purple hover:shadow-glow-purple text-white font-light px-6 py-3 rounded-xl transition-all duration-300 border border-white/20">
               詳細を見る
             </button>
           </div>
