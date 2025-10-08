@@ -16,11 +16,24 @@ async function importIngredients() {
 
   const ingredientsData = JSON.parse(readFileSync('/tmp/ingredients-fresh.json', 'utf-8'));
 
+  // Get all ingredient slugs to validate references
+  const allSlugs = ingredientsData.map(ing => ing.slug);
+
   for (const ingredient of ingredientsData) {
     try {
       console.log(`📝 インポート中: ${ingredient.name} (${ingredient.slug})`);
 
       const docId = `ingredient-${ingredient.slug}`;
+
+      // Convert relatedIngredients from slug strings to references
+      // Only include references that exist in our data
+      const relatedIngredients = (ingredient.relatedIngredients || [])
+        .filter(slug => allSlugs.includes(slug))
+        .map(slug => ({
+          _type: 'reference',
+          _ref: `ingredient-${slug}`,
+          _key: slug,
+        }));
 
       const doc = {
         _id: docId,
@@ -40,7 +53,7 @@ async function importIngredients() {
         evidenceLevel: ingredient.evidenceLevel,
         scientificBackground: ingredient.scientificBackground,
         foodSources: ingredient.foodSources || [],
-        relatedIngredients: ingredient.relatedIngredients || [],
+        relatedIngredients,
         faqs: ingredient.faqs || [],
         references: ingredient.references || [],
       };
