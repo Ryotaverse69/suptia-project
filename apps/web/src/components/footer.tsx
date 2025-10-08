@@ -132,7 +132,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/how-it-works"
+                  href="/how-to-use"
                   className="hover:text-foreground transition-colors"
                 >
                   サプティアの使い方
