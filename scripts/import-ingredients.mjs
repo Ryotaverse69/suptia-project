@@ -14,17 +14,14 @@ const client = createClient({
 async function importIngredients() {
   console.log('🚀 Sanityに成分データをインポートします...\n');
 
-  // JSONファイルを読み込み
   const ingredientsData = JSON.parse(readFileSync('/tmp/ingredients-fresh.json', 'utf-8'));
 
   for (const ingredient of ingredientsData) {
     try {
       console.log(`📝 インポート中: ${ingredient.name} (${ingredient.slug})`);
 
-      // スラッグからドキュメントIDを生成
       const docId = `ingredient-${ingredient.slug}`;
 
-      // Sanity用のデータ構造に変換
       const doc = {
         _id: docId,
         _type: 'ingredient',
@@ -43,11 +40,11 @@ async function importIngredients() {
         evidenceLevel: ingredient.evidenceLevel,
         scientificBackground: ingredient.scientificBackground,
         foodSources: ingredient.foodSources || [],
+        relatedIngredients: ingredient.relatedIngredients || [],
         faqs: ingredient.faqs || [],
         references: ingredient.references || [],
       };
 
-      // createOrReplaceでドキュメントを作成または更新
       await client.createOrReplace(doc);
       console.log(`✅ 成功: ${ingredient.name}\n`);
     } catch (error) {
@@ -58,5 +55,4 @@ async function importIngredients() {
   console.log('🎉 インポート完了！');
 }
 
-// 実行
 importIngredients().catch(console.error);
