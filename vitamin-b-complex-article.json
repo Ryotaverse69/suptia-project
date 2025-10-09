@@ -1,0 +1,61 @@
+{
+  "name": "ビタミンB群",
+  "nameEn": "Vitamin B Complex",
+  "slug": "vitamin-b-complex",
+  "category": "vitamin",
+  "evidenceLevel": "A",
+  "description": "Vitamin B Complex is a powerhouse group of eight essential water-soluble vitamins that play crucial roles in cellular metabolism, energy production, and nervous system function. This comprehensive supplement includes thiamine (B1), riboflavin (B2), niacin (B3), pantothenic acid (B5), pyridoxine (B6), biotin (B7), folate (B9), and cobalamin (B12). Each B vitamin serves unique yet interconnected functions in converting food into cellular energy, supporting DNA synthesis, and maintaining optimal brain function. As water-soluble nutrients, B vitamins are not stored in the body and require daily replenishment through diet or supplementation. The synergistic effects of B Complex vitamins make them particularly valuable for individuals experiencing stress, fatigue, or following restrictive diets that may limit B vitamin intake.",
+  "benefits": [
+    "Enhanced energy production through improved ATP synthesis and carbohydrate metabolism, particularly beneficial for athletes and individuals with chronic fatigue",
+    "Superior nervous system support with B1, B6, and B12 promoting neurotransmitter synthesis, myelin sheath formation, and cognitive function maintenance",
+    "Cardiovascular health optimization through homocysteine metabolism regulation, with B6, B9, and B12 reducing heart disease risk by up to 20%",
+    "Improved mood and mental health via serotonin and dopamine production support, with studies showing 30% reduction in depression symptoms",
+    "Cellular metabolism enhancement and red blood cell formation, preventing anemia and supporting oxygen delivery throughout the body",
+    "Skin, hair, and nail health promotion through biotin and riboflavin support of keratin infrastructure and cellular regeneration",
+    "Stress response optimization with pantothenic acid supporting adrenal gland function and cortisol regulation during high-stress periods",
+    "DNA synthesis and repair support crucial for rapidly dividing cells, pregnancy health, and cancer prevention mechanisms"
+  ],
+  "recommendedDosage": "Adult dosage typically ranges from 50-100mg for most B vitamins (B1, B2, B3, B5, B6) taken once daily with meals for optimal absorption. Biotin recommendations range from 30-100mcg, folate 400-800mcg (800mcg for pregnant women), and B12 2.4-100mcg depending on absorption capacity. Elderly individuals over 50 may require higher B12 doses (500-1000mcg) due to decreased stomach acid production. Athletes and highly active individuals may benefit from upper range doses taken in morning to support energy metabolism throughout the day. Sustained-release formulations provide gradual nutrient delivery over 6-8 hours, reducing urinary excretion. Always take B Complex with food to minimize gastrointestinal discomfort and enhance fat-soluble vitamin absorption synergy.",
+  "sideEffects": "B Complex vitamins are generally well-tolerated with minimal adverse effects when taken at recommended doses. Common mild side effects include bright yellow urine coloration from riboflavin excretion (harmless but alarming to some users), mild nausea when taken on empty stomach, and occasional digestive upset or diarrhea at high doses exceeding 100mg. High-dose niacin (B3) above 500mg may cause uncomfortable flushing, tingling, or skin redness lasting 30-60 minutes, though flush-free formulations are available. Excessive B6 intake over 200mg daily for extended periods may result in peripheral neuropathy with numbness or tingling in extremities. Individuals with pre-existing conditions should monitor for rare allergic reactions including rash, itching, or difficulty breathing requiring immediate medical attention.",
+  "interactions": "B Complex vitamins interact with numerous medications and supplements requiring careful timing and dosage management. Metformin and proton pump inhibitors (PPIs) significantly reduce B12 absorption, necessitating higher supplemental doses or sublingual forms. Anticonvulsant medications like phenytoin deplete folate levels, while folate supplementation may reduce drug efficacy requiring dose adjustments. Alcohol consumption dramatically increases B vitamin excretion and metabolism, with chronic use requiring 2-3x higher intake. Antibiotics, particularly tetracyclines, should be separated from B Complex by 2-3 hours to prevent binding and reduced antibiotic absorption. High-dose vitamin C may destroy B12 in supplements, requiring separate administration timing. Levodopa effectiveness may be reduced by vitamin B6, though B Complex formulations without B6 are available for Parkinson's patients.",
+  "scientificBackground": "B vitamins function as essential coenzymes in over 100 enzymatic reactions governing cellular metabolism, with each vitamin serving distinct biochemical roles discovered throughout the 20th century. Thiamine (B1) acts as thiamine pyrophosphate in carbohydrate metabolism and neural function, first identified in 1910 as the anti-beriberi factor. Riboflavin (B2) forms FAD and FMN coenzymes crucial for electron transport chain function and energy production. Niacin (B3) constitutes NAD and NADP coenzymes essential for DNA repair, cell signaling, and hundreds of redox reactions. Pantothenic acid (B5) is the precursor to Coenzyme A, vital for fatty acid synthesis and breakdown. Pyridoxine (B6) participates in amino acid metabolism and neurotransmitter synthesis as pyridoxal phosphate. Biotin (B7) serves as a cofactor for carboxylase enzymes in fatty acid synthesis and gluconeogenesis. Folate (B9) provides one-carbon units for DNA synthesis and methylation. Cobalamin (B12) supports DNA synthesis, neurological function, and red blood cell formation through methylcobalamin and adenosylcobalamin forms. The interconnected nature of B vitamins in methylation cycles, energy metabolism, and neurotransmitter synthesis underlies their synergistic effects when administered together.",
+  "foodSources": [
+    "Whole grains and fortified cereals providing 25-100% daily value of thiamine, riboflavin, niacin, and folate per serving",
+    "Lean meats, poultry, and fish offering 30-80% DV of B3, B6, and B12, with salmon providing 80% DV B12 per 3oz serving",
+    "Eggs containing significant biotin (10mcg per large egg), B12 (0.6mcg), and riboflavin (0.2mg) concentrated in the yolk",
+    "Legumes including lentils and chickpeas delivering 90% DV folate and 20-30% DV thiamine and B6 per cooked cup",
+    "Dark leafy greens like spinach providing 60% DV folate, 25% riboflavin, and significant B6 per cooked cup",
+    "Nuts and seeds, particularly sunflower seeds offering 20% DV pantothenic acid, thiamine, and B6 per ounce",
+    "Dairy products delivering 25-35% DV riboflavin and B12 per cup of milk or yogurt",
+    "Nutritional yeast providing exceptional B vitamin density with up to 640% DV B12 (fortified versions) per tablespoon"
+  ],
+  "faqs": [
+    {
+      "question": "Can B Complex vitamins really boost energy levels, or is this a placebo effect?",
+      "answer": "B Complex vitamins genuinely support energy production through their essential roles as coenzymes in ATP synthesis and carbohydrate metabolism. However, they do not provide energy directly like calories do. If you are deficient in B vitamins, supplementation will noticeably improve energy levels within 2-4 weeks by optimizing mitochondrial function. If you have adequate B vitamin status, additional supplementation will not create superhuman energy but may help during periods of increased stress or physical demands when B vitamin requirements increase by 20-50%."
+    },
+    {
+      "question": "Why does my urine turn bright yellow after taking B Complex, and is this dangerous?",
+      "answer": "Bright yellow or even neon green urine is a harmless side effect caused by excess riboflavin (vitamin B2) excretion. As a water-soluble vitamin, riboflavin cannot be stored in the body, so amounts exceeding immediate needs are eliminated through urine, creating the distinctive fluorescent yellow color. This indicates your body is properly processing and excreting excess vitamins rather than accumulating them. The coloration typically appears 1-2 hours after supplementation and is actually a sign your kidneys are functioning normally."
+    },
+    {
+      "question": "Should I take B Complex in the morning or evening for optimal results?",
+      "answer": "Morning administration with breakfast is generally recommended for B Complex vitamins because they support energy metabolism and may interfere with sleep if taken late in the day. B vitamins, particularly B6, can increase alertness and even cause vivid dreams when taken before bedtime. Taking B Complex with your morning meal also optimizes absorption through food-mediated mechanisms and aligns supplementation with your body's natural circadian rhythm of increased metabolic activity during waking hours. If you experience any stomach upset, taking it mid-meal rather than before eating can help."
+    },
+    {
+      "question": "How long does it take to correct a B vitamin deficiency with supplementation?",
+      "answer": "Deficiency correction timelines vary by specific B vitamin and severity. B12 deficiency typically shows improvement in fatigue and cognitive symptoms within 2-4 weeks, though neurological recovery may require 3-6 months of consistent supplementation at therapeutic doses (1000mcg daily). Folate deficiency responds more rapidly, with red blood cell indices normalizing within 4-6 weeks. Thiamine deficiency symptoms like confusion and weakness may improve within days to weeks. For best results, combine supplementation with dietary improvements and address underlying absorption issues. Blood level retesting after 8-12 weeks of supplementation helps confirm adequate correction."
+    },
+    {
+      "question": "Can I take too much B Complex, and what are the risks of overdose?",
+      "answer": "While B vitamins are water-soluble and excess amounts are typically excreted, chronic high-dose supplementation can cause adverse effects. Vitamin B6 toxicity from doses exceeding 200mg daily for months can cause peripheral neuropathy with numbness and difficulty walking, though this reverses upon discontinuation. Niacin above 2000mg daily may cause liver damage and severe flushing. Folate above 1000mcg can mask B12 deficiency symptoms, allowing neurological damage to progress undetected. Biotin supplementation above 5000mcg can interfere with laboratory test results, causing false readings. Stick to recommended doses unless under medical supervision, and choose reputable brands with third-party testing to ensure label accuracy."
+    }
+  ],
+  "references": [
+    "Kennedy DO. B Vitamins and the Brain: Mechanisms, Dose and Efficacy—A Review. Nutrients. 2016;8(2):68. doi:10.3390/nu8020068",
+    "Hanna M, Jaqua E, Nguyen V, Clay J. B Vitamins: Functions and Uses in Medicine. Perm J. 2022;26(2):89-97. doi:10.7812/TPP/21.204",
+    "Calderón-Ospina CA, Nava-Mesa MO. B Vitamins in the nervous system: Current knowledge of the biochemical modes of action and synergies of thiamine, pyridoxine, and cobalamin. CNS Neurosci Ther. 2020;26(1):5-13.",
+    "O'Leary F, Samman S. Vitamin B12 in Health and Disease. Nutrients. 2010;2(3):299-316. doi:10.3390/nu2030299",
+    "Mikkelsen K, Apostolopoulos V. B Vitamins and Ageing. Subcell Biochem. 2018;90:451-470. doi:10.1007/978-981-13-2835-0_15"
+  ]
+}

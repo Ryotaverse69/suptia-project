@@ -1,0 +1,62 @@
+{
+  "name": "クロム",
+  "nameEn": "Chromium",
+  "slug": "chromium",
+  "category": "mineral",
+  "evidenceLevel": "B",
+  "description": "Chromium is an essential trace mineral that plays a critical role in carbohydrate, protein, and lipid metabolism by enhancing insulin sensitivity and glucose regulation. This micronutrient supports healthy blood sugar levels, weight management, and metabolic function through its involvement in insulin signaling pathways. Chromium supplementation, particularly in the form of chromium picolinate, has been extensively studied for its potential benefits in managing type 2 diabetes, metabolic syndrome, and body composition. Research suggests that adequate chromium intake may help reduce insulin resistance, support cardiovascular health, and improve macronutrient metabolism, making it particularly valuable for individuals with blood sugar concerns or metabolic challenges.",
+  "benefits": [
+    "Enhances insulin sensitivity and glucose metabolism by potentiating insulin receptor signaling, which may reduce fasting blood glucose levels by 15-30% in individuals with impaired glucose tolerance",
+    "Supports healthy weight management and body composition by potentially reducing food cravings, particularly for carbohydrates, and promoting lean muscle mass retention during caloric restriction",
+    "Improves lipid profiles by helping to reduce total cholesterol and LDL cholesterol levels by approximately 10-20% while potentially increasing beneficial HDL cholesterol",
+    "Reduces risk of type 2 diabetes development by improving insulin receptor function and glucose uptake in peripheral tissues, particularly beneficial for individuals with prediabetes or metabolic syndrome",
+    "Supports cardiovascular health through improved glucose and lipid metabolism, potentially reducing markers of cardiovascular disease risk",
+    "May enhance cognitive function and mood regulation by supporting neurotransmitter synthesis and brain glucose metabolism, with some studies showing improvements in depression symptoms",
+    "Assists in protein synthesis and amino acid metabolism, contributing to muscle maintenance and recovery in active individuals",
+    "Supports healthy aging by maintaining metabolic efficiency and protecting against age-related insulin resistance"
+  ],
+  "recommendedDosage": "The adequate intake (AI) for chromium varies by age and gender: adults aged 19-50 should consume 25-35 mcg daily (25 mcg for women, 35 mcg for men), while adults over 50 require 20-30 mcg daily. For therapeutic purposes, chromium picolinate supplementation typically ranges from 200-1,000 mcg daily, with most studies using 200-400 mcg for metabolic support. Chromium is best absorbed when taken with vitamin C and should ideally be consumed with meals to enhance absorption and minimize potential gastrointestinal discomfort. For blood sugar management, divided doses throughout the day may provide more consistent benefits. Common supplemental forms include chromium picolinate (highest bioavailability), chromium polynicotinate, and chromium chloride. Pregnant and lactating women may require slightly higher amounts (30-45 mcg daily) but should consult healthcare providers before supplementing.",
+  "sideEffects": "Chromium is generally well-tolerated at recommended doses, with most individuals experiencing no adverse effects. Mild side effects may include headaches, dizziness, nausea, mood changes, and sleep disturbances, particularly when first beginning supplementation or at higher doses. Skin reactions such as itching or flushing have been reported in sensitive individuals. At very high doses (greater than 1,000 mcg daily for extended periods), chromium may potentially cause kidney or liver damage, though this is rare. Some individuals may experience hypoglycemia (low blood sugar) when combining chromium supplements with diabetes medications, requiring careful blood glucose monitoring and medication adjustment. Chromium hexavalent, an industrial form, is toxic, but nutritional supplements contain only the safe trivalent form. Long-term safety at high supplemental doses has not been fully established, so maintaining dosages within recommended ranges is advisable.",
+  "interactions": "Chromium supplementation may interact with several medications and nutrients, requiring careful consideration. Antacids, H2 blockers (ranitidine), and proton pump inhibitors (omeprazole) may reduce chromium absorption by altering stomach pH. Corticosteroids, NSAIDs, and beta-blockers can increase chromium excretion, potentially creating deficiency. Most importantly, chromium enhances insulin sensitivity, which may potentiate the effects of diabetes medications including insulin, metformin, sulfonylureas, and other hypoglycemic agents, potentially causing dangerously low blood sugar levels without proper medical supervision and dose adjustments. Vitamin C and niacin may enhance chromium absorption, while calcium carbonate and magnesium hydroxide may compete for absorption. Chromium may also interact with thyroid medications by affecting mineral absorption patterns. High doses of zinc or iron supplements may reduce chromium absorption through competitive binding mechanisms. Always inform healthcare providers about chromium supplementation when taking prescription medications.",
+  "scientificBackground": "Chromium was identified as an essential trace element in the 1950s when researchers discovered its role in glucose metabolism. The mineral functions primarily through chromodulin, a low-molecular-weight chromium-binding substance that enhances insulin receptor tyrosine kinase activity, thereby improving cellular insulin sensitivity. When insulin binds to its receptor, chromium-containing chromodulin amplifies the signal, facilitating glucose uptake into cells. Clinical research has produced mixed but generally supportive results for chromium supplementation, particularly in populations with impaired glucose tolerance or type 2 diabetes. A meta-analysis of multiple randomized controlled trials found that chromium supplementation significantly improved glycemic control in diabetic patients, with average reductions in fasting blood glucose of 15-25 mg/dL and HbA1c improvements of 0.5-1.0%. However, chromium deficiency is considered rare in developed countries due to adequate dietary intake from whole grains, meat, and certain vegetables. The bioavailability of chromium varies significantly by chemical form, with organic forms like chromium picolinate showing approximately 25% absorption compared to less than 1% for inorganic chromium chloride.",
+  "foodSources": [
+    "Broccoli (1 cup): approximately 22 mcg of chromium, one of the richest vegetable sources",
+    "Grape juice (1 cup): 8 mcg, providing easily absorbable chromium from fruit sources",
+    "Whole wheat bread (2 slices): 4 mcg, with whole grains retaining chromium lost in refined products",
+    "Beef (3 ounces): 2-3 mcg, with red meat providing bioavailable chromium",
+    "Turkey breast (3 ounces): 2 mcg, offering lean protein with chromium content",
+    "Green beans (1 cup): 2 mcg, providing chromium alongside fiber and other minerals",
+    "Potatoes with skin (1 medium): 3 mcg, with chromium concentrated in the skin",
+    "Garlic (1 teaspoon): 3 mcg, offering concentrated chromium in small amounts",
+    "Basil (1 tablespoon dried): 2 mcg, with herbs and spices providing trace minerals"
+  ],
+  "faqs": [
+    {
+      "question": "Can chromium supplements help with weight loss?",
+      "answer": "Chromium supplementation shows modest and inconsistent effects on weight loss. While some studies suggest chromium picolinate may reduce body fat by 0.5-1 kg over 12-16 weeks, primarily through reduced carbohydrate cravings and improved insulin sensitivity, results vary significantly between individuals. Chromium is not a magic solution for weight loss and works best when combined with proper diet and exercise. It may be most beneficial for individuals with insulin resistance or metabolic syndrome who struggle with carbohydrate cravings and blood sugar fluctuations."
+    },
+    {
+      "question": "Is chromium deficiency common, and what are the symptoms?",
+      "answer": "True chromium deficiency is rare in developed countries due to adequate dietary intake from varied food sources. However, marginal chromium status may occur in individuals consuming highly processed diets low in whole grains and vegetables. Symptoms of deficiency include impaired glucose tolerance, elevated blood sugar and insulin levels, increased cholesterol and triglycerides, weight loss, peripheral neuropathy, and confusion. Populations at higher risk include elderly individuals, those with type 2 diabetes, pregnant women, and athletes with high carbohydrate intake. Long-term total parenteral nutrition without chromium supplementation can also lead to deficiency."
+    },
+    {
+      "question": "How long does it take for chromium supplements to work?",
+      "answer": "The timeline for chromium supplementation effects varies by individual and health goal. For blood sugar regulation, some individuals may notice improvements in glucose control within 2-4 weeks, though optimal benefits typically emerge after 8-12 weeks of consistent supplementation. Studies examining metabolic parameters generally assess outcomes at 3-6 month intervals. For weight management or body composition changes, meaningful results typically require 12-16 weeks combined with lifestyle modifications. It is important to maintain consistent supplementation and monitor blood glucose levels, especially when managing diabetes, as medication adjustments may be necessary as insulin sensitivity improves."
+    },
+    {
+      "question": "What is the difference between chromium picolinate and other chromium forms?",
+      "answer": "Chromium picolinate is the most studied and bioavailable supplemental form, with absorption rates around 25% compared to less than 1% for inorganic chromium chloride. The picolinate molecule (a derivative of tryptophan) facilitates chromium transport across intestinal membranes. Chromium polynicotinate combines chromium with niacin and may offer similar benefits with potentially better tolerability. Chromium chloride and chromium-enriched yeast are other available forms. Most clinical research has utilized chromium picolinate at doses of 200-1,000 mcg daily, making it the form with the strongest evidence base for metabolic benefits."
+    },
+    {
+      "question": "Can I take chromium if I have diabetes and am on medication?",
+      "answer": "Chromium supplementation may be beneficial for individuals with type 2 diabetes, but medical supervision is essential. Chromium enhances insulin sensitivity, which can potentiate the effects of diabetes medications including insulin, metformin, and sulfonylureas, potentially causing hypoglycemia. If you decide to supplement with chromium while on diabetes medications, work closely with your healthcare provider to monitor blood glucose levels frequently and adjust medication dosages as needed. Many diabetics successfully use chromium as an adjunct therapy, but careful monitoring and professional guidance are critical to prevent dangerous blood sugar fluctuations."
+    }
+  ],
+  "references": [
+    "Anderson RA. Chromium in the prevention and control of diabetes. Diabetes Metab. 2000;26(1):22-27.",
+    "Suksomboon N, Poolsup N, Yuwanakorn A. Systematic review and meta-analysis of the efficacy and safety of chromium supplementation in diabetes. J Clin Pharm Ther. 2014;39(3):292-306.",
+    "Vincent JB. The biochemistry of chromium. J Nutr. 2000;130(4):715-718.",
+    "Institute of Medicine. Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc. National Academies Press; 2001.",
+    "Pittler MH, Stevinson C, Ernst E. Chromium picolinate for reducing body weight: meta-analysis of randomized trials. Int J Obes Relat Metab Disord. 2003;27(4):522-529."
+  ]
+}

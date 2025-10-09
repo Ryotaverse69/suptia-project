@@ -1,0 +1,60 @@
+{
+  "name": "グルコサミン",
+  "nameEn": "Glucosamine",
+  "slug": "glucosamine",
+  "category": "other",
+  "evidenceLevel": "B",
+  "description": "Glucosamine is a naturally occurring amino sugar compound that plays a crucial role in building and maintaining healthy cartilage, the flexible connective tissue that cushions joints throughout the body. As one of the most researched and widely used supplements for joint health, glucosamine has gained significant attention for its potential to alleviate osteoarthritis symptoms, reduce joint pain, and slow cartilage degradation. This compound is primarily found in shellfish shells and is available in various supplemental forms including glucosamine sulfate, glucosamine hydrochloride, and N-acetyl glucosamine, each offering unique bioavailability profiles and therapeutic benefits for individuals seeking natural approaches to joint care and mobility enhancement.",
+  "benefits": [
+    "Reduces osteoarthritis pain and stiffness by supporting cartilage regeneration and proteoglycan synthesis, with clinical studies showing 20-30% pain reduction after 8-12 weeks of consistent use",
+    "Slows cartilage degradation and joint space narrowing in knee osteoarthritis, potentially delaying or reducing the need for joint replacement surgery in moderate cases",
+    "Improves joint mobility and flexibility by enhancing synovial fluid production and reducing inflammatory markers such as C-reactive protein and interleukin-1",
+    "Supports connective tissue health beyond joints, including tendons, ligaments, and skin integrity through collagen synthesis stimulation",
+    "May reduce the need for NSAIDs and pain medications, offering a safer long-term alternative with fewer gastrointestinal and cardiovascular side effects",
+    "Exhibits anti-inflammatory properties by inhibiting nuclear factor-kappa B pathways and reducing matrix metalloproteinase activity in joint tissues",
+    "Promotes healing after joint injuries or surgical procedures by accelerating cartilage repair mechanisms and reducing recovery time",
+    "May benefit temporomandibular joint disorders and other joint-related conditions affecting jaw, spine, and extremities"
+  ],
+  "recommendedDosage": "The standard therapeutic dose for glucosamine ranges from 1,500 mg to 2,000 mg daily, typically divided into two or three doses taken with meals to enhance absorption and minimize gastrointestinal discomfort. Glucosamine sulfate is often recommended at 1,500 mg once daily or 500 mg three times daily, while glucosamine hydrochloride may require slightly higher doses due to lower elemental glucosamine content. For adults over 60 or those with moderate to severe osteoarthritis, doses up to 2,000 mg daily may be more effective. Treatment duration should extend at least 8-12 weeks before assessing effectiveness, as glucosamine works gradually to rebuild cartilage rather than providing immediate pain relief. For maintenance and prevention, lower doses of 1,000-1,200 mg daily may be sufficient. Athletes and individuals with high joint stress may benefit from higher end dosing combined with chondroitin sulfate for synergistic effects.",
+  "sideEffects": "Glucosamine is generally well-tolerated with a favorable safety profile compared to conventional pain medications. Common mild side effects include gastrointestinal symptoms such as nausea, heartburn, diarrhea, and constipation, occurring in approximately 5-10% of users and usually resolving with continued use or dose adjustment. Some individuals may experience mild drowsiness, headaches, or skin reactions. People with shellfish allergies should exercise caution, though allergic reactions are rare since glucosamine is derived from shells rather than protein-containing flesh. Individuals with diabetes should monitor blood glucose levels closely, as early concerns about glucosamine affecting insulin sensitivity have been largely dispelled by recent research, though prudent monitoring remains advisable. High doses may rarely cause increased blood pressure or interact with blood-clotting mechanisms. Pregnant and breastfeeding women should avoid glucosamine due to insufficient safety data in these populations.",
+  "interactions": "Glucosamine may interact with warfarin and other anticoagulant medications, potentially enhancing their blood-thinning effects and increasing bleeding risk, requiring INR monitoring and possible dose adjustments. When combined with NSAIDs like ibuprofen or acetaminophen, glucosamine may allow for reduced pain medication dosages, but this should be done under medical supervision. Individuals taking diabetes medications including metformin, insulin, or sulfonylureas should monitor blood glucose levels, though modern research suggests minimal impact on glycemic control. Chemotherapy drugs, particularly those affecting cellular processes, may have theoretical interactions requiring oncologist consultation. Glucosamine may reduce the effectiveness of certain antibiotics and should be taken several hours apart from tetracycline medications. Combining glucosamine with chondroitin sulfate, MSM, or omega-3 fatty acids is generally safe and may provide enhanced joint support through complementary mechanisms. Avoid concurrent use with high-dose calcium supplements which may interfere with absorption.",
+  "scientificBackground": "Glucosamine serves as a fundamental building block for glycosaminoglycans and proteoglycans, essential components of articular cartilage matrix that provide structural integrity and shock-absorbing properties to joints. Research spanning over three decades has investigated glucosamine's chondroprotective mechanisms, including its ability to stimulate chondrocyte metabolism, increase proteoglycan and collagen synthesis, and inhibit cartilage-degrading enzymes such as matrix metalloproteinases and aggrecanases. The landmark GAIT study (Glucosamine/Chondroitin Arthritis Intervention Trial) and subsequent long-term European studies have provided mixed but generally supportive evidence for glucosamine's efficacy in treating knee osteoarthritis, with glucosamine sulfate showing more consistent benefits than hydrochloride forms. Mechanistic studies reveal that glucosamine suppresses inflammatory pathways including NF-κB activation and reduces production of pro-inflammatory cytokines like interleukin-1β and tumor necrosis factor-alpha. Bioavailability studies indicate that oral glucosamine reaches systemic circulation with approximately 25% absorption, with preferential uptake in joint tissues. Recent research explores glucosamine's potential benefits beyond joint health, including cardiovascular protection, gut health modulation, and longevity effects observed in animal models.",
+  "foodSources": [
+    "Shellfish shells including shrimp, crab, and lobster exoskeletons (primary commercial source, though not typically consumed as food)",
+    "Animal cartilage and connective tissue from bone broth, chicken cartilage, and beef trachea (minimal amounts)",
+    "Fungi and yeast-derived glucosamine (vegetarian source alternative with comparable bioavailability)",
+    "Fermented corn-based glucosamine (vegan-friendly option for those avoiding shellfish and animal products)",
+    "Certain mushroom species including shiitake and oyster mushrooms (trace amounts in cell walls)",
+    "Bone marrow from grass-fed animals (contains precursors and related glycosaminoglycans)",
+    "No significant plant-based food sources exist; supplementation is necessary for therapeutic doses"
+  ],
+  "faqs": [
+    {
+      "question": "How long does it take for glucosamine to work for joint pain?",
+      "answer": "Glucosamine typically requires 8-12 weeks of consistent daily use before noticeable improvements in joint pain and mobility occur, as it works by gradually rebuilding cartilage rather than providing immediate pain relief like conventional analgesics. Some individuals may experience benefits within 4-6 weeks, while others may need up to 3 months for optimal results. Clinical studies suggest that maximum benefits are achieved after 6 months of continuous use, with sustained improvement possible for years with ongoing supplementation."
+    },
+    {
+      "question": "Is glucosamine sulfate or hydrochloride better for osteoarthritis?",
+      "answer": "Glucosamine sulfate is generally considered more effective for osteoarthritis based on clinical research, as the sulfate component may provide additional benefits for cartilage synthesis and the stabilized crystalline form shows superior bioavailability. However, glucosamine hydrochloride contains higher elemental glucosamine content per gram and may be preferable for those with sulfate sensitivities. Most positive clinical trials have used glucosamine sulfate at 1,500 mg daily, making it the evidence-based choice for osteoarthritis management."
+    },
+    {
+      "question": "Can people with shellfish allergies safely take glucosamine?",
+      "answer": "Most people with shellfish allergies can safely take glucosamine supplements because the compound is extracted from the chitin in shells rather than the protein-containing meat that triggers allergic reactions. However, trace contamination is theoretically possible depending on manufacturing processes. Individuals with severe shellfish allergies should consult their allergist and consider vegetarian glucosamine derived from fungi or fermented corn as a safer alternative with equivalent effectiveness."
+    },
+    {
+      "question": "Should glucosamine be taken with or without food?",
+      "answer": "Glucosamine is best taken with meals to enhance absorption and minimize potential gastrointestinal side effects such as nausea or stomach upset. Taking it with food helps buffer the digestive system and may improve bioavailability of certain forms. For divided doses, spreading intake across 2-3 meals throughout the day maintains more consistent blood levels and reduces the likelihood of digestive discomfort compared to single large doses."
+    },
+    {
+      "question": "Does glucosamine affect blood sugar levels in diabetics?",
+      "answer": "Early theoretical concerns about glucosamine affecting insulin sensitivity and blood glucose control have been largely dispelled by comprehensive clinical research. Multiple large-scale studies, including systematic reviews and meta-analyses, have found no significant impact on hemoglobin A1c, fasting glucose, or insulin sensitivity in diabetic patients taking standard glucosamine doses. However, as a precautionary measure, individuals with diabetes should monitor blood glucose levels when initiating glucosamine supplementation and inform their healthcare provider, especially if taking insulin or other diabetes medications."
+    }
+  ],
+  "references": [
+    "Clegg DO, et al. Glucosamine, chondroitin sulfate, and the two in combination for painful knee osteoarthritis. New England Journal of Medicine. 2006;354(8):795-808.",
+    "Reginster JY, et al. Long-term effects of glucosamine sulphate on osteoarthritis progression: a randomised, placebo-controlled clinical trial. Lancet. 2001;357(9252):251-256.",
+    "Runhaar J, et al. A systematic review on the role of glucosamine in the treatment of osteoarthritis. Rheumatology International. 2018;38(10):1753-1766.",
+    "Simental-Mendía M, et al. Effect of glucosamine and chondroitin sulfate in symptomatic knee osteoarthritis: a systematic review and meta-analysis of randomized placebo-controlled trials. Rheumatology International. 2018;38(8):1413-1428.",
+    "Ogata T, et al. Safety and efficacy of glucosamine, chondroitin, and their combination for painful knee osteoarthritis: a systematic review and meta-analysis. Osteoarthritis and Cartilage. 2018;26(6):729-738."
+  ]
+}
