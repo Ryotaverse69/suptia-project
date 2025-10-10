@@ -27,8 +27,8 @@ interface Ingredient {
   description: string;
   benefits: string[];
   recommendedDosage: string;
-  sideEffects?: string[];
-  interactions?: string[];
+  sideEffects?: string;
+  interactions?: string;
   evidenceLevel: string;
   scientificBackground: string;
   foodSources?: string[];
@@ -328,48 +328,31 @@ export default async function IngredientPage({ params }: Props) {
               )}
 
               {/* 副作用・注意点 */}
-              {ingredient.sideEffects && ingredient.sideEffects.length > 0 && (
+              {ingredient.sideEffects && (
                 <section>
                   <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
                     <AlertCircle className="text-accent-orange" size={24} />
                     副作用・注意点
                   </h2>
                   <div className="p-6 bg-accent-orange/5 border border-accent-orange/30 rounded-lg">
-                    <ul className="space-y-2">
-                      {ingredient.sideEffects.map((effect, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-3 text-primary-800"
-                        >
-                          <span className="text-accent-orange mt-0.5">•</span>
-                          <span>{effect}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-primary-800 leading-relaxed whitespace-pre-line">
+                      {ingredient.sideEffects}
+                    </p>
                   </div>
                 </section>
               )}
 
               {/* 相互作用 */}
-              {ingredient.interactions &&
-                ingredient.interactions.length > 0 && (
-                  <section>
-                    <h2 className="text-2xl font-bold text-primary-900 mb-4">
-                      他の成分・医薬品との相互作用
-                    </h2>
-                    <ul className="space-y-2">
-                      {ingredient.interactions.map((interaction, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-3 text-primary-800"
-                        >
-                          <span className="text-primary mt-0.5">•</span>
-                          <span>{interaction}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
+              {ingredient.interactions && (
+                <section>
+                  <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                    他の成分・医薬品との相互作用
+                  </h2>
+                  <p className="text-primary-800 leading-relaxed whitespace-pre-line">
+                    {ingredient.interactions}
+                  </p>
+                </section>
+              )}
 
               {/* FAQ */}
               {ingredient.faqs && ingredient.faqs.length > 0 && (
