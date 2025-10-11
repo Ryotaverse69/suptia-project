@@ -92,3 +92,4 @@ test-results-*.json
 # Temporary script files and backups
 *.tar.gz
 *.ndjson
+# test notification hook
