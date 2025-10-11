@@ -88,3 +88,7 @@ test-results-*.json
 
 # MCP Settings (contains secrets)
 .kiro/settings/mcp.json
+
+# Temporary script files and backups
+*.tar.gz
+*.ndjson
