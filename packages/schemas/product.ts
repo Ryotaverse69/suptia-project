@@ -24,7 +24,8 @@ export const product = defineType({
     defineField({
       name: "brand",
       title: "ブランド",
-      type: "string",
+      type: "reference",
+      to: [{ type: "brand" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -151,18 +152,99 @@ export const product = defineType({
       type: "boolean",
       description: "品質検査の有無",
     }),
+    defineField({
+      name: "scores",
+      title: "評価スコア",
+      type: "object",
+      description: "各種評価スコア（0-100）",
+      fields: [
+        {
+          name: "safety",
+          title: "安全性スコア",
+          type: "number",
+          validation: (Rule) => Rule.min(0).max(100),
+          description: "成分の安全性、第三者機関検査、警告事項などに基づく",
+        },
+        {
+          name: "evidence",
+          title: "エビデンススコア",
+          type: "number",
+          validation: (Rule) => Rule.min(0).max(100),
+          description: "科学的根拠の質と量に基づく",
+        },
+        {
+          name: "costEffectiveness",
+          title: "コストパフォーマンス",
+          type: "number",
+          validation: (Rule) => Rule.min(0).max(100),
+          description: "成分量あたりの価格、実効コストに基づく",
+        },
+        {
+          name: "overall",
+          title: "総合スコア",
+          type: "number",
+          validation: (Rule) => Rule.min(0).max(100),
+          description: "上記3つのスコアを総合した評価",
+        },
+      ],
+    }),
+    defineField({
+      name: "reviewStats",
+      title: "レビュー統計",
+      type: "object",
+      description: "ユーザーレビューの集計データ",
+      fields: [
+        {
+          name: "averageRating",
+          title: "平均評価",
+          type: "number",
+          validation: (Rule) => Rule.min(0).max(5),
+          description: "5段階評価の平均値",
+        },
+        {
+          name: "reviewCount",
+          title: "レビュー数",
+          type: "number",
+          validation: (Rule) => Rule.min(0),
+          description: "総レビュー件数",
+        },
+      ],
+    }),
+    defineField({
+      name: "availability",
+      title: "入手可能性",
+      type: "string",
+      options: {
+        list: [
+          { title: "在庫あり", value: "in-stock" },
+          { title: "在庫僅少", value: "low-stock" },
+          { title: "入荷待ち", value: "out-of-stock" },
+          { title: "販売終了", value: "discontinued" },
+        ],
+      },
+      initialValue: "in-stock",
+      description: "商品の入手可能性ステータス",
+    }),
+    defineField({
+      name: "costPerDay",
+      title: "1日あたりのコスト（円）",
+      type: "number",
+      description:
+        "価格 ÷ (1容器あたりの回数 ÷ 1日あたりの摂取回数) で自動計算",
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {
       title: "name",
-      brand: "brand",
+      brandName: "brand.name",
       price: "priceJPY",
       media: "images.0",
     },
-    prepare({ title, brand, price, media }) {
+    prepare({ title, brandName, price, media }) {
       return {
         title,
-        subtitle: `${brand} - ¥${price?.toLocaleString()}`,
+        subtitle: `${brandName || "ブランド未設定"} - ¥${price?.toLocaleString()}`,
         media,
       };
     },
