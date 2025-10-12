@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { sanity } from "@/lib/sanity.client";
+import { RelatedProducts } from "@/components/RelatedProducts";
 import {
   BookOpen,
   AlertCircle,
@@ -51,6 +52,35 @@ interface Ingredient {
   seoKeywords?: string[];
 }
 
+interface RelatedProduct {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
+  brand: {
+    name: string;
+    trustScore?: number;
+  };
+  priceJPY: number;
+  scores?: {
+    overall?: number;
+    safety?: number;
+    evidence?: number;
+    costEffectiveness?: number;
+  };
+  reviewStats?: {
+    averageRating?: number;
+    reviewCount?: number;
+  };
+  availability?: string;
+  images?: Array<{
+    asset: {
+      url: string;
+    };
+  }>;
+}
+
 interface Props {
   params: Promise<{
     slug: string;
@@ -89,6 +119,48 @@ async function getIngredient(slug: string): Promise<Ingredient | null> {
   } catch (error) {
     console.error("Failed to fetch ingredient:", error);
     return null;
+  }
+}
+
+// 成分IDを取得
+async function getIngredientId(slug: string): Promise<string | null> {
+  const query = `*[_type == "ingredient" && slug.current == $slug][0]._id`;
+  try {
+    const id = await sanity.fetch(query, { slug });
+    return id;
+  } catch (error) {
+    console.error("Failed to fetch ingredient ID:", error);
+    return null;
+  }
+}
+
+// 関連商品を取得（成分を含む商品）
+async function getRelatedProducts(
+  ingredientId: string,
+): Promise<RelatedProduct[]> {
+  const query = `*[_type == "product" && references($ingredientId) && availability == "in-stock"]{
+    _id,
+    name,
+    slug,
+    "brand": brand->{
+      name,
+      trustScore
+    },
+    priceJPY,
+    scores,
+    reviewStats,
+    availability,
+    "images": images[0...1]{
+      "asset": asset->
+    }
+  } | order(scores.overall desc)[0...6]`;
+
+  try {
+    const products = await sanity.fetch(query, { ingredientId });
+    return products || [];
+  } catch (error) {
+    console.error("Failed to fetch related products:", error);
+    return [];
   }
 }
 
@@ -163,6 +235,12 @@ export default async function IngredientPage({ params }: Props) {
   if (!ingredient) {
     notFound();
   }
+
+  // 関連商品を取得
+  const ingredientId = await getIngredientId(slug);
+  const relatedProducts = ingredientId
+    ? await getRelatedProducts(ingredientId)
+    : [];
 
   // JSON-LD構造化データ（SEO対策）
   const jsonLd = {
@@ -450,6 +528,12 @@ export default async function IngredientPage({ params }: Props) {
             </aside>
           </div>
         </article>
+
+        {/* 関連商品セクション */}
+        <RelatedProducts
+          products={relatedProducts}
+          ingredientName={ingredient.name}
+        />
       </div>
     </>
   );
