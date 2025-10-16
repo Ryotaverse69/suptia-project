@@ -43,7 +43,7 @@ export default function AboutPage() {
               <ArrowRight size={20} />
             </Link>
             <Link
-              href="/how-it-works"
+              href="/how-to-use"
               className="inline-flex items-center gap-2 rounded-lg border-2 border-white bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
             >
               使い方を見る
@@ -344,7 +344,7 @@ export default function AboutPage() {
 
           <div className="mt-12 text-center">
             <Link
-              href="/how-it-works"
+              href="/how-to-use"
               className="inline-flex items-center gap-2 text-primary hover:text-primary-600 font-semibold"
             >
               詳しい使い方を見る
