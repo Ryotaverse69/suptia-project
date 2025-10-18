@@ -1,0 +1,47 @@
+{
+  "name": "sanity-ingredient-validator",
+  "description": "Sanityインポート前に成分記事JSONを検証（構造・文字数・薬機法・エビデンスレベル・参考文献）",
+  "version": "1.0.0",
+  "inputs": {
+    "file": {
+      "type": "string | string[]",
+      "description": "検証するJSONファイルのパス（単一 or 配列）",
+      "required": true
+    },
+    "mode": {
+      "type": "'single' | 'batch'",
+      "description": "検証モード",
+      "default": "single"
+    },
+    "showOnlyErrors": {
+      "type": "boolean",
+      "description": "エラーのみ表示",
+      "default": false
+    }
+  },
+  "outputs": {
+    "report": {
+      "type": "ValidationReport",
+      "description": "詳細な検証レポート（JSON形式）"
+    },
+    "summaryFile": {
+      "type": "string",
+      "description": "サマリーファイルパス（batchモード時のみ）"
+    }
+  },
+  "scoreWeights": {
+    "structure": 25,
+    "compliance": 30,
+    "wordCount": 20,
+    "references": 15,
+    "evidence": 5,
+    "language": 5
+  },
+  "gradeThresholds": {
+    "S": 90,
+    "A": 80,
+    "B": 70,
+    "C": 60,
+    "D": 0
+  }
+}

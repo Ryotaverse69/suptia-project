@@ -93,3 +93,7 @@ test-results-*.json
 *.tar.gz
 *.ndjson
 # test notification hook
+logs/
+check-*.mjs
+import-*.mjs
+reimport-*.mjs

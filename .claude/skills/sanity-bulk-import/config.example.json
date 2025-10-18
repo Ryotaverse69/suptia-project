@@ -1,0 +1,31 @@
+{
+  "sanity": {
+    "projectId": "your-project-id",
+    "dataset": "production",
+    "apiVersion": "2024-01-01"
+  },
+  "import": {
+    "articleDir": ".",
+    "filePattern": "*-article.json",
+    "dryRun": true,
+    "batchSize": 10,
+    "retryCount": 3,
+    "successThreshold": 0.95
+  },
+  "backup": {
+    "enabled": true,
+    "s3Bucket": "suptia-sanity-backups",
+    "s3Region": "ap-northeast-1",
+    "retentionDays": 90
+  },
+  "logging": {
+    "dir": "logs",
+    "format": "json",
+    "level": "info"
+  },
+  "security": {
+    "tokenEnvVar": "SANITY_API_TOKEN",
+    "minPermissions": ["read", "write"],
+    "encryptBackups": true
+  }
+}

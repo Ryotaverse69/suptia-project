@@ -18,6 +18,33 @@ import {
 // 開発中は常に最新データを取得
 export const dynamic = "force-dynamic";
 
+// 簡易的なマークダウンをHTMLに変換する関数
+function parseMarkdown(text: string | string[] | undefined | null): string {
+  if (!text) return "";
+
+  // 配列の場合は結合
+  if (Array.isArray(text)) {
+    text = text.join(", ");
+  }
+
+  // 文字列でない場合は文字列に変換
+  if (typeof text !== "string") {
+    text = String(text);
+  }
+
+  return (
+    text
+      // 太字: **text** または __text__ → <strong>text</strong>
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/__(.+?)__/g, "<strong>$1</strong>")
+      // イタリック: *text* または _text_ → <em>text</em>
+      .replace(/\*(.+?)\*/g, "<em>$1</em>")
+      .replace(/_(.+?)_/g, "<em>$1</em>")
+      // コード: `code` → <code>code</code>
+      .replace(/`(.+?)`/g, "<code>$1</code>")
+  );
+}
+
 interface Ingredient {
   name: string;
   nameEn: string;
@@ -336,9 +363,12 @@ export default async function IngredientPage({ params }: Props) {
                   <BookOpen className="text-primary" size={24} />
                   {ingredient.name}とは
                 </h2>
-                <p className="text-primary-800 leading-relaxed">
-                  {ingredient.description}
-                </p>
+                <div
+                  className="text-primary-800 leading-relaxed prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                  dangerouslySetInnerHTML={{
+                    __html: parseMarkdown(ingredient.description),
+                  }}
+                />
               </section>
 
               {/* 主な効果・効能 */}
@@ -355,7 +385,12 @@ export default async function IngredientPage({ params }: Props) {
                           className="text-accent-mint flex-shrink-0 mt-0.5"
                           size={20}
                         />
-                        <span className="text-primary-800">{benefit}</span>
+                        <div
+                          className="text-primary-800 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                          dangerouslySetInnerHTML={{
+                            __html: parseMarkdown(benefit),
+                          }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -369,9 +404,12 @@ export default async function IngredientPage({ params }: Props) {
                   推奨摂取量
                 </h2>
                 <div className="p-6 bg-primary-50 border border-primary-200 rounded-lg">
-                  <p className="text-primary-800 leading-relaxed whitespace-pre-line">
-                    {ingredient.recommendedDosage}
-                  </p>
+                  <div
+                    className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                    dangerouslySetInnerHTML={{
+                      __html: parseMarkdown(ingredient.recommendedDosage),
+                    }}
+                  />
                 </div>
               </section>
 
@@ -381,9 +419,12 @@ export default async function IngredientPage({ params }: Props) {
                   <ShieldCheck className="text-primary" size={24} />
                   科学的背景・エビデンス
                 </h2>
-                <p className="text-primary-800 leading-relaxed whitespace-pre-line">
-                  {ingredient.scientificBackground}
-                </p>
+                <div
+                  className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                  dangerouslySetInnerHTML={{
+                    __html: parseMarkdown(ingredient.scientificBackground),
+                  }}
+                />
               </section>
 
               {/* 食品源 */}
@@ -413,9 +454,12 @@ export default async function IngredientPage({ params }: Props) {
                     副作用・注意点
                   </h2>
                   <div className="p-6 bg-accent-orange/5 border border-accent-orange/30 rounded-lg">
-                    <p className="text-primary-800 leading-relaxed whitespace-pre-line">
-                      {ingredient.sideEffects}
-                    </p>
+                    <div
+                      className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                      dangerouslySetInnerHTML={{
+                        __html: parseMarkdown(ingredient.sideEffects),
+                      }}
+                    />
                   </div>
                 </section>
               )}
@@ -426,9 +470,12 @@ export default async function IngredientPage({ params }: Props) {
                   <h2 className="text-2xl font-bold text-primary-900 mb-4">
                     他の成分・医薬品との相互作用
                   </h2>
-                  <p className="text-primary-800 leading-relaxed whitespace-pre-line">
-                    {ingredient.interactions}
-                  </p>
+                  <div
+                    className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                    dangerouslySetInnerHTML={{
+                      __html: parseMarkdown(ingredient.interactions),
+                    }}
+                  />
                 </section>
               )}
 
@@ -450,9 +497,12 @@ export default async function IngredientPage({ params }: Props) {
                           </h3>
                         </summary>
                         <div className="px-6 py-4 border-t border-primary-200 bg-primary-50/50">
-                          <p className="text-primary-800 leading-relaxed whitespace-pre-line">
-                            {faq.answer}
-                          </p>
+                          <div
+                            className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                            dangerouslySetInnerHTML={{
+                              __html: parseMarkdown(faq.answer),
+                            }}
+                          />
                         </div>
                       </details>
                     ))}

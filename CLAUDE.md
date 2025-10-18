@@ -145,6 +145,184 @@ Suptiaは「**Trivago × PubMed × GPT**」を統合した、次世代型サプ�
 
 ---
 
+## ⚙️ 行動規範（Behavioral Rules）
+
+1. **公式API優先**
+   - Amazon PA-APIや楽天Ichiba APIを使用。
+   - 非公式APIや明確に禁止されているスクレイピングは禁止。
+   - ToS（利用規約）・robots.txtを遵守。
+
+2. **無料範囲での開発優先**
+   - 有料サービス（Bright Data等）はMVP以降に検討。
+
+3. **透明性と説明性の保持**
+   - 推薦理由・出典（研究・価格・成分）を常に明示。
+
+4. **法令遵守と倫理**
+   - 薬機法に抵触する表記を禁止。
+   - 個人情報は暗号化し、削除リクエストに即対応。
+
+5. **再現性とテスト優先**
+   - すべての推薦ロジック・API呼び出しはテスト可能な形に。
+   - ブラックボックス化を避け、説明可能な構造で設計。
+
+---
+
+## 📊 データソース構成
+
+| サイト       | 種別     | 取得手段                           | 更新頻度          | 信頼度 | 備考             |
+| ------------ | -------- | ---------------------------------- | ----------------- | ------ | ---------------- |
+| **Amazon**   | 公式API  | Product Advertising API            | Daily / On-demand | High   | ASIN / JANで同定 |
+| **楽天市場** | 公式API  | Ichiba Item Search API             | Daily             | High   | JAN対応          |
+| **iHerb**    | 非公開   | スクレイピングAPI（Bright Data等） | Weekly            | Medium | 後期対応予定     |
+| **その他EC** | 将来対応 | 個別                               | TBD               | Low    | 公式API優先      |
+
+---
+
+## 🧩 データスキーマ仕様
+
+### Productドキュメント
+
+```json
+{
+  "id": "suptia:product:001",
+  "title": "Vitamin C 1000mg",
+  "brand": "Now Foods",
+  "ingredients": [
+    { "ref": "ingredient:vitamin-c", "amount": 1000, "unit": "mg" }
+  ],
+  "prices": [
+    {
+      "amount": 1980,
+      "currency": "JPY",
+      "source": "amazon.jp",
+      "fetched_at": "2025-10-16T12:00:00Z",
+      "confidence": 0.95,
+      "url": "https://amazon.co.jp/dp/B000...",
+      "affiliate_tag": "suptia-22"
+    },
+    {
+      "amount": 1880,
+      "currency": "JPY",
+      "source": "rakuten.jp",
+      "fetched_at": "2025-10-16T11:30:00Z",
+      "confidence": 0.92,
+      "url": "https://item.rakuten.co.jp/..."
+    }
+  ],
+  "normalized_unit_price": {
+    "per_mg": 1.88,
+    "currency": "JPY"
+  },
+  "confidence_score": 0.93,
+  "last_updated": "2025-10-16T12:10:00Z"
+}
+```
+
+### Ingredientドキュメント
+
+```json
+{
+  "id": "ingredient:vitamin-c",
+  "name": "ビタミンC",
+  "aliases": ["アスコルビン酸"],
+  "category": "抗酸化ビタミン",
+  "recommended_dose_mg": 500,
+  "toxicity_upper_mg": 2000,
+  "evidence_level": "A",
+  "sources": [{ "url": "https://pubmed.ncbi.nlm.nih.gov/..." }]
+}
+```
+
+---
+
+## 🔍 商品同定ロジック
+
+1. **JAN一致 → 即同一と判定**
+2. **ASIN一致 → 同一商品とみなす**
+3. **タイトル正規化（ブランド・容量除去）→ 類似度計算（cosine > 0.92）→ 同一候補**
+4. **閾値未満（0.92未満）は pending リストで手動レビュー**
+
+結果は `product_linkage` に記録し、毎日再評価。
+
+---
+
+## 🧱 エラーハンドリング
+
+| 状況                       | 対応                                     |
+| -------------------------- | ---------------------------------------- |
+| HTTP 429 / RateLimit       | Exponential backoff（1s→4s→9s、最大3回） |
+| 5xx / Network Error        | キャッシュ返却または再試行               |
+| 価格異常値（前回比±80%超） | 一時無効化（監察フラグ）                 |
+| 重大エラー                 | Datadog / Sanity監察テーブルに30日保存   |
+
+---
+
+## 📡 監視とアラート基準（SLO）
+
+| メトリクス             | 目標値 | アラート条件 | 通知先        |
+| ---------------------- | ------ | ------------ | ------------- |
+| price_sync_error_rate  | < 1%   | > 5%         | Slack #infra  |
+| cache_hit_rate         | > 90%  | < 80%        | Slack #dev    |
+| unmatched_product_rate | < 5%   | > 10%        | Slack #data   |
+| API latency            | < 1.5s | > 3s         | MonitoringBot |
+
+---
+
+## ⚖️ 法令・倫理ポリシー
+
+### 薬機法遵守
+
+- 「治る」「改善」などの医療表現は禁止。
+- 成分効果は「一般的知見」として説明。
+
+### データライセンス
+
+- 公式APIレスポンスの再配布は禁止。
+- キャッシュ保存のみ許可。
+
+### プライバシー
+
+- 個人データはAES暗号化、削除リクエスト即応。
+
+### スクレイピング倫理
+
+- robots.txt禁止領域はアクセス不可。
+- Bright Data等の合法サービスのみ使用。
+
+---
+
+## 🧠 GPT / AI連携（将来フェーズ）
+
+- GPTまたはClaude APIとRAG接続。
+- 参照データ：成分ガイド、価格履歴、研究要約。
+- 出力には必ず出典（source.url / updated_at）を添付。
+- Explainable Recommendation（根拠付き推薦）を実現。
+
+---
+
+## 🗺️ フェーズマッピング
+
+| フェーズ | 概要                                     | 状態            |
+| -------- | ---------------------------------------- | --------------- |
+| 1        | Sanity連携UI構築                         | ✅ 完了         |
+| 2        | 意思決定ロジック / コスト算出            | 🔄 進行中       |
+| 2.5      | Amazon/Rakuten API連携（メタサーチ基礎） | 🔨 直近予定     |
+| 3        | SEO強化 / 構造化データ / 薬機法対応      | ⏳ 設計中       |
+| 4        | 価格アラート / マイページ / 継続利用機能 | ⏳ 計画中       |
+| 5        | GPT統合 / 自然言語推薦                   | 🔮 2026以降予定 |
+
+---
+
+## 🚫 禁止事項（DO NOT）
+
+- 非公式APIや明示的に禁止されているスクレイピング
+- 医療効能の断定表現（例：「治る」「防ぐ」）
+- 個人情報の平文保存
+- 出典不明データの使用
+
+---
+
 ## 🛒 ECサイト連携・API統合戦略
 
 ### 基本方針
@@ -943,8 +1121,219 @@ npm run dev
 
 ---
 
+## 📝 更新履歴
+
+| 日付       | バージョン | 更新者 | 内容                                                                              |
+| ---------- | ---------- | ------ | --------------------------------------------------------------------------------- |
+| 2025-10-16 | v1.3.0     | Ryota  | 行動規範・データスキーマ・エラーハンドリング・SLO・法令ポリシー・AI連携方針を追加 |
+| 2025-10-12 | v1.2.0     | Ryota  | ECサイト連携・API統合戦略を追加（Amazon PA-API、楽天API、iHerb対応計画）          |
+| 2025-10-10 | v1.1.0     | Ryota  | UIデザイン構成とコンポーネントライブラリを追加                                    |
+| 2025-10-01 | v1.0.0     | Ryota  | 初版作成（Claude Code連携用）                                                     |
+
 ---
 
-**最終更新日**: 2025-10-12
-**バージョン**: 1.2.0
-**変更内容**: ECサイト連携・API統合戦略を追加（Amazon PA-API、楽天API、iHerb対応計画）
+## 🧩 Claude長期記憶メモ
+
+**Suptia概要**:
+
+- Amazon/Rakuten公式APIを利用した価格・成分・根拠を統合したAIサプリ意思決定エンジン。
+- APIがない場合は合法的スクレイピングAPI（Bright Data等）を使用。
+- JAN優先の商品同定ロジックとデータ信頼度管理が重要。
+- 薬機法遵守・透明性・安全性を最優先とする。
+- 段階的にメタサーチエンジンからGPT連携へ進化する。
+
+**重要な制約**:
+
+- 非公式APIや明示的に禁止されているスクレイピングは禁止。
+- 医療効能の断定表現は使用不可。
+- すべての推薦に出典（研究・価格・成分データ）を明示。
+- テスト可能で説明可能な設計を維持。
+
+**現在のフェーズ**:
+
+- フェーズ2（意思決定ロジック/コスト算出）進行中。
+- フェーズ2.5（Amazon/Rakuten API連携）を直近で開始予定。
+
+---
+
+---
+
+## 🛠️ Claude Code Skills
+
+SuptiaプロジェクトではClaude Code用のカスタムSkillsを実装しています。これらのSkillsは開発効率を大幅に向上させます。
+
+### 利用可能なSkills
+
+#### 1. **sanity-ingredient-validator** - 成分記事品質チェック
+
+**目的**: Sanityインポート前に成分記事JSONを自動検証
+
+**機能**:
+
+- ✅ 構造チェック（必須フィールド・配列要素数）
+- ✅ 薬機法NGワードチェック（治る・治療・予防など）
+- ✅ 文字数チェック（日本語文字数を正確にカウント）
+- ✅ 参考文献チェック（URL有効性・信頼度評価）
+- ✅ エビデンスレベルチェック（S/A/B/C/D）
+- ✅ 言語チェック（英語文章の混入検出）
+
+**スコアリングシステム**:
+
+```
+総合100点満点
+- 構造: 25点
+- 薬機法コンプライアンス: 30点（最重要）
+- 文字数: 20点
+- 参考文献: 15点
+- エビデンスレベル: 5点
+- 言語: 5点
+
+グレード判定:
+- S (90+): 優秀 - インポート推奨
+- A (80+): 良好 - 軽微な修正推奨
+- B (70+): 合格 - 修正後にインポート
+- C (60+): 要修正 - 複数の問題あり
+- D (<60): 不合格 - 大幅な修正が必要
+```
+
+**使用方法**:
+
+```bash
+# 単一ファイルの検証
+npx tsx .claude/skills/sanity-ingredient-validator/index.ts vitamin-c-article.json
+
+# バッチモード（複数ファイル）
+npx tsx .claude/skills/sanity-ingredient-validator/index.ts --batch "*-article.json"
+
+# エラーのみ表示
+npx tsx .claude/skills/sanity-ingredient-validator/index.ts --batch "*-article.json" --errors-only
+
+# レポートを指定ファイルに保存
+npx tsx .claude/skills/sanity-ingredient-validator/index.ts vitamin-c-article.json -o report.json
+```
+
+**出力例**:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│         Sanity Ingredient Validator Report              │
+├─────────────────────────────────────────────────────────┤
+│ File: vitamin-c-article.json                             │
+│ Score: 85/100 (Grade: A)                                 │
+│ Status: 良好 - 軽微な修正推奨                                   │
+└─────────────────────────────────────────────────────────┘
+
+📊 Detailed Scores:
+  Structure:   25/25 ✅
+  Compliance:  28/30 ✅
+  Word Count:  18/20 ⚠️
+  References:  12/15 ⚠️
+  Evidence:    5/5 ✅
+  Language:    5/5 ✅
+
+💡 Recommendations:
+  1. descriptionを50文字以上追加してください
+  2. 参考文献を1件追加してください
+```
+
+**ディレクトリ構造**:
+
+```
+.claude/skills/sanity-ingredient-validator/
+├── skill.json              # メタデータ
+├── index.ts               # エントリーポイント
+├── validator.ts           # メインロジック
+├── checkers/              # チェッカー
+│   ├── structure.ts
+│   ├── compliance.ts
+│   ├── wordCount.ts
+│   ├── references.ts
+│   ├── evidence.ts
+│   └── language.ts
+├── rules/                 # ルール定義
+│   ├── ng-words.ts
+│   ├── evidence-levels.ts
+│   └── trusted-sources.ts
+├── scoring.ts             # スコアリング
+└── reporter.ts            # レポート生成
+```
+
+**薬機法NGワード例**:
+
+```typescript
+// Critical（重大違反）
+("治る", "治す", "治療", "治癒");
+("予防する", "防ぐ", "防止");
+("がんに効く", "糖尿病を治す", "高血圧を下げる");
+
+// Warning（警告）
+("効く", "効果がある", "改善する");
+("若返る", "回復する", "再生する");
+
+// OK表現
+("〜をサポート", "〜に役立つ可能性");
+("一般的に", "研究では", "〜と言われています");
+("健康維持に", "栄養補給として");
+```
+
+**エビデンスレベル定義（Suptia独自基準）**:
+
+```
+S: 大規模RCTやメタ解析による高い信頼性
+   例: ビタミンDと骨密度改善
+
+A: 良質な研究で効果が確認
+   例: EPA/DHAと中性脂肪低下
+
+B: 限定的研究・条件付きの効果
+   例: マグネシウムと睡眠改善
+
+C: 動物実験・小規模試験レベル
+   例: アスタキサンチンと疲労改善
+
+D: 理論・未検証レベル
+   例: 未確認ハーブ抽出物
+```
+
+**信頼できる参考文献ソース**:
+
+```
+Tier 1（最高信頼度）:
+- pubmed.ncbi.nlm.nih.gov
+- cochrane.org
+- mhlw.go.jp（厚生労働省）
+- nih.gov
+
+Tier 2（高信頼度）:
+- who.int
+- scholar.google.com
+- sciencedirect.com
+- nature.com
+
+Tier 3（中信頼度）:
+- researchgate.net
+- arxiv.org
+```
+
+---
+
+### 今後追加予定のSkills
+
+#### 2. **sanity-bulk-import** - 一括インポートツール
+
+**機能**:
+
+- ✅ 複数JSONファイルの一括インポート
+- ✅ validator統合（検証合格ファイルのみインポート）
+- ✅ 差分検出・既存データとの比較
+- ✅ バックアップ・ロールバック機能
+- ✅ エラーハンドリング・リトライ
+- ✅ 進捗表示・詳細ログ
+
+**ステータス**: 設計完了、実装予定（フェーズ1後半）
+
+---
+
+**最終更新日**: 2025-10-17
+**バージョン**: 1.4.0
+**変更内容**: Claude Code Skills（sanity-ingredient-validator）を追加
