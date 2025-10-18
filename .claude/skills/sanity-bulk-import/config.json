@@ -1,0 +1,29 @@
+{
+  "sanity": {
+    "projectId": "fny3jdcg",
+    "dataset": "production",
+    "apiVersion": "2025-08-21"
+  },
+  "import": {
+    "articleDir": "../../..",
+    "filePattern": "*-article.json",
+    "dryRun": true,
+    "batchSize": 10,
+    "retryCount": 3,
+    "successThreshold": 0.95
+  },
+  "backup": {
+    "enabled": true,
+    "retentionDays": 90
+  },
+  "logging": {
+    "dir": "logs",
+    "format": "json",
+    "level": "info"
+  },
+  "security": {
+    "tokenEnvVar": "SANITY_API_TOKEN",
+    "minPermissions": ["read", "write"],
+    "encryptBackups": true
+  }
+}
