@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/schema/settings-schema.json",
+  "autoApprove": {
+    "bash": ["*"],
+    "read": ["**"],
+    "write": ["**"],
+    "edit": ["**"],
+    "glob": ["**"],
+    "grep": ["**"]
+  },
+  "enableAllProjectMcpServers": true,
+  "communicationStyle": {
+    "language": "ja",
+    "tone": "professional",
+    "verbosity": "concise"
+  },
+  "taskManagement": {
+    "useTodoWrite": true,
+    "autoMarkCompleted": true
+  },
+  "codeStyle": {
+    "identifiers": "en",
+    "comments": "ja",
+    "documentation": "ja"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "terminal-notifier -title '🔐 Claude Code' -message '承認が必要です' -sound 'Tink' && osascript -e 'beep 2' &"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Hook] Stop hook triggered at '$(date) >> /tmp/claude-hooks.log && terminal-notifier -title '✅ Claude Code' -message '作業が完了しました' -sound 'Tink'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash(git push:*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/git-push-with-notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
