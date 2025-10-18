@@ -55,8 +55,8 @@ interface Ingredient {
   description: string;
   benefits: string[];
   recommendedDosage: string;
-  sideEffects?: string;
-  interactions?: string;
+  sideEffects?: string[];
+  interactions?: string[];
   evidenceLevel: string;
   scientificBackground: string;
   foodSources?: string[];
@@ -454,12 +454,28 @@ export default async function IngredientPage({ params }: Props) {
                     副作用・注意点
                   </h2>
                   <div className="p-6 bg-accent-orange/5 border border-accent-orange/30 rounded-lg">
-                    <div
-                      className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                      dangerouslySetInnerHTML={{
-                        __html: parseMarkdown(ingredient.sideEffects),
-                      }}
-                    />
+                    {Array.isArray(ingredient.sideEffects) ? (
+                      <ul className="space-y-3 text-primary-800 leading-relaxed">
+                        {ingredient.sideEffects.map((effect, index) => (
+                          <li key={index} className="flex gap-3">
+                            <span className="text-accent-orange mt-1">•</span>
+                            <span
+                              className="flex-1 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                              dangerouslySetInnerHTML={{
+                                __html: parseMarkdown(effect),
+                              }}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div
+                        className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                        dangerouslySetInnerHTML={{
+                          __html: parseMarkdown(ingredient.sideEffects as any),
+                        }}
+                      />
+                    )}
                   </div>
                 </section>
               )}
@@ -470,12 +486,28 @@ export default async function IngredientPage({ params }: Props) {
                   <h2 className="text-2xl font-bold text-primary-900 mb-4">
                     他の成分・医薬品との相互作用
                   </h2>
-                  <div
-                    className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                    dangerouslySetInnerHTML={{
-                      __html: parseMarkdown(ingredient.interactions),
-                    }}
-                  />
+                  {Array.isArray(ingredient.interactions) ? (
+                    <ul className="space-y-3 text-primary-800 leading-relaxed">
+                      {ingredient.interactions.map((interaction, index) => (
+                        <li key={index} className="flex gap-3">
+                          <span className="text-primary-600 mt-1">•</span>
+                          <span
+                            className="flex-1 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                            dangerouslySetInnerHTML={{
+                              __html: parseMarkdown(interaction),
+                            }}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div
+                      className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                      dangerouslySetInnerHTML={{
+                        __html: parseMarkdown(ingredient.interactions as any),
+                      }}
+                    />
+                  )}
                 </section>
               )}
 
