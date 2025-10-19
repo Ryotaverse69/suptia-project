@@ -89,6 +89,9 @@ test-results-*.json
 # MCP Settings (contains secrets)
 .kiro/settings/mcp.json
 
+# Claude Code local settings (personal preferences)
+.claude/settings.local.json
+
 # Temporary script files and backups
 *.tar.gz
 *.ndjson
@@ -97,3 +100,4 @@ logs/
 check-*.mjs
 import-*.mjs
 reimport-*.mjs
+references-issues.json
