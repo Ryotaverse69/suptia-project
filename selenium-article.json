@@ -57,27 +57,27 @@
   "recommendedDosage": "セレンの推奨栄養所要量（RDA）は19歳以上の成人で1日55mcgで、妊婦は1日60mcg、授乳中の女性は増加した需要をサポートするために1日70mcgを必要とします。1〜3歳の子供は20mcg、4〜8歳は30mcg、9〜13歳は40mcg、14〜18歳の青少年は1日55mcgを必要とします。\n\n許容上限摂取量（UL）は成人で1日400mcgに設定されており、これを超えるとセレン中毒（セレン症）が発生する可能性があります。ほとんどの人は、特にブラジルナッツ（1粒あたり70〜90mcgを提供可能）、シーフード、肉、セレン豊富な土壌で栽培された全粒穀物を通じて、食事源からセレンのニーズを満たすことができます。\n\nサプリメントを摂取する場合、セレンはセレノメチオニン（90%前後のより高い生物学的利用能を持つ有機形態）、セレン酸ナトリウムまたはセレン酸塩（50〜60%の吸収を持つ無機形態）、セレン強化酵母として入手可能です。吸収を高め、胃腸の副作用を軽減するために、食事と一緒にセレンサプリメントを摂取してください。\n\n推奨用量を超えないでください。適切性と毒性の間のマージンは他の多くのミネラルよりも狭いためです。欠乏が疑われる場合や特定の健康状態がある場合は、サプリメント開始前に医療専門家に相談することをお勧めします。",
   "references": [
     {
-      "title": "Rayman MP. Selenium and human health. Lancet. 2012;379(9822):1256-1268.",
+      "title": "Rayman MP. セレンと人間の健康. Lancet誌, 2012年",
       "url": "https://pubmed.ncbi.nlm.nih.gov/22381456/"
     },
     {
-      "title": "Lippman SM et al. Effect of selenium and vitamin E on risk of prostate cancer and other cancers: the Selenium and Vitamin E Cancer Prevention Trial (SELECT). JAMA. 2009;301(1):39-51.",
+      "title": "Lippman SM他. セレンとビタミンEの前立腺がんおよびその他のがんリスクへの影響：SELECT試験. JAMA誌, 2009年",
       "url": "https://pubmed.ncbi.nlm.nih.gov/19066370/"
     },
     {
-      "title": "Toulis KA, Anastasilakis AD, Tzellos TG, Goulis DG, Kouvelas D. Selenium supplementation in the treatment of Hashimoto's thyroiditis: a systematic review and a meta-analysis. Thyroid. 2010;20(10):1163-1173.",
+      "title": "Toulis KA他. 橋本甲状腺炎治療におけるセレンサプリメント：系統的レビューとメタ解析. Thyroid誌, 2010年",
       "url": "https://pubmed.ncbi.nlm.nih.gov/20883174/"
     },
     {
-      "title": "Institute of Medicine. Dietary Reference Intakes for Vitamin C, Vitamin E, Selenium, and Carotenoids. National Academies Press; 2000.",
+      "title": "米国医学研究所. ビタミンC、ビタミンE、セレン、カロテノイドの食事摂取基準. 全米科学アカデミー出版, 2000年",
       "url": "https://www.ncbi.nlm.nih.gov/books/NBK225480/"
     },
     {
-      "title": "Vinceti M, Filippini T, Del Giovane C, et al. Selenium for preventing cancer. Cochrane Database Syst Rev. 2018;1:CD005195.",
+      "title": "Vinceti M他. がん予防のためのセレン. Cochrane Database系統的レビュー, 2018年",
       "url": "https://pubmed.ncbi.nlm.nih.gov/29376219/"
     },
     {
-      "title": "Fairweather-Tait SJ, Bao Y, Broadley MR, et al. Selenium in human health and disease. Antioxid Redox Signal. 2011;14(7):1337-1383.",
+      "title": "Fairweather-Tait SJ他. 人間の健康と疾患におけるセレン. 抗酸化レドックスシグナル誌, 2011年",
       "url": "https://pubmed.ncbi.nlm.nih.gov/20812787/"
     }
   ],

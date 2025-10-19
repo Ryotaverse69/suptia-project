@@ -52,11 +52,26 @@
   "nameEn": "Chromium",
   "recommendedDosage": "クロムの適正摂取量(AI)は年齢と性別によって異なります:19-50歳の成人は1日25-35mcgを摂取すべきです(女性は25mcg、男性は35mcg)、50歳以上の成人は1日20-30mcgが必要です。\n\n健康サポート目的では、ピコリン酸クロム補給は通常1日200-1,000mcgの範囲であり、ほとんどの研究では代謝サポートに200-400mcgを使用しています。\n\nクロムはビタミンCと一緒に摂取すると最もよく吸収され、吸収を強化し、潜在的な胃腸不快感を最小限に抑えるために、理想的には食事と一緒に摂取すべきです。\n\n血糖管理には、1日を通じて分割用量により一貫した効果が得られる可能性があります。\n\n一般的な補給形態には、ピコリン酸クロム(最高の生物学的利用能)、ポリニコチン酸クロム、塩化クロムが含まれます。\n\n妊娠中および授乳中の女性はわずかに多い量(1日30-45mcg)が必要な場合がありますが、補給前に医療提供者に相談すべきです。",
   "references": [
-    "Anderson RA. Chromium in the prevention and control of diabetes. Diabetes Metab. 2000;26(1):22-27.",
-    "Suksomboon N, Poolsup N, Yuwanakorn A. Systematic review and meta-analysis of the efficacy and safety of chromium supplementation in diabetes. J Clin Pharm Ther. 2014;39(3):292-306.",
-    "Vincent JB. The biochemistry of chromium. J Nutr. 2000;130(4):715-718.",
-    "Institute of Medicine. Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc. National Academies Press; 2001.",
-    "Pittler MH, Stevinson C, Ernst E. Chromium picolinate for reducing body weight: meta-analysis of randomized trials. Int J Obes Relat Metab Disord. 2003;27(4):522-529."
+    {
+      "title": "Anderson RA. Chromium in the prevention and control of diabetes. Diabetes Metab. 2000;26(1):22-27.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10705100/"
+    },
+    {
+      "title": "Suksomboon N, Poolsup N, Yuwanakorn A. Systematic review and meta-analysis of the efficacy and safety of chromium supplementation in diabetes. J Clin Pharm Ther. 2014;39(3):292-306.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24635480/"
+    },
+    {
+      "title": "Vincent JB. The biochemistry of chromium. J Nutr. 2000;130(4):715-718.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10736319/"
+    },
+    {
+      "title": "Institute of Medicine. Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc. National Academies Press; 2001.",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK222310/"
+    },
+    {
+      "title": "Pittler MH, Stevinson C, Ernst E. Chromium picolinate for reducing body weight: meta-analysis of randomized trials. Int J Obes Relat Metab Disord. 2003;27(4):522-529.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12664086/"
+    }
   ],
   "relatedIngredients": null,
   "scientificBackground": "クロムは、研究者がグルコース代謝におけるその役割を発見した1950年代に必須微量元素として特定されました。\n\nこのミネラルは主にクロモデュリンを介して機能します。\n\nこれは、インスリン受容体チロシンキナーゼ活性を強化する低分子量クロム結合物質であり、それにより細胞インスリン感受性を改善します。\n\nインスリンがその受容体に結合すると、クロム含有クロモデュリンがシグナルを増幅し、細胞へのグルコース取り込みを促進します。\n\n臨床研究では、クロム補給について混合されたが一般的に支持的な結果が得られており、特に耐糖能障害または2型糖尿病の集団においてそうです。\n\n複数の無作為化対照試験のメタ分析では、クロム補給が糖尿病患者の血糖制御を著しく改善し、空腹時血糖の平均減少が15-25mg/dL、HbA1cの改善が0.5-1.0%であることがわかりました。\n\nしかし、クロム欠乏は、全粒穀物、肉、特定の野菜からの適切な食事摂取により、先進国ではまれと考えられています。\n\nクロムの生物学的利用能は化学形態によって大幅に異なり、ピコリン酸クロムなどの有機形態は約25%の吸収を示すのに対し、無機塩化クロムは1%未満です。",

@@ -53,11 +53,26 @@
   "nameEn": "Protein",
   "recommendedDosage": "タンパク質必要量は年齢・性別・体組成・活動レベル・健康状態・目標により大きく異なります。\n\n座りがちな成人の推奨食事摂取量（RDA）は体重1kgあたり0.8g（70kgの成人で約56g）ですが、多くの栄養科学者はこれを欠乏をのリスク低減をサポートする可能性ための最低量と考え、健康のための最適量ではないとしています。\n\n活動的な人やアスリートはより高い摂取が有益です。\n\n持久系アスリートは通常1.2-1.6g/kg、筋力・パワー系アスリートは筋タンパク質合成と回復を最大化するため1.6-2.2g/kgが最適です。\n\n高齢者（65歳以上）は加齢に伴う筋肉減少と機能維持のため1.2-1.5g/kgの高い摂取が必要で、サルコペニア健康維持には1.6-2.0g/kgまでの摂取が有益とする研究もあります。\n\nカロリー制限や減量期間中は除脂肪体重を維持するため1.8-2.7g/kgが必要で、体脂肪率が低いほど高い摂取が必要です。\n\n最適な筋タンパク質合成のため、1日3-5食で各20-40gの高品質タンパク質を分散摂取すると、同量を少ない食事で摂取するよりも筋タンパク質合成を効果的に刺激します。\n\n運動後2時間以内に20-40gのタンパク質摂取で回復と適応が向上しますが、アナボリックウィンドウは4-6時間以上続く可能性があります。\n\n就寝前のタンパク質摂取（カゼインなど遅消化型30-40g）は夜間の筋タンパク質合成を高め翌日の回復を改善します。\n\nタンパク質の質も重要で、動物性タンパク質（肉・魚・卵・乳製品）は完全なアミノ酸プロファイルと高い生物学的価値・吸収率90-95%を提供し、植物性タンパク質は生物学的価値が低く（70-85%）同等のアミノ酸供給には大量摂取か戦略的な組み合わせが必要です。\n\n体重1kgあたり2.5-3.0gを超える非常に高いタンパク質摂取はほとんどの人に不要で、追加の利益は最小限で他の重要な栄養素を置き換える可能性があります。",
   "references": [
-    "Morton, R. W., et al. (2018). A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength in healthy adults. British Journal of Sports Medicine, 52(6), 376-384.",
-    "Jäger, R., et al. (2017). International Society of Sports Nutrition Position Stand: protein and exercise. Journal of the International Society of Sports Nutrition, 14, 20.",
-    "Schoenfeld, B. J., & Aragon, A. A. (2018). How much protein can the body use in a single meal for muscle-building? Implications for daily protein distribution. Journal of the International Society of Sports Nutrition, 15, 10.",
-    "Trommelen, J., & van Loon, L. J. C. (2016). Pre-Sleep Protein Ingestion to Improve the Skeletal Muscle Adaptive Response to Exercise Training. Nutrients, 8(12), 763.",
-    "Devries, M. C., & Phillips, S. M. (2015). Supplemental protein in support of muscle mass and health: advantage whey. Journal of Food Science, 80(S1), A8-A15."
+    {
+      "title": "Morton, R. W., et al. (2018). A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength in healthy adults. British Journal of Sports Medicine, 52(6), 376-384.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29679660/"
+    },
+    {
+      "title": "Jäger, R., et al. (2017). International Society of Sports Nutrition Position Stand: protein and exercise. Journal of the International Society of Sports Nutrition, 14, 20.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28642676/"
+    },
+    {
+      "title": "Schoenfeld, B. J., & Aragon, A. A. (2018). How much protein can the body use in a single meal for muscle-building? Implications for daily protein distribution. Journal of the International Society of Sports Nutrition, 15, 10.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29497353/"
+    },
+    {
+      "title": "Trommelen, J., & van Loon, L. J. C. (2016). Pre-Sleep Protein Ingestion to Improve the Skeletal Muscle Adaptive Response to Exercise Training. Nutrients, 8(12), 763.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27916799/"
+    },
+    {
+      "title": "Devries, M. C., & Phillips, S. M. (2015). Supplemental protein in support of muscle mass and health: advantage whey. Journal of Food Science, 80(S1), A8-A15.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25757896/"
+    }
   ],
   "relatedIngredients": [
     {
