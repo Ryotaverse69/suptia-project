@@ -100,4 +100,6 @@ logs/
 check-*.mjs
 import-*.mjs
 reimport-*.mjs
+fix-*.mjs
 references-issues.json
+encoding-issues.json
