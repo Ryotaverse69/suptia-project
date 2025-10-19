@@ -28,7 +28,7 @@
       "question": "アシュワガンダを長期的に摂取しても安全ですか、それともサイクリングすべきですか?"
     },
     {
-      "answer": "最適なタイミングは、個々の目標と反応に依存します。\n\n一日を通じたストレスと不安管理には、朝または分割投与(朝と午後)がしばしば好まれます。\n\n睡眠サポートと不眠症には、リラックスを促進し、睡眠開始をサポートするため、就寝の1-2時間前にアシュワガンダを摂取するのが最も効果的です。\n\n一部の人はアシュワガンダが軽度に活力を与えると感じて朝の投与を好みますが、他の人は眠気を経験し、夕方の投与から恩恵を受けます。\n\n運動パフォーマンス研究では、通常、食事と一緒に分割投与を使用します。\n\n夕方の投与から始めることで、個々の鎮静効果を評価でき、個人的な反応に基づいてタイミングを調整できます。\n\n安定した血中濃度を維持するには、特定の時間帯よりもタイミングの一貫性が重要です。",
+      "answer": "最適なタイミングは、個々の目標と反応に依存します。\n\n一日を通じたストレスと不安管理には、朝または分割投与(朝と午後)がしばしば好まれます。\n\n睡眠サポートと不眠症には、リラックスを促進し、睡眠開始をサポートするため、就寝の1-2時間前にアシュワガンダを摂取するのが最も効果的です。\n\n一部の人はアシュワガンダが軽度に活力を与えると感じて朝の投与を好みますが、他の人は眠気を経験し、夕方の投与から恩恵を受けます。\n\n運動パフォーマンス研究では、通常、食事と���緒に分割投与を使用します。\n\n夕方の投与から始めることで、個々の鎮静効果を評価でき、個人的な反応に基づいてタイミングを調整できます。\n\n安定した血中濃度を維持するには、特定の時間帯よりもタイミングの一貫性が重要です。",
       "question": "アシュワガンダは朝と夜のどちらに摂取すべきですか?"
     },
     {
@@ -51,11 +51,26 @@
   "nameEn": "Ashwagandha",
   "recommendedDosage": "標準的なアシュワガンダの投与量は、1日1回または2回300mgから600mgの標準化された根エキスの範囲であり、ほとんどの臨床研究では、最適な健康維持効果のために5%のウィザノリドを含むように標準化されたエキス300-500mgを1日2回使用しています。\n\nストレスと不安の軽減には、5-10%のウィザノリドに標準化された高濃度エキス300-600mgが典型的であり、運動パフォーマンスの効果には1日2回500-600mgが必要な場合があります。\n\n睡眠サポートは、就寝の1-2時間前に300-600mgの単回投与で達成される場合があります。\n\n認知向上プロトコルは通常1日2回300-500mgを使用し、甲状腺サポートとホルモンバランスには1日600mgを2回に分けて服用する必要がある場合があります。\n\n全根粉末を使用する伝統的な調製品は、ウィザノリド濃度が低いため、1日3,000-6,000mgのより高用量が必要です。\n\n摂取期間は、完全な健康維持効果を評価するために少なくとも8-12週間継続すべきですが、一部の人は2-4週間以内に改善を経験します。\n\nアシュワガンダは食事の有無にかかわらず摂取できますが、一部の人は食事と一緒に摂取すると軽度の消化器効果が軽減されることに気付きます。\n\n2-3ヶ月の継続補給後に定期的な休憩を取ってアシュワガンダの使用をサイクリングすることは、感受性と有効性を維持するのに役立つ場合があります。",
   "references": [
-    "Chandrasekhar K, et al. A prospective, randomized double-blind, placebo-controlled study of safety and efficacy of a high-concentration full-spectrum extract of ashwagandha root in reducing stress and anxiety in adults. Indian Journal of Psychological Medicine. 2012;34(3):255-262.",
-    "Salve J, et al. Adaptogenic and anxiolytic effects of ashwagandha root extract in healthy adults: A double-blind, randomized, placebo-controlled clinical study. Cureus. 2019;11(12):e6466.",
-    "Wankhede S, et al. Examining the effect of Withania somnifera supplementation on muscle strength and recovery: a randomized controlled trial. Journal of the International Society of Sports Nutrition. 2015;12:43.",
-    "Lopresti AL, et al. An investigation into the stress-relieving and pharmacological actions of an ashwagandha extract: A randomized, double-blind, placebo-controlled study. Medicine. 2019;98(37):e17186.",
-    "Singh N, et al. An overview on ashwagandha: a Rasayana of Ayurveda. African Journal of Traditional, Complementary and Alternative Medicines. 2011;8(5 Suppl):208-213."
+    {
+      "title": "Chandrasekhar K, et al. A prospective, randomized double-blind, placebo-controlled study of safety and efficacy of a high-concentration full-spectrum extract of ashwagandha root in reducing stress and anxiety in adults. Indian Journal of Psychological Medicine. 2012;34(3):255-262.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23439798/"
+    },
+    {
+      "title": "Salve J, et al. Adaptogenic and anxiolytic effects of ashwagandha root extract in healthy adults: A double-blind, randomized, placebo-controlled clinical study. Cureus. 2019;11(12):e6466.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32021735/"
+    },
+    {
+      "title": "Wankhede S, et al. Examining the effect of Withania somnifera supplementation on muscle strength and recovery: a randomized controlled trial. Journal of the International Society of Sports Nutrition. 2015;12:43.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26609282/"
+    },
+    {
+      "title": "Lopresti AL, et al. An investigation into the stress-relieving and pharmacological actions of an ashwagandha extract: A randomized, double-blind, placebo-controlled study. Medicine. 2019;98(37):e17186.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31517876/"
+    },
+    {
+      "title": "Singh N, et al. An overview on ashwagandha: a Rasayana of Ayurveda. African Journal of Traditional, Complementary and Alternative Medicines. 2011;8(5 Suppl):208-213.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3252722/"
+    }
   ],
   "relatedIngredients": null,
   "scientificBackground": "アシュワガンダの健康サポート特性は、主にウィザノリドと呼ばれるステロイド性ラクトンに起因し、特にウィザフェリンAとウィザノリドDが複数の細胞経路にわたって強力な生物学的活性を示します。\n\nこれらの化合物は、視床下部-下垂体-副腎軸を調節し、コルチゾール分泌を減少させ、ストレス反応を抑制しながら、慢性ストレス要因への回復力を高めます。\n\nウィザノリドはGABA模倣活性を示し、GABA受容体に結合し、抑制性神経伝達の強化を通じて抗不安および鎮静効果を生み出します。\n\n神経化学研究により、アシュワガンダがセロトニンとドパミンレベルを増加させながら、脳組織の酸化ストレスマーカーを減少させ、興奮毒性から神経を保護し、神経可塑性をサポートすることが明らかになっています。\n\nこのハーブの適応性特性には、熱ショックタンパク質、サーチュイン、細胞ストレス応答経路の調節が含まれ、細胞の回復力と長寿を強化します。\n\n臨床研究では、NF-κBシグナル伝達の阻害を通じて、TNF-アルファ、IL-6、CRPを含む炎症性サイトカインを減少させるアシュワガンダの能力が実証され、全身性抗炎症効果を提供します。\n\n運動パフォーマンスに関する研究では、VO2最大の増加、ミトコンドリア機能の強化、筋損傷の減少を示すクレアチンキナーゼレベルの低下、改善された回復マーカーが明らかになっています。\n\n内分泌研究では、アシュワガンダが黄体形成ホルモン分泌を刺激し、ライディッヒ細胞でのテストステロン産生を強化し、T3およびT4合成の増加や活性T3へのT4変換の強化を含む複数のメカニズムを通じて健康的な甲状腺機能をサポートすることが示されています。\n\n前臨床研究では、アポトーシス誘導、血管新生阻害、免疫系強化を含む複数のメカニズムを通じた潜在的な抗がん特性が示唆されていますが、ヒトのがん研究は依然として予備的です。",
