@@ -6,6 +6,10 @@ import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { TrendingUp, Shield, Award } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
+import {
+  calculateComprehensiveCost,
+  getCostEfficiencyLabel,
+} from "@/lib/cost-calculator";
 
 interface ProductCardProps {
   product: {
@@ -14,7 +18,12 @@ interface ProductCardProps {
     slug: {
       current: string;
     };
-    effectiveCostPerDay?: number;
+    servingsPerDay?: number;
+    servingsPerContainer?: number;
+    ingredients?: Array<{
+      amountMgPerServing: number;
+    }>;
+    effectiveCostPerDay?: number; // 後方互換性のため残す
     rating?: number;
     reviewCount?: number;
     isBestValue?: boolean;
@@ -28,13 +37,35 @@ export function ProductCard({ product }: ProductCardProps) {
     name,
     priceJPY,
     slug,
-    effectiveCostPerDay,
+    servingsPerDay,
+    servingsPerContainer,
+    ingredients,
+    effectiveCostPerDay: manualCostPerDay,
     rating = 4.5,
     reviewCount = 127,
     isBestValue = false,
     safetyScore = 95,
     imageUrl = "/placeholder-supplement.jpg",
   } = product;
+
+  // 実効コストを自動計算（データが揃っている場合）
+  let calculatedCost;
+  if (
+    servingsPerDay &&
+    servingsPerContainer &&
+    ingredients &&
+    ingredients.length > 0
+  ) {
+    calculatedCost = calculateComprehensiveCost({
+      priceJPY,
+      servingsPerDay,
+      servingsPerContainer,
+      ingredients,
+    });
+  }
+
+  // 計算されたコストまたは手動で渡されたコストを使用
+  const effectiveCostPerDay = calculatedCost?.costPerDay ?? manualCostPerDay;
 
   return (
     <Link href={`/products/${slug.current}`}>
