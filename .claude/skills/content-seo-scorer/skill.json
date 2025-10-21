@@ -1,0 +1,74 @@
+{
+  "name": "content-seo-scorer",
+  "description": "コンテンツSEOスコアラー - 記事のSEO品質を総合評価",
+  "version": "1.0.0",
+  "inputs": {
+    "target": {
+      "type": "string | string[]",
+      "description": "評価対象のファイルまたはディレクトリ",
+      "required": true,
+      "examples": [
+        "apps/web/src/app/(marketing)/ingredients/[slug]/page.tsx",
+        "apps/web/src/app/(marketing)/ingredients/**/*.tsx"
+      ]
+    },
+    "mode": {
+      "type": "'single' | 'batch'",
+      "description": "評価モード",
+      "default": "single"
+    },
+    "includeCompetitorAnalysis": {
+      "type": "boolean",
+      "description": "競合分析を含める",
+      "default": false
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "score": {
+      "type": "SEOScore",
+      "description": "SEOスコア（0-100点）"
+    },
+    "breakdown": {
+      "type": "ScoreBreakdown",
+      "description": "スコア内訳"
+    },
+    "issues": {
+      "type": "SEOIssue[]",
+      "description": "検出された問題"
+    },
+    "recommendations": {
+      "type": "Recommendation[]",
+      "description": "改善推奨事項"
+    }
+  },
+  "scoreWeights": {
+    "wordCount": 20,
+    "headingStructure": 15,
+    "keywordDensity": 15,
+    "internalLinks": 10,
+    "externalLinks": 10,
+    "metaTags": 15,
+    "readability": 10,
+    "structuredData": 15
+  },
+  "targets": {
+    "wordCount": 3000,
+    "headingStructure": "H1(1) → H2(3-5) → H3(適宜)",
+    "keywordDensity": "1-3%",
+    "internalLinks": 5,
+    "externalLinks": 3,
+    "titleLength": 60,
+    "descriptionLength": 160,
+    "readabilityScore": 70
+  }
+}

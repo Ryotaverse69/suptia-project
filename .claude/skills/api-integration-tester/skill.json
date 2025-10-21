@@ -1,0 +1,79 @@
+{
+  "name": "api-integration-tester",
+  "description": "Amazon PA-API・楽天API連携テスター - 認証、レート制限、データ品質を検証",
+  "version": "1.0.0",
+  "inputs": {
+    "provider": {
+      "type": "'amazon' | 'rakuten' | 'all'",
+      "description": "テスト対象のAPIプロバイダー",
+      "required": true,
+      "options": ["amazon", "rakuten", "all"]
+    },
+    "testType": {
+      "type": "'auth' | 'fetch' | 'quality' | 'rate-limit' | 'all'",
+      "description": "テストタイプ",
+      "default": "all",
+      "options": ["auth", "fetch", "quality", "rate-limit", "all"]
+    },
+    "testProduct": {
+      "type": "string | null",
+      "description": "テスト用の商品ID（ASIN、楽天商品コードなど）",
+      "default": null,
+      "examples": ["B000123456", "rakuten:item-code-123"]
+    },
+    "generateMockData": {
+      "type": "boolean",
+      "description": "モックデータを生成するか",
+      "default": false
+    },
+    "mockDataCount": {
+      "type": "number",
+      "description": "生成するモックデータの数",
+      "default": 10
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "report": {
+      "type": "TestReport",
+      "description": "API連携テストレポート"
+    },
+    "authResult": {
+      "type": "AuthTestResult",
+      "description": "認証テスト結果"
+    },
+    "fetchResult": {
+      "type": "FetchTestResult",
+      "description": "データ取得テスト結果"
+    },
+    "qualityScore": {
+      "type": "QualityScore",
+      "description": "データ品質スコア"
+    },
+    "rateLimitStatus": {
+      "type": "RateLimitStatus",
+      "description": "レート制限ステータス"
+    }
+  },
+  "qualityScoreWeights": {
+    "priceAccuracy": 30,
+    "stockAvailability": 25,
+    "imageQuality": 15,
+    "descriptionCompleteness": 15,
+    "reviewData": 10,
+    "responseTime": 5
+  },
+  "passThresholds": {
+    "qualityScore": 70,
+    "responseTime": 2000
+  }
+}

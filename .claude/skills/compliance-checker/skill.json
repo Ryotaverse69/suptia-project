@@ -1,0 +1,65 @@
+{
+  "name": "compliance-checker",
+  "description": "記事・UI文言の薬機法・景品表示法コンプライアンスを自動チェック",
+  "version": "1.0.0",
+  "inputs": {
+    "target": {
+      "type": "string | string[]",
+      "description": "チェック対象のファイルまたはディレクトリ（glob対応）",
+      "required": true,
+      "examples": [
+        "apps/web/src/**/*.tsx",
+        "apps/web/src/app/(marketing)/ingredients/**/*.tsx",
+        "*-article.json"
+      ]
+    },
+    "fileTypes": {
+      "type": "string[]",
+      "description": "チェック対象のファイルタイプ",
+      "default": ["tsx", "ts", "json", "md"],
+      "options": ["tsx", "ts", "jsx", "js", "json", "md"]
+    },
+    "severityThreshold": {
+      "type": "'critical' | 'warning' | 'all'",
+      "description": "表示する違反の重要度",
+      "default": "all"
+    },
+    "autoFix": {
+      "type": "boolean",
+      "description": "自動修正を実行（修正案を適用）",
+      "default": false
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "report": {
+      "type": "ComplianceReport",
+      "description": "コンプライアンスチェックレポート"
+    },
+    "violations": {
+      "type": "Violation[]",
+      "description": "検出された違反一覧"
+    },
+    "summary": {
+      "type": "Summary",
+      "description": "サマリー統計"
+    }
+  },
+  "scoreWeights": {
+    "critical": -15,
+    "warning": -5
+  },
+  "passThreshold": {
+    "critical": 0,
+    "warning": 3
+  }
+}

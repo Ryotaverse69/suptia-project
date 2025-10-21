@@ -1,0 +1,100 @@
+{
+  "name": "structured-data-validator",
+  "description": "JSON-LD構造化データのschema.org準拠を検証（Product, BreadcrumbList, ItemList）",
+  "version": "1.0.0",
+  "inputs": {
+    "target": {
+      "type": "string | string[]",
+      "description": "検証対象のURL、ファイル、またはディレクトリ",
+      "required": true,
+      "examples": [
+        "http://localhost:3000/ingredients/vitamin-c",
+        "apps/web/src/app/(marketing)/ingredients/[slug]/page.tsx",
+        "apps/web/src/**/*.tsx"
+      ]
+    },
+    "schemaTypes": {
+      "type": "string[]",
+      "description": "検証対象のschema.orgタイプ",
+      "default": ["Product", "BreadcrumbList", "ItemList", "Article"],
+      "options": [
+        "Product",
+        "BreadcrumbList",
+        "ItemList",
+        "Article",
+        "Organization",
+        "WebPage"
+      ]
+    },
+    "mode": {
+      "type": "'url' | 'file'",
+      "description": "検証モード（URLまたはファイル）",
+      "default": "file"
+    },
+    "googleTest": {
+      "type": "boolean",
+      "description": "Google Rich Results Testを実行するか",
+      "default": false
+    },
+    "autoFix": {
+      "type": "boolean",
+      "description": "自動修正を実行（修正案を適用）",
+      "default": false
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "report": {
+      "type": "ValidationReport",
+      "description": "構造化データ検証レポート"
+    },
+    "structuredData": {
+      "type": "StructuredData[]",
+      "description": "抽出された構造化データ"
+    },
+    "errors": {
+      "type": "ValidationError[]",
+      "description": "検出されたエラー"
+    },
+    "warnings": {
+      "type": "ValidationWarning[]",
+      "description": "検出された警告"
+    }
+  },
+  "schemaValidation": {
+    "required": ["@context", "@type"],
+    "Product": {
+      "required": ["name", "image", "description"],
+      "recommended": ["offers", "aggregateRating", "brand", "sku"]
+    },
+    "BreadcrumbList": {
+      "required": ["itemListElement"],
+      "itemListElement": {
+        "required": ["@type", "position", "name"]
+      }
+    },
+    "ItemList": {
+      "required": ["itemListElement"],
+      "recommended": ["numberOfItems"]
+    },
+    "Article": {
+      "required": ["headline", "datePublished", "author"],
+      "recommended": ["image", "publisher"]
+    }
+  },
+  "scoreWeights": {
+    "requiredFields": 50,
+    "recommendedFields": 30,
+    "schemaCompliance": 20
+  },
+  "passThreshold": 70
+}

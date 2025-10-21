@@ -1,0 +1,111 @@
+{
+  "name": "price-sync-monitor",
+  "description": "価格同期モニター - 価格データの鮮度、異常値、API障害を監視",
+  "version": "1.0.0",
+  "inputs": {
+    "mode": {
+      "type": "'check' | 'detect-anomalies' | 'analyze-cache' | 'all'",
+      "description": "モニタリングモード",
+      "default": "all",
+      "options": ["check", "detect-anomalies", "analyze-cache", "all"]
+    },
+    "dataSource": {
+      "type": "string",
+      "description": "価格データソース（JSONファイルまたはSanity）",
+      "default": "price-data.json",
+      "examples": ["price-data.json", "sanity://products"]
+    },
+    "anomalyThreshold": {
+      "type": "number",
+      "description": "異常価格の閾値（前回比±パーセント）",
+      "default": 80,
+      "min": 0,
+      "max": 100
+    },
+    "cacheMaxAge": {
+      "type": "number",
+      "description": "キャッシュの最大有効期間（時間）",
+      "default": 6,
+      "min": 1,
+      "max": 24
+    },
+    "notify": {
+      "type": "'slack' | 'discord' | 'email' | null",
+      "description": "通知先",
+      "default": null,
+      "options": ["slack", "discord", "email", null]
+    },
+    "webhookUrl": {
+      "type": "string | null",
+      "description": "Webhook URL（Slack/Discord）",
+      "default": null
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "status": {
+      "type": "MonitorStatus",
+      "description": "モニタリングステータス"
+    },
+    "anomalies": {
+      "type": "PriceAnomaly[]",
+      "description": "検出された異常価格"
+    },
+    "cacheStatus": {
+      "type": "CacheStatus",
+      "description": "キャッシュステータス"
+    },
+    "metrics": {
+      "type": "SLOMetrics",
+      "description": "SLOメトリクス"
+    },
+    "report": {
+      "type": "MonitorReport",
+      "description": "詳細レポート"
+    }
+  },
+  "sloTargets": {
+    "price_sync_error_rate": {
+      "target": 1,
+      "unit": "%",
+      "description": "価格同期エラー率"
+    },
+    "cache_hit_rate": {
+      "target": 90,
+      "unit": "%",
+      "description": "キャッシュヒット率"
+    },
+    "unmatched_product_rate": {
+      "target": 5,
+      "unit": "%",
+      "description": "未マッチ商品率"
+    },
+    "api_latency": {
+      "target": 1500,
+      "unit": "ms",
+      "description": "APIレスポンスタイム"
+    }
+  },
+  "alertRules": {
+    "critical": {
+      "price_sync_error_rate": "> 5%",
+      "cache_hit_rate": "< 70%",
+      "api_latency": "> 3000ms"
+    },
+    "warning": {
+      "price_sync_error_rate": "> 2%",
+      "cache_hit_rate": "< 85%",
+      "unmatched_product_rate": "> 10%",
+      "api_latency": "> 2000ms"
+    }
+  }
+}

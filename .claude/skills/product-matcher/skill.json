@@ -1,0 +1,85 @@
+{
+  "name": "product-matcher",
+  "description": "複数ECサイトの商品を正確にマッチング（JAN・ASIN・タイトル類似度）",
+  "version": "1.0.0",
+  "inputs": {
+    "source": {
+      "type": "string",
+      "description": "マッチング元の商品データファイル（JSON）",
+      "required": true,
+      "examples": ["amazon-products.json", "products/*.json"]
+    },
+    "target": {
+      "type": "string",
+      "description": "マッチング先の商品データファイル（JSON）",
+      "required": true,
+      "examples": ["rakuten-products.json", "products/*.json"]
+    },
+    "threshold": {
+      "type": "number",
+      "description": "類似度の閾値（0.0-1.0）",
+      "default": 0.92,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "matchingStrategy": {
+      "type": "string",
+      "description": "マッチング戦略",
+      "default": "auto",
+      "options": ["auto", "jan-only", "asin-only", "title-only", "all"]
+    },
+    "saveToSanity": {
+      "type": "boolean",
+      "description": "マッチング結果をSanityに保存",
+      "default": false
+    },
+    "generateReviewList": {
+      "type": "boolean",
+      "description": "未マッチ商品のレビューリストを生成",
+      "default": true
+    },
+    "outputFormat": {
+      "type": "'console' | 'json' | 'markdown'",
+      "description": "出力フォーマット",
+      "default": "console"
+    },
+    "saveReport": {
+      "type": "string | null",
+      "description": "レポートファイルの保存パス",
+      "default": null
+    }
+  },
+  "outputs": {
+    "matches": {
+      "type": "Match[]",
+      "description": "マッチング結果"
+    },
+    "unmatched": {
+      "type": "UnmatchedProduct[]",
+      "description": "未マッチ商品リスト"
+    },
+    "statistics": {
+      "type": "MatchStatistics",
+      "description": "マッチング統計"
+    },
+    "report": {
+      "type": "MatchReport",
+      "description": "詳細レポート"
+    }
+  },
+  "matchingPriority": [
+    "JAN一致（confidence: 1.0）",
+    "ASIN一致（confidence: 0.95）",
+    "タイトル類似度 >= 0.92（confidence: 類似度）"
+  ],
+  "confidenceWeights": {
+    "janMatch": 1.0,
+    "asinMatch": 0.95,
+    "titleSimilarity": "dynamic"
+  },
+  "thresholds": {
+    "highConfidence": 0.92,
+    "mediumConfidence": 0.85,
+    "lowConfidence": 0.75
+  }
+}
