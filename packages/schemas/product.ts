@@ -233,6 +233,107 @@ export const product = defineType({
         "価格 ÷ (1容器あたりの回数 ÷ 1日あたりの摂取回数) で自動計算",
       readOnly: true,
     }),
+    defineField({
+      name: "priceData",
+      title: "価格データ（自動取得）",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "source",
+              title: "ソース",
+              type: "string",
+              options: {
+                list: [
+                  { title: "楽天", value: "rakuten" },
+                  { title: "Amazon", value: "amazon" },
+                  { title: "iHerb", value: "iherb" },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "amount",
+              title: "価格（円）",
+              type: "number",
+              validation: (Rule) => Rule.required().min(0),
+            },
+            {
+              name: "currency",
+              title: "通貨",
+              type: "string",
+              initialValue: "JPY",
+            },
+            {
+              name: "url",
+              title: "購入URL",
+              type: "url",
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "fetchedAt",
+              title: "取得日時",
+              type: "datetime",
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "confidence",
+              title: "信頼度",
+              type: "number",
+              validation: (Rule) => Rule.min(0).max(1),
+              description: "0〜1の範囲（1が最高信頼度）",
+            },
+          ],
+          preview: {
+            select: {
+              source: "source",
+              amount: "amount",
+              fetchedAt: "fetchedAt",
+            },
+            prepare({ source, amount, fetchedAt }) {
+              return {
+                title: `${source}: ¥${amount?.toLocaleString()}`,
+                subtitle: fetchedAt
+                  ? new Date(fetchedAt).toLocaleString("ja-JP")
+                  : "未取得",
+              };
+            },
+          },
+        },
+      ],
+      description: "API経由で自動取得された最新の価格情報",
+    }),
+    defineField({
+      name: "priceHistory",
+      title: "価格履歴",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "source",
+              title: "ソース",
+              type: "string",
+            },
+            {
+              name: "amount",
+              title: "価格（円）",
+              type: "number",
+            },
+            {
+              name: "recordedAt",
+              title: "記録日時",
+              type: "datetime",
+            },
+          ],
+        },
+      ],
+      description: "過去の価格変動履歴（最大100件）",
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {

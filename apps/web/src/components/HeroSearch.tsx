@@ -13,7 +13,7 @@ export function HeroSearch() {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-primary via-primary-600 to-accent-purple py-20 px-6 lg:px-12 xl:px-16 overflow-hidden">
+    <div className="relative bg-gradient-to-br from-primary-300 via-primary-400 to-primary py-20 px-6 lg:px-12 xl:px-16 overflow-hidden">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10"></div>
 
       {/* Floating orbs for depth */}

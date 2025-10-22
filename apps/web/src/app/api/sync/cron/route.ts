@@ -9,6 +9,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { sanityServer } from "@/lib/sanityServer";
+import {
+  saveBulkPriceData,
+  type PriceDataForSanity,
+} from "@/lib/price-manager";
 
 export const maxDuration = 300; // 5分のタイムアウト（Pro planの場合）
 
@@ -98,8 +102,56 @@ export async function GET(request: NextRequest) {
       `[Cron] Batch sync completed: ${result.successCount}/${result.totalProducts} successful`,
     );
 
-    // TODO: 価格データをSanityに保存する処理を追加
-    // TODO: 価格履歴を記録する処理を追加
+    // 価格データをSanityに保存
+    const priceUpdates: Array<{
+      productId: string;
+      priceData: PriceDataForSanity[];
+    }> = [];
+
+    for (const productResult of result.results) {
+      if (productResult.success && productResult.prices) {
+        const priceData: PriceDataForSanity[] = productResult.prices.map(
+          (price: {
+            source: string;
+            amount: number;
+            currency: string;
+            url: string;
+          }) => ({
+            source: price.source as "rakuten" | "amazon" | "iherb",
+            amount: price.amount,
+            currency: price.currency,
+            url: price.url,
+            fetchedAt: new Date().toISOString(),
+            confidence: 0.95, // デフォルトの信頼度
+          }),
+        );
+
+        priceUpdates.push({
+          productId: productResult.productId,
+          priceData,
+        });
+      }
+    }
+
+    let saveResult: {
+      successCount: number;
+      failureCount: number;
+      errors: Array<{ productId: string; error: string }>;
+    } = { successCount: 0, failureCount: 0, errors: [] };
+
+    if (priceUpdates.length > 0) {
+      console.log(
+        `[Cron] Saving ${priceUpdates.length} price updates to Sanity...`,
+      );
+      saveResult = await saveBulkPriceData(priceUpdates, {
+        recordHistory: true,
+        maxHistoryEntries: 100,
+        priceChangeThreshold: 0.05, // 5%以上の変動で履歴に記録
+      });
+      console.log(
+        `[Cron] Price save completed: ${saveResult.successCount} success, ${saveResult.failureCount} failure`,
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -108,6 +160,8 @@ export async function GET(request: NextRequest) {
         totalProducts: result.totalProducts,
         successCount: result.successCount,
         failureCount: result.failureCount,
+        savedToSanity: saveResult.successCount,
+        saveErrors: saveResult.failureCount,
       },
       timestamp: new Date().toISOString(),
       duration: Date.now() - startTime,
