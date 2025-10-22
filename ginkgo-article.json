@@ -71,13 +71,8 @@
       "_type": "reference"
     },
     {
-      "_key": "7MAYpyO4GR94MtR0V9EtND",
-      "_ref": "ingredient-7MAYpyO4GR94MtR0V9EtND",
-      "_type": "reference"
-    },
-    {
-      "_key": "ingredient.ashwagandha",
-      "_ref": "ingredient-ingredient.ashwagandha",
+      "_key": "ashwagandha",
+      "_ref": "ingredient-ashwagandha",
       "_type": "reference"
     }
   ]
