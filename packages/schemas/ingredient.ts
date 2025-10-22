@@ -121,6 +121,11 @@ export const ingredient = defineType({
       type: "string",
       options: {
         list: [
+          { title: "S: 大規模RCTやメタ解析", value: "S" },
+          { title: "A: 良質な研究で効果確認", value: "A" },
+          { title: "B: 限定的研究・条件付き", value: "B" },
+          { title: "C: 動物実験・小規模試験", value: "C" },
+          { title: "D: 理論・未検証レベル", value: "D" },
           { title: "高", value: "高" },
           { title: "中", value: "中" },
           { title: "低", value: "低" },

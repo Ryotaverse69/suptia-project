@@ -81,14 +81,6 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href="/company"
-                  className="hover:text-foreground transition-colors"
-                >
-                  運営会社について
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/about"
                   className="hover:text-foreground transition-colors"
                 >
@@ -101,14 +93,6 @@ export function Footer() {
                   className="hover:text-foreground transition-colors"
                 >
                   お問い合わせ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/advisory"
-                  className="hover:text-foreground transition-colors"
-                >
-                  研究・監修者情報
                 </Link>
               </li>
               <li>
