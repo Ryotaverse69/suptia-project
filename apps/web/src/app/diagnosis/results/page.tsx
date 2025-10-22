@@ -1,11 +1,7 @@
-"use client";
-
-import { useMemo } from "react";
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import {
   recommendProducts,
-  type ProductForDiagnosis,
   type UserDiagnosisProfile,
   type HealthGoal,
   type UserPriority,
@@ -15,107 +11,11 @@ import {
 import type { ContraindicationTag } from "@/lib/safety-checker";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { fetchProductsForDiagnosis } from "../actions";
 
-// ダミー商品データ（実際はSanityから取得）
-const MOCK_PRODUCTS: ProductForDiagnosis[] = [
-  {
-    id: "prod-1",
-    name: "高品質ビタミンC 1000mg 250粒",
-    brand: "Now Foods",
-    priceJPY: 1980,
-    servingsPerDay: 2,
-    servingsPerContainer: 250,
-    ingredients: [
-      {
-        name: "ビタミンC",
-        slug: "vitamin-c",
-        category: "ビタミン",
-        evidenceLevel: "A",
-        relatedGoals: ["immune-boost", "skin-health", "anti-aging"],
-        contraindications: [],
-        amountMgPerServing: 1000,
-      },
-    ],
-  },
-  {
-    id: "prod-2",
-    name: "プレミアムオメガ3フィッシュオイル 120粒",
-    brand: "Nordic Naturals",
-    priceJPY: 3500,
-    servingsPerDay: 2,
-    servingsPerContainer: 60,
-    ingredients: [
-      {
-        name: "EPA/DHA",
-        slug: "omega-3",
-        category: "脂肪酸",
-        evidenceLevel: "S",
-        relatedGoals: ["heart-health", "brain-function", "anti-aging"],
-        contraindications: ["anticoagulant-use", "surgery", "bleeding-risk"],
-        amountMgPerServing: 1000,
-      },
-    ],
-  },
-  {
-    id: "prod-3",
-    name: "キレート加工マグネシウム 400mg 240粒",
-    brand: "Doctor's Best",
-    priceJPY: 2200,
-    servingsPerDay: 2,
-    servingsPerContainer: 120,
-    ingredients: [
-      {
-        name: "マグネシウム",
-        slug: "magnesium",
-        category: "ミネラル",
-        evidenceLevel: "B",
-        relatedGoals: ["sleep-quality", "muscle-growth", "stress-relief"],
-        contraindications: ["kidney-disease"],
-        amountMgPerServing: 400,
-      },
-    ],
-  },
-  {
-    id: "prod-4",
-    name: "高濃度ビタミンD3 2000IU 360粒",
-    brand: "Healthy Origins",
-    priceJPY: 1500,
-    servingsPerDay: 1,
-    servingsPerContainer: 360,
-    ingredients: [
-      {
-        name: "ビタミンD3",
-        slug: "vitamin-d",
-        category: "ビタミン",
-        evidenceLevel: "A",
-        relatedGoals: ["bone-health", "immune-boost", "general-wellness"],
-        contraindications: [],
-        amountMgPerServing: 50,
-      },
-    ],
-  },
-  {
-    id: "prod-5",
-    name: "総合マルチビタミン 90粒",
-    brand: "Generic Brand",
-    priceJPY: 800,
-    servingsPerDay: 1,
-    servingsPerContainer: 30,
-    ingredients: [
-      {
-        name: "ビタミンミックス",
-        slug: "multi-vitamin",
-        category: "その他",
-        evidenceLevel: "C",
-        relatedGoals: ["general-wellness"],
-        contraindications: [],
-        amountMgPerServing: 500,
-      },
-    ],
-  },
-];
+// Sanityから商品データを取得するようになりました
 
-export default function DiagnosisResultsPage({
+export default async function DiagnosisResultsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -126,39 +26,28 @@ export default function DiagnosisResultsPage({
   const budgetStr = searchParams.budget as string | undefined;
   const priorityParam = searchParams.priority as string | undefined;
 
-  // ユーザープロファイル（メモ化）
-  const userProfile = useMemo<UserDiagnosisProfile>(() => {
-    const goals =
-      (goalsParam?.split(",").filter(Boolean) as HealthGoal[]) || [];
-    const conditions =
-      (conditionsParam?.split(",").filter(Boolean) as ContraindicationTag[]) ||
-      [];
-    const budget = budgetStr ? parseFloat(budgetStr) : undefined;
-    const priority = (priorityParam || "balanced") as UserPriority;
+  // ユーザープロファイル（サーバーコンポーネントなのでメモ化不要）
+  const goals = (goalsParam?.split(",").filter(Boolean) as HealthGoal[]) || [];
+  const conditions =
+    (conditionsParam?.split(",").filter(Boolean) as ContraindicationTag[]) ||
+    [];
+  const budget = budgetStr ? parseFloat(budgetStr) : undefined;
+  const priority = (priorityParam || "balanced") as UserPriority;
 
-    return {
-      goals,
-      healthConditions: conditions,
-      budgetPerDay: budget,
-      priority,
-    };
-  }, [goalsParam, conditionsParam, budgetStr, priorityParam]);
-
-  // 推薦結果を計算
-  const recommendations = useMemo(
-    () => recommendProducts(MOCK_PRODUCTS, userProfile),
-    [userProfile],
-  );
-
-  const topThree = recommendations.slice(0, 3);
-
-  // JSXで使用する変数を取り出す
-  const {
+  const userProfile: UserDiagnosisProfile = {
     goals,
     healthConditions: conditions,
     budgetPerDay: budget,
     priority,
-  } = userProfile;
+  };
+
+  // Sanityから商品データを取得
+  const products = await fetchProductsForDiagnosis();
+
+  // 推薦結果を計算
+  const recommendations = recommendProducts(products, userProfile);
+
+  const topThree = recommendations.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-50">

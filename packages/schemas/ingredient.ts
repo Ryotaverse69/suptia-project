@@ -227,6 +227,33 @@ export const ingredient = defineType({
       },
       group: "safety",
     }),
+    defineField({
+      name: "relatedGoals",
+      title: "関連する健康目標",
+      type: "array",
+      of: [{ type: "string" }],
+      description: "この成分が貢献する健康目標のタグ。診断機能で使用されます。",
+      options: {
+        list: [
+          { title: "免疫力強化", value: "immune-boost" },
+          { title: "肌の健康", value: "skin-health" },
+          { title: "抗老化", value: "anti-aging" },
+          { title: "心臓の健康", value: "heart-health" },
+          { title: "脳の健康", value: "brain-health" },
+          { title: "骨の健康", value: "bone-health" },
+          { title: "関節の健康", value: "joint-health" },
+          { title: "消化器の健康", value: "digestive-health" },
+          { title: "目の健康", value: "eye-health" },
+          { title: "エネルギー増強", value: "energy-boost" },
+          { title: "ストレス軽減", value: "stress-relief" },
+          { title: "睡眠改善", value: "sleep-improvement" },
+          { title: "体重管理", value: "weight-management" },
+          { title: "筋肉増強", value: "muscle-building" },
+          { title: "運動パフォーマンス向上", value: "athletic-performance" },
+        ],
+      },
+      group: "safety",
+    }),
 
     // FAQ
     defineField({
