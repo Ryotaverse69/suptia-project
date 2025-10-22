@@ -1,0 +1,29 @@
+{
+  "name": "article-improver",
+  "displayName": "Sanity Article Improver",
+  "description": "成分記事の品質を自動改善（薬機法準拠、文字数拡充、SEO最適化）",
+  "version": "1.0.0",
+  "author": "Suptia Project",
+  "created": "2024-10-22",
+  "updated": "2024-10-22",
+  "tags": ["sanity", "quality", "compliance", "seo", "content"],
+  "category": "content-optimization",
+  "permissions": {
+    "readFiles": true,
+    "writeFiles": true,
+    "executeCommands": false
+  },
+  "commands": [
+    {
+      "name": "improve",
+      "description": "記事を改善",
+      "usage": "npx tsx .claude/skills/article-improver/index.ts [file.json] [options]",
+      "options": [
+        "--batch: 複数ファイルを一括処理",
+        "--output: 出力ファイル名を指定",
+        "--model: CoQ10記事を模範として使用",
+        "--force: 既存の改善済みファイルを上書き"
+      ]
+    }
+  ]
+}
