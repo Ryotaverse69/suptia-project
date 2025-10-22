@@ -85,6 +85,18 @@ export const product = defineType({
               return isValid || "EANは13桁の数字である必要があります";
             }),
         },
+        {
+          name: "rakutenItemCode",
+          title: "楽天商品コード",
+          type: "string",
+          description: "楽天市場の商品コード（例: shopid:itemid）",
+        },
+        {
+          name: "yahooCode",
+          title: "Yahoo!商品コード",
+          type: "string",
+          description: "Yahoo!ショッピングの商品コード",
+        },
       ],
     }),
     defineField({

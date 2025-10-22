@@ -4,21 +4,26 @@ export * from "./types";
 export * from "./base";
 export * from "./amazon";
 export * from "./rakuten";
+export * from "./yahoo";
 
 // アダプターファクトリー
 import { AmazonAdapter, type AmazonAdapterConfig } from "./amazon";
 import { RakutenAdapter, type RakutenAdapterConfig } from "./rakuten";
+import { YahooAdapter, type YahooAdapterConfig } from "./yahoo";
 import type { ProductPriceAdapter } from "./base";
 
 /**
  * アダプター種別
  */
-export type AdapterType = "amazon" | "rakuten";
+export type AdapterType = "amazon" | "rakuten" | "yahoo";
 
 /**
  * アダプター設定のユニオン型
  */
-export type AnyAdapterConfig = AmazonAdapterConfig | RakutenAdapterConfig;
+export type AnyAdapterConfig =
+  | AmazonAdapterConfig
+  | RakutenAdapterConfig
+  | YahooAdapterConfig;
 
 /**
  * アダプターファクトリー
@@ -36,6 +41,10 @@ export function createAdapter(
   config: RakutenAdapterConfig,
 ): RakutenAdapter;
 export function createAdapter(
+  type: "yahoo",
+  config: YahooAdapterConfig,
+): YahooAdapter;
+export function createAdapter(
   type: AdapterType,
   config: AnyAdapterConfig,
 ): ProductPriceAdapter {
@@ -44,6 +53,8 @@ export function createAdapter(
       return new AmazonAdapter(config as AmazonAdapterConfig);
     case "rakuten":
       return new RakutenAdapter(config as RakutenAdapterConfig);
+    case "yahoo":
+      return new YahooAdapter(config as YahooAdapterConfig);
     default:
       throw new Error(`Unknown adapter type: ${type}`);
   }
@@ -54,7 +65,8 @@ export function createAdapter(
  *
  * 優先順位:
  * 1. 楽天API（売上要件なし、MVP期間中のメイン）
- * 2. Amazon PA-API（売上発生後に有効化）
+ * 2. Yahoo!ショッピングAPI（フェーズ2.5 - 価格比較拡張）
+ * 3. Amazon PA-API（売上発生後に有効化）
  */
 export function createAdaptersFromEnv(): ProductPriceAdapter[] {
   const adapters: ProductPriceAdapter[] = [];
@@ -69,6 +81,19 @@ export function createAdaptersFromEnv(): ProductPriceAdapter[] {
         applicationId: process.env.RAKUTEN_APPLICATION_ID,
         applicationSecret: process.env.RAKUTEN_APPLICATION_SECRET,
         affiliateId: process.env.RAKUTEN_AFFILIATE_ID,
+      }),
+    );
+  }
+
+  // Yahoo!ショッピングAPI（フェーズ2.5）
+  // - 売上要件なし
+  // - 1リクエスト/秒制限
+  // - バリューコマースアフィリエイト（報酬率1-50%）
+  if (process.env.YAHOO_SHOPPING_CLIENT_ID) {
+    adapters.push(
+      createAdapter("yahoo", {
+        clientId: process.env.YAHOO_SHOPPING_CLIENT_ID,
+        affiliateId: process.env.YAHOO_AFFILIATE_ID,
       }),
     );
   }
