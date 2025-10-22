@@ -36,12 +36,13 @@ export async function GET(request: NextRequest) {
 
     console.log("[Cron] Starting price sync batch job...");
 
-    // Sanityから全商品を取得
+    // Sanityから全商品を取得（識別子も含む）
     const products = await sanityServer.fetch(
       `*[_type == "product" && availability == "in-stock"] {
         _id,
         name,
-        "brand": brand->name
+        "brand": brand->name,
+        identifiers
       }`,
     );
 
@@ -57,14 +58,35 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Cron] Found ${products.length} products to sync`);
 
-    // バッチ同期APIを呼び出し
+    // バッチ同期APIを呼び出し（識別子を優先的に使用）
     const batchRequest = {
-      products: products.map((product: any) => ({
-        id: product._id,
-        identifier: {
-          title: product.name,
-        },
-      })),
+      products: products.map((product: any) => {
+        const identifier: any = {};
+
+        // 識別子の優先順位: JAN > ASIN > title
+        if (product.identifiers?.jan) {
+          identifier.jan = product.identifiers.jan;
+        }
+        if (product.identifiers?.asin) {
+          identifier.asin = product.identifiers.asin;
+        }
+        if (product.identifiers?.upc) {
+          identifier.upc = product.identifiers.upc;
+        }
+        if (product.identifiers?.ean) {
+          identifier.ean = product.identifiers.ean;
+        }
+
+        // 識別子がない場合はタイトルで検索
+        if (Object.keys(identifier).length === 0) {
+          identifier.title = product.name;
+        }
+
+        return {
+          id: product._id,
+          identifier,
+        };
+      }),
       maxConcurrency: 10, // Cronジョブなので並列数を多めに
     };
 

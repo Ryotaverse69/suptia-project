@@ -29,6 +29,65 @@ export const product = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "identifiers",
+      title: "商品識別子",
+      type: "object",
+      description:
+        "JANコード、ASIN等の商品識別番号（価格取得の精度向上に使用）",
+      fields: [
+        {
+          name: "jan",
+          title: "JANコード",
+          type: "string",
+          description: "日本の標準商品コード（13桁または8桁）",
+          validation: (Rule) =>
+            Rule.custom((value) => {
+              if (!value) return true; // オプショナル
+              const isValid = /^\d{8}$|^\d{13}$/.test(value);
+              return (
+                isValid || "JANコードは8桁または13桁の数字である必要があります"
+              );
+            }),
+        },
+        {
+          name: "asin",
+          title: "ASIN",
+          type: "string",
+          description: "Amazon商品識別番号（10文字）",
+          validation: (Rule) =>
+            Rule.custom((value) => {
+              if (!value) return true; // オプショナル
+              const isValid = /^[A-Z0-9]{10}$/.test(value);
+              return isValid || "ASINは10文字の英数字である必要があります";
+            }),
+        },
+        {
+          name: "upc",
+          title: "UPC",
+          type: "string",
+          description: "米国の標準商品コード（12桁）",
+          validation: (Rule) =>
+            Rule.custom((value) => {
+              if (!value) return true; // オプショナル
+              const isValid = /^\d{12}$/.test(value);
+              return isValid || "UPCは12桁の数字である必要があります";
+            }),
+        },
+        {
+          name: "ean",
+          title: "EAN",
+          type: "string",
+          description: "欧州商品コード（13桁）",
+          validation: (Rule) =>
+            Rule.custom((value) => {
+              if (!value) return true; // オプショナル
+              const isValid = /^\d{13}$/.test(value);
+              return isValid || "EANは13桁の数字である必要があります";
+            }),
+        },
+      ],
+    }),
+    defineField({
       name: "ingredients",
       title: "成分構成",
       type: "array",
