@@ -21,22 +21,20 @@ export interface RakutenAdapterConfig extends AdapterConfig {
 }
 
 /**
- * 楽天商品検索APIレスポンス型（簡略版）
+ * 楽天商品検索APIレスポンス型（formatVersion=2対応）
  */
 interface RakutenItemSearchResponse {
-  Items?: Array<{
-    Item: {
-      itemName: string;
-      itemCode: string;
-      itemPrice: number;
-      itemUrl: string;
-      affiliateUrl?: string;
-      availability: number; // 0=売り切れ, 1=在庫あり
-      reviewCount: number;
-      reviewAverage: number;
-      pointRate: number;
-      janCode?: string;
-    };
+  items?: Array<{
+    itemName: string;
+    itemCode: string;
+    itemPrice: number;
+    itemUrl: string;
+    affiliateUrl?: string;
+    availability: number; // 0=売り切れ, 1=在庫あり
+    reviewCount: number;
+    reviewAverage: number;
+    pointRate: number;
+    janCode?: string;
   }>;
   error?: string;
   error_description?: string;
@@ -69,7 +67,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.Items || response.Items.length === 0) {
+      if (!response.items || response.items.length === 0) {
         return {
           success: false,
           error: {
@@ -80,7 +78,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.Items[0].Item;
+      const item = response.items[0];
 
       // ポイント還元を考慮した実効価格
       const pointDiscount = item.itemPrice * (item.pointRate / 100);
@@ -113,7 +111,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.Items || response.Items.length === 0) {
+      if (!response.items || response.items.length === 0) {
         return {
           success: false,
           error: {
@@ -124,7 +122,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.Items[0].Item;
+      const item = response.items[0];
       const stockStatus: StockStatus =
         item.availability === 1
           ? ("in_stock" as StockStatus)
@@ -147,7 +145,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.Items || response.Items.length === 0) {
+      if (!response.items || response.items.length === 0) {
         return {
           success: false,
           error: {
@@ -158,7 +156,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.Items[0].Item;
+      const item = response.items[0];
 
       const reviewData: ReviewData = {
         averageRating: item.reviewAverage,
@@ -182,6 +180,7 @@ export class RakutenAdapter extends BaseAdapter {
     const params = new URLSearchParams({
       applicationId: this.rakutenConfig.applicationId,
       formatVersion: "2",
+      hits: "1", // 最初の1件のみ取得（効率化）
     });
 
     // 識別子の優先順位: JAN > itemCode > keyword
