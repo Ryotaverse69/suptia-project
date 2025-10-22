@@ -22,9 +22,10 @@ export interface RakutenAdapterConfig extends AdapterConfig {
 
 /**
  * 楽天商品検索APIレスポンス型（formatVersion=2対応）
+ * 注意: formatVersion=2でも"Items"は大文字
  */
 interface RakutenItemSearchResponse {
-  items?: Array<{
+  Items?: Array<{
     itemName: string;
     itemCode: string;
     itemPrice: number;
@@ -67,7 +68,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.items || response.items.length === 0) {
+      if (!response.Items || response.Items.length === 0) {
         return {
           success: false,
           error: {
@@ -78,7 +79,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.items[0];
+      const item = response.Items[0];
 
       // ポイント還元を考慮した実効価格
       const pointDiscount = item.itemPrice * (item.pointRate / 100);
@@ -111,7 +112,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.items || response.items.length === 0) {
+      if (!response.Items || response.Items.length === 0) {
         return {
           success: false,
           error: {
@@ -122,7 +123,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.items[0];
+      const item = response.Items[0];
       const stockStatus: StockStatus =
         item.availability === 1
           ? ("in_stock" as StockStatus)
@@ -145,7 +146,7 @@ export class RakutenAdapter extends BaseAdapter {
         this.searchItem(identifier),
       );
 
-      if (!response.items || response.items.length === 0) {
+      if (!response.Items || response.Items.length === 0) {
         return {
           success: false,
           error: {
@@ -156,7 +157,7 @@ export class RakutenAdapter extends BaseAdapter {
         };
       }
 
-      const item = response.items[0];
+      const item = response.Items[0];
 
       const reviewData: ReviewData = {
         averageRating: item.reviewAverage,
