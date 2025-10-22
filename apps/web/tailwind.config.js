@@ -72,6 +72,19 @@ module.exports = {
           "2xl": "1440px",
         },
       },
+      animation: {
+        "gradient-shift": "gradient-shift 15s ease infinite",
+      },
+      keyframes: {
+        "gradient-shift": {
+          "0%, 100%": {
+            "background-position": "0% 50%",
+          },
+          "50%": {
+            "background-position": "100% 50%",
+          },
+        },
+      },
     },
   },
   plugins: [],

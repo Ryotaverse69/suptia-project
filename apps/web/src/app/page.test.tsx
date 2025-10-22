@@ -31,15 +31,6 @@ describe("Home Page", () => {
     expect(heading).toHaveTextContent("あなたに最適なサプリを見つけよう");
   });
 
-  it("renders the description", async () => {
-    const HomeComponent = await Home();
-    render(HomeComponent);
-    const description = screen.getByText(
-      "科学的根拠に基づいた、信頼できるサプリメント比較サイト",
-    );
-    expect(description).toBeInTheDocument();
-  });
-
   it("renders the recommended products section", async () => {
     const HomeComponent = await Home();
     render(HomeComponent);

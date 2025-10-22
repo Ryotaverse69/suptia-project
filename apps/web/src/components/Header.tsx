@@ -9,7 +9,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-primary-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/10 backdrop-blur-xl shadow-lg supports-[backdrop-filter]:bg-white/5">
       <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
         <div className="flex h-16 items-center justify-between">
           {/* Left: Logo */}
@@ -25,10 +25,10 @@ export function Header() {
               priority
             />
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-primary-900 leading-none">
+              <span className="font-bold text-lg text-white leading-none drop-shadow-sm">
                 サプティア
               </span>
-              <span className="text-xs text-primary-600 leading-none">
+              <span className="text-xs text-white/80 leading-none drop-shadow-sm">
                 Suptia
               </span>
             </div>
@@ -39,7 +39,7 @@ export function Header() {
             {/* About Link */}
             <Link
               href="/about"
-              className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
+              className="text-sm text-white/90 hover:text-white transition-colors font-medium drop-shadow-sm"
             >
               サプティアとは
             </Link>
@@ -47,7 +47,7 @@ export function Header() {
             {/* How to Use Link */}
             <Link
               href="/how-to-use"
-              className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
+              className="text-sm text-white/90 hover:text-white transition-colors font-medium drop-shadow-sm"
             >
               サプティアの使い方
             </Link>
@@ -55,7 +55,7 @@ export function Header() {
             {/* Login Button */}
             <Link
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all backdrop-blur-sm border border-white/30 text-sm font-medium shadow-lg"
             >
               <User size={18} />
               <span>ログイン</span>
@@ -65,24 +65,24 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-primary-100 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
             {mobileMenuOpen ? (
-              <X size={24} className="text-primary-600" />
+              <X size={24} className="text-white drop-shadow-sm" />
             ) : (
-              <Menu size={24} className="text-primary-600" />
+              <Menu size={24} className="text-white drop-shadow-sm" />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-primary-200 py-4 space-y-4">
+          <div className="md:hidden border-t border-white/20 py-4 space-y-4 bg-white/5 backdrop-blur-xl">
             {/* About - Mobile */}
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
+              className="block px-2 py-2 text-white/90 hover:text-white transition-colors font-medium drop-shadow-sm"
             >
               サプティアとは
             </Link>
@@ -91,7 +91,7 @@ export function Header() {
             <Link
               href="/how-to-use"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
+              className="block px-2 py-2 text-white/90 hover:text-white transition-colors font-medium drop-shadow-sm"
             >
               サプティアの使い方
             </Link>
@@ -100,7 +100,7 @@ export function Header() {
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 mx-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
+              className="flex items-center justify-center gap-2 mx-2 px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all backdrop-blur-sm border border-white/30 font-medium shadow-lg"
             >
               <User size={18} />
               <span>ログイン</span>
