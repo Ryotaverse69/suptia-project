@@ -67,6 +67,7 @@ export function createAdaptersFromEnv(): ProductPriceAdapter[] {
     adapters.push(
       createAdapter("rakuten", {
         applicationId: process.env.RAKUTEN_APPLICATION_ID,
+        applicationSecret: process.env.RAKUTEN_APPLICATION_SECRET,
         affiliateId: process.env.RAKUTEN_AFFILIATE_ID,
       }),
     );

@@ -16,6 +16,7 @@ import type {
  */
 export interface RakutenAdapterConfig extends AdapterConfig {
   applicationId: string;
+  applicationSecret?: string; // 一部のAPIエンドポイントで必要
   affiliateId?: string;
 }
 
