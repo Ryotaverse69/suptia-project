@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { validateCompliance } from "./utils/compliance";
 
 export const product = defineType({
   name: "product",
@@ -201,6 +202,13 @@ export const product = defineType({
       name: "description",
       title: "商品説明",
       type: "text",
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          const result = validateCompliance(value);
+          return result.isValid
+            ? true
+            : result.message || "薬機法違反の可能性があります";
+        }).warning(),
     }),
     defineField({
       name: "form",

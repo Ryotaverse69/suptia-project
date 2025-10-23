@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { validateCompliance } from "./utils/compliance";
 
 export const ingredient = defineType({
   name: "ingredient",
@@ -78,7 +79,17 @@ export const ingredient = defineType({
       rows: 4,
       description:
         "成分の簡潔な説明（300-500文字程度）※記事全体で2,500〜3,500文字を目指してください",
-      validation: (Rule) => Rule.required().min(300).max(600),
+      validation: (Rule) =>
+        Rule.required()
+          .min(300)
+          .max(600)
+          .custom((value) => {
+            const result = validateCompliance(value);
+            return result.isValid
+              ? true
+              : result.message || "薬機法違反の可能性があります";
+          })
+          .warning(),
       group: "content",
     }),
 
@@ -90,7 +101,20 @@ export const ingredient = defineType({
       of: [{ type: "string" }],
       description:
         "箇条書きで効果を記載（8〜10項目推奨）各項目は詳細に記述してください",
-      validation: (Rule) => Rule.required().min(5),
+      validation: (Rule) =>
+        Rule.required()
+          .min(5)
+          .custom((items: string[] | undefined) => {
+            if (!items || items.length === 0) return true;
+            for (const item of items) {
+              const result = validateCompliance(item);
+              if (!result.isValid) {
+                return `効果・効能に薬機法違反の可能性: ${result.message}`;
+              }
+            }
+            return true;
+          })
+          .warning(),
       group: "content",
     }),
     defineField({
@@ -100,7 +124,16 @@ export const ingredient = defineType({
       rows: 8,
       description:
         "推奨摂取量の詳細な説明（500-800文字程度）具体的な数値、状況別の推奨量、摂取タイミングなどを含めてください",
-      validation: (Rule) => Rule.required().min(400),
+      validation: (Rule) =>
+        Rule.required()
+          .min(400)
+          .custom((value) => {
+            const result = validateCompliance(value);
+            return result.isValid
+              ? true
+              : result.message || "薬機法違反の可能性があります";
+          })
+          .warning(),
       group: "content",
     }),
     defineField({
@@ -141,7 +174,16 @@ export const ingredient = defineType({
       rows: 10,
       description:
         "研究や科学的根拠についての詳細説明（800-1,200文字程度）具体的な研究名、年代、結果を含めてください",
-      validation: (Rule) => Rule.required().min(600),
+      validation: (Rule) =>
+        Rule.required()
+          .min(600)
+          .custom((value) => {
+            const result = validateCompliance(value);
+            return result.isValid
+              ? true
+              : result.message || "薬機法違反の可能性があります";
+          })
+          .warning(),
       group: "scientific",
     }),
     defineField({
@@ -177,7 +219,17 @@ export const ingredient = defineType({
       of: [{ type: "string" }],
       description:
         "副作用や注意事項を箇条書きで記載（5〜7項目推奨）各項目は詳細に記述してください",
-      validation: (Rule) => Rule.min(3),
+      validation: (Rule) =>
+        Rule.min(3).custom((items: string[] | undefined) => {
+          if (!items || items.length === 0) return true;
+          for (const item of items) {
+            const result = validateCompliance(item);
+            if (!result.isValid) {
+              return `副作用に薬機法違反の可能性: ${result.message}`;
+            }
+          }
+          return true;
+        }),
       group: "safety",
     }),
     defineField({
@@ -187,7 +239,17 @@ export const ingredient = defineType({
       of: [{ type: "string" }],
       description:
         "相互作用について記載（5〜8項目推奨）具体的な薬剤名や影響の詳細を含めてください",
-      validation: (Rule) => Rule.min(3),
+      validation: (Rule) =>
+        Rule.min(3).custom((items: string[] | undefined) => {
+          if (!items || items.length === 0) return true;
+          for (const item of items) {
+            const result = validateCompliance(item);
+            if (!result.isValid) {
+              return `相互作用に薬機法違反の可能性: ${result.message}`;
+            }
+          }
+          return true;
+        }),
       group: "safety",
     }),
     defineField({
@@ -281,7 +343,16 @@ export const ingredient = defineType({
               type: "text",
               rows: 8,
               description: "各回答は200-400文字程度で詳細に記述してください",
-              validation: (Rule) => Rule.required().min(150),
+              validation: (Rule) =>
+                Rule.required()
+                  .min(150)
+                  .custom((value) => {
+                    const result = validateCompliance(value);
+                    return result.isValid
+                      ? true
+                      : result.message || "薬機法違反の可能性があります";
+                  })
+                  .warning(),
             },
           ],
           preview: {
