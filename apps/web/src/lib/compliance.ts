@@ -1,69 +1,41 @@
-// Compliance checker for pharmaceutical regulations
+/**
+ * 薬機法コンプライアンスチェッカー（後方互換版）
+ *
+ * より強力なコンプライアンスシステムは @/lib/compliance/checker を使用してください
+ */
 
-export interface ComplianceRule {
+// 新しい強力なシステムから機能を再エクスポート
+export {
+  checkCompliance,
+  highlightViolations,
+  autoFixViolations,
+  summarizeByCategory,
+  generateComplianceReport,
+  type ComplianceViolation,
+  type ComplianceResult,
+} from "./compliance/checker";
+
+export {
+  type ComplianceRule,
+  type ComplianceCategory,
+  type ComplianceSeverity,
+} from "./compliance/rules";
+
+// レガシー型定義（後方互換性のため残す）
+export interface LegacyComplianceRule {
   pattern: string;
   suggest: string;
 }
 
-export interface ComplianceViolation {
+export interface LegacyComplianceViolation {
   originalText: string;
   suggestedText: string;
   pattern: string;
 }
 
-export interface ComplianceResult {
+export interface LegacyComplianceResult {
   hasViolations: boolean;
-  violations: ComplianceViolation[];
-}
-
-// Load rules from tools/phrase-checker/rules.json
-const COMPLIANCE_RULES: ComplianceRule[] = [
-  {
-    pattern: "完治",
-    suggest: "改善が期待される",
-  },
-  {
-    pattern: "即効|速攻",
-    suggest: "短期間での変化が報告されている",
-  },
-  {
-    pattern: "必ず痩せる",
-    suggest: "体重管理をサポートする可能性",
-  },
-];
-
-/**
- * Check text for compliance violations
- */
-export function checkCompliance(text: string): ComplianceResult {
-  if (!text || typeof text !== "string") {
-    return {
-      hasViolations: false,
-      violations: [],
-    };
-  }
-
-  const violations: ComplianceViolation[] = [];
-
-  for (const rule of COMPLIANCE_RULES) {
-    const regex = new RegExp(rule.pattern, "gi");
-    const matches = text.match(regex);
-
-    if (matches) {
-      for (const match of matches) {
-        violations.push({
-          originalText: match,
-          suggestedText: rule.suggest,
-          pattern: rule.pattern,
-        });
-      }
-    }
-  }
-
-  return {
-    hasViolations: violations.length > 0,
-    violations,
-  };
+  violations: LegacyComplianceViolation[];
 }
 
 /**

@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     // メール送信
     const { data, error } = await resend.emails.send({
-      from: "サプティア お問い合わせ <onboarding@resend.dev>", // Resendのデフォルト送信元（本番環境では独自ドメインに変更）
+      from: "サプティア お問い合わせ <noreply@suptia.com>",
       to: [adminEmail],
       replyTo: body.email,
       subject: `【お問い合わせ】${body.subject}`,
