@@ -6,6 +6,7 @@ import { getSiteUrl } from "@/lib/runtimeConfig";
 import { generateOrganizationJsonLd } from "@/lib/seo";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -78,6 +79,9 @@ export default function RootLayout({
         >
           {JSON.stringify(organizationJsonLd)}
         </Script>
+
+        {/* Google Analytics 4 */}
+        <GoogleAnalytics />
 
         <Header />
         {children}
