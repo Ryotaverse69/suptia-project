@@ -97,6 +97,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/advisory"
+                  className="hover:text-foreground transition-colors"
+                >
+                  情報ソースと方針
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/contact"
                   className="hover:text-foreground transition-colors"
                 >

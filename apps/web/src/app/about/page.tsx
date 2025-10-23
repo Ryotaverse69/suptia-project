@@ -19,8 +19,15 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-600 to-accent-purple py-20 px-6">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10"></div>
+      <section className="relative overflow-hidden py-20 px-6">
+        {/* Static gradient background (same as hero search) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
+          }}
+        ></div>
         <div className="relative mx-auto max-w-6xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
             <Sparkles size={16} />
@@ -216,10 +223,10 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-primary-900">
-                    専門家の監修
+                    科学的根拠の重視
                   </h3>
                   <p className="text-primary-700">
-                    栄養学の専門家、医師、薬剤師が情報の正確性をチェック。信頼できる情報だけをお届けします。
+                    査読済み論文やエビデンスレベルに基づいた情報提供を心がけ、信頼できる情報源のみを使用しています。
                   </p>
                 </div>
               </div>
@@ -355,7 +362,15 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-br from-primary via-primary-600 to-accent-purple py-20 px-6">
+      <section className="relative py-20 px-6">
+        {/* Static gradient background (same as hero search) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
+          }}
+        ></div>
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="mb-6 text-4xl font-bold text-white">
             今すぐ、最適なサプリメントを見つけよう

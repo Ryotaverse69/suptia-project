@@ -17,8 +17,15 @@ export default function HowToUsePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-600 to-accent-purple py-20 px-6">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10"></div>
+      <section className="relative overflow-hidden py-20 px-6">
+        {/* Static gradient background (same as hero search) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
+          }}
+        ></div>
         <div className="relative mx-auto max-w-6xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
             <Sparkles size={16} />
@@ -403,8 +410,16 @@ export default function HowToUsePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-br from-primary via-primary-600 to-accent-purple py-20 px-6">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative py-20 px-6">
+        {/* Static gradient background (same as hero search) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
+          }}
+        ></div>
+        <div className="relative mx-auto max-w-4xl text-center">
           <h2 className="mb-6 text-4xl font-bold text-white">
             さあ、サプティアを使ってみよう
           </h2>

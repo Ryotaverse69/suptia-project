@@ -52,7 +52,7 @@ export default function SitemapPage() {
             </li>
             <li>
               <Link href="/advisory" className="text-primary hover:underline">
-                研究・監修者情報
+                情報ソースと方針
               </Link>
             </li>
             <li>
@@ -178,7 +178,6 @@ export default function SitemapPage() {
           <ul className="space-y-2 text-muted-foreground text-sm">
             <li>製品レビュー（実装予定）</li>
             <li>ユーザー評価（実装予定）</li>
-            <li>専門家レビュー（実装予定）</li>
             <li>比較ツール（実装予定）</li>
           </ul>
         </div>
@@ -226,7 +225,7 @@ export default function SitemapPage() {
             <div>📁 / (ホーム)</div>
             <div className="ml-4">├─ 📄 /about (運営会社について)</div>
             <div className="ml-4">├─ 📄 /contact (お問い合わせ)</div>
-            <div className="ml-4">├─ 📄 /advisory (研究・監修者情報)</div>
+            <div className="ml-4">├─ 📄 /advisory (情報ソースと方針)</div>
             <div className="ml-4">├─ 📄 /partners (提携パートナー)</div>
             <div className="ml-4">├─ 📄 /sitemap (サイトマップ)</div>
             <div className="ml-4">├─ 📄 /faq (FAQ)</div>
