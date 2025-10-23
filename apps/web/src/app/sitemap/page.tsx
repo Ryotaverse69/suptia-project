@@ -11,7 +11,8 @@ import {
 
 export const metadata: Metadata = {
   title: "サイトマップ - サプティア",
-  description: "サプティアの全ページ一覧です。",
+  description:
+    "サプティアの全ページを一覧でご確認いただけます。商品一覧、成分ガイド、使い方、会社情報、法的情報など、サイト内のすべてのコンテンツへのリンク集です。",
 };
 
 export default function SitemapPage() {

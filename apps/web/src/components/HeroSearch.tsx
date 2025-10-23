@@ -79,8 +79,8 @@ export function HeroSearch() {
           </h1>
         </div>
 
-        {/* 3D search box with floating animation */}
-        <form onSubmit={handleSearch} className="relative mb-8 animate-float">
+        {/* 3D search box */}
+        <form onSubmit={handleSearch} className="relative mb-8">
           <div
             className="flex items-center rounded-xl overflow-hidden backdrop-blur-2xl border border-white/40 transition-all duration-500 hover:border-white/60"
             style={{

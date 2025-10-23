@@ -10,7 +10,8 @@ import {
 
 export const metadata: Metadata = {
   title: "サプティアの使い方 - サプティア",
-  description: "サプティアの使い方と機能説明です。",
+  description:
+    "科学的根拠に基づいた最適なサプリメントを3つのステップで見つける方法。商品検索、価格比較、安全性スコア評価など、サプティアの全機能を詳しく解説します。",
 };
 
 export default function HowItWorksPage() {

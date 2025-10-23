@@ -3,7 +3,8 @@ import { ExternalLink, ShoppingCart, TrendingUp, Shield } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "提携パートナー - サプティア",
-  description: "サプティアの提携ECサイト、アフィリエイトプログラムについて。",
+  description:
+    "サプティアが提携するAmazon、楽天市場、Yahoo!ショッピングなどのECサイトと、アフィリエイトプログラムについて詳しくご紹介。信頼性の高いパートナーから最適なサプリメントを見つけます。",
 };
 
 export default function PartnersPage() {
