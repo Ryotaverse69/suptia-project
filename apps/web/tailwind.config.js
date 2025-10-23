@@ -74,6 +74,11 @@ module.exports = {
       },
       animation: {
         "gradient-shift": "gradient-shift 15s ease infinite",
+        "depth-light-1": "depth-light-1 20s ease-in-out infinite",
+        "depth-light-2": "depth-light-2 25s ease-in-out infinite",
+        "depth-light-3": "depth-light-3 30s ease-in-out infinite",
+        "depth-shadow-1": "depth-shadow-1 22s ease-in-out infinite",
+        "depth-shadow-2": "depth-shadow-2 28s ease-in-out infinite",
       },
       keyframes: {
         "gradient-shift": {
@@ -82,6 +87,68 @@ module.exports = {
           },
           "50%": {
             "background-position": "100% 50%",
+          },
+        },
+        "depth-light-1": {
+          "0%, 100%": {
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.6",
+          },
+          "33%": {
+            transform: "translate(30px, -20px) scale(1.1)",
+            opacity: "0.7",
+          },
+          "66%": {
+            transform: "translate(-20px, 30px) scale(0.95)",
+            opacity: "0.5",
+          },
+        },
+        "depth-light-2": {
+          "0%, 100%": {
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.5",
+          },
+          "40%": {
+            transform: "translate(-40px, 20px) scale(1.15)",
+            opacity: "0.6",
+          },
+          "80%": {
+            transform: "translate(20px, -30px) scale(0.9)",
+            opacity: "0.4",
+          },
+        },
+        "depth-light-3": {
+          "0%, 100%": {
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.4",
+          },
+          "50%": {
+            transform: "translate(0, -40px) scale(1.2)",
+            opacity: "0.5",
+          },
+        },
+        "depth-shadow-1": {
+          "0%, 100%": {
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.3",
+          },
+          "50%": {
+            transform: "translate(-30px, 30px) scale(1.1)",
+            opacity: "0.4",
+          },
+        },
+        "depth-shadow-2": {
+          "0%, 100%": {
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.25",
+          },
+          "35%": {
+            transform: "translate(40px, -20px) scale(1.15)",
+            opacity: "0.35",
+          },
+          "70%": {
+            transform: "translate(-30px, 40px) scale(0.95)",
+            opacity: "0.2",
           },
         },
       },

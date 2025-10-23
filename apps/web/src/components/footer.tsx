@@ -72,6 +72,14 @@ export function Footer() {
                   Cookieポリシー
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/legal/affiliate"
+                  className="hover:text-foreground transition-colors"
+                >
+                  アフィリエイト開示
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -162,21 +170,6 @@ export function Footer() {
             </p>
             <p className="text-xs text-muted-foreground">
               ※ 本サイトは医療・診断を目的としたものではありません
-            </p>
-          </div>
-        </div>
-
-        {/* アフィリエイト開示 */}
-        <div className="border-t pt-6 mb-6">
-          <div className="bg-muted/50 rounded-lg p-4">
-            <h4 className="font-semibold text-sm mb-2">
-              アフィリエイトプログラムについて
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              当サイトは、Amazon.co.jp、楽天市場、Yahoo!ショッピング、Qoo10、iHerb、その他提携企業のアフィリエイトプログラムに参加しています。
-              商品リンクを経由して購入された場合、当サイトは紹介料を受け取ることがあります。
-              これにより商品価格が変わることはありません。
-              また、レビューや評価は紹介料の有無に関わらず、科学的根拠と中立性を保持して提供しています。
             </p>
           </div>
         </div>

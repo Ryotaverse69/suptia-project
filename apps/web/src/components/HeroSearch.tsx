@@ -15,13 +15,52 @@ export function HeroSearch() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 lg:px-12 xl:px-16 overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-300 via-primary-400 to-primary animate-gradient-shift bg-[length:200%_200%]"></div>
+      {/* Base gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-300 via-primary-400 to-primary"></div>
+
+      {/* 3D depth layers - Light sources */}
+      <div
+        className="absolute inset-0 opacity-60 animate-depth-light-1"
+        style={{
+          background:
+            "radial-gradient(ellipse 800px 600px at 20% 30%, rgba(122, 152, 236, 0.4) 0%, transparent 50%)",
+        }}
+      ></div>
+      <div
+        className="absolute inset-0 opacity-50 animate-depth-light-2"
+        style={{
+          background:
+            "radial-gradient(ellipse 600px 800px at 80% 20%, rgba(90, 127, 230, 0.3) 0%, transparent 50%)",
+        }}
+      ></div>
+      <div
+        className="absolute inset-0 opacity-40 animate-depth-light-3"
+        style={{
+          background:
+            "radial-gradient(ellipse 700px 700px at 50% 80%, rgba(59, 102, 224, 0.25) 0%, transparent 50%)",
+        }}
+      ></div>
+
+      {/* Shadow layers for depth */}
+      <div
+        className="absolute inset-0 opacity-30 animate-depth-shadow-1"
+        style={{
+          background:
+            "radial-gradient(ellipse 600px 600px at 90% 90%, rgba(45, 79, 184, 0.5) 0%, transparent 50%)",
+        }}
+      ></div>
+      <div
+        className="absolute inset-0 opacity-25 animate-depth-shadow-2"
+        style={{
+          background:
+            "radial-gradient(ellipse 500px 700px at 10% 70%, rgba(36, 61, 148, 0.4) 0%, transparent 50%)",
+        }}
+      ></div>
 
       {/* Molecule background animation */}
       <MoleculeBackground />
 
-      {/* Floating orbs for depth */}
+      {/* Floating orbs for additional depth */}
       <div className="absolute top-20 left-20 w-64 h-64 bg-accent-mint/20 rounded-full blur-3xl animate-pulse"></div>
       <div
         className="absolute bottom-20 right-20 w-80 h-80 bg-accent-purple/20 rounded-full blur-3xl animate-pulse"
