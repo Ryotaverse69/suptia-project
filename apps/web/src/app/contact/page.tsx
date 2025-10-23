@@ -19,11 +19,25 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus("idle");
 
-    // TODO: 実際のフォーム送信処理を実装
     try {
-      // API呼び出しをシミュレート
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // APIエンドポイントへの送信
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "送信に失敗しました");
+      }
+
+      // 成功時の処理
       setSubmitStatus("success");
       setFormData({
         name: "",
@@ -32,8 +46,19 @@ export default function ContactPage() {
         category: "general",
         message: "",
       });
+
+      // 3秒後に成功メッセージを非表示
+      setTimeout(() => {
+        setSubmitStatus("idle");
+      }, 5000);
     } catch (error) {
+      console.error("Contact form submission error:", error);
       setSubmitStatus("error");
+
+      // 5秒後にエラーメッセージを非表示
+      setTimeout(() => {
+        setSubmitStatus("idle");
+      }, 5000);
     } finally {
       setIsSubmitting(false);
     }

@@ -10,6 +10,10 @@ import {
   generateFAQStructuredData,
 } from "@/lib/structured-data";
 import {
+  generateInternalLinks,
+  type LinkableIngredient,
+} from "@/lib/internal-links";
+import {
   BookOpen,
   AlertCircle,
   CheckCircle2,
@@ -197,6 +201,41 @@ async function getRelatedProducts(
   }
 }
 
+// 全成分リストを取得（内部リンク用）
+async function getAllIngredients(): Promise<LinkableIngredient[]> {
+  const query = `*[_type == "ingredient" && defined(slug.current)]{
+    name,
+    nameEn,
+    "slug": slug.current
+  }`;
+
+  try {
+    const ingredients = await sanity.fetch(query);
+    return ingredients || [];
+  } catch (error) {
+    console.error("Failed to fetch ingredients for internal links:", error);
+    return [];
+  }
+}
+
+// Markdownをパースして内部リンクを追加
+function parseMarkdownWithInternalLinks(
+  text: string | string[] | undefined | null,
+  allIngredients: LinkableIngredient[],
+  currentIngredientName: string,
+): string {
+  const parsed = parseMarkdown(text);
+
+  // 内部リンクを生成（現在の成分は除外）
+  return generateInternalLinks(parsed, allIngredients, {
+    baseUrl: "/ingredients",
+    excludeIngredients: [currentIngredientName],
+    maxLinksPerIngredient: 2,
+    linkClassName: "text-primary hover:text-primary-700 underline",
+    openInNewTab: false,
+  });
+}
+
 // 動的ルートの生成
 export async function generateStaticParams() {
   const query = `*[_type == "ingredient"]{ "slug": slug.current }`;
@@ -269,11 +308,12 @@ export default async function IngredientPage({ params }: Props) {
     notFound();
   }
 
-  // 関連商品を取得
+  // 関連商品と全成分リストを取得
   const ingredientId = await getIngredientId(slug);
-  const relatedProducts = ingredientId
-    ? await getRelatedProducts(ingredientId)
-    : [];
+  const [relatedProducts, allIngredients] = await Promise.all([
+    ingredientId ? getRelatedProducts(ingredientId) : Promise.resolve([]),
+    getAllIngredients(),
+  ]);
 
   // JSON-LD構造化データ（SEO対策）
   const articleJsonLd = {
@@ -403,7 +443,11 @@ export default async function IngredientPage({ params }: Props) {
                 <div
                   className="text-primary-800 leading-relaxed prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
                   dangerouslySetInnerHTML={{
-                    __html: parseMarkdown(ingredient.description),
+                    __html: parseMarkdownWithInternalLinks(
+                      ingredient.description,
+                      allIngredients,
+                      ingredient.name,
+                    ),
                   }}
                 />
               </section>
@@ -459,7 +503,11 @@ export default async function IngredientPage({ params }: Props) {
                 <div
                   className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
                   dangerouslySetInnerHTML={{
-                    __html: parseMarkdown(ingredient.scientificBackground),
+                    __html: parseMarkdownWithInternalLinks(
+                      ingredient.scientificBackground,
+                      allIngredients,
+                      ingredient.name,
+                    ),
                   }}
                 />
               </section>
