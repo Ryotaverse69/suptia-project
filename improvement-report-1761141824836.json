@@ -1,0 +1,23 @@
+{
+  "success": [
+    {
+      "file": "probiotics-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/probiotics-article-improved.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    }
+  ],
+  "failed": [],
+  "improvements": []
+}

@@ -1,0 +1,564 @@
+{
+  "success": [
+    {
+      "file": "ashwagandha-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/ashwagandha-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "astaxanthin-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/astaxanthin-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "bcaa-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/bcaa-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "calcium-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/calcium-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "chromium-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/chromium-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "coenzyme-q10-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/coenzyme-q10-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "collagen-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/collagen-article.json",
+      "score": 88,
+      "grade": "A",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "creatine-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/creatine-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "folic-acid-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/folic-acid-article.json",
+      "score": 88,
+      "grade": "A",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "ginkgo-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/ginkgo-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "glucosamine-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/glucosamine-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "iodine-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/iodine-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "iron-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/iron-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "l-carnitine-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/l-carnitine-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "lutein-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/lutein-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: B",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "magnesium-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/magnesium-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "magnesium-glycinate-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/magnesium-glycinate-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "nac-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/nac-article.json",
+      "score": 100,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 10件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "niacin-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/niacin-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "omega-3-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/omega-3-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "omega3-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/omega3-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "potassium-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/potassium-article.json",
+      "score": 90,
+      "grade": "S",
+      "improvements": [
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "probiotics-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/probiotics-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "protein-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/protein-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "selenium-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/selenium-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "turmeric-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/turmeric-article.json",
+      "score": 98,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 10件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-a-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-a-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-b-complex-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-b-complex-article.json",
+      "score": 100,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 10件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-b12-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-b12-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-c-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-c-article.json",
+      "score": 93,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-d-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-d-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-e-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-e-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: A",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "vitamin-k-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/vitamin-k-article.json",
+      "score": 91,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    },
+    {
+      "file": "zinc-article.json",
+      "outputPath": "/Users/ryota/VScode/suptia-project/zinc-article.json",
+      "score": 95,
+      "grade": "S",
+      "improvements": [
+        "Benefits: 10項目以上",
+        "FAQs: 5項目以上",
+        "薬機法完全準拠",
+        "Description: 500文字以上",
+        "推奨摂取量: 400文字以上",
+        "全FAQ: 200文字以上",
+        "参考文献: 5件以上",
+        "エビデンスレベル: S",
+        "SEOメタデータ: 完備"
+      ]
+    }
+  ],
+  "failed": [],
+  "improvements": []
+}

@@ -131,6 +131,29 @@ export function generateBreadcrumbJsonLd(
   };
 }
 
+export function generateOrganizationJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "サプティア",
+    url: siteUrl,
+    logo: `${siteUrl}/logo.png`,
+    description:
+      "科学的根拠に基づくサプリメント比較プラットフォーム。安全性、エビデンス、コストパフォーマンスで評価",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "Customer Service",
+      email: "info@suptia.com",
+    },
+    sameAs: [
+      // SNSアカウントがあれば追加
+      // "https://twitter.com/suptia",
+      // "https://www.facebook.com/suptia",
+    ],
+  };
+}
+
 // Canonical URL utilities
 export function cleanUrl(url: string): string {
   const urlObj = new URL(url);

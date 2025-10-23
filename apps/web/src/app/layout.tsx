@@ -3,6 +3,7 @@ import "@/env";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { getSiteUrl } from "@/lib/runtimeConfig";
+import { generateOrganizationJsonLd } from "@/lib/seo";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
 import type { Metadata } from "next";
@@ -59,13 +60,25 @@ export default function RootLayout({
     name: "サプティア",
     url: siteUrl,
   };
+  const organizationJsonLd = generateOrganizationJsonLd();
+
   return (
     <html lang="ja">
       <body>
-        {/* Global JSON-LD (example) rendered with CSP nonce */}
+        {/* JSON-LD Structured Data: WebSite */}
         <Script id="website-jsonld" type="application/ld+json" nonce={nonce}>
           {JSON.stringify(websiteJsonLd)}
         </Script>
+
+        {/* JSON-LD Structured Data: Organization */}
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          nonce={nonce}
+        >
+          {JSON.stringify(organizationJsonLd)}
+        </Script>
+
         <Header />
         {children}
         <Footer />

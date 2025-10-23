@@ -1,8 +1,14 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Script from "next/script";
+import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
+import {
+  generateBreadcrumbStructuredData,
+  generateFAQStructuredData,
+} from "@/lib/structured-data";
 import {
   BookOpen,
   AlertCircle,
@@ -270,7 +276,7 @@ export default async function IngredientPage({ params }: Props) {
     : [];
 
   // JSON-LD構造化データ（SEO対策）
-  const jsonLd = {
+  const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: `${ingredient.name}（${ingredient.nameEn}）の効果と摂取方法`,
@@ -295,13 +301,44 @@ export default async function IngredientPage({ params }: Props) {
     keywords: `${ingredient.name}, ${ingredient.nameEn}, サプリメント, ${ingredient.category}`,
   };
 
+  // Breadcrumb structured data
+  const breadcrumbJsonLd = generateBreadcrumbStructuredData([
+    { name: "ホーム", url: "https://suptia.com/" },
+    { name: "成分ガイド", url: "https://suptia.com/ingredients" },
+    { name: ingredient.name, url: `https://suptia.com/ingredients/${slug}` },
+  ]);
+
+  // FAQ structured data (if FAQs exist)
+  const faqJsonLd =
+    ingredient.faqs && ingredient.faqs.length > 0
+      ? generateFAQStructuredData(
+          ingredient.faqs.map((faq) => ({
+            question: faq.question,
+            answer: faq.answer,
+          })),
+        )
+      : null;
+
+  const nonce = headers().get("x-nonce") || undefined;
+
   return (
     <>
-      {/* 構造化データの挿入 */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {/* JSON-LD Structured Data: Article */}
+      <Script id="article-jsonld" type="application/ld+json" nonce={nonce}>
+        {JSON.stringify(articleJsonLd)}
+      </Script>
+
+      {/* JSON-LD Structured Data: Breadcrumb */}
+      <Script id="breadcrumb-jsonld" type="application/ld+json" nonce={nonce}>
+        {JSON.stringify(breadcrumbJsonLd)}
+      </Script>
+
+      {/* JSON-LD Structured Data: FAQ (if exists) */}
+      {faqJsonLd && (
+        <Script id="faq-jsonld" type="application/ld+json" nonce={nonce}>
+          {JSON.stringify(faqJsonLd)}
+        </Script>
+      )}
 
       <div className="min-h-screen bg-background">
         {/* パンくずリスト */}
