@@ -237,20 +237,29 @@ export default async function SearchPage({
                         <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                       </div>
 
-                      <p className="text-sm text-primary-700 line-clamp-2 mb-4">
-                        {ingredient.description}
-                      </p>
+                      {ingredient.description &&
+                        typeof ingredient.description === "string" && (
+                          <p className="text-sm text-primary-700 line-clamp-2 mb-4">
+                            {ingredient.description}
+                          </p>
+                        )}
 
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="inline-block px-3 py-1 bg-primary-100 text-primary-900 text-xs rounded-full">
-                          {ingredient.category}
-                        </span>
-                        <div className="inline-flex items-center gap-1 px-3 py-1 bg-accent-mint/10 border border-accent-mint/30 rounded-full">
-                          <Shield className="text-accent-mint" size={14} />
-                          <span className="text-xs font-medium text-primary-900">
-                            {ingredient.evidenceLevel}
-                          </span>
-                        </div>
+                        {ingredient.category &&
+                          typeof ingredient.category === "string" && (
+                            <span className="inline-block px-3 py-1 bg-primary-100 text-primary-900 text-xs rounded-full">
+                              {ingredient.category}
+                            </span>
+                          )}
+                        {ingredient.evidenceLevel &&
+                          typeof ingredient.evidenceLevel === "string" && (
+                            <div className="inline-flex items-center gap-1 px-3 py-1 bg-accent-mint/10 border border-accent-mint/30 rounded-full">
+                              <Shield className="text-accent-mint" size={14} />
+                              <span className="text-xs font-medium text-primary-900">
+                                {ingredient.evidenceLevel}
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </Link>
                   ))}
@@ -285,18 +294,22 @@ export default async function SearchPage({
                           <h3 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
                             {product.name}
                           </h3>
-                          <p className="text-sm text-primary-600">
-                            {product.brand}
-                          </p>
+                          {product.brand &&
+                            typeof product.brand === "string" && (
+                              <p className="text-sm text-primary-600">
+                                {product.brand}
+                              </p>
+                            )}
                         </div>
                         <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                       </div>
 
-                      {product.description && (
-                        <p className="text-sm text-primary-700 line-clamp-2 mb-4">
-                          {product.description}
-                        </p>
-                      )}
+                      {product.description &&
+                        typeof product.description === "string" && (
+                          <p className="text-sm text-primary-700 line-clamp-2 mb-4">
+                            {product.description}
+                          </p>
+                        )}
 
                       {product.price && (
                         <div className="text-lg font-bold text-primary">
