@@ -45,13 +45,14 @@ async function searchContent(
     return { ingredients: [], products: [] };
   }
 
-  const searchTerm = query.trim();
+  const searchTerm = query.trim().toLowerCase();
 
   // 成分を検索
+  // GROQでは部分一致検索にmatchを使用（大文字小文字を区別しない）
   const ingredientsQuery = `*[_type == "ingredient" && (
-    name match "${searchTerm}*" ||
-    nameEn match "${searchTerm}*" ||
-    category match "${searchTerm}*"
+    lower(name) match "*${searchTerm}*" ||
+    lower(nameEn) match "*${searchTerm}*" ||
+    lower(category) match "*${searchTerm}*"
   )] | order(name asc) [0...20] {
     _id,
     name,
@@ -64,8 +65,8 @@ async function searchContent(
 
   // 商品を検索（将来的に実装）
   const productsQuery = `*[_type == "product" && (
-    name match "${searchTerm}*" ||
-    brand match "${searchTerm}*"
+    lower(name) match "*${searchTerm}*" ||
+    lower(brand) match "*${searchTerm}*"
   )] | order(name asc) [0...20] {
     _id,
     name,
