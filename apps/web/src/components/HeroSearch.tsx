@@ -2,15 +2,20 @@
 
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MoleculeBackground } from "./MoleculeBackground";
 
 export function HeroSearch() {
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search functionality
-    console.log("Searching for:", searchQuery);
+
+    if (searchQuery.trim()) {
+      // 検索ページへリダイレクト
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   return (
@@ -119,7 +124,9 @@ export function HeroSearch() {
           {["ビタミンD", "オメガ3", "マグネシウム", "プロテイン"].map((tag) => (
             <button
               key={tag}
-              onClick={() => setSearchQuery(tag)}
+              onClick={() => {
+                router.push(`/search?q=${encodeURIComponent(tag)}`);
+              }}
               className="px-5 py-2 text-white rounded-full text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
               style={{
                 boxShadow:
@@ -129,13 +136,6 @@ export function HeroSearch() {
               {tag}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-10">
-        <div className="w-6 h-10 border-2 border-white/40 rounded-full flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-white/60 rounded-full"></div>
         </div>
       </div>
     </div>

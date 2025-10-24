@@ -26,7 +26,7 @@
   "hooks": {
     "Notification": [
       {
-        "matcher": "",
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
@@ -37,11 +37,11 @@
     ],
     "Stop": [
       {
-        "matcher": "",
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[Hook] Stop hook triggered at '$(date) >> /tmp/claude-hooks.log && terminal-notifier -title '✅ Claude Code' -message '作業が完了しました' -sound 'Tink'"
+            "command": "echo '[Hook] Stop hook triggered at '$(date) >> /tmp/claude-hooks.log; terminal-notifier -title '✅ Claude Code Stop' -message '作業が完了しました' -sound 'Tink'"
           }
         ]
       }

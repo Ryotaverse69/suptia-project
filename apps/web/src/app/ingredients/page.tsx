@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Pill,
 } from "lucide-react";
+import { IngredientSearch } from "@/components/IngredientSearch";
 
 export const metadata: Metadata = {
   title: "成分ガイド｜サプリメント成分の効果と科学的根拠 - サプティア",
@@ -123,18 +124,8 @@ export default async function IngredientsPage() {
               あなたに最適なサプリメント選びをサポートします。
             </p>
 
-            {/* 検索バー（今後実装） */}
-            <div className="relative">
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400"
-                size={20}
-              />
-              <input
-                type="search"
-                placeholder="成分名で検索（例：ビタミンC、オメガ3）"
-                className="w-full px-12 py-4 rounded-lg text-primary-900 placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-white"
-              />
-            </div>
+            {/* 検索バー */}
+            <IngredientSearch />
           </div>
         </div>
       </div>

@@ -52,14 +52,14 @@ export function Header() {
               サプティアの使い方
             </Link>
 
-            {/* Login Button */}
-            <Link
+            {/* Login Button - Hidden for now */}
+            {/* <Link
               href="/login"
               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium"
             >
               <User size={18} />
               <span>ログイン</span>
-            </Link>
+            </Link> */}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -96,15 +96,15 @@ export function Header() {
               サプティアの使い方
             </Link>
 
-            {/* Login - Mobile */}
-            <Link
+            {/* Login - Mobile - Hidden for now */}
+            {/* <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center justify-center gap-2 mx-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
             >
               <User size={18} />
               <span>ログイン</span>
-            </Link>
+            </Link> */}
           </div>
         )}
       </div>

@@ -124,7 +124,7 @@ export default function ContactPage() {
             </div>
             <h3 className="font-semibold mb-2">詳細な回答</h3>
             <p className="text-sm text-muted-foreground">
-              専門スタッフが丁寧に対応いたします
+              担当者が丁寧に対応いたします
             </p>
           </div>
           <div className="border rounded-lg p-6 text-center">
