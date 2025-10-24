@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Star, ShoppingCart, TrendingUp } from "lucide-react";
+import { formatPrice } from "@/lib/format";
 
 interface RelatedProduct {
   _id: string;
@@ -129,7 +130,7 @@ export function RelatedProducts({
                 {/* 価格 */}
                 <div className="flex items-baseline justify-between pt-3 border-t border-primary-100">
                   <span className="text-2xl font-bold text-primary-900">
-                    ¥{product.priceJPY.toLocaleString()}
+                    {formatPrice(product.priceJPY)}
                   </span>
                   <span className="text-sm text-primary-600">税込</span>
                 </div>

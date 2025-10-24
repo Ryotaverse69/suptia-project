@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Star, TrendingUp, Shield, Award } from "lucide-react";
+import { formatPrice } from "@/lib/format";
 
 interface Product {
   _id: string;
@@ -207,7 +208,7 @@ export function ProductGrid({
               {/* 価格 */}
               <div className="flex items-baseline justify-between pt-4 border-t border-primary-100">
                 <span className="text-2xl font-bold text-primary-900">
-                  ¥{product.priceJPY.toLocaleString()}
+                  {formatPrice(product.priceJPY)}
                 </span>
                 <span className="text-sm text-primary-600">税込</span>
               </div>

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { sanity } from "@/lib/sanity.client";
+import { formatPrice } from "@/lib/format";
 import {
   Search as SearchIcon,
   ChevronRight,
@@ -45,14 +46,14 @@ async function searchContent(
     return { ingredients: [], products: [] };
   }
 
-  const searchTerm = query.trim().toLowerCase();
+  const searchTerm = query.trim();
 
   // 成分を検索
-  // GROQでは部分一致検索にmatchを使用（大文字小文字を区別しない）
+  // GROQのmatchは大文字小文字を区別しないため、そのまま使用可能
   const ingredientsQuery = `*[_type == "ingredient" && (
-    lower(name) match "*${searchTerm}*" ||
-    lower(nameEn) match "*${searchTerm}*" ||
-    lower(category) match "*${searchTerm}*"
+    name match "*${searchTerm}*" ||
+    nameEn match "*${searchTerm}*" ||
+    category match "*${searchTerm}*"
   )] | order(name asc) [0...20] {
     _id,
     name,
@@ -65,8 +66,8 @@ async function searchContent(
 
   // 商品を検索（将来的に実装）
   const productsQuery = `*[_type == "product" && (
-    lower(name) match "*${searchTerm}*" ||
-    lower(brand) match "*${searchTerm}*"
+    name match "*${searchTerm}*" ||
+    brand match "*${searchTerm}*"
   )] | order(name asc) [0...20] {
     _id,
     name,
@@ -299,7 +300,7 @@ export default async function SearchPage({
 
                       {product.price && (
                         <div className="text-lg font-bold text-primary">
-                          ¥{product.price.toLocaleString()}
+                          {formatPrice(product.price)}
                         </div>
                       )}
                     </Link>

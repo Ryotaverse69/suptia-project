@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { getSiteUrl } from "./runtimeConfig";
+import { formatPrice } from "./format";
 
 // Base SEO configuration
 const SITE_NAME = "サプティア";
@@ -76,7 +77,7 @@ export function generateProductMetadata(product: ProductSEOData): Metadata {
   const title = `${product.name} - ${product.brand}`;
   const description =
     product.description ||
-    `${product.brand}の${product.name}。価格: ¥${product.priceJPY.toLocaleString()}。詳細な価格分析と成分情報をご覧いただけます。`;
+    `${product.brand}の${product.name}。価格: ${formatPrice(product.priceJPY)}。詳細な価格分析と成分情報をご覧いただけます。`;
 
   return generateMetadata({
     title,

@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import { X } from "lucide-react";
+import { formatPrice } from "@/lib/format";
 
 interface Brand {
   _id: string;
@@ -185,10 +186,10 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
               </div>
             )}
             {minPrice && (
-              <div>最低価格: ¥{Number(minPrice).toLocaleString()}</div>
+              <div>最低価格: {formatPrice(Number(minPrice))}</div>
             )}
             {maxPrice && (
-              <div>最高価格: ¥{Number(maxPrice).toLocaleString()}</div>
+              <div>最高価格: {formatPrice(Number(maxPrice))}</div>
             )}
             {minScore && <div>最低スコア: {minScore}以上</div>}
           </div>
