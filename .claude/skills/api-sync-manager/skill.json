@@ -1,0 +1,75 @@
+{
+  "name": "api-sync-manager",
+  "description": "Amazon PA-API・楽天API・その他ECサイトとの価格データ同期管理",
+  "version": "1.0.0",
+  "inputs": {
+    "command": {
+      "type": "'sync' | 'schedule' | 'monitor' | 'test'",
+      "description": "実行コマンド",
+      "required": true
+    },
+    "sources": {
+      "type": "string[]",
+      "description": "同期するECサイト",
+      "default": ["amazon", "rakuten"]
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "string[]",
+          "description": "同期する商品ID"
+        },
+        "interval": {
+          "type": "string",
+          "description": "同期間隔（cronフォーマット）",
+          "default": "0 */6 * * *"
+        },
+        "batchSize": {
+          "type": "number",
+          "description": "バッチサイズ",
+          "default": 10
+        },
+        "retryPolicy": {
+          "type": "object",
+          "properties": {
+            "maxRetries": {
+              "type": "number",
+              "default": 3
+            },
+            "backoffMs": {
+              "type": "number",
+              "default": 1000
+            }
+          }
+        }
+      }
+    }
+  },
+  "outputs": {
+    "syncResults": {
+      "type": "SyncResult[]",
+      "description": "同期結果"
+    },
+    "errors": {
+      "type": "APIError[]",
+      "description": "エラー情報"
+    },
+    "metrics": {
+      "type": "SyncMetrics",
+      "description": "同期メトリクス"
+    }
+  },
+  "features": [
+    "Amazon PA-API 5.0対応",
+    "楽天市場API対応",
+    "レート制限管理",
+    "指数バックオフリトライ",
+    "価格変動アラート",
+    "在庫切れ検知",
+    "キャッシュ戦略",
+    "バッチ処理最適化",
+    "エラーログ記録",
+    "同期状況ダッシュボード"
+  ]
+}

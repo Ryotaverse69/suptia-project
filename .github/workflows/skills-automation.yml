@@ -1,0 +1,277 @@
+name: Skills Automation
+
+on:
+  push:
+    paths:
+      - '*-article.json'
+      - '.claude/skills/**'
+  pull_request:
+    paths:
+      - '*-article.json'
+      - '.claude/skills/**'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Skill to run'
+        required: true
+        type: choice
+        options:
+          - validate
+          - optimize
+          - import
+          - compliance
+          - pipeline
+      target:
+        description: 'Target file or pipeline name'
+        required: false
+        default: ''
+
+jobs:
+  validate-articles:
+    name: Validate Articles
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd .claude/skills && npm ci
+
+      - name: Find changed articles
+        id: changed-articles
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '.*-article\.json$' || true)
+          else
+            FILES=$(git diff --name-only HEAD~1...HEAD | grep -E '.*-article\.json$' || true)
+          fi
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Validate articles
+        if: steps.changed-articles.outputs.files != ''
+        run: |
+          for file in ${{ steps.changed-articles.outputs.files }}; do
+            echo "Validating $file..."
+            npm run skill:validate "$file"
+          done
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-reports
+          path: .claude/skills/logs/*.json
+
+  compliance-check:
+    name: Compliance Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd .claude/skills && npm ci
+
+      - name: Run compliance check
+        run: |
+          npm run skill:compliance check --all
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = '.claude/skills/logs/compliance-report.json';
+            if (fs.existsSync(reportPath)) {
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
+              const comment = `## 📋 薬機法コンプライアンスチェック
+
+              **結果**: ${report.compliant ? '✅ 合格' : '❌ 不合格'}
+              **スコア**: ${report.score}/100
+
+              ${report.issues.length > 0 ? '### ⚠️ 検出された問題:\n' + report.issues.map(i => `- ${i}`).join('\n') : ''}
+
+              ${report.suggestions.length > 0 ? '### 💡 推奨事項:\n' + report.suggestions.map(s => `- ${s}`).join('\n') : ''}`;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+  deploy-check:
+    name: Deploy Readiness Check
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd .claude/skills && npm ci
+
+      - name: Run deploy check
+        id: deploy-check
+        run: |
+          npm run skill:dev deploy:check
+          echo "ready=$?" >> $GITHUB_OUTPUT
+
+      - name: Create deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ready = '${{ steps.deploy-check.outputs.ready }}' === '0';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: ready ? 'success' : 'failure',
+              context: 'Deploy Readiness',
+              description: ready ? 'Ready to deploy' : 'Not ready for deployment'
+            });
+
+  run-skill:
+    name: Run Skill (Manual)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd .claude/skills && npm ci
+
+      - name: Setup environment
+        run: |
+          echo "NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.SANITY_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SANITY_DATASET=${{ secrets.SANITY_DATASET }}" >> $GITHUB_ENV
+          echo "SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Run selected skill
+        run: |
+          case "${{ github.event.inputs.skill }}" in
+            validate)
+              npm run skill:validate "${{ github.event.inputs.target }}"
+              ;;
+            optimize)
+              npm run skill:optimize "${{ github.event.inputs.target }}" --mode full
+              ;;
+            import)
+              npm run skill:import --dry-run
+              ;;
+            compliance)
+              npm run skill:compliance check --all
+              ;;
+            pipeline)
+              npm run skill:pipeline "${{ github.event.inputs.target }}"
+              ;;
+          esac
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: skill-results
+          path: |
+            .claude/skills/logs/
+            .pipeline-output/
+
+  weekly-maintenance:
+    name: Weekly Maintenance
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 0 * * 0'  # 毎週日曜日
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd .claude/skills && npm ci
+
+      - name: Run price analysis
+        run: |
+          npm run skill:pipeline price-analysis
+
+      - name: Run SEO optimization
+        run: |
+          npm run skill:pipeline seo-content
+
+      - name: Clean up old logs
+        run: |
+          find .claude/skills/logs -name "*.log" -mtime +30 -delete
+
+      - name: Create maintenance report
+        run: |
+          echo "# Weekly Maintenance Report - $(date)" > maintenance-report.md
+          echo "## Tasks Completed:" >> maintenance-report.md
+          echo "- Price analysis pipeline executed" >> maintenance-report.md
+          echo "- SEO content optimization completed" >> maintenance-report.md
+          echo "- Old logs cleaned up" >> maintenance-report.md
+
+      - name: Upload maintenance report
+        uses: actions/upload-artifact@v3
+        with:
+          name: maintenance-report
+          path: maintenance-report.md
+
+  notify-slack:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    needs: [validate-articles, compliance-check, deploy-check]
+    if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Skills Automation Complete
+            Validation: ${{ needs.validate-articles.result }}
+            Compliance: ${{ needs.compliance-check.result }}
+            Deploy Check: ${{ needs.deploy-check.result }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: env.SLACK_WEBHOOK != ''

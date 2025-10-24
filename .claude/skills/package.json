@@ -1,0 +1,37 @@
+{
+  "name": "@suptia/claude-skills",
+  "version": "1.0.0",
+  "description": "Claude Code Skills for Suptia Project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "@sanity/client": "^6.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "glob": "^10.3.10",
+    "dotenv": "^16.3.1",
+    "zod": "^3.22.4",
+    "ndjson": "^2.0.0",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/ndjson": "^2.0.4",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "vitest": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

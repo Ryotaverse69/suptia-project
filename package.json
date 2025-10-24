@@ -58,11 +58,24 @@
     "preview:diagnose": "node scripts/diagnose-vercel-preview.mjs",
     "preview:get": "node scripts/get-preview-url.mjs",
     "preview:test": "node scripts/test-vercel-preview-workflow.mjs",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "skill:validate": "tsx .claude/skills/sanity-ingredient-validator/index.ts",
+    "skill:import": "tsx .claude/skills/sanity-bulk-import/index.ts",
+    "skill:optimize": "tsx .claude/skills/article-optimizer/index.ts",
+    "skill:price": "tsx .claude/skills/price-calculator/index.ts",
+    "skill:dev": "tsx .claude/skills/sanity-dev-helper/index.ts",
+    "skill:compliance": "tsx .claude/skills/compliance-checker/index.ts",
+    "skill:pipeline": "tsx .claude/skills/run-pipeline.ts",
+    "skill:list": "tsx .claude/skills/run-pipeline.ts list",
+    "skills:install": "cd .claude/skills && npm install",
+    "skills:help": "echo 'Available Skills: validate, import, optimize, price, dev, compliance, pipeline'"
   },
   "devDependencies": {
     "husky": "^9.0.0",
-    "lint-staged": "^15.0.0"
+    "lint-staged": "^15.0.0",
+    "tsx": "^4.7.0",
+    "ora": "^7.0.1",
+    "@types/node": "^20.0.0"
   },
   "lint-staged": {
     "apps/web/**/*.{js,jsx,ts,tsx}": [

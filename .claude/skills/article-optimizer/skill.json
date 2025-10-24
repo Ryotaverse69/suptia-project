@@ -1,0 +1,80 @@
+{
+  "name": "article-optimizer",
+  "description": "成分記事の品質を統合的に最適化（自動修正、薬機法準拠、SEO強化、文字数拡充）",
+  "version": "2.0.0",
+  "inputs": {
+    "file": {
+      "type": "string | string[]",
+      "description": "最適化するJSONファイルのパス（単一 or 複数）",
+      "required": true
+    },
+    "mode": {
+      "type": "'check' | 'fix' | 'enhance' | 'full'",
+      "description": "動作モード（check:検証のみ、fix:自動修正、enhance:拡充、full:全機能）",
+      "default": "full"
+    },
+    "options": {
+      "type": "object",
+      "description": "最適化オプション",
+      "properties": {
+        "targetWordCount": {
+          "type": "number",
+          "description": "目標文字数",
+          "default": 5000
+        },
+        "autoGenerateLinks": {
+          "type": "boolean",
+          "description": "関連成分への内部リンクを自動生成",
+          "default": true
+        },
+        "expandFAQ": {
+          "type": "boolean",
+          "description": "FAQを自動拡充",
+          "default": true
+        },
+        "addSchema": {
+          "type": "boolean",
+          "description": "構造化データを追加",
+          "default": true
+        },
+        "complianceLevel": {
+          "type": "'strict' | 'standard' | 'lenient'",
+          "description": "薬機法準拠レベル",
+          "default": "strict"
+        }
+      }
+    }
+  },
+  "outputs": {
+    "report": {
+      "type": "OptimizationReport",
+      "description": "最適化レポート（変更内容、スコア改善、警告）"
+    },
+    "optimizedFiles": {
+      "type": "string[]",
+      "description": "最適化済みファイルのパス"
+    },
+    "backupFiles": {
+      "type": "string[]",
+      "description": "バックアップファイルのパス"
+    }
+  },
+  "features": [
+    "薬機法NGワード自動修正",
+    "文字数自動拡充（AIサポート）",
+    "SEOメタデータ最適化",
+    "内部リンク自動生成",
+    "構造化データ追加",
+    "参考文献自動フォーマット",
+    "FAQ自動拡充",
+    "エビデンスレベル判定",
+    "画像alt属性最適化",
+    "読みやすさスコア改善"
+  ],
+  "dependencies": {
+    "@sanity/client": "^6.0.0",
+    "chalk": "^5.0.0",
+    "ora": "^7.0.0",
+    "zod": "^3.0.0"
+  }
+}

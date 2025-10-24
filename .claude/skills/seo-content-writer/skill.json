@@ -1,0 +1,67 @@
+{
+  "name": "seo-content-writer",
+  "description": "SEO最適化された成分記事・ランディングページを自動生成",
+  "version": "1.0.0",
+  "inputs": {
+    "topic": {
+      "type": "string",
+      "description": "記事のトピック（成分名やキーワード）",
+      "required": true
+    },
+    "type": {
+      "type": "'ingredient' | 'landing' | 'comparison' | 'guide'",
+      "description": "コンテンツタイプ",
+      "default": "ingredient"
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "targetWordCount": {
+          "type": "number",
+          "description": "目標文字数",
+          "default": 5000
+        },
+        "keywords": {
+          "type": "string[]",
+          "description": "ターゲットキーワード"
+        },
+        "tone": {
+          "type": "'professional' | 'friendly' | 'educational'",
+          "description": "文章のトーン",
+          "default": "educational"
+        },
+        "includeSchema": {
+          "type": "boolean",
+          "description": "構造化データを含める",
+          "default": true
+        }
+      }
+    }
+  },
+  "outputs": {
+    "content": {
+      "type": "Article",
+      "description": "生成された記事"
+    },
+    "seoScore": {
+      "type": "number",
+      "description": "SEOスコア（0-100）"
+    },
+    "metadata": {
+      "type": "SEOMetadata",
+      "description": "SEOメタデータ"
+    }
+  },
+  "features": [
+    "キーワード最適化",
+    "見出し構造の自動生成",
+    "メタディスクリプション生成",
+    "内部リンク提案",
+    "構造化データ生成",
+    "読みやすさスコア計算",
+    "薬機法準拠チェック",
+    "PubMed参考文献取得",
+    "FAQ自動生成",
+    "関連キーワード抽出"
+  ]
+}

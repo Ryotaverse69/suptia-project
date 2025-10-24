@@ -1,0 +1,72 @@
+{
+  "name": "price-calculator",
+  "description": "サプリメントの価格計算と正規化コスト分析（mg単価、1日コスト、コスパ評価）",
+  "version": "1.0.0",
+  "inputs": {
+    "products": {
+      "type": "Product[] | string",
+      "description": "分析する商品データ（配列またはJSONファイルパス）",
+      "required": true
+    },
+    "mode": {
+      "type": "'analyze' | 'compare' | 'normalize' | 'report'",
+      "description": "動作モード",
+      "default": "analyze"
+    },
+    "targetIngredient": {
+      "type": "string",
+      "description": "比較対象の成分名（compareモード時）"
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "通貨",
+          "default": "JPY"
+        },
+        "includeTax": {
+          "type": "boolean",
+          "description": "税込み計算",
+          "default": true
+        },
+        "taxRate": {
+          "type": "number",
+          "description": "税率",
+          "default": 0.1
+        },
+        "servingMode": {
+          "type": "'single' | 'daily' | 'monthly'",
+          "description": "コスト計算単位",
+          "default": "daily"
+        }
+      }
+    }
+  },
+  "outputs": {
+    "analysis": {
+      "type": "PriceAnalysis",
+      "description": "価格分析結果"
+    },
+    "comparison": {
+      "type": "ComparisonResult[]",
+      "description": "比較結果（compareモード時）"
+    },
+    "report": {
+      "type": "CostReport",
+      "description": "コストレポート"
+    }
+  },
+  "features": [
+    "mg単価自動計算",
+    "成分量正規化",
+    "1日あたりコスト算出",
+    "複数商品比較",
+    "コストパフォーマンススコア",
+    "価格変動追跡",
+    "複合成分の価値計算",
+    "推奨摂取量ベースの実効コスト",
+    "バルク購入割引分析",
+    "為替レート対応"
+  ]
+}

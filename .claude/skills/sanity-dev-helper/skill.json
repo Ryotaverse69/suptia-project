@@ -1,0 +1,69 @@
+{
+  "name": "sanity-dev-helper",
+  "description": "Suptia開発環境の統合管理ツール（サーバー起動、環境変数、ビルド、デプロイ前チェック）",
+  "version": "1.0.0",
+  "commands": {
+    "start": "開発サーバーを起動",
+    "env:check": "環境変数の検証と同期",
+    "build": "プロダクションビルド",
+    "test": "テスト実行とカバレッジレポート",
+    "deploy:check": "デプロイ前の総合チェック",
+    "sanity:sync": "Sanityデータの同期",
+    "clean": "キャッシュとビルド成果物をクリーン",
+    "status": "プロジェクトステータス表示"
+  },
+  "inputs": {
+    "command": {
+      "type": "string",
+      "description": "実行するコマンド",
+      "required": true
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "type": "number",
+          "description": "開発サーバーのポート番号",
+          "default": 3000
+        },
+        "sanityPort": {
+          "type": "number",
+          "description": "Sanity Studioのポート番号",
+          "default": 3333
+        },
+        "verbose": {
+          "type": "boolean",
+          "description": "詳細ログを表示",
+          "default": false
+        },
+        "fix": {
+          "type": "boolean",
+          "description": "自動修正を試みる",
+          "default": false
+        }
+      }
+    }
+  },
+  "outputs": {
+    "status": {
+      "type": "ProjectStatus",
+      "description": "プロジェクトのステータス情報"
+    },
+    "checkResults": {
+      "type": "CheckResults",
+      "description": "チェック結果の詳細"
+    }
+  },
+  "features": [
+    "Next.js + Sanity Studio 同時起動",
+    "環境変数の自動検証・同期",
+    "薬機法コンプライアンスチェック統合",
+    "ビルドサイズ分析",
+    "デプロイ前チェックリスト",
+    "Sanityスキーマ検証",
+    "依存関係の脆弱性チェック",
+    "パフォーマンス最適化提案",
+    "開発サーバー自動再起動",
+    "プロジェクト健全性スコア"
+  ]
+}

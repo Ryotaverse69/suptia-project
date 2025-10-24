@@ -1,0 +1,68 @@
+{
+  "name": "test-generator",
+  "description": "Vitestテストケース・E2Eテスト・APIモックを自動生成",
+  "version": "1.0.0",
+  "inputs": {
+    "target": {
+      "type": "string",
+      "description": "テスト対象のファイルパスまたはコンポーネント名",
+      "required": true
+    },
+    "type": {
+      "type": "'unit' | 'integration' | 'e2e' | 'all'",
+      "description": "生成するテストの種類",
+      "default": "unit"
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "coverage": {
+          "type": "number",
+          "description": "目標カバレッジ率",
+          "default": 80
+        },
+        "mockStrategy": {
+          "type": "'minimal' | 'comprehensive'",
+          "description": "モック戦略",
+          "default": "minimal"
+        },
+        "includeSnapshots": {
+          "type": "boolean",
+          "description": "スナップショットテストを含める",
+          "default": true
+        },
+        "includeAccessibility": {
+          "type": "boolean",
+          "description": "アクセシビリティテストを含める",
+          "default": true
+        }
+      }
+    }
+  },
+  "outputs": {
+    "testFiles": {
+      "type": "string[]",
+      "description": "生成されたテストファイル"
+    },
+    "mockFiles": {
+      "type": "string[]",
+      "description": "生成されたモックファイル"
+    },
+    "coverage": {
+      "type": "CoverageReport",
+      "description": "カバレッジレポート"
+    }
+  },
+  "features": [
+    "Vitest対応",
+    "Testing Library統合",
+    "自動モック生成",
+    "E2Eシナリオ生成",
+    "スナップショットテスト",
+    "アクセシビリティテスト",
+    "パフォーマンステスト",
+    "Sanity APIモック",
+    "Next.js App Router対応",
+    "カバレッジ分析"
+  ]
+}
