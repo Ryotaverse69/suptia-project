@@ -1,0 +1,42 @@
+{
+  "name": "ec-sync",
+  "version": "1.0.0",
+  "description": "楽天・Yahoo・Amazon等のECサイトから商品データを取得し、Sanityに同期するスキル",
+  "author": "Suptia Development Team",
+  "category": "data-integration",
+  "tags": ["rakuten", "yahoo", "amazon", "ec", "product", "sync", "sanity"],
+  "usage": "ECサイトから商品データを同期する際に使用します。開発環境での対話的な実行と、本番環境でのバッチ処理の両方に対応しています。",
+  "examples": [
+    {
+      "description": "楽天から「ビタミンC」で検索して10件同期",
+      "command": "node .claude/skills/ec-sync/index.mjs rakuten \"ビタミンC\" --limit 10"
+    },
+    {
+      "description": "DRYRUNモードで取得データを確認",
+      "command": "node .claude/skills/ec-sync/index.mjs rakuten \"プロテイン\" --dry-run"
+    },
+    {
+      "description": "既存商品の価格のみ更新",
+      "command": "node .claude/skills/ec-sync/index.mjs rakuten --update-prices"
+    }
+  ],
+  "dependencies": {
+    "node": ">=18.0.0"
+  },
+  "environment": {
+    "required": ["SANITY_API_TOKEN", "RAKUTEN_APPLICATION_ID"],
+    "optional": [
+      "RAKUTEN_AFFILIATE_ID",
+      "YAHOO_SHOPPING_CLIENT_ID",
+      "YAHOO_AFFILIATE_ID",
+      "AMAZON_ACCESS_KEY_ID",
+      "AMAZON_SECRET_ACCESS_KEY",
+      "AMAZON_ASSOCIATE_TAG"
+    ]
+  },
+  "scripts": {
+    "sync-rakuten": "node scripts/sync-rakuten-products.mjs",
+    "sync-yahoo": "node scripts/sync-yahoo-products.mjs",
+    "sync-amazon": "node scripts/sync-amazon-products.mjs"
+  }
+}

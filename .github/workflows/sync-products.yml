@@ -1,0 +1,106 @@
+name: EC商品自動同期
+
+on:
+  # 毎日深夜3時（JST）に実行 = UTC 18:00
+  schedule:
+    - cron: '0 18 * * *'
+
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'ECサイト (rakuten, yahoo, all)'
+        required: false
+        default: 'all'
+      keyword:
+        description: '検索キーワード'
+        required: false
+        default: 'サプリメント'
+      limit:
+        description: '取得件数'
+        required: false
+        default: '100'
+
+jobs:
+  sync-rakuten:
+    name: 楽天商品同期
+    runs-on: ubuntu-latest
+    if: github.event.inputs.source == 'rakuten' || github.event.inputs.source == 'all' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > apps/web/.env.local << EOF
+          SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}
+          RAKUTEN_APPLICATION_ID=${{ secrets.RAKUTEN_APPLICATION_ID }}
+          RAKUTEN_AFFILIATE_ID=${{ secrets.RAKUTEN_AFFILIATE_ID }}
+          EOF
+
+      - name: Sync Rakuten products
+        run: |
+          KEYWORD="${{ github.event.inputs.keyword || 'サプリメント' }}"
+          LIMIT="${{ github.event.inputs.limit || '100' }}"
+          node scripts/sync-rakuten-products.mjs "$KEYWORD" --limit $LIMIT
+
+  sync-yahoo:
+    name: Yahoo!商品同期
+    runs-on: ubuntu-latest
+    if: github.event.inputs.source == 'yahoo' || github.event.inputs.source == 'all' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > apps/web/.env.local << EOF
+          SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}
+          YAHOO_SHOPPING_CLIENT_ID=${{ secrets.YAHOO_SHOPPING_CLIENT_ID }}
+          YAHOO_AFFILIATE_ID=${{ secrets.YAHOO_AFFILIATE_ID }}
+          EOF
+
+      - name: Sync Yahoo products
+        run: |
+          KEYWORD="${{ github.event.inputs.keyword || 'サプリメント' }}"
+          LIMIT="${{ github.event.inputs.limit || '100' }}"
+          node scripts/sync-yahoo-products.mjs "$KEYWORD" --limit $LIMIT
+
+  notify:
+    name: 同期完了通知
+    runs-on: ubuntu-latest
+    needs: [sync-rakuten, sync-yahoo]
+    if: always()
+
+    steps:
+      - name: Check sync results
+        run: |
+          echo "楽天同期: ${{ needs.sync-rakuten.result }}"
+          echo "Yahoo同期: ${{ needs.sync-yahoo.result }}"
+
+          if [ "${{ needs.sync-rakuten.result }}" != "success" ] || [ "${{ needs.sync-yahoo.result }}" != "success" ]; then
+            echo "⚠️  一部の同期が失敗しました"
+            exit 1
+          else
+            echo "✅ すべての同期が成功しました"
+          fi
