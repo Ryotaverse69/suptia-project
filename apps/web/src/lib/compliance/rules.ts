@@ -35,21 +35,21 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
   // 1. 疾病の治療・予防効果（最重要）
   // ========================================
   {
-    pattern: "治る|治す|治療|治癒|完治",
+    pattern: "治[るります]+|治す|治療|治癒|完治|治[りれた]+",
     category: "disease_treatment",
     severity: "critical",
     suggest: "健康維持をサポート",
     description: "疾病の治療効果を標榜する表現は薬機法違反です",
   },
   {
-    pattern: "予防する|防ぐ|防止|予防効果",
+    pattern: "予防[するできます]+|防[ぐぎぎます]+|防止|予防効果",
     category: "disease_treatment",
     severity: "critical",
     suggest: "〜のリスクに配慮",
     description: "疾病の予防効果を標榜する表現は薬機法違反です",
   },
   {
-    pattern: "改善する|改善効果",
+    pattern: "改善[するします]+|改善効果",
     category: "disease_treatment",
     severity: "high",
     suggest: "サポートする可能性",
@@ -60,14 +60,14 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
   // 2. 具体的な疾病名を使った効能効果
   // ========================================
   {
-    pattern: "がんに効く|癌を|ガンに",
+    pattern: "(がん|癌|ガン)[をがに]|[がガ]ん.*効く",
     category: "disease_treatment",
     severity: "critical",
     suggest: "健康維持に",
     description: "がんに関する効能効果は絶対に使用不可",
   },
   {
-    pattern: "糖尿病を|糖尿病に効く",
+    pattern: "糖尿病[をがに]|糖尿病.*効く",
     category: "disease_treatment",
     severity: "critical",
     suggest: "血糖値の健康維持に",
@@ -295,14 +295,15 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
   // 10. 美容関連（特に注意）
   // ========================================
   {
-    pattern: "シミが消える|シワが消える|美白効果",
+    pattern:
+      "(シミ|シワ)が消え[るます]+|(シミ|シワ).*なくな[るります]+|美白効果",
     category: "medical_effect",
     severity: "critical",
     suggest: "肌の健康維持をサポート",
     description: "美容効果を断定する表現は使用不可",
   },
   {
-    pattern: "若返る|アンチエイジング効果|老化防止",
+    pattern: "若返[るります]+|アンチエイジング効果|老化防止",
     category: "medical_effect",
     severity: "high",
     suggest: "年齢に応じた健康維持に",

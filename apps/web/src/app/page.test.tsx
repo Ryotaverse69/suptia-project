@@ -2,6 +2,24 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "./page";
 
+// Mock Next.js headers
+vi.mock("next/headers", () => ({
+  headers: vi.fn(() => ({
+    get: vi.fn(() => null),
+  })),
+}));
+
+// Mock Next.js navigation
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+  })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => "/"),
+}));
+
 // Mock Sanity client
 vi.mock("@/lib/sanity.client", () => ({
   sanity: {

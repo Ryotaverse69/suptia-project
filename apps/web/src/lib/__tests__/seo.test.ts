@@ -92,7 +92,7 @@ describe("SEO Utilities", () => {
       expect(metadata.description).toContain(
         "テストブランドのビタミンC 1000mg",
       );
-      expect(metadata.description).toContain("¥2,980");
+      expect(metadata.description).toContain("￥2,980");
     });
 
     it("適切なキーワードが設定される", () => {
