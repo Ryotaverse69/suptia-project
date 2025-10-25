@@ -3,6 +3,7 @@ import { checkCompliance, generateSampleDescription } from "@/lib/compliance";
 import { WarningBanner } from "@/components/WarningBanner";
 import { PriceTable } from "@/components/PriceTable";
 import { PriceComparison } from "@/components/PriceComparison";
+import { PriceHistoryChart } from "@/components/PriceHistoryChart";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -205,6 +206,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         {/* Price Comparison Component */}
         <PriceComparison priceData={product.priceData} className="mb-8" />
+
+        {/* Price History Chart */}
+        <PriceHistoryChart
+          priceHistory={product.priceHistory}
+          className="mb-8"
+        />
 
         {/* Back to Home */}
         <div className="text-center">
