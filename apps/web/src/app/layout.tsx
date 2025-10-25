@@ -2,6 +2,7 @@
 import "@/env";
 import { headers } from "next/headers";
 import Script from "next/script";
+import { Suspense } from "react";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { generateOrganizationJsonLd } from "@/lib/seo";
 import { Header } from "@/components/Header";
@@ -84,7 +85,9 @@ export default function RootLayout({
         </Script>
 
         {/* Google Analytics 4 */}
-        <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
 
         <Header />
         {children}
