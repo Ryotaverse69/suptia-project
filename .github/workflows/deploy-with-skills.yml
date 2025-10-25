@@ -169,7 +169,8 @@ jobs:
       - name: Run Lighthouse audit
         run: |
           echo "### 🚦 Lighthouseパフォーマンス監査" >> $GITHUB_STEP_SUMMARY
-          npx @lhci/cli autorun --collect.url=${{ needs.deploy-vercel.outputs.url }}
+          npx @lhci/cli@0.15.x collect --url=${{ needs.deploy-vercel.outputs.url }} --numberOfRuns=1
+          npx @lhci/cli@0.15.x upload
           echo "✅ パフォーマンス監査完了" >> $GITHUB_STEP_SUMMARY
 
   notify-completion:
