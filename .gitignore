@@ -95,11 +95,13 @@ test-results-*.json
 # Temporary script files and backups
 *.tar.gz
 *.ndjson
+*.backup-*.json
 # test notification hook
 logs/
 check-*.mjs
 import-*.mjs
 reimport-*.mjs
 fix-*.mjs
+test-*.mjs
 references-issues.json
 encoding-issues.json
