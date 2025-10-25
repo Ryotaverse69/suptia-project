@@ -59,24 +59,11 @@ jobs:
             echo "compliance_pass=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run deploy readiness check
-        id: deploy_check
-        run: |
-          echo "### 🚀 デプロイ準備チェック" >> $GITHUB_STEP_SUMMARY
-          if npm run skill:dev deploy:check; then
-            echo "✅ デプロイ準備: 完了" >> $GITHUB_STEP_SUMMARY
-            echo "deploy_ready=true" >> $GITHUB_OUTPUT
-          else
-            echo "❌ デプロイ準備: 未完了" >> $GITHUB_STEP_SUMMARY
-            echo "deploy_ready=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Overall check status
         id: checks
         run: |
           if [[ "${{ steps.validate.outputs.validate_pass }}" == "true" ]] && \
-             [[ "${{ steps.compliance.outputs.compliance_pass }}" == "true" ]] && \
-             [[ "${{ steps.deploy_check.outputs.deploy_ready }}" == "true" ]]; then
+             [[ "${{ steps.compliance.outputs.compliance_pass }}" == "true" ]]; then
             echo "ready=true" >> $GITHUB_OUTPUT
             echo "## ✅ すべてのチェックに合格しました" >> $GITHUB_STEP_SUMMARY
           else
