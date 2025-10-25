@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { CookieSettingsButton } from "./CookieSettingsButton";
 
 export function Footer() {
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
@@ -229,11 +228,6 @@ export function Footer() {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Cookie同意設定リンク */}
-        <div className="border-t pt-6 mb-6">
-          <CookieSettingsButton />
         </div>
 
         {/* Copyright */}

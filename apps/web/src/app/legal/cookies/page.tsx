@@ -1,6 +1,9 @@
 "use client";
 
+import { useCookieConsent } from "@/contexts/CookieConsentContext";
+
 export default function CookiesPage() {
+  const { openSettings } = useCookieConsent();
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8">Cookieポリシー</h1>
@@ -190,15 +193,15 @@ export default function CookiesPage() {
           <h3 className="text-xl font-semibold mb-3 mt-6">
             4.1 当サイトでの設定
           </h3>
-          <div className="border rounded-lg p-6 mb-4">
-            <p className="mb-3">
-              フッターにある「Cookie設定を変更する」リンクから、いつでもCookie設定を変更できます。
+          <div className="border rounded-lg p-6 mb-4 bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-950/20 dark:to-blue-950/20">
+            <p className="mb-4">
+              以下のボタンから、いつでもCookie設定を変更できます。
+              <br />
+              各種類のCookieを個別に有効・無効にすることができます。
             </p>
             <button
-              onClick={() => {
-                console.log("Open cookie consent manager");
-              }}
-              className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+              onClick={openSettings}
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all hover:shadow-lg font-medium"
             >
               Cookie設定を変更する
             </button>

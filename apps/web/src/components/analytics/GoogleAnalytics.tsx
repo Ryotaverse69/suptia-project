@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useCookieConsent } from "@/contexts/CookieConsentContext";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
@@ -13,6 +14,7 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
  * - ページビュー自動トラッキング
  * - ルート変更時のイベント送信
  * - プライバシー準拠（IP匿名化、Cookie設定）
+ * - Cookie同意管理と連携（同意がない場合は実行しない）
  *
  * 使用方法:
  * layout.tsx の <body> 内に配置
@@ -20,10 +22,11 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 export default function GoogleAnalytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { consent } = useCookieConsent();
 
   // ページビュートラッキング（ルート変更時）
   useEffect(() => {
-    if (!GA_MEASUREMENT_ID) return;
+    if (!GA_MEASUREMENT_ID || !consent.analytics) return;
 
     const url = pathname + searchParams.toString();
 
@@ -35,10 +38,10 @@ export default function GoogleAnalytics() {
         cookie_flags: "SameSite=None;Secure", // Cookie設定
       });
     }
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, consent.analytics]);
 
-  // GA_MEASUREMENT_IDが設定されていない場合は何も表示しない
-  if (!GA_MEASUREMENT_ID) {
+  // GA_MEASUREMENT_IDが設定されていない場合、または分析Cookieの同意がない場合は何も表示しない
+  if (!GA_MEASUREMENT_ID || !consent.analytics) {
     return null;
   }
 
