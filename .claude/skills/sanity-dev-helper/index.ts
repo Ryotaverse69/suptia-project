@@ -818,7 +818,8 @@ ${chalk.bold('Sanity Dev Helper - Suptia開発環境管理ツール')}
   }
 }
 
-if (require.main === module) {
+// ESモジュール用のメインチェック
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 

@@ -341,7 +341,8 @@ ${chalk.bold('Article Optimizer - 成分記事統合最適化ツール')}
   }
 }
 
-if (require.main === module) {
+// ESモジュール用のメインチェック
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 

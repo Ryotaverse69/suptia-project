@@ -693,7 +693,8 @@ ${chalk.bold('Price Calculator - サプリメント価格分析ツール')}
   }
 }
 
-if (require.main === module) {
+// ESモジュール用のメインチェック
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 
