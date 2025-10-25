@@ -2,12 +2,10 @@
 import "@/env";
 import { headers } from "next/headers";
 import Script from "next/script";
-import { Suspense } from "react";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { generateOrganizationJsonLd } from "@/lib/seo";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -66,6 +64,7 @@ export default function RootLayout({
     url: siteUrl,
   };
   const organizationJsonLd = generateOrganizationJsonLd();
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
     <html lang="ja">
@@ -85,9 +84,24 @@ export default function RootLayout({
         </Script>
 
         {/* Google Analytics 4 */}
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
 
         <Header />
         {children}
