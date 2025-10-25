@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Resendクライアントの初期化
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resendクライアントの遅延初期化（ビルド時ではなく実行時に初期化）
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 // リクエストボディの型定義
 interface ContactFormData {
@@ -154,6 +159,7 @@ export async function POST(request: NextRequest) {
     `.trim();
 
     // メール送信
+    const resend = getResendClient();
     const { data, error } = await resend.emails.send({
       from: "サプティア お問い合わせ <noreply@suptia.com>",
       to: [adminEmail],
