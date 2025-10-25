@@ -264,6 +264,10 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
           reviewCount: product.reviewCount || 0,
         },
         priceData: [priceData],
+        // 外部画像URL（楽天APIから取得）
+        ...(product.imageUrl && {
+          externalImageUrl: product.imageUrl,
+        }),
         // 以下は手動入力が必要
         ingredients: [], // Sanityで手動入力
         servingsPerDay: 1, // デフォルト値
@@ -289,6 +293,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
               availability: product.inStock ? 'in-stock' : 'out-of-stock',
               'reviewStats.averageRating': product.rating || 0,
               'reviewStats.reviewCount': product.reviewCount || 0,
+              ...(product.imageUrl && { externalImageUrl: product.imageUrl }),
             },
             insert: {
               after: 'priceData[-1]',

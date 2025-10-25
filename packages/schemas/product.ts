@@ -192,6 +192,12 @@ export const product = defineType({
       ],
     }),
     defineField({
+      name: "externalImageUrl",
+      title: "外部画像URL",
+      type: "url",
+      description: "EC APIから取得した商品画像のURL（楽天・Yahoo等）",
+    }),
+    defineField({
       name: "warnings",
       title: "注意事項",
       type: "array",

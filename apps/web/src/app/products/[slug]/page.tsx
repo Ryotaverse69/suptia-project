@@ -47,6 +47,7 @@ interface Product {
     };
     alt?: string;
   }>;
+  externalImageUrl?: string;
   priceData?: PriceData[];
   priceHistory?: PriceHistory[];
   urls?: {
@@ -77,6 +78,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       },
       alt
     },
+    externalImageUrl,
     priceData,
     priceHistory,
     urls
@@ -174,11 +176,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* Product Image */}
-        {product.images && product.images.length > 0 && (
+        {(product.externalImageUrl ||
+          (product.images && product.images.length > 0)) && (
           <div className="mb-8">
             <Image
-              src={product.images[0].asset.url}
-              alt={product.images[0].alt || product.name}
+              src={product.externalImageUrl || product.images![0].asset.url}
+              alt={product.images?.[0]?.alt || product.name}
               width={400}
               height={300}
               className="rounded-lg shadow-sm"

@@ -271,6 +271,10 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
           reviewCount: product.reviewCount || 0,
         },
         priceData: [priceData],
+        // 外部画像URL（Yahoo APIから取得）
+        ...(product.imageUrl && {
+          externalImageUrl: product.imageUrl,
+        }),
         ingredients: [],
         servingsPerDay: 1,
         servingsPerContainer: 30,
@@ -295,6 +299,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
               availability: product.inStock ? 'in-stock' : 'out-of-stock',
               'reviewStats.averageRating': product.rating || 0,
               'reviewStats.reviewCount': product.reviewCount || 0,
+              ...(product.imageUrl && { externalImageUrl: product.imageUrl }),
             },
             insert: {
               after: 'priceData[-1]',

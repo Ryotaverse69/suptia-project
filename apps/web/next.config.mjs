@@ -4,7 +4,7 @@
 function buildDevCSP() {
   const policies = [
     "default-src 'self'",
-    "img-src 'self' https://cdn.sanity.io data:",
+    "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp data:",
     "connect-src 'self' https://*.sanity.io",
     "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
     "font-src 'self' data:",
@@ -21,6 +21,22 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "cdn.sanity.io",
+      },
+      {
+        protocol: "https",
+        hostname: "thumbnail.image.rakuten.co.jp",
+      },
+      {
+        protocol: "https",
+        hostname: "tshop.r10s.jp",
+      },
+      {
+        protocol: "https",
+        hostname: "item-shopping.c.yimg.jp",
+      },
+      {
+        protocol: "https",
+        hostname: "shopping.c.yimg.jp",
       },
     ],
   },
