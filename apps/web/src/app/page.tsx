@@ -32,6 +32,12 @@ interface Ingredient {
   };
 }
 
+interface IngredientWithStats extends Ingredient {
+  productCount: number;
+  minPrice: number;
+  sampleImageUrl?: string;
+}
+
 async function getProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(priceJPY asc)[0..12]{
     name,
@@ -108,11 +114,56 @@ async function getPopularIngredients(): Promise<Ingredient[]> {
   }
 }
 
+// 成分ごとの統計情報を取得
+async function getIngredientStats(ingredientSlug: string): Promise<{
+  productCount: number;
+  minPrice: number;
+  sampleImageUrl?: string;
+}> {
+  const query = `*[_type == "ingredient" && slug.current == $slug][0]{
+    "productCount": count(*[_type == "product" && references(^._id)]),
+    "minPrice": math::min(*[_type == "product" && references(^._id)].priceJPY),
+    "sampleImageUrl": *[_type == "product" && references(^._id) && defined(externalImageUrl)][0].externalImageUrl
+  }`;
+
+  try {
+    const stats = await sanity.fetch(query, { slug: ingredientSlug });
+    return {
+      productCount: stats?.productCount || 0,
+      minPrice: stats?.minPrice || 0,
+      sampleImageUrl: stats?.sampleImageUrl,
+    };
+  } catch (error) {
+    console.error(`Failed to fetch stats for ingredient ${ingredientSlug}:`, error);
+    return {
+      productCount: 0,
+      minPrice: 0,
+    };
+  }
+}
+
+// 人気の成分と統計情報を取得
+async function getPopularIngredientsWithStats(): Promise<IngredientWithStats[]> {
+  const ingredients = await getPopularIngredients();
+
+  const ingredientsWithStats = await Promise.all(
+    ingredients.map(async (ingredient) => {
+      const stats = await getIngredientStats(ingredient.slug.current);
+      return {
+        ...ingredient,
+        ...stats,
+      };
+    })
+  );
+
+  return ingredientsWithStats;
+}
+
 export default async function Home() {
   const products = await getProducts();
   const ingredients = await getIngredients();
   const featuredProducts = await getFeaturedProducts();
-  const popularIngredients = await getPopularIngredients();
+  const popularIngredientsWithStats = await getPopularIngredientsWithStats();
 
   // Calculate effective cost for each product
   const productsWithCost = products.map((product, index) => {
@@ -364,7 +415,7 @@ export default async function Home() {
         )}
 
         {/* 人気の成分セクション */}
-        {popularIngredients.length > 0 && (
+        {popularIngredientsWithStats.length > 0 && (
           <section className="py-12 border-b border-primary-100 bg-white/50">
             <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
               <div className="flex items-center justify-between mb-6">
@@ -383,34 +434,60 @@ export default async function Home() {
               {/* 横スクロール可能なカルーセル */}
               <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 lg:-mx-12 lg:px-12 xl:-mx-16 xl:px-16">
                 <div className="flex gap-4 pb-4">
-                  {popularIngredients.map((ingredient) => (
+                  {popularIngredientsWithStats.map((ingredient) => (
                     <Link
                       key={ingredient.slug.current}
-                      href={`/ingredients/${ingredient.slug.current}`}
+                      href={`/search?q=${encodeURIComponent(ingredient.name)}`}
                       className="group flex-shrink-0 w-[280px] bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                     >
-                      {/* カテゴリヘッダー */}
-                      <div className="p-4 pb-0">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-100 rounded-full mb-3">
-                          <span className="text-xs font-bold text-primary-900">
+                      {/* 商品画像 */}
+                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
+                        {ingredient.sampleImageUrl ? (
+                          <img
+                            src={ingredient.sampleImageUrl}
+                            alt={ingredient.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+                            <Award size={48} strokeWidth={1} />
+                          </div>
+                        )}
+                        {/* カテゴリバッジ */}
+                        <div className="absolute top-2 left-2">
+                          <div className="px-3 py-1 bg-primary rounded text-white text-xs font-bold">
                             {ingredient.category}
-                          </span>
+                          </div>
                         </div>
+                      </div>
 
+                      {/* 商品情報 */}
+                      <div className="p-4">
                         {/* 成分名 */}
                         <h3 className="text-base font-bold text-primary-900 mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
                           {ingredient.name}
                         </h3>
                         <p className="text-xs text-primary-600 mb-3">{ingredient.nameEn}</p>
 
-                        {/* 説明 */}
-                        <p className="text-sm text-primary-700 line-clamp-3 mb-4">
-                          {ingredient.description}
-                        </p>
+                        {/* 統計情報 */}
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm font-semibold text-primary-900">
+                              {ingredient.productCount}種類
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-primary-600">最安値</span>
+                            <span className="text-sm font-bold text-primary-900">
+                              ¥{ingredient.minPrice.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
 
                         {/* 料金プランをチェックボタン */}
-                        <button className="w-full mt-2 mb-4 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
-                          この成分を含む商品を見る
+                        <button className="w-full mt-2 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
+                          商品を比較する
                         </button>
                       </div>
                     </Link>
