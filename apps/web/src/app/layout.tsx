@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   },
   description:
     "科学的根拠に基づくサプリメント比較メタサーチ。あなたに最適なサプリメントを見つけるお手伝いをします。",
+  verification: {
+    google: process.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION,
+  },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
