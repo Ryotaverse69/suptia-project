@@ -2,6 +2,7 @@ import { sanityServer } from "@/lib/sanityServer";
 import { checkCompliance, generateSampleDescription } from "@/lib/compliance";
 import { WarningBanner } from "@/components/WarningBanner";
 import { PriceTable } from "@/components/PriceTable";
+import { PriceComparison } from "@/components/PriceComparison";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -12,6 +13,21 @@ import { isValidSlug } from "@/lib/sanitize";
 import Image from "next/image";
 import { headers } from "next/headers";
 import Script from "next/script";
+
+interface PriceData {
+  source: string;
+  amount: number;
+  currency: string;
+  url: string;
+  fetchedAt: string;
+  confidence?: number;
+}
+
+interface PriceHistory {
+  source: string;
+  amount: number;
+  recordedAt: string;
+}
 
 interface Product {
   _id: string;
@@ -30,6 +46,13 @@ interface Product {
     };
     alt?: string;
   }>;
+  priceData?: PriceData[];
+  priceHistory?: PriceHistory[];
+  urls?: {
+    rakuten?: string;
+    amazon?: string;
+    iherb?: string;
+  };
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -52,7 +75,10 @@ async function getProduct(slug: string): Promise<Product | null> {
         url
       },
       alt
-    }
+    },
+    priceData,
+    priceHistory,
+    urls
   }`;
 
   try {
@@ -176,6 +202,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
           }}
           className="mb-8"
         />
+
+        {/* Price Comparison Component */}
+        <PriceComparison priceData={product.priceData} className="mb-8" />
 
         {/* Back to Home */}
         <div className="text-center">
