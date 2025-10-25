@@ -87,7 +87,7 @@ jobs:
 
       - name: Upload check reports
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pre-deploy-reports
           path: |
@@ -122,7 +122,7 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: apps/web/.next
@@ -271,7 +271,7 @@ jobs:
           echo "- Post-deploy validation: ✅" >> deployment-report.md
 
       - name: Upload deployment report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-report
           path: deployment-report.md
