@@ -31,7 +31,7 @@ interface Ingredient {
 interface Product {
   _id: string;
   name: string;
-  brand: string;
+  brandName: string;
   slug: {
     current: string;
   };
@@ -67,11 +67,11 @@ async function searchContent(
   // 商品を検索（将来的に実装）
   const productsQuery = `*[_type == "product" && (
     name match "*${searchTerm}*" ||
-    brand match "*${searchTerm}*"
+    brand->name match "*${searchTerm}*"
   )] | order(name asc) [0...20] {
     _id,
     name,
-    brand,
+    'brandName': brand->name,
     slug,
     description,
     price
@@ -294,10 +294,10 @@ export default async function SearchPage({
                           <h3 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
                             {product.name}
                           </h3>
-                          {product.brand &&
-                            typeof product.brand === "string" && (
+                          {product.brandName &&
+                            typeof product.brandName === "string" && (
                               <p className="text-sm text-primary-600">
-                                {product.brand}
+                                {product.brandName}
                               </p>
                             )}
                         </div>

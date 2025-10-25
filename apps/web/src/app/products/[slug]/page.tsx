@@ -33,7 +33,7 @@ interface PriceHistory {
 interface Product {
   _id: string;
   name: string;
-  brand: string;
+  brandName: string;
   priceJPY: number;
   servingsPerContainer: number;
   servingsPerDay: number;
@@ -65,7 +65,7 @@ async function getProduct(slug: string): Promise<Product | null> {
   const query = `*[_type == "product" && slug.current == $slug][0]{
     _id,
     name,
-    brand,
+    'brandName': brand->name,
     priceJPY,
     servingsPerContainer,
     servingsPerDay,
@@ -114,7 +114,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // Generate JSON-LD structured data
   const productJsonLd = generateProductJsonLd({
     name: product.name,
-    brand: product.brand,
+    brand: product.brandName,
     priceJPY: product.priceJPY,
     slug: product.slug.current,
     description,
@@ -170,7 +170,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {product.name}
           </h1>
-          <p className="text-lg text-gray-600">{product.brand}</p>
+          <p className="text-lg text-gray-600">{product.brandName}</p>
         </div>
 
         {/* Product Image */}
@@ -239,7 +239,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   return generateProductMetadata({
     name: product.name,
-    brand: product.brand,
+    brand: product.brandName,
     priceJPY: product.priceJPY,
     slug: product.slug.current,
     description: product.description,
