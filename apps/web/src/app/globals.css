@@ -139,4 +139,14 @@
   .glow-blue {
     box-shadow: 0 0 24px rgba(59, 102, 224, 0.2);
   }
+
+  /* スクロールバーを非表示 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }

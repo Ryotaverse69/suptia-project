@@ -9,6 +9,7 @@ import {
   Package,
   AlertCircle,
   Shield,
+  Award,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ interface Product {
   };
   description?: string;
   price?: number;
+  externalImageUrl?: string;
 }
 
 async function searchContent(
@@ -74,7 +76,8 @@ async function searchContent(
     'brandName': brand->name,
     slug,
     description,
-    price
+    price,
+    externalImageUrl
   }`;
 
   try {
@@ -287,35 +290,54 @@ export default async function SearchPage({
                     <Link
                       key={product._id}
                       href={`/products/${product.slug.current}`}
-                      className="group bg-white border border-primary-200 rounded-lg p-6 hover:border-primary hover:shadow-lg transition-all"
+                      className="group bg-white border border-primary-200 rounded-lg overflow-hidden hover:border-primary hover:shadow-lg transition-all"
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
-                            {product.name}
-                          </h3>
-                          {product.brandName &&
-                            typeof product.brandName === "string" && (
-                              <p className="text-sm text-primary-600">
-                                {product.brandName}
-                              </p>
-                            )}
-                        </div>
-                        <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                      {/* 商品画像 */}
+                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
+                        {product.externalImageUrl ? (
+                          <img
+                            src={product.externalImageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+                            <Award size={56} strokeWidth={1} />
+                          </div>
+                        )}
                       </div>
 
-                      {product.description &&
-                        typeof product.description === "string" && (
-                          <p className="text-sm text-primary-700 line-clamp-2 mb-4">
-                            {product.description}
-                          </p>
-                        )}
-
-                      {product.price && (
-                        <div className="text-lg font-bold text-primary">
-                          {formatPrice(product.price)}
+                      {/* 商品情報 */}
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
+                              {product.name}
+                            </h3>
+                            {product.brandName &&
+                              typeof product.brandName === "string" && (
+                                <p className="text-sm text-primary-600">
+                                  {product.brandName}
+                                </p>
+                              )}
+                          </div>
+                          <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                         </div>
-                      )}
+
+                        {product.description &&
+                          typeof product.description === "string" && (
+                            <p className="text-sm text-primary-700 line-clamp-2 mb-4">
+                              {product.description}
+                            </p>
+                          )}
+
+                        {product.price && (
+                          <div className="text-lg font-bold text-primary">
+                            {formatPrice(product.price)}
+                          </div>
+                        )}
+                      </div>
                     </Link>
                   ))}
                 </div>

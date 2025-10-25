@@ -95,6 +95,15 @@ class RakutenAdapter {
   }
 
   normalizeProduct(item) {
+    // 楽天APIの画像URLから高解像度版を取得
+    // mediumImageUrlsには ?_ex=128x128 のようなサイズ指定がついているので削除
+    let imageUrl = null;
+    if (item.mediumImageUrls && item.mediumImageUrls.length > 0) {
+      const originalUrl = item.mediumImageUrls[0].imageUrl;
+      // ?_ex=128x128 などのクエリパラメータを削除してフルサイズ画像を取得
+      imageUrl = originalUrl.split('?')[0];
+    }
+
     return {
       id: item.itemCode,
       name: item.itemName,
@@ -102,7 +111,7 @@ class RakutenAdapter {
       currency: 'JPY',
       url: item.itemUrl,
       affiliateUrl: item.affiliateUrl,
-      imageUrl: item.mediumImageUrls?.[0]?.imageUrl,
+      imageUrl,
       brand: item.shopName,
       rating: item.reviewAverage,
       reviewCount: item.reviewCount,

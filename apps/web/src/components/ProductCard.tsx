@@ -29,6 +29,7 @@ interface ProductCardProps {
     isBestValue?: boolean;
     safetyScore?: number;
     imageUrl?: string;
+    externalImageUrl?: string;
   };
 }
 
@@ -45,8 +46,12 @@ export function ProductCard({ product }: ProductCardProps) {
     reviewCount = 127,
     isBestValue = false,
     safetyScore = 95,
-    imageUrl = "/placeholder-supplement.jpg",
+    imageUrl,
+    externalImageUrl,
   } = product;
+
+  // 画像URL: 外部画像URL > imageUrl > プレースホルダー
+  const displayImageUrl = externalImageUrl || imageUrl;
 
   // 実効コストを自動計算（データが揃っている場合）
   let calculatedCost;
@@ -71,10 +76,19 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${slug.current}`}>
       <Card className="group cursor-pointer overflow-hidden h-full flex flex-col hover:scale-[1.02]">
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
-          {/* Placeholder for product image */}
-          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
-            <Award size={56} strokeWidth={1} />
-          </div>
+          {/* Product image */}
+          {displayImageUrl ? (
+            <img
+              src={displayImageUrl}
+              alt={name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+              <Award size={56} strokeWidth={1} />
+            </div>
+          )}
 
           {isBestValue && (
             <div className="absolute top-4 left-4 z-10">
