@@ -1115,7 +1115,7 @@ npm run dev
 
 ## 連絡先とサポート
 
-- **リポジトリ**: [GitHub - suptia-project](https://github.com/Ryotaverse69/suptia-kiro)
+- **リポジトリ**: [GitHub - suptia-project](https://github.com/Ryotaverse69/suptia-project)
 - **ドキュメント**: `./docs/` ディレクトリ
 - **Issue報告**: GitHubのIssuesセクション
 

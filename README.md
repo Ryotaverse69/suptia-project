@@ -83,7 +83,7 @@ gh auth login
 bash .tools/bootstrap_repo.sh OWNER REPO BRANCH
 
 # 例: このリポジトリの場合
-bash .tools/bootstrap_repo.sh Ryotaverse69 suptia-kiro master
+bash .tools/bootstrap_repo.sh Ryotaverse69 suptia-project master
 ```
 
 #### スクリプトが実行する内容

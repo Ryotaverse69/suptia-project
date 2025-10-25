@@ -14,8 +14,8 @@ Suptiaプロジェクトの自動化を完全に機能させるため、GitHub S
 | `SANITY_DATASET`    | Sanityデータセット名     | 通常は `production`                                                              |
 | `SANITY_API_TOKEN`  | Sanity APIトークン       | 下記の「Sanity APIトークン作成方法」参照                                         |
 | `VERCEL_TOKEN`      | Vercelデプロイ用トークン | [Vercel Settings](https://vercel.com/account/tokens) → Create Token              |
-| `VERCEL_ORG_ID`     | Vercel組織ID             | Vercelプロジェクト → Settings → General                                          |
-| `VERCEL_PROJECT_ID` | VercelプロジェクトID     | Vercelプロジェクト → Settings → General                                          |
+| `VERCEL_ORG_ID`     | Vercel組織ID/スコープID  | 下記の「Vercel組織ID取得方法」参照                                               |
+| `VERCEL_PROJECT_ID` | VercelプロジェクトID     | Vercelプロジェクト → Settings → General → Project ID                             |
 
 ### オプションのSecrets（推奨）
 
@@ -34,7 +34,7 @@ Suptiaプロジェクトの自動化を完全に機能させるため、GitHub S
 
 ### Step 1: GitHubリポジトリのSecretsページを開く
 
-1. GitHubリポジトリ（[https://github.com/Ryotaverse69/suptia-kiro](https://github.com/Ryotaverse69/suptia-kiro)）を開く
+1. GitHubリポジトリ（[https://github.com/Ryotaverse69/suptia-project](https://github.com/Ryotaverse69/suptia-project)）を開く
 2. 上部メニューの **Settings** をクリック
 3. 左側メニューの **Secrets and variables** → **Actions** をクリック
 
@@ -49,7 +49,67 @@ Suptiaプロジェクトの自動化を完全に機能させるため、GitHub S
    - **Permissions**: `Editor`（読み書き可能）
 6. トークンをコピー（**重要：この画面を閉じると二度と表示されません**）
 
-### Step 3: Vercelトークンの作成
+### Step 3: Vercel組織ID（ORG_ID）の取得
+
+#### 方法1: Vercel CLIを使用（推奨）
+
+```bash
+# Vercel CLIをインストール（未インストールの場合）
+npm i -g vercel
+
+# ログイン
+vercel login
+
+# プロジェクト情報を表示
+vercel whoami
+```
+
+このコマンドで表示される情報：
+
+- **個人アカウントの場合**: `Scope` の値が `VERCEL_ORG_ID`
+- **チームの場合**: `Team` のIDが `VERCEL_ORG_ID`
+
+#### 方法2: Vercelダッシュボードから確認
+
+1. [Vercel Dashboard](https://vercel.com/dashboard)にログイン
+2. プロジェクトを選択
+3. **Settings** → **General** をクリック
+4. ページのURLを確認:
+   - 個人: `https://vercel.com/[username]/[project]/settings`
+   - チーム: `https://vercel.com/[team-slug]/[project]/settings`
+5. `.vercel/project.json`ファイルがある場合は、その中の`orgId`が該当
+
+#### 方法3: APIで確認
+
+```bash
+# Vercel APIを使用（VERCEL_TOKENが必要）
+curl -H "Authorization: Bearer YOUR_VERCEL_TOKEN" \
+  https://api.vercel.com/v2/user
+```
+
+レスポンスの`id`フィールドが個人アカウントのORG_IDです。
+
+**📝 注意**:
+
+- **VERCEL_ORG_ID**: 個人の場合はUser Scope ID、チームの場合はTeam ID
+- **VERCEL_PROJECT_ID**: プロジェクト固有のID（プロジェクト設定画面で確認可能）
+- 両方とも`.vercel/project.json`ファイルがある場合は、そこから確認可能
+
+#### 🎯 このプロジェクトの場合
+
+`.vercel/project.json`ファイルに既に値があります：
+
+```json
+{
+  "projectId": "prj_NWkcnXBay0NvP9FEZUuXAICo0514", // ← VERCEL_PROJECT_ID
+  "orgId": "team_RIwNpcvXKq5GcbPbIvWObT5I", // ← VERCEL_ORG_ID
+  "projectName": "suptia-project"
+}
+```
+
+これらの値をそのままGitHub Secretsに設定してください。
+
+### Step 4: Vercelトークンの作成
 
 1. [Vercel Settings](https://vercel.com/account/tokens)にアクセス
 2. **Create Token** をクリック
@@ -57,7 +117,7 @@ Suptiaプロジェクトの自動化を完全に機能させるため、GitHub S
 4. スコープはデフォルトのままでOK
 5. **Create** をクリックしてトークンをコピー
 
-### Step 4: GitHubにSecretsを追加
+### Step 5: GitHubにSecretsを追加
 
 各Secretごとに以下の手順を繰り返します：
 
@@ -66,7 +126,7 @@ Suptiaプロジェクトの自動化を完全に機能させるため、GitHub S
 3. **Secret** フィールドに値を貼り付け
 4. **Add secret** をクリック
 
-### Step 5: 設定の確認
+### Step 6: 設定の確認
 
 すべてのSecretsを追加したら、以下のコマンドで確認：
 

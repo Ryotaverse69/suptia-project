@@ -13,8 +13,8 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/Ryotaverse69/suptia-kiro.git
-cd suptia-kiro
+git clone https://github.com/Ryotaverse69/suptia-project.git
+cd suptia-project
 
 # devブランチに切り替え
 git switch dev
@@ -64,6 +64,7 @@ Preview環境で問題がないことを確認したら、PRを作成します�
 ```
 
 **PR作成時のチェックリスト**:
+
 - [ ] Preview環境で動作確認済み
 - [ ] テストが通過している
 - [ ] コードレビューが完了している

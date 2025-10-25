@@ -39,7 +39,7 @@ graph TB
     Checks -->|No| Feedback[フィードバック]
     AutoMerge --> Master[master ブランチ]
     Master --> VercelProd[Vercel Production環境]
-    
+
     subgraph "CI/CD Checks"
         Format[format:check]
         Lint[lint]
@@ -59,6 +59,7 @@ graph TB
 #### Branch Protection Rules
 
 **Master Branch Protection:**
+
 ```yaml
 master:
   protection_rules:
@@ -66,7 +67,7 @@ master:
       strict: true
       contexts:
         - "format:check"
-        - "lint" 
+        - "lint"
         - "test"
         - "typecheck"
         - "build"
@@ -85,10 +86,11 @@ master:
 ```
 
 **Dev Branch Configuration:**
+
 ```yaml
 dev:
-  protection_rules: null  # 直接push許可
-  auto_deploy: true       # Vercel Preview自動デプロイ
+  protection_rules: null # 直接push許可
+  auto_deploy: true # Vercel Preview自動デプロイ
 ```
 
 #### Repository Settings
@@ -131,8 +133,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
       - run: npm ci
       - run: npm run ${{ matrix.check }}
 
@@ -178,10 +180,10 @@ environments:
       - NEXT_PUBLIC_SITE_URL
       - SANITY_API_TOKEN
       - SANITY_API_VERSION
-  
+
   preview:
     branch: "dev"
-    domain: "suptia-kiro-git-dev-*.vercel.app"
+    domain: "suptia-project-git-dev-*.vercel.app"
     variables:
       - NEXT_PUBLIC_SANITY_PROJECT_ID
       - NEXT_PUBLIC_SANITY_DATASET
@@ -206,10 +208,7 @@ npm run precommit
     "precommit": "npm run format && npm run lint && npm run test && npm run env:check"
   },
   "lint-staged": {
-    "apps/web/**/*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "apps/web/**/*.{js,jsx,ts,tsx}": ["prettier --write", "eslint --fix"]
   }
 }
 ```
@@ -221,20 +220,20 @@ npm run precommit
 export const dodCriteria = [
   {
     name: "Code Quality",
-    checks: ["format", "lint", "typecheck"]
+    checks: ["format", "lint", "typecheck"],
   },
   {
     name: "Testing",
-    checks: ["test", "coverage"]
+    checks: ["test", "coverage"],
   },
   {
     name: "Build & Deploy",
-    checks: ["build", "headers", "jsonld"]
+    checks: ["build", "headers", "jsonld"],
   },
   {
     name: "Documentation",
-    checks: ["readme", "changelog"]
-  }
+    checks: ["readme", "changelog"],
+  },
 ];
 ```
 
@@ -244,7 +243,7 @@ export const dodCriteria = [
 
 ```typescript
 interface Branch {
-  name: 'master' | 'dev';
+  name: "master" | "dev";
   protection: BranchProtection | null;
   deployTarget: DeploymentEnvironment;
   allowDirectPush: boolean;
@@ -263,7 +262,7 @@ interface BranchProtection {
 
 ```typescript
 interface DeploymentEnvironment {
-  name: 'production' | 'preview';
+  name: "production" | "preview";
   branch: string;
   domain: string;
   environmentVariables: EnvironmentVariable[];
@@ -274,7 +273,7 @@ interface EnvironmentVariable {
   key: string;
   value: string;
   encrypted: boolean;
-  environments: ('production' | 'preview')[];
+  environments: ("production" | "preview")[];
 }
 ```
 
@@ -312,12 +311,12 @@ error_handling:
     action: "block_merge"
     notification: "slack_webhook"
     retry_policy: "manual"
-  
+
   test_failure:
     action: "block_merge"
     notification: "github_comment"
     retry_policy: "automatic_once"
-  
+
   deployment_failure:
     action: "rollback"
     notification: "email_alert"
@@ -328,11 +327,11 @@ error_handling:
 
 ```typescript
 interface ProtectionViolation {
-  type: 'direct_push' | 'missing_review' | 'failed_check';
+  type: "direct_push" | "missing_review" | "failed_check";
   branch: string;
   user: string;
   timestamp: Date;
-  resolution: 'blocked' | 'override' | 'fixed';
+  resolution: "blocked" | "override" | "fixed";
 }
 ```
 
@@ -364,12 +363,12 @@ testing_pyramid:
     coverage_threshold: 80%
     tools: ["vitest", "jest"]
     run_on: ["push", "pr"]
-  
+
   integration_tests:
     coverage_threshold: 60%
     tools: ["playwright", "cypress"]
     run_on: ["pr", "merge"]
-  
+
   e2e_tests:
     coverage_threshold: 40%
     tools: ["playwright"]
@@ -383,13 +382,13 @@ interface QualityGate {
   name: string;
   criteria: QualityCriteria[];
   blocking: boolean;
-  environment: 'dev' | 'master';
+  environment: "dev" | "master";
 }
 
 interface QualityCriteria {
-  metric: 'test_coverage' | 'build_success' | 'lint_errors';
+  metric: "test_coverage" | "build_success" | "lint_errors";
   threshold: number;
-  operator: '>=' | '<=' | '=';
+  operator: ">=" | "<=" | "=";
 }
 ```
 
@@ -404,7 +403,7 @@ performance_tests:
       best_practices: 90
       seo: 95
     run_on: ["pr", "deploy"]
-  
+
   load_testing:
     tool: "k6"
     scenarios: ["normal_load", "stress_test"]
@@ -422,7 +421,7 @@ access_control:
     force_push: false
     delete: false
     admin_override: true
-  
+
   dev:
     direct_push: true
     force_push: true
@@ -438,7 +437,7 @@ secrets:
     - VERCEL_TOKEN
     - SANITY_API_TOKEN
     - SLACK_WEBHOOK_URL
-  
+
   vercel:
     production:
       - SANITY_API_TOKEN
@@ -456,12 +455,12 @@ security_checks:
     tool: "dependabot"
     schedule: "weekly"
     auto_merge: "patch_only"
-  
+
   code_scanning:
     tool: "codeql"
     languages: ["typescript", "javascript"]
     schedule: "on_push"
-  
+
   secret_scanning:
     enabled: true
     push_protection: true
@@ -477,12 +476,12 @@ monitoring:
     metric: "deployments_successful / deployments_total"
     threshold: 0.95
     alert: "slack"
-  
+
   build_time:
     metric: "avg(build_duration)"
     threshold: "10m"
     alert: "email"
-  
+
   test_execution_time:
     metric: "avg(test_duration)"
     threshold: "5m"
@@ -509,7 +508,7 @@ graph TD
     Severity -->|Critical| Immediate[Immediate Alert]
     Severity -->|Warning| Batched[Batched Alert]
     Severity -->|Info| Log[Log Only]
-    
+
     Immediate --> Slack[Slack Notification]
     Immediate --> Email[Email Alert]
     Batched --> DailyReport[Daily Report]
@@ -526,11 +525,11 @@ github_vercel:
     - push
     - pull_request
     - deployment_status
-  
+
   deployment_triggers:
     production: "push to master"
     preview: "push to dev"
-  
+
   status_checks:
     - vercel_deployment_ready
     - vercel_build_successful
@@ -543,11 +542,11 @@ tool_integrations:
   eslint:
     config: "apps/web/.eslintrc.json"
     output_format: "github_annotations"
-  
+
   prettier:
     config: "apps/web/.prettierrc"
     check_only: true
-  
+
   vitest:
     config: "apps/web/vitest.config.ts"
     coverage_reporter: "lcov"
@@ -560,9 +559,9 @@ interface NotificationConfig {
   slack: {
     webhook: string;
     channels: {
-      deployments: '#deployments';
-      alerts: '#alerts';
-      general: '#general';
+      deployments: "#deployments";
+      alerts: "#alerts";
+      general: "#general";
     };
   };
   email: {

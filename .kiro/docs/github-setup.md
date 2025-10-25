@@ -20,7 +20,7 @@ Protect matching branches:
     ✅ Require approvals: 1
     ✅ Dismiss stale PR approvals when new commits are pushed
     ✅ Require review from code owners
-  
+
   ✅ Require status checks to pass before merging
     ✅ Require branches to be up to date before merging
     Required status checks:
@@ -32,7 +32,7 @@ Protect matching branches:
       - headers
       - jsonld
       - pr-dod-check
-  
+
   ✅ Require conversation resolution before merging
   ✅ Require signed commits
   ✅ Require linear history
@@ -51,10 +51,10 @@ Branch name pattern: dev
 Protect matching branches:
   ✅ Require a pull request before merging: ❌ Disabled
     # devブランチは直接pushを許可
-  
+
   ✅ Require status checks to pass before merging: ❌ Disabled
     # CI/CDは実行されるが、必須ではない
-  
+
   ✅ Include administrators
   ✅ Allow force pushes: ✅ Enabled (開発用)
   ✅ Allow deletions: ❌ Disabled (常設ブランチのため)
@@ -65,7 +65,7 @@ Protect matching branches:
 ### General Settings
 
 ```yaml
-Repository name: suptia-kiro
+Repository name: suptia-project
 Description: Suptia platform with Kiro AI development workflow
 
 Features:
@@ -89,15 +89,13 @@ Pushes:
 ### Security Settings
 
 ```yaml
-Security:
-  ✅ Private vulnerability reporting
+Security: ✅ Private vulnerability reporting
   ✅ Dependency graph
   ✅ Dependabot alerts
   ✅ Dependabot security updates
   ✅ Dependabot version updates
 
-Code scanning:
-  ✅ CodeQL analysis
+Code scanning: ✅ CodeQL analysis
   ✅ Secret scanning
   ✅ Push protection for secrets
 ```
@@ -107,11 +105,9 @@ Code scanning:
 ### Workflow permissions
 
 ```yaml
-Actions permissions:
-  ✅ Allow all actions and reusable workflows
+Actions permissions: ✅ Allow all actions and reusable workflows
 
-Workflow permissions:
-  ✅ Read and write permissions
+Workflow permissions: ✅ Read and write permissions
   ✅ Allow GitHub Actions to create and approve pull requests
 ```
 
@@ -210,7 +206,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-  
+
   - type: textarea
     id: what-happened
     attributes:
@@ -219,7 +215,7 @@ body:
       placeholder: Tell us what you see!
     validations:
       required: true
-  
+
   - type: dropdown
     id: browsers
     attributes:
@@ -230,7 +226,7 @@ body:
         - Chrome
         - Safari
         - Microsoft Edge
-  
+
   - type: textarea
     id: logs
     attributes:
@@ -252,7 +248,7 @@ body:
     attributes:
       value: |
         Thanks for suggesting a new feature!
-  
+
   - type: textarea
     id: problem
     attributes:
@@ -261,7 +257,7 @@ body:
       placeholder: I'm always frustrated when...
     validations:
       required: true
-  
+
   - type: textarea
     id: solution
     attributes:
@@ -269,7 +265,7 @@ body:
       description: A clear and concise description of what you want to happen.
     validations:
       required: true
-  
+
   - type: textarea
     id: alternatives
     attributes:
@@ -283,34 +279,44 @@ body:
 # .github/pull_request_template.md
 
 ## 概要
+
 <!-- このPRの目的と変更内容を簡潔に説明してください -->
 
 ## 変更内容
+
 <!-- 具体的な変更内容をリストアップしてください -->
-- [ ] 
-- [ ] 
-- [ ] 
+
+- [ ]
+- [ ]
+- [ ]
 
 ## テスト
+
 <!-- テスト方法と結果を記載してください -->
+
 - [ ] ローカルでテストが通過することを確認
 - [ ] Preview環境で動作確認済み
 - [ ] 必要に応じてE2Eテストを追加
 
 ## チェックリスト
+
 - [ ] コードレビューの準備ができている
 - [ ] ドキュメントを更新している（必要な場合）
 - [ ] 破壊的変更がある場合は、マイグレーションガイドを作成
 - [ ] セキュリティに関する変更がある場合は、セキュリティレビューを実施
 
 ## 関連Issue
+
 <!-- 関連するIssueがあれば記載してください -->
+
 Closes #
 
 ## スクリーンショット
+
 <!-- UIに変更がある場合は、Before/Afterのスクリーンショットを添付してください -->
 
 ## 追加情報
+
 <!-- その他、レビュアーに伝えたい情報があれば記載してください -->
 ```
 
@@ -323,8 +329,7 @@ Payload URL: https://api.vercel.com/v1/integrations/deploy/...
 Content type: application/json
 Secret: [Vercel Integration Secret]
 
-Events:
-  ✅ Push
+Events: ✅ Push
   ✅ Pull request
 ```
 
@@ -334,8 +339,7 @@ Events:
 Payload URL: https://hooks.slack.com/services/...
 Content type: application/json
 
-Events:
-  ✅ Push
+Events: ✅ Push
   ✅ Pull request
   ✅ Issues
   ✅ Deployment status
