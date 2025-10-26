@@ -49,8 +49,31 @@ const client = createClient({
 function cleanText(text) {
   if (!text || typeof text !== 'string') return text;
 
-  return text
-    // 不要な定型文を削除
+  let result = text;
+
+  // 1. 繰り返されるフレーズを削除（2回目以降を削除）
+  const repeatedPhrases = [
+    '複数の査読付き論文により、この知見の信頼性が確認されています。',
+    '個人差があるため、少量から始めて徐々に調整することが推奨されます。',
+    '研究により有効性が確認されており、',
+    '研究により有効性が確認されており',
+  ];
+
+  repeatedPhrases.forEach(phrase => {
+    const regex = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    const matches = result.match(regex);
+    if (matches && matches.length > 1) {
+      // 最初の出現を保持、それ以降を削除
+      let count = 0;
+      result = result.replace(regex, (match) => {
+        count++;
+        return count === 1 ? match : '';
+      });
+    }
+  });
+
+  // 2. 不要な定型文を削除
+  result = result
     .replace(/[:：]\s*優れた供給源として知られています\.?/gi, '')
     .replace(/[:：]\s*豊富に含まれています\.?/gi, '')
     .replace(/[:：]\s*良い供給源です\.?/gi, '')
@@ -60,38 +83,68 @@ function cleanText(text) {
     .replace(/良い供給源です\.?/gi, '')
     .replace(/ビタミンAが豊富です\.?/gi, '')
 
-    // 繰り返しフレーズを削除
-    .replace(/、?研究により有効性が確認されており、?\s*/g, (match, offset, string) => {
-      // 最初の出現は残す
-      const before = string.substring(0, offset);
-      const occurrences = (before.match(/研究により有効性が確認されており/g) || []).length;
-      return occurrences > 0 ? '' : match.replace(/、/g, '');
-    })
+    // 3. 繰り返しフレーズを完全削除（残っている場合）
+    .replace(/、?研究により有効性が確認されており、?/g, '')
     .replace(/、?これにより健康維持に重要な役割を果たします\.?/gi, '')
     .replace(/、?この作用メカニズムは、体内の複数の生化学的経路を介して実現されます\.?/gi, '')
     .replace(/、?実際の使用においては、個人差があることを理解し、適切な用量から始めることが推奨されます\.?/gi, '')
     .replace(/、?この作用メカニズムは、体内の複数の経路を通じて実現されます\.?/gi, '')
     .replace(/、?科学的な研究により、この効果が確認されています\.?/gi, '')
 
-    // description内の定型文削除
+    // 4. description内の定型文削除
     .replace(/長期的な使用においては、定期的な健康チェックとともに、体調の変化を観察することが重要です。\s*/g, '')
     .replace(/個人の体質や健康状態により、反応には差があることを理解しておく必要があります。\s*/g, '')
     .replace(/最適な効果を得るためには、バランスの取れた食事と健康的な生活習慣との組み合わせが推奨されます。\s*/g, '')
 
-    // 箇条書きマーカーを削除
+    // 5. 箇条書きマーカーを削除
     .replace(/^[•◦・]\s*/gm, '')
     .replace(/\s*[•◦・]\s*/g, ' ')
 
-    // 二重句読点を修正
+    // 6. 二重句読点を修正
     .replace(/。+/g, '。')
     .replace(/、+/g, '、')
     .replace(/！+/g, '！')
     .replace(/？+/g, '？')
 
-    // 複数の空白を整理
+    // 7. 複数の空白を整理
     .replace(/\s+/g, ' ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+
+  return result;
+}
+
+/**
+ * 推奨摂取量のフォーマット
+ */
+function formatRecommendedDosage(text) {
+  if (!text || typeof text !== 'string') return text;
+
+  return text
+    // 【】の後に改行を追加
+    .replace(/】\s*/g, '】\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+/**
+ * benefits配列の処理（末尾の句点確認）
+ */
+function cleanBenefits(benefits) {
+  if (!Array.isArray(benefits)) return benefits;
+
+  return benefits.map(benefit => {
+    if (typeof benefit !== 'string') return benefit;
+
+    let cleaned = cleanText(benefit);
+
+    // 末尾に句点がない場合は追加
+    if (cleaned && !cleaned.match(/[。！？]$/)) {
+      cleaned += '。';
+    }
+
+    return cleaned;
+  });
 }
 
 /**
@@ -163,13 +216,13 @@ async function main() {
       // データをクリーニング
       const cleanedData = {
         description: cleanText(ingredient.description),
-        benefits: cleanArray(ingredient.benefits),
+        benefits: cleanBenefits(ingredient.benefits), // 新しい関数使用
         foodSources: cleanArray(ingredient.foodSources),
         sideEffects: Array.isArray(ingredient.sideEffects)
           ? cleanArray(ingredient.sideEffects)
           : cleanText(ingredient.sideEffects),
         interactions: cleanText(ingredient.interactions),
-        recommendedDosage: cleanText(ingredient.recommendedDosage),
+        recommendedDosage: formatRecommendedDosage(cleanText(ingredient.recommendedDosage)), // フォーマット適用
         faqs: ingredient.faqs?.map(faq => ({
           ...faq,
           question: cleanText(faq.question),
