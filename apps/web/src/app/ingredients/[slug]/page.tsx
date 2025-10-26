@@ -182,7 +182,7 @@ async function getIngredientId(slug: string): Promise<string | null> {
 async function getRelatedProducts(
   ingredientId: string,
 ): Promise<RelatedProduct[]> {
-  const query = `*[_type == "product" && references($ingredientId) && availability == "in-stock"]{
+  const query = `*[_type == "product" && references($ingredientId) && (!defined(availability) || availability == "in-stock")]{
     _id,
     name,
     slug,
@@ -370,7 +370,7 @@ export default async function IngredientPage({ params }: Props) {
 
   // FAQ structured data (if FAQs exist)
   const faqJsonLd =
-    ingredient.faqs && ingredient.faqs.length > 0
+    Array.isArray(ingredient.faqs) && ingredient.faqs.length > 0
       ? generateFAQStructuredData(
           ingredient.faqs.map((faq) => ({
             question: faq.question,
@@ -477,22 +477,23 @@ export default async function IngredientPage({ params }: Props) {
               </section>
 
               {/* 主な効果・効能 */}
-              {ingredient.benefits && ingredient.benefits.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
-                    <TrendingUp className="text-primary" size={24} />
-                    主な効果・効能
-                  </h2>
-                  <div className="bg-gradient-to-br from-accent-mint/5 to-accent-mint/10 rounded-lg p-6">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: formatList(ingredient.benefits, "bullet"),
-                      }}
-                      className="benefits-list space-y-3 text-primary-800 text-sm sm:text-base"
-                    />
-                  </div>
-                </section>
-              )}
+              {Array.isArray(ingredient.benefits) &&
+                ingredient.benefits.length > 0 && (
+                  <section>
+                    <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
+                      <TrendingUp className="text-primary" size={24} />
+                      主な効果・効能
+                    </h2>
+                    <div className="bg-gradient-to-br from-accent-mint/5 to-accent-mint/10 rounded-lg p-6">
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: formatList(ingredient.benefits, "bullet"),
+                        }}
+                        className="benefits-list space-y-3 text-primary-800 text-sm sm:text-base"
+                      />
+                    </div>
+                  </section>
+                )}
 
               {/* 推奨摂取量 */}
               <section>
@@ -531,42 +532,43 @@ export default async function IngredientPage({ params }: Props) {
               </section>
 
               {/* 食品源 */}
-              {ingredient.foodSources && ingredient.foodSources.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-6 ingredient-section-title">
-                    豊富に含まれる食品
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {ingredient.foodSources.map((source, index) => {
-                      // 不要な定型文を削除（コロン＋フレーズをすべて削除）
-                      const cleanedSource = source
-                        .replace(
-                          /[:：]\s*優れた供給源として知られています\.?/gi,
-                          "",
-                        )
-                        .replace(/[:：]\s*豊富に含まれています\.?/gi, "")
-                        .replace(/[:：]\s*良い供給源です\.?/gi, "")
-                        .replace(/[:：]\s*ビタミンAが豊富です\.?/gi, "")
-                        .replace(/優れた供給源として知られています\.?/gi, "")
-                        .replace(/豊富に含まれています\.?/gi, "")
-                        .replace(/良い供給源です\.?/gi, "")
-                        .replace(/ビタミンAが豊富です\.?/gi, "")
-                        .trim();
+              {Array.isArray(ingredient.foodSources) &&
+                ingredient.foodSources.length > 0 && (
+                  <section>
+                    <h2 className="text-2xl font-bold text-primary-900 mb-6 ingredient-section-title">
+                      豊富に含まれる食品
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {ingredient.foodSources.map((source, index) => {
+                        // 不要な定型文を削除（コロン＋フレーズをすべて削除）
+                        const cleanedSource = source
+                          .replace(
+                            /[:：]\s*優れた供給源として知られています\.?/gi,
+                            "",
+                          )
+                          .replace(/[:：]\s*豊富に含まれています\.?/gi, "")
+                          .replace(/[:：]\s*良い供給源です\.?/gi, "")
+                          .replace(/[:：]\s*ビタミンAが豊富です\.?/gi, "")
+                          .replace(/優れた供給源として知られています\.?/gi, "")
+                          .replace(/豊富に含まれています\.?/gi, "")
+                          .replace(/良い供給源です\.?/gi, "")
+                          .replace(/ビタミンAが豊富です\.?/gi, "")
+                          .trim();
 
-                      return (
-                        <div
-                          key={index}
-                          className="p-4 bg-white border border-primary-200 rounded-lg hover:shadow-md transition-shadow"
-                        >
-                          <p className="text-primary-800 font-medium">
-                            {cleanedSource}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
-              )}
+                        return (
+                          <div
+                            key={index}
+                            className="p-4 bg-white border border-primary-200 rounded-lg hover:shadow-md transition-shadow"
+                          >
+                            <p className="text-primary-800 font-medium">
+                              {cleanedSource}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
 
               {/* 副作用・注意点 */}
               {ingredient.sideEffects && (
@@ -626,7 +628,7 @@ export default async function IngredientPage({ params }: Props) {
               )}
 
               {/* FAQ */}
-              {ingredient.faqs && ingredient.faqs.length > 0 && (
+              {Array.isArray(ingredient.faqs) && ingredient.faqs.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-primary-900 mb-6">
                     よくある質問
@@ -657,41 +659,42 @@ export default async function IngredientPage({ params }: Props) {
               )}
 
               {/* 参考文献 */}
-              {ingredient.references && ingredient.references.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-4">
-                    参考文献
-                  </h2>
-                  <ul className="space-y-2">
-                    {ingredient.references.map((ref, index) => (
-                      <li key={index} className="text-primary-800">
-                        <span className="text-primary-600 mr-2">
-                          [{index + 1}]
-                        </span>
-                        {ref.url ? (
-                          <a
-                            href={ref.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-primary inline-flex items-center gap-1"
-                          >
-                            {ref.title}
-                            <ExternalLink size={14} />
-                          </a>
-                        ) : (
-                          <span>{ref.title}</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
+              {Array.isArray(ingredient.references) &&
+                ingredient.references.length > 0 && (
+                  <section>
+                    <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                      参考文献
+                    </h2>
+                    <ul className="space-y-2">
+                      {ingredient.references.map((ref, index) => (
+                        <li key={index} className="text-primary-800">
+                          <span className="text-primary-600 mr-2">
+                            [{index + 1}]
+                          </span>
+                          {ref.url ? (
+                            <a
+                              href={ref.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-primary inline-flex items-center gap-1"
+                            >
+                              {ref.title}
+                              <ExternalLink size={14} />
+                            </a>
+                          ) : (
+                            <span>{ref.title}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
             </div>
 
             {/* 右カラム：サイドバー */}
             <aside className="space-y-6">
               {/* 関連成分 */}
-              {ingredient.relatedIngredients &&
+              {Array.isArray(ingredient.relatedIngredients) &&
                 ingredient.relatedIngredients.length > 0 && (
                   <div className="bg-white border border-primary-200 rounded-lg p-6 sticky top-20">
                     <h3 className="text-lg font-bold text-primary-900 mb-4">

@@ -8,10 +8,10 @@ interface RelatedProduct {
   slug: {
     current: string;
   };
-  brand: {
+  brand?: {
     name: string;
     trustScore?: number;
-  };
+  } | null;
   priceJPY: number;
   scores?: {
     overall?: number;
@@ -66,23 +66,27 @@ export function RelatedProducts({
             >
               {/* 商品画像（将来実装） */}
               <div className="aspect-[4/3] bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-primary-600 font-semibold text-sm">
-                    {product.brand.name}
-                  </p>
-                  {product.brand.trustScore && (
-                    <p className="text-primary-500 text-xs mt-1">
-                      信頼度: {product.brand.trustScore}
+                {product.brand && (
+                  <div className="text-center">
+                    <p className="text-primary-600 font-semibold text-sm">
+                      {product.brand.name}
                     </p>
-                  )}
-                </div>
+                    {product.brand.trustScore && (
+                      <p className="text-primary-500 text-xs mt-1">
+                        信頼度: {product.brand.trustScore}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="p-5">
                 {/* ブランド名 */}
-                <p className="text-sm text-primary-600 mb-1 font-medium">
-                  {product.brand.name}
-                </p>
+                {product.brand && (
+                  <p className="text-sm text-primary-600 mb-1 font-medium">
+                    {product.brand.name}
+                  </p>
+                )}
 
                 {/* 商品名 */}
                 <h3 className="text-lg font-semibold text-primary-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors">
