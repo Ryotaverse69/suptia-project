@@ -47,7 +47,7 @@ interface IngredientWithStats extends Ingredient {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..12]{
+  const query = `*[_type == "product" && (source == "rakuten" || source == "yahoo")] | order(priceJPY asc)[0..12]{
     name,
     priceJPY,
     servingsPerContainer,
@@ -85,7 +85,7 @@ async function getIngredients(): Promise<Ingredient[]> {
 
 // おすすめサプリを取得（上位4件）
 async function getFeaturedProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..3]{
+  const query = `*[_type == "product" && (source == "rakuten" || source == "yahoo")] | order(priceJPY asc)[0..3]{
     name,
     priceJPY,
     servingsPerContainer,
@@ -380,8 +380,6 @@ export default async function Home() {
                             alt={product.name}
                             fill
                             className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 280px"
-                            priority
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
@@ -480,7 +478,6 @@ export default async function Home() {
                             alt={ingredient.name}
                             fill
                             className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 280px"
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">

@@ -182,7 +182,7 @@ async function getIngredientId(slug: string): Promise<string | null> {
 async function getRelatedProducts(
   ingredientId: string,
 ): Promise<RelatedProduct[]> {
-  const query = `*[_type == "product" && references($ingredientId) && (!defined(availability) || availability == "in-stock")]{
+  const query = `*[_type == "product" && references($ingredientId) && (!defined(availability) || availability == "in-stock") && (source == "rakuten" || source == "yahoo")]{
     _id,
     name,
     slug,
