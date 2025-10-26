@@ -391,14 +391,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {(product.externalImageUrl ||
           (product.images && product.images.length > 0)) && (
           <div className="mb-8">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={product.externalImageUrl || product.images![0].asset.url}
               alt={product.images?.[0]?.alt || product.name}
               width={400}
               height={300}
               className="rounded-lg shadow-sm"
-              priority
-              unoptimized
+              loading="eager"
             />
           </div>
         )}

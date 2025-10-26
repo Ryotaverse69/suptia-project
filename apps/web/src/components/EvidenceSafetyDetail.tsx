@@ -264,38 +264,22 @@ export function EvidenceSafetyDetail({
           安全性評価
         </h2>
 
-        {/* 安全性スコア */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-700 mb-2">安全性スコア</p>
-            <p className="text-4xl font-bold text-blue-900 mb-2">
-              {safetyScore}点
-            </p>
-            <div className="h-3 bg-blue-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-blue-700 transition-all duration-500"
-                style={{ width: `${safetyScore}%` }}
-              />
+        {/* 安全性レベルバッジ */}
+        <div
+          className={`p-6 ${safetyLevel.bgColor} border ${safetyLevel.borderColor} rounded-lg mb-6`}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <SafetyIcon size={28} className={safetyLevel.color} />
+            <div>
+              <p className={`text-3xl font-bold ${safetyLevel.color}`}>
+                {safetyLevel.grade}ランク
+              </p>
+              <p className={`text-sm font-semibold ${safetyLevel.color}`}>
+                {safetyLevel.label}
+              </p>
             </div>
           </div>
-
-          <div
-            className={`p-6 ${safetyLevel.bgColor} border ${safetyLevel.borderColor} rounded-lg flex flex-col justify-center`}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <SafetyIcon size={24} className={safetyLevel.color} />
-              <p className="text-sm text-gray-700">安全性レベル</p>
-            </div>
-            <p className={`text-3xl font-bold ${safetyLevel.color} mb-2`}>
-              {safetyLevel.grade}
-            </p>
-            <p className={`text-sm font-semibold ${safetyLevel.color}`}>
-              {safetyLevel.label}
-            </p>
-            <p className="text-xs text-gray-600 mt-2">
-              {safetyLevel.description}
-            </p>
-          </div>
+          <p className="text-sm text-gray-700">{safetyLevel.description}</p>
         </div>
 
         {/* 第三者機関検査 */}
