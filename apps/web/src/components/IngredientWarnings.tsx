@@ -7,12 +7,35 @@ interface IngredientWarningsProps {
 
 /**
  * 妊婦・授乳婦への警告を自動検出して表示
+ * 重大なリスクがある場合のみ表示
  */
 export function IngredientWarnings({
   sideEffects,
   interactions,
 }: IngredientWarningsProps) {
-  // 警告キーワードの検出
+  const allText = [...(sideEffects || []), ...(interactions || [])].join(" ");
+
+  // 重大な危険を示すキーワード（これらがある場合のみ警告を表示）
+  const criticalKeywords = [
+    "禁忌",
+    "避ける",
+    "禁止",
+    "控える",
+    "使用しない",
+    "摂取しない",
+    "中止",
+    "危険",
+    "催奇形性",
+    "先天性奇形",
+    "流産",
+    "早産",
+  ];
+
+  const hasCriticalWarning = criticalKeywords.some((keyword) =>
+    allText.includes(keyword),
+  );
+
+  // 妊婦・授乳婦関連のキーワードも含まれているか確認
   const pregnancyKeywords = [
     "妊婦",
     "妊娠",
@@ -20,51 +43,25 @@ export function IngredientWarnings({
     "胎児",
     "妊娠中",
     "授乳中",
-    "妊産婦",
   ];
-
-  const allText = [...(sideEffects || []), ...(interactions || [])].join(" ");
-
-  const hasPregnancyWarning = pregnancyKeywords.some((keyword) =>
+  const hasPregnancyMention = pregnancyKeywords.some((keyword) =>
     allText.includes(keyword),
   );
 
-  if (!hasPregnancyWarning) return null;
-
-  // 妊婦関連の文章を抽出
-  const pregnancyRelatedTexts = [
-    ...(sideEffects || []),
-    ...(interactions || []),
-  ]
-    .filter((text) =>
-      pregnancyKeywords.some((keyword) => text.includes(keyword)),
-    )
-    .slice(0, 2); // 最大2つまで表示
+  // 重大な警告があり、かつ妊婦関連の言及がある場合のみ表示
+  if (!hasCriticalWarning || !hasPregnancyMention) return null;
 
   return (
-    <div className="mb-8">
-      <div className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-6 shadow-md">
+    <div className="mb-6">
+      <div className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <AlertTriangle
             className="text-red-600 flex-shrink-0 mt-0.5"
-            size={24}
+            size={20}
           />
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-red-900 mb-3">
-              ⚠️ 妊娠中・授乳中の方への注意
-            </h3>
-            <div className="space-y-2">
-              {pregnancyRelatedTexts.map((text, index) => (
-                <p
-                  key={index}
-                  className="text-sm sm:text-base text-red-800 leading-relaxed"
-                >
-                  {text}
-                </p>
-              ))}
-            </div>
-            <p className="text-sm text-red-700 mt-4 font-semibold">
-              使用前に必ず医師または薬剤師にご相談ください。
+            <p className="text-sm sm:text-base text-red-900 font-semibold">
+              妊娠中・授乳中の方は使用前に必ず医師にご相談ください
             </p>
           </div>
         </div>
