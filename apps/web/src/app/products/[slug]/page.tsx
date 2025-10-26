@@ -55,6 +55,10 @@ interface Product {
     amazon?: string;
     iherb?: string;
   };
+  janCode?: string | null;
+  itemCode?: string;
+  affiliateUrl?: string;
+  source?: string;
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -81,7 +85,11 @@ async function getProduct(slug: string): Promise<Product | null> {
     externalImageUrl,
     priceData,
     priceHistory,
-    urls
+    urls,
+    janCode,
+    itemCode,
+    affiliateUrl,
+    source
   }`;
 
   try {
@@ -90,6 +98,44 @@ async function getProduct(slug: string): Promise<Product | null> {
   } catch (error) {
     console.error("Failed to fetch product:", error);
     return null;
+  }
+}
+
+/**
+ * JANコードが同じ商品を複数ソースから取得
+ */
+async function getRelatedProductsByJan(
+  janCode: string | null,
+): Promise<PriceData[]> {
+  if (!janCode) {
+    return [];
+  }
+
+  const query = `*[_type == "product" && janCode == $janCode && janCode != null]{
+    _id,
+    name,
+    source,
+    priceJPY,
+    affiliateUrl,
+    availability,
+    itemCode
+  }`;
+
+  try {
+    const products = await sanityServer.fetch(query, { janCode });
+
+    // PriceData形式に変換
+    return products.map((product: any) => ({
+      source: product.source || "unknown",
+      amount: product.priceJPY,
+      currency: "JPY",
+      url: product.affiliateUrl || "#",
+      fetchedAt: new Date().toISOString(),
+      confidence: 0.95, // JANコード一致なので高い信頼度
+    }));
+  } catch (error) {
+    console.error("Failed to fetch related products:", error);
+    return [];
   }
 }
 
@@ -105,6 +151,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!product) {
     notFound();
   }
+
+  // JANコードで関連商品を取得して価格比較データを作成
+  const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
+
+  // 既存のpriceDataとマージ（既存データを優先）
+  const mergedPriceData =
+    product.priceData && product.priceData.length > 0
+      ? product.priceData
+      : relatedPrices;
 
   // Generate sample description if not available
   const description =
@@ -179,13 +234,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {(product.externalImageUrl ||
           (product.images && product.images.length > 0)) && (
           <div className="mb-8">
-            <img
+            <Image
               src={product.externalImageUrl || product.images![0].asset.url}
               alt={product.images?.[0]?.alt || product.name}
               width={400}
               height={300}
               className="rounded-lg shadow-sm"
-              loading="eager"
+              priority
             />
           </div>
         )}
@@ -208,7 +263,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         />
 
         {/* Price Comparison Component */}
-        <PriceComparison priceData={product.priceData} className="mb-8" />
+        <PriceComparison priceData={mergedPriceData} className="mb-8" />
 
         {/* Price History Chart */}
         <PriceHistoryChart
