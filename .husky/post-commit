@@ -2,12 +2,9 @@
 
 # Git commitが完了した直後に実行
 
-NOTIFIER="./scripts/notify.sh"
-
-# コミットメッセージを取得
-COMMIT_MSG=$(git log -1 --pretty=%B)
-
-# 通知を送信
-if [ -f "$NOTIFIER" ]; then
-  "$NOTIFIER" done "コミット完了" "$COMMIT_MSG" 2>/dev/null &
-fi
+# 通知は無効化
+# NOTIFIER="./scripts/notify.sh"
+# COMMIT_MSG=$(git log -1 --pretty=%B)
+# if [ -f "$NOTIFIER" ]; then
+#   "$NOTIFIER" done "コミット完了" "$COMMIT_MSG" 2>/dev/null &
+# fi

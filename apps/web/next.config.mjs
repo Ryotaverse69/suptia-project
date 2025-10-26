@@ -17,27 +17,12 @@ function buildDevCSP() {
 
 const nextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.sanity.io",
-      },
-      {
-        protocol: "https",
-        hostname: "thumbnail.image.rakuten.co.jp",
-      },
-      {
-        protocol: "https",
-        hostname: "tshop.r10s.jp",
-      },
-      {
-        protocol: "https",
-        hostname: "item-shopping.c.yimg.jp",
-      },
-      {
-        protocol: "https",
-        hostname: "shopping.c.yimg.jp",
-      },
+    domains: [
+      "cdn.sanity.io",
+      "thumbnail.image.rakuten.co.jp",
+      "tshop.r10s.jp",
+      "item-shopping.c.yimg.jp",
+      "shopping.c.yimg.jp",
     ],
   },
   async headers() {

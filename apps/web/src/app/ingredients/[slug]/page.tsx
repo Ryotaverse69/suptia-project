@@ -5,6 +5,8 @@ import Script from "next/script";
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
+import { IngredientContent } from "@/components/IngredientContent";
+import { formatTextWithParagraphs, formatList } from "@/lib/text-formatter";
 import {
   generateBreadcrumbStructuredData,
   generateFAQStructuredData,
@@ -436,59 +438,48 @@ export default async function IngredientPage({ params }: Props) {
             <div className="lg:col-span-2 space-y-10">
               {/* 概要 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
                   <BookOpen className="text-primary" size={24} />
                   {ingredient.name}とは
                 </h2>
-                <div
-                  className="text-primary-800 leading-relaxed prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                  dangerouslySetInnerHTML={{
-                    __html: parseMarkdownWithInternalLinks(
-                      ingredient.description,
-                      allIngredients,
-                      ingredient.name,
-                    ),
-                  }}
+                {/* モバイル対応済みの成分コンテンツ表示 */}
+                <IngredientContent
+                  description={ingredient.description}
+                  className="mb-8"
                 />
               </section>
 
               {/* 主な効果・効能 */}
               {ingredient.benefits && ingredient.benefits.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
                     <TrendingUp className="text-primary" size={24} />
                     主な効果・効能
                   </h2>
-                  <ul className="space-y-3">
-                    {ingredient.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <CheckCircle2
-                          className="text-accent-mint flex-shrink-0 mt-0.5"
-                          size={20}
-                        />
-                        <div
-                          className="text-primary-800 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                          dangerouslySetInnerHTML={{
-                            __html: parseMarkdown(benefit),
-                          }}
-                        />
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="bg-gradient-to-br from-accent-mint/5 to-accent-mint/10 rounded-lg p-6">
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: formatList(ingredient.benefits, "bullet"),
+                      }}
+                      className="benefits-list space-y-3 text-primary-800 text-sm sm:text-base"
+                    />
+                  </div>
                 </section>
               )}
 
               {/* 推奨摂取量 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
                   <Scale className="text-primary" size={24} />
                   推奨摂取量
                 </h2>
-                <div className="p-6 bg-primary-50 border border-primary-200 rounded-lg">
+                <div className="p-6 bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-200 rounded-lg">
                   <div
-                    className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                    className="dosage-content text-primary-800 text-sm sm:text-base space-y-3"
                     dangerouslySetInnerHTML={{
-                      __html: parseMarkdown(ingredient.recommendedDosage),
+                      __html: formatTextWithParagraphs(
+                        ingredient.recommendedDosage,
+                      ),
                     }}
                   />
                 </div>
@@ -496,20 +487,20 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* 科学的背景 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
                   <ShieldCheck className="text-primary" size={24} />
                   科学的背景・エビデンス
                 </h2>
-                <div
-                  className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                  dangerouslySetInnerHTML={{
-                    __html: parseMarkdownWithInternalLinks(
-                      ingredient.scientificBackground,
-                      allIngredients,
-                      ingredient.name,
-                    ),
-                  }}
-                />
+                <div className="bg-gradient-to-r from-white to-primary-50/30 border-l-4 border-primary-500 pl-6 pr-4 py-4 rounded-r-lg">
+                  <div
+                    className="scientific-content text-primary-800 text-sm sm:text-base space-y-3 sm:space-y-4"
+                    dangerouslySetInnerHTML={{
+                      __html: formatTextWithParagraphs(
+                        ingredient.scientificBackground,
+                      ),
+                    }}
+                  />
+                </div>
               </section>
 
               {/* 食品源 */}
@@ -534,30 +525,25 @@ export default async function IngredientPage({ params }: Props) {
               {/* 副作用・注意点 */}
               {ingredient.sideEffects && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
                     <AlertCircle className="text-accent-orange" size={24} />
                     副作用・注意点
                   </h2>
-                  <div className="p-6 bg-accent-orange/5 border border-accent-orange/30 rounded-lg">
+                  <div className="p-6 bg-gradient-to-br from-accent-orange/5 to-accent-orange/10 border border-accent-orange/30 rounded-lg shadow-sm">
                     {Array.isArray(ingredient.sideEffects) ? (
-                      <ul className="space-y-3 text-primary-800 leading-relaxed">
-                        {ingredient.sideEffects.map((effect, index) => (
-                          <li key={index} className="flex gap-3">
-                            <span className="text-accent-orange mt-1">•</span>
-                            <span
-                              className="flex-1 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                              dangerouslySetInnerHTML={{
-                                __html: parseMarkdown(effect),
-                              }}
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                      <div
+                        className="side-effects-list space-y-3 text-primary-800 text-sm sm:text-base"
+                        dangerouslySetInnerHTML={{
+                          __html: formatList(ingredient.sideEffects, "bullet"),
+                        }}
+                      />
                     ) : (
                       <div
-                        className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                        className="side-effects-content text-primary-800 text-sm sm:text-base space-y-3"
                         dangerouslySetInnerHTML={{
-                          __html: parseMarkdown(ingredient.sideEffects as any),
+                          __html: formatTextWithParagraphs(
+                            ingredient.sideEffects as any,
+                          ),
                         }}
                       />
                     )}
@@ -568,31 +554,45 @@ export default async function IngredientPage({ params }: Props) {
               {/* 相互作用 */}
               {ingredient.interactions && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6">
                     他の成分・医薬品との相互作用
                   </h2>
-                  {Array.isArray(ingredient.interactions) ? (
-                    <ul className="space-y-3 text-primary-800 leading-relaxed">
-                      {ingredient.interactions.map((interaction, index) => (
-                        <li key={index} className="flex gap-3">
-                          <span className="text-primary-600 mt-1">•</span>
-                          <span
-                            className="flex-1 prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                            dangerouslySetInnerHTML={{
-                              __html: parseMarkdown(interaction),
-                            }}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div
-                      className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
-                      dangerouslySetInnerHTML={{
-                        __html: parseMarkdown(ingredient.interactions as any),
-                      }}
-                    />
-                  )}
+                  <div className="bg-gradient-to-r from-primary-50 to-white border-l-4 border-primary-400 pl-6 pr-4 py-4 rounded-r-lg">
+                    {Array.isArray(ingredient.interactions) ? (
+                      <div
+                        className="interactions-list"
+                        dangerouslySetInnerHTML={{
+                          __html: formatList(ingredient.interactions, "bullet"),
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="interactions-content"
+                        dangerouslySetInnerHTML={{
+                          __html: formatTextWithParagraphs(
+                            ingredient.interactions as any,
+                          ),
+                        }}
+                      />
+                    )}
+                  </div>
+                  <style jsx>{`
+                    :global(.interactions-list li) {
+                      @apply mb-3 last:mb-0;
+                    }
+                    :global(.interactions-list li > div) {
+                      @apply text-primary-800;
+                    }
+                    :global(.interactions-content > div) {
+                      @apply text-primary-800 mb-3 last:mb-0;
+                    }
+                    @media (max-width: 640px) {
+                      :global(.interactions-list),
+                      :global(.interactions-content) {
+                        @apply text-sm;
+                      }
+                    }
+                  `}</style>
                 </section>
               )}
 
@@ -606,24 +606,37 @@ export default async function IngredientPage({ params }: Props) {
                     {ingredient.faqs.map((faq, index) => (
                       <details
                         key={index}
-                        className="group bg-white border border-primary-200 rounded-lg overflow-hidden"
+                        className="group bg-white border border-primary-200 rounded-lg overflow-hidden transition-all hover:shadow-md"
                       >
                         <summary className="px-6 py-4 cursor-pointer hover:bg-primary-50 transition-colors">
-                          <h3 className="inline font-semibold text-primary-900">
-                            {faq.question}
+                          <h3 className="inline font-semibold text-primary-900 text-base sm:text-lg">
+                            Q. {faq.question}
                           </h3>
                         </summary>
-                        <div className="px-6 py-4 border-t border-primary-200 bg-primary-50/50">
+                        <div className="px-6 py-4 border-t border-primary-200 bg-gradient-to-br from-primary-50/70 to-white">
                           <div
-                            className="text-primary-800 leading-relaxed whitespace-pre-line prose prose-sm max-w-none prose-strong:text-primary-900 prose-strong:font-semibold"
+                            className="faq-answer"
                             dangerouslySetInnerHTML={{
-                              __html: parseMarkdown(faq.answer),
+                              __html: formatTextWithParagraphs(faq.answer),
                             }}
                           />
                         </div>
                       </details>
                     ))}
                   </div>
+                  <style jsx>{`
+                    :global(.faq-answer > div) {
+                      @apply text-primary-800 mb-3 last:mb-0;
+                    }
+                    @media (max-width: 640px) {
+                      :global(.faq-answer) {
+                        @apply text-sm leading-6;
+                      }
+                      :global(.faq-answer > div) {
+                        @apply mb-2;
+                      }
+                    }
+                  `}</style>
                 </section>
               )}
 

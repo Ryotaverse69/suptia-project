@@ -58,6 +58,116 @@ Suptiaは段階的に以下の3層構造で進化します：
 
 ---
 
+## 🛤️ ユーザージャーニー / ユースケース
+
+### ケース1: 成分名から最安値サプリを購入する典型的フロー
+
+Suptiaの核となる価値提供フローです。ユーザーが成分名で検索してから、最適な商品を選び、最安値で購入するまでの一連の体験を設計します。
+
+#### ステップバイステップ
+
+1. **ユーザーがサプティアに訪問**
+   - 「ビタミンCのサプリが欲しい」という明確なニーズを持っている
+
+2. **検索窓で「ビタミンC」と入力**
+   - トップページまたは検索ページの検索バーを使用
+   - 成分名（日本語・英語）での検索に対応
+
+3. **ビタミンCを含むサプリメントの一覧が表示される**
+   - トリバゴ風のリスト表示
+   - 各商品の基本情報：商品名、画像、評価スコア、1日あたりのコスト
+   - フィルター機能：「コスパが良い順」「価格が安い順」「評価が高い順」
+
+4. **コスパの良いサプリを選択（例: DHCのビタミンC）**
+   - 商品カードをクリック
+   - 商品詳細ページへ遷移
+
+5. **📍 重要: 商品詳細ページで複数ECサイトの価格比較が表示される**
+   - 同一商品の各ECサイトでの販売価格を一覧表示
+   - 例:
+
+     ```
+     DHC ビタミンC 60日分
+
+     ECサイト別価格比較（最安値順）
+     ┌────────────────────────────────────────┐
+     │ 🏆 最安値                                │
+     │ 楽天市場    ¥398  →  料金を表示ボタン    │
+     │ Yahoo!      ¥420  →  料金を表示ボタン    │
+     │ Amazon      ¥450  →  料金を表示ボタン    │
+     │ iHerb       ¥480  →  料金を表示ボタン    │
+     └────────────────────────────────────────┘
+     ```
+
+6. **顧客は最安値のリンクをクリックして購入へ**
+   - アフィリエイトリンクを経由してECサイトに遷移
+   - Suptiaはアフィリエイト収益を獲得
+
+#### 技術実装の要点
+
+**商品詳細ページ (`/products/[slug]`) の要件**:
+
+- 複数の`prices`配列を持つ商品データ構造
+- 各priceオブジェクトには以下の情報を含む:
+  - `source`: ECサイト名（"rakuten", "yahoo", "amazon", "iherb"）
+  - `amount`: 価格（円）
+  - `url`: アフィリエイトリンクURL
+  - `fetched_at`: 価格取得日時
+  - `in_stock`: 在庫状況
+  - `shipping_fee`: 送料（オプション）
+
+**データ構造例**:
+
+```typescript
+interface ProductPrice {
+  source: "rakuten" | "yahoo" | "amazon" | "iherb";
+  amount: number;
+  currency: "JPY";
+  url: string; // アフィリエイトリンク
+  fetched_at: string; // ISO 8601
+  in_stock: boolean;
+  shipping_fee?: number;
+  affiliate_tag?: string;
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  prices: ProductPrice[]; // 複数のECサイトの価格
+  // ... その他のフィールド
+}
+```
+
+**UIコンポーネント要件**:
+
+- `ProductPriceComparison.tsx`: 価格比較テーブルコンポーネント
+  - 最安値を強調表示（🏆マーク）
+  - 価格順でソート
+  - 各ECサイトへのCTAボタン
+  - 価格取得日時の表示
+  - 在庫切れの場合はグレーアウト
+
+**現在の実装状況**:
+
+- ✅ 検索機能（成分名で検索）
+- ✅ フィルター機能（コスパ順、価格順）
+- ✅ 商品一覧のリスト表示（トリバゴ風）
+- ✅ **商品詳細ページでの複数ECサイト価格比較**（PriceComparisonコンポーネント）
+  - 最安値の強調表示
+  - 価格順ソート
+  - 各ECサイトへのアフィリエイトリンク
+  - 価格取得日時の表示
+  - 最安値との差額表示
+
+**次の優先実装タスク**:
+
+- 🔄 Sanityに実際の商品データと複数ECサイトの価格データを登録
+- 🔄 楽天市場APIとの連携（価格データの自動取得）
+- 🔄 Amazon PA-APIとの連携
+
+---
+
 ## 🗓 フェーズ別ロードマップ
 
 ### フェーズ1：データ基盤の完成（10月〜11月）
@@ -137,7 +247,59 @@ ECサイトAPI → ECAdapter → 同期スクリプト → Sanity CMS → Next.j
 
 - ⏳ 在庫状況監視・通知
 - ⏳ JANコードによる高精度マッチング
-- ⏳ Amazon PA-API統合（売上3件達成後）
+- ⏳ **Amazon PA-API & CJ Affiliate統合（2026年1月〜）** ← 同時実施予定
+
+**iHerb統合戦略** （2025年10月25日決定）:
+
+iHerbには公式APIが存在しないため、以下の方法でデータ取得：
+
+**📌 決定事項**: **Amazon PA-API統合とCJ Affiliate統合を同時実施**
+
+**理由**:
+
+- Amazon PA-APIは売上要件（過去30日以内に3件以上）をクリアする必要がある
+- CJ Affiliateも実績があった方が承認されやすい
+- 同時統合で実装コストを最適化
+- Amazon + iHerb両方揃って初めて真の価格比較が完成
+
+**統合方法**:
+
+1. **CJ Affiliate API経由**（推奨・無料）
+   - iHerbと提携しているアフィリエイトネットワーク
+   - Product Feed APIで商品データ取得
+   - Deep Link APIでアフィリエイトリンク生成
+   - 完全に合法、アフィリエイト報酬も獲得可能（5-10%）
+
+2. **その他のネットワーク**（将来的に追加検討）
+   - Rakuten Advertising（旧LinkShare）
+   - Impact（旧Impact Radius）
+
+3. **Bright Data**（フェーズ3以降、有料）
+   - リアルタイム価格・在庫情報
+   - 費用: $500/月〜
+
+**実装済みファイル**（統合準備完了）:
+
+```
+apps/web/src/lib/integrations/
+├── cj-affiliate.ts           # CJ Affiliate API実装
+├── rakuten-advertising.ts    # Rakuten Advertising API実装
+├── impact-radius.ts          # Impact API実装
+└── affiliate-manager.ts      # 統合マネージャー（3つのAPIを統一）
+
+docs/
+├── AFFILIATE_API_GUIDE.md                 # 詳細実装ガイド
+├── IHERB_INTEGRATION_SUMMARY.md          # 統合方法まとめ
+├── CJ_AFFILIATE_APPLICATION_COPY_PASTE.md # 申請フォーム用テンプレート
+└── ROADMAP_EC_INTEGRATION.md             # EC統合ロードマップ
+```
+
+**統合タイムライン**:
+
+- **現在（フェーズ1）**: 楽天市場APIで運用中
+- **2025年12月末**: Amazon初回売上達成目標
+- **2026年1月**: Amazon PA-API & CJ Affiliate同時統合開始
+- **2026年3月**: 価格比較機能完成（楽天 vs Amazon vs iHerb）
 
 **✅ ゴール**: 実際のEC商品データでSuptiaが動作し、リアルタイム価格比較が可能に ← **達成！**
 

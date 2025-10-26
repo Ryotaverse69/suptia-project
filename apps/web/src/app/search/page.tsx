@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { sanity } from "@/lib/sanity.client";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductListItem } from "@/components/ProductListItem";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { SearchBar } from "@/components/SearchBar";
 import {
@@ -42,6 +42,47 @@ interface Product {
   };
 }
 
+// 検索クエリからブランド名を抽出する
+function extractBrandFromQuery(query: string): string | null {
+  const normalizedQuery = query.toLowerCase().trim();
+
+  // 一般的なブランド名リスト（部分一致で検出）
+  const brandKeywords = [
+    "dhc",
+    "ネイチャーメイド",
+    "nature made",
+    "naturemade",
+    "大塚製薬",
+    "otsuka",
+    "ファンケル",
+    "fancl",
+    "アサヒ",
+    "asahi",
+    "ディアナチュラ",
+    "dear natura",
+    "小林製薬",
+    "kobayashi",
+    "サントリー",
+    "suntory",
+    "明治",
+    "meiji",
+    "森永",
+    "morinaga",
+    "now foods",
+    "now",
+    "california gold",
+    "solgar",
+  ];
+
+  for (const brand of brandKeywords) {
+    if (normalizedQuery.includes(brand)) {
+      return brand;
+    }
+  }
+
+  return null;
+}
+
 // 成分を検索
 async function searchIngredient(query: string): Promise<Ingredient | null> {
   if (!query || query.trim().length === 0) {
@@ -70,10 +111,11 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   }
 }
 
-// 成分を含む商品を取得
+// 成分を含む商品を取得（オプショナルでブランド名フィルター）
 async function getProductsByIngredient(
   ingredientId: string,
-  sortBy: string = "price"
+  sortBy: string = "price",
+  brandFilter?: string,
 ): Promise<Product[]> {
   let orderClause = "priceJPY asc";
 
@@ -83,7 +125,12 @@ async function getProductsByIngredient(
     orderClause = "name asc";
   }
 
-  const query = `*[_type == "product" && references($ingredientId)] | order(${orderClause}){
+  // ブランド名フィルターがある場合は追加条件を含める
+  const brandCondition = brandFilter
+    ? `&& brand->name match "*${brandFilter}*"`
+    : "";
+
+  const query = `*[_type == "product" && references($ingredientId) ${brandCondition}] | order(${orderClause}){
     _id,
     name,
     priceJPY,
@@ -140,13 +187,20 @@ export default async function SearchPage({
   const query = params.q || "";
   const sortBy = params.sort || "price";
 
+  // 検索クエリからブランド名を抽出
+  const brandFilter = extractBrandFromQuery(query);
+
   // まず成分を検索
   const ingredient = await searchIngredient(query);
 
-  // 成分が見つかった場合は、その成分を含む商品を表示
+  // 成分が見つかった場合は、その成分を含む商品を表示（ブランドフィルターも適用）
   // 見つからない場合は、商品名で検索
   const products = ingredient
-    ? await getProductsByIngredient(ingredient._id, sortBy)
+    ? await getProductsByIngredient(
+        ingredient._id,
+        sortBy,
+        brandFilter || undefined,
+      )
     : await searchProducts(query);
 
   // Calculate effective cost for each product
@@ -175,7 +229,9 @@ export default async function SearchPage({
   // ソート適用
   let sortedProducts = [...productsWithCost];
   if (sortBy === "cost") {
-    sortedProducts.sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
+    sortedProducts.sort(
+      (a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay,
+    );
   } else if (sortBy === "price_desc") {
     sortedProducts.sort((a, b) => b.priceJPY - a.priceJPY);
   }
@@ -266,7 +322,10 @@ export default async function SearchPage({
                     <span className="text-sm text-primary-900">
                       最安値:{" "}
                       <span className="font-bold">
-                        ¥{Math.min(...sortedProducts.map((p) => p.priceJPY)).toLocaleString()}
+                        ¥
+                        {Math.min(
+                          ...sortedProducts.map((p) => p.priceJPY),
+                        ).toLocaleString()}
                       </span>
                     </span>
                   </div>
@@ -317,9 +376,9 @@ export default async function SearchPage({
 
             {/* 商品一覧 */}
             {sortedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="space-y-4">
                 {sortedProducts.map((product, index) => (
-                  <ProductCard key={index} product={product} />
+                  <ProductListItem key={index} product={product} />
                 ))}
               </div>
             ) : (
@@ -354,7 +413,8 @@ export default async function SearchPage({
                       {ingredient.name}についてもっと知る
                     </h2>
                     <p className="text-primary-700 mb-4">
-                      {ingredient.name}の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
+                      {ingredient.name}
+                      の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
                     </p>
                     <Link
                       href={`/ingredients/${ingredient.slug.current}`}

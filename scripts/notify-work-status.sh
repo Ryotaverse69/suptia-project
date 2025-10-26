@@ -19,10 +19,7 @@ send_notification() {
   local sound="$3"
   local icon="$4"
 
-  # 音を鳴らす
-  afplay "/System/Library/Sounds/${sound}.aiff" 2>/dev/null &
-
-  # terminal-notifierで通知（バックグラウンド）
+  # terminal-notifierがあればそれを使う（推奨）
   if command -v terminal-notifier &> /dev/null; then
     terminal-notifier \
       -title "🤖 Claude Code" \
@@ -31,16 +28,11 @@ send_notification() {
       -sound "$sound" \
       -group "claude-work" \
       -sender "com.apple.Terminal" \
-      -activate "com.apple.Terminal" &
+      -activate "com.apple.Terminal"
+  else
+    # terminal-notifierがない場合はosascriptで通知
+    osascript -e "display notification \"$message\" with title \"🤖 Claude Code\" subtitle \"$title\" sound name \"$sound\""
   fi
-
-  # osascriptでバナー通知（フォアグラウンド）
-  osascript -e "display notification \"$message\" with title \"🤖 Claude Code\" subtitle \"$title\" sound name \"$sound\"" &
-
-  # 視覚的なアラート（1秒だけ表示）
-  (
-    osascript -e "display alert \"$title\" message \"$message\" as informational giving up after 1" &
-  ) 2>/dev/null
 }
 
 # 通知タイプに応じた処理
@@ -50,7 +42,7 @@ case "$NOTIFICATION_TYPE" in
     send_notification \
       "✅ 作業完了" \
       "$MESSAGE${DETAIL:+ - $DETAIL}" \
-      "Glass" \
+      "Tink" \
       "✅"
     ;;
 
