@@ -21,6 +21,8 @@ interface EvidenceSafetyDetailProps {
     url?: string;
     source?: string;
   }>;
+  ingredientName?: string;
+  ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   className?: string;
 }
 
@@ -31,6 +33,8 @@ export function EvidenceSafetyDetail({
   thirdPartyTested = false,
   warnings = [],
   references = [],
+  ingredientName,
+  ingredientEvidenceLevel,
   className = "",
 }: EvidenceSafetyDetailProps) {
   // エビデンスレベルの説明
@@ -85,25 +89,61 @@ export function EvidenceSafetyDetail({
     ? evidenceLevelInfo[evidenceLevel]
     : evidenceLevelInfo.D;
 
-  // 安全性レベルの判定
+  // 安全性レベルの判定（S/A/B/C/D）
   const getSafetyLevel = (score: number) => {
     if (score >= 90)
       return {
-        label: "非常に高い",
+        grade: "S",
+        label: "安全性S - 最高レベル",
+        description:
+          "非常に高い安全性が確認されています。重大な副作用の報告がなく、長期使用の実績があります。",
         color: "text-green-700",
+        bgColor: "bg-green-50",
+        borderColor: "border-green-300",
         icon: CheckCircle2,
       };
     if (score >= 80)
-      return { label: "高い", color: "text-blue-700", icon: CheckCircle2 };
-    if (score >= 70)
-      return { label: "中程度", color: "text-yellow-700", icon: AlertTriangle };
-    if (score >= 60)
       return {
-        label: "やや低い",
-        color: "text-orange-700",
+        grade: "A",
+        label: "安全性A - 高い安全性",
+        description:
+          "高い安全性が確認されています。適切な使用下では問題ありません。",
+        color: "text-blue-700",
+        bgColor: "bg-blue-50",
+        borderColor: "border-blue-300",
+        icon: CheckCircle2,
+      };
+    if (score >= 70)
+      return {
+        grade: "B",
+        label: "安全性B - 中程度の安全性",
+        description:
+          "一般的に安全ですが、一部の方には注意が必要な場合があります。",
+        color: "text-yellow-700",
+        bgColor: "bg-yellow-50",
+        borderColor: "border-yellow-300",
         icon: AlertTriangle,
       };
-    return { label: "低い", color: "text-red-700", icon: AlertTriangle };
+    if (score >= 60)
+      return {
+        grade: "C",
+        label: "安全性C - 注意が必要",
+        description: "使用には注意が必要です。医師への相談を推奨します。",
+        color: "text-orange-700",
+        bgColor: "bg-orange-50",
+        borderColor: "border-orange-300",
+        icon: AlertTriangle,
+      };
+    return {
+      grade: "D",
+      label: "安全性D - 要注意",
+      description:
+        "安全性に懸念があります。使用前に必ず医師に相談してください。",
+      color: "text-red-700",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-300",
+      icon: AlertTriangle,
+    };
   };
 
   const safetyLevel = getSafetyLevel(safetyScore);
@@ -156,6 +196,30 @@ export function EvidenceSafetyDetail({
                 style={{ width: `${evidenceScore}%` }}
               />
             </div>
+          </div>
+        )}
+
+        {/* 成分のエビデンスレベル */}
+        {ingredientName && ingredientEvidenceLevel && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              主要成分のエビデンス評価
+            </h3>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">{ingredientName}:</span>
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold">
+                  {ingredientEvidenceLevel}
+                </span>
+              </div>
+              <span className="text-xs text-gray-600">
+                {evidenceLevelInfo[ingredientEvidenceLevel]?.label}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 mt-2">
+              この成分自体の科学的根拠は{ingredientEvidenceLevel}
+              ランクに評価されています。
+            </p>
           </div>
         )}
 
@@ -215,13 +279,21 @@ export function EvidenceSafetyDetail({
             </div>
           </div>
 
-          <div className="p-6 bg-green-50 border border-green-200 rounded-lg flex flex-col justify-center">
+          <div
+            className={`p-6 ${safetyLevel.bgColor} border ${safetyLevel.borderColor} rounded-lg flex flex-col justify-center`}
+          >
             <div className="flex items-center gap-2 mb-2">
               <SafetyIcon size={24} className={safetyLevel.color} />
               <p className="text-sm text-gray-700">安全性レベル</p>
             </div>
-            <p className={`text-2xl font-bold ${safetyLevel.color}`}>
+            <p className={`text-3xl font-bold ${safetyLevel.color} mb-2`}>
+              {safetyLevel.grade}
+            </p>
+            <p className={`text-sm font-semibold ${safetyLevel.color}`}>
               {safetyLevel.label}
+            </p>
+            <p className="text-xs text-gray-600 mt-2">
+              {safetyLevel.description}
             </p>
           </div>
         </div>

@@ -71,6 +71,13 @@ interface Product {
   };
   ingredients?: Array<{
     amountMgPerServing: number;
+    ingredient?: {
+      _id: string;
+      name: string;
+      nameEn: string;
+      evidenceLevel?: "S" | "A" | "B" | "C" | "D";
+      category?: string;
+    };
   }>;
   thirdPartyTested?: boolean;
   warnings?: string[];
@@ -111,7 +118,16 @@ async function getProduct(slug: string): Promise<Product | null> {
     affiliateUrl,
     source,
     scores,
-    ingredients,
+    ingredients[]{
+      amountMgPerServing,
+      ingredient->{
+        _id,
+        name,
+        nameEn,
+        evidenceLevel,
+        category
+      }
+    },
     thirdPartyTested,
     warnings,
     references
@@ -273,6 +289,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // 主要成分データを準備
   const mainIngredient = product.ingredients?.[0];
   const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
+  const mainIngredientInfo = mainIngredient?.ingredient;
+  const ingredientName = mainIngredientInfo?.name;
+  const ingredientEvidenceLevel = mainIngredientInfo?.evidenceLevel;
 
   // エビデンスレベルを判定
   const evidenceLevel = product.scores?.evidence
@@ -430,6 +449,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
           thirdPartyTested={product.thirdPartyTested || false}
           warnings={product.warnings || []}
           references={product.references || []}
+          ingredientName={ingredientName}
+          ingredientEvidenceLevel={ingredientEvidenceLevel}
           className="mb-8"
         />
 
