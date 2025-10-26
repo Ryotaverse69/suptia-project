@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
 import { TrendingUp, Shield, Award, MapPin } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
@@ -84,12 +83,11 @@ export function ProductListItem({ product }: ProductListItemProps) {
           <Link href={`/products/${slug.current}`}>
             <div className="relative w-full h-full overflow-hidden bg-gradient-blue">
               {displayImageUrl ? (
-                <Image
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={displayImageUrl}
                   alt={name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 100vw, 320px"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">

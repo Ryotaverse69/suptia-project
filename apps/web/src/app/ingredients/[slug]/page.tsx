@@ -6,6 +6,10 @@ import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { IngredientContent } from "@/components/IngredientContent";
+import {
+  IngredientWarnings,
+  IngredientSummary,
+} from "@/components/IngredientWarnings";
 import { formatTextWithParagraphs, formatList } from "@/lib/text-formatter";
 import {
   generateBreadcrumbStructuredData,
@@ -26,6 +30,7 @@ import {
   ChevronRight,
   Pill,
 } from "lucide-react";
+import "./ingredient-styles.css";
 
 // 開発中は常に最新データを取得
 export const dynamic = "force-dynamic";
@@ -317,12 +322,25 @@ export default async function IngredientPage({ params }: Props) {
     getAllIngredients(),
   ]);
 
+  // 不要なフレーズをクリーニングする関数
+  const cleanText = (text: string | undefined | null): string => {
+    if (!text) return "";
+    return text
+      .replace(/[:：]\s*優れた供給源として知られています\.?/gi, "")
+      .replace(/[:：]\s*豊富に含まれています\.?/gi, "")
+      .replace(/[:：]\s*良い供給源です\.?/gi, "")
+      .replace(/優れた供給源として知られています\.?/gi, "")
+      .replace(/豊富に含まれています\.?/gi, "")
+      .replace(/良い供給源です\.?/gi, "")
+      .trim();
+  };
+
   // JSON-LD構造化データ（SEO対策）
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: `${ingredient.name}（${ingredient.nameEn}）の効果と摂取方法`,
-    description: ingredient.description,
+    description: cleanText(ingredient.description),
     author: {
       "@type": "Organization",
       name: "サプティア",
@@ -356,7 +374,7 @@ export default async function IngredientPage({ params }: Props) {
       ? generateFAQStructuredData(
           ingredient.faqs.map((faq) => ({
             question: faq.question,
-            answer: faq.answer,
+            answer: cleanText(faq.answer),
           })),
         )
       : null;
@@ -432,13 +450,22 @@ export default async function IngredientPage({ params }: Props) {
             </div>
           </header>
 
+          {/* 要約（1行） */}
+          <IngredientSummary description={ingredient.description} />
+
+          {/* 妊婦・授乳婦への警告 */}
+          <IngredientWarnings
+            sideEffects={ingredient.sideEffects}
+            interactions={ingredient.interactions}
+          />
+
           {/* メインコンテンツ */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* 左カラム：主要コンテンツ */}
             <div className="lg:col-span-2 space-y-10">
               {/* 概要 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <BookOpen className="text-primary" size={24} />
                   {ingredient.name}とは
                 </h2>
@@ -452,7 +479,7 @@ export default async function IngredientPage({ params }: Props) {
               {/* 主な効果・効能 */}
               {ingredient.benefits && ingredient.benefits.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                     <TrendingUp className="text-primary" size={24} />
                     主な効果・効能
                   </h2>
@@ -469,7 +496,7 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* 推奨摂取量 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <Scale className="text-primary" size={24} />
                   推奨摂取量
                 </h2>
@@ -487,7 +514,7 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* 科学的背景 */}
               <section>
-                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <ShieldCheck className="text-primary" size={24} />
                   科学的背景・エビデンス
                 </h2>
@@ -506,18 +533,37 @@ export default async function IngredientPage({ params }: Props) {
               {/* 食品源 */}
               {ingredient.foodSources && ingredient.foodSources.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6 ingredient-section-title">
                     豊富に含まれる食品
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {ingredient.foodSources.map((source, index) => (
-                      <div
-                        key={index}
-                        className="p-4 bg-white border border-primary-200 rounded-lg"
-                      >
-                        <p className="text-primary-800">{source}</p>
-                      </div>
-                    ))}
+                    {ingredient.foodSources.map((source, index) => {
+                      // 不要な定型文を削除（コロン＋フレーズをすべて削除）
+                      const cleanedSource = source
+                        .replace(
+                          /[:：]\s*優れた供給源として知られています\.?/gi,
+                          "",
+                        )
+                        .replace(/[:：]\s*豊富に含まれています\.?/gi, "")
+                        .replace(/[:：]\s*良い供給源です\.?/gi, "")
+                        .replace(/[:：]\s*ビタミンAが豊富です\.?/gi, "")
+                        .replace(/優れた供給源として知られています\.?/gi, "")
+                        .replace(/豊富に含まれています\.?/gi, "")
+                        .replace(/良い供給源です\.?/gi, "")
+                        .replace(/ビタミンAが豊富です\.?/gi, "")
+                        .trim();
+
+                      return (
+                        <div
+                          key={index}
+                          className="p-4 bg-white border border-primary-200 rounded-lg hover:shadow-md transition-shadow"
+                        >
+                          <p className="text-primary-800 font-medium">
+                            {cleanedSource}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </section>
               )}
@@ -525,7 +571,7 @@ export default async function IngredientPage({ params }: Props) {
               {/* 副作用・注意点 */}
               {ingredient.sideEffects && (
                 <section>
-                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                     <AlertCircle className="text-accent-orange" size={24} />
                     副作用・注意点
                   </h2>
@@ -560,14 +606,14 @@ export default async function IngredientPage({ params }: Props) {
                   <div className="bg-gradient-to-r from-primary-50 to-white border-l-4 border-primary-400 pl-6 pr-4 py-4 rounded-r-lg">
                     {Array.isArray(ingredient.interactions) ? (
                       <div
-                        className="interactions-list"
+                        className="interactions-list space-y-3 text-primary-800 text-sm sm:text-base"
                         dangerouslySetInnerHTML={{
                           __html: formatList(ingredient.interactions, "bullet"),
                         }}
                       />
                     ) : (
                       <div
-                        className="interactions-content"
+                        className="interactions-content text-primary-800 text-sm sm:text-base space-y-3"
                         dangerouslySetInnerHTML={{
                           __html: formatTextWithParagraphs(
                             ingredient.interactions as any,
@@ -576,23 +622,6 @@ export default async function IngredientPage({ params }: Props) {
                       />
                     )}
                   </div>
-                  <style jsx>{`
-                    :global(.interactions-list li) {
-                      @apply mb-3 last:mb-0;
-                    }
-                    :global(.interactions-list li > div) {
-                      @apply text-primary-800;
-                    }
-                    :global(.interactions-content > div) {
-                      @apply text-primary-800 mb-3 last:mb-0;
-                    }
-                    @media (max-width: 640px) {
-                      :global(.interactions-list),
-                      :global(.interactions-content) {
-                        @apply text-sm;
-                      }
-                    }
-                  `}</style>
                 </section>
               )}
 
@@ -615,7 +644,7 @@ export default async function IngredientPage({ params }: Props) {
                         </summary>
                         <div className="px-6 py-4 border-t border-primary-200 bg-gradient-to-br from-primary-50/70 to-white">
                           <div
-                            className="faq-answer"
+                            className="faq-answer text-primary-800 text-sm sm:text-base leading-6 sm:leading-relaxed space-y-2 sm:space-y-3"
                             dangerouslySetInnerHTML={{
                               __html: formatTextWithParagraphs(faq.answer),
                             }}
@@ -624,19 +653,6 @@ export default async function IngredientPage({ params }: Props) {
                       </details>
                     ))}
                   </div>
-                  <style jsx>{`
-                    :global(.faq-answer > div) {
-                      @apply text-primary-800 mb-3 last:mb-0;
-                    }
-                    @media (max-width: 640px) {
-                      :global(.faq-answer) {
-                        @apply text-sm leading-6;
-                      }
-                      :global(.faq-answer > div) {
-                        @apply mb-2;
-                      }
-                    }
-                  `}</style>
                 </section>
               )}
 

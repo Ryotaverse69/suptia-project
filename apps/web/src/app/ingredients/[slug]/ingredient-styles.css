@@ -1,0 +1,107 @@
+/* 成分ガイドページのグローバルスタイル */
+
+/* 箇条書きリストのスタイル */
+.benefits-list ul,
+.side-effects-list ul,
+.interactions-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li,
+.side-effects-list li,
+.interactions-list li {
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  position: relative;
+  line-height: 1.9;
+}
+
+.benefits-list li:last-child,
+.side-effects-list li:last-child,
+.interactions-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* リストマーカーの装飾 */
+.benefits-list li::before,
+.side-effects-list li::before,
+.interactions-list li::before {
+  position: absolute;
+  left: -1.5rem;
+}
+
+/* モバイル表示の最適化 */
+@media (max-width: 640px) {
+  .benefits-list li,
+  .side-effects-list li,
+  .interactions-list li {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* デスクトップ表示 */
+@media (min-width: 641px) {
+  .benefits-list li,
+  .side-effects-list li,
+  .interactions-list li {
+    font-size: 1rem;
+    line-height: 1.85rem;
+  }
+}
+
+/* 段落のスタイル - 改行を増やして読みやすく */
+.dosage-content p,
+.scientific-content p,
+.faq-answer p,
+.interactions-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.9;
+}
+
+.dosage-content p:last-child,
+.scientific-content p:last-child,
+.faq-answer p:last-child,
+.interactions-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* セクション内の改行を強調 */
+.dosage-content br,
+.interactions-content br {
+  display: block;
+  content: "";
+  margin-bottom: 0.5rem;
+}
+
+/* 強調テキスト */
+.dosage-content strong,
+.scientific-content strong,
+.benefits-list strong,
+.interactions-list strong {
+  font-weight: 600;
+  color: #1e3a8a;
+  background: linear-gradient(to bottom, transparent 60%, #dbeafe 60%);
+  padding: 0 0.15rem;
+}
+
+/* セクション見出しの装飾 */
+.ingredient-section-title {
+  border-bottom: 3px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* カードスタイルの統一 */
+.ingredient-card {
+  transition: all 0.3s ease;
+}
+
+.ingredient-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
