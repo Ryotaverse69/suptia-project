@@ -8,7 +8,10 @@ import {
   AlertTriangle,
   CheckCircle2,
   ExternalLink,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
+import type { IngredientSafetyDetail } from "@/lib/auto-scoring";
 
 interface EvidenceSafetyDetailProps {
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
@@ -23,6 +26,7 @@ interface EvidenceSafetyDetailProps {
   }>;
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
+  safetyDetails?: IngredientSafetyDetail[];
   className?: string;
 }
 
@@ -35,6 +39,7 @@ export function EvidenceSafetyDetail({
   references = [],
   ingredientName,
   ingredientEvidenceLevel,
+  safetyDetails = [],
   className = "",
 }: EvidenceSafetyDetailProps) {
   // エビデンスレベルの説明
@@ -281,6 +286,112 @@ export function EvidenceSafetyDetail({
           </div>
           <p className="text-sm text-gray-700">{safetyLevel.description}</p>
         </div>
+
+        {/* 成分別安全性詳細 */}
+        {safetyDetails.length > 0 && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <Shield size={16} className="text-blue-600" />
+              成分別安全性評価の詳細
+            </h3>
+            <div className="space-y-3">
+              {safetyDetails.map((detail, index) => {
+                const totalPenalty =
+                  detail.evidenceLevelPenalty +
+                  detail.sideEffectsPenalty +
+                  detail.interactionsPenalty;
+                const hasReduction = totalPenalty < 0;
+
+                return (
+                  <div
+                    key={index}
+                    className="p-3 bg-white border border-blue-200 rounded-lg"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <p className="font-semibold text-gray-800">
+                        {detail.name}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          安全性スコア:
+                        </span>
+                        <span className="font-bold text-blue-700">
+                          {detail.finalScore}点
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-xs text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <span className="w-32">ベーススコア:</span>
+                        <span className="font-mono">{detail.baseScore}点</span>
+                      </div>
+
+                      {detail.categoryBonus !== 0 && (
+                        <div className="flex items-center gap-2 text-green-700">
+                          <TrendingUp size={14} />
+                          <span className="w-32">カテゴリボーナス:</span>
+                          <span className="font-mono">
+                            +{detail.categoryBonus}点
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            （基本的な栄養素）
+                          </span>
+                        </div>
+                      )}
+
+                      {hasReduction && (
+                        <div className="mt-2 pt-2 border-t border-gray-200">
+                          <p className="font-semibold text-orange-700 mb-1 flex items-center gap-1">
+                            <TrendingDown size={14} />
+                            減点要因:
+                          </p>
+
+                          {detail.evidenceLevelPenalty < 0 && (
+                            <div className="flex items-center gap-2 text-orange-600 ml-4">
+                              <span className="w-28">エビデンスレベル:</span>
+                              <span className="font-mono">
+                                {detail.evidenceLevelPenalty}点
+                              </span>
+                            </div>
+                          )}
+
+                          {detail.sideEffectsPenalty < 0 && (
+                            <div className="flex items-center gap-2 text-orange-600 ml-4">
+                              <span className="w-28">副作用:</span>
+                              <span className="font-mono">
+                                {detail.sideEffectsPenalty}点
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                （{detail.sideEffectsCount}件）
+                              </span>
+                            </div>
+                          )}
+
+                          {detail.interactionsPenalty < 0 && (
+                            <div className="flex items-center gap-2 text-orange-600 ml-4">
+                              <span className="w-28">相互作用:</span>
+                              <span className="font-mono">
+                                {detail.interactionsPenalty}点
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                （{detail.interactionsCount}件）
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              ※
+              安全性スコアは、ベーススコア（90点）から、エビデンスレベル、副作用の数、相互作用の数に応じて調整されます。
+            </p>
+          </div>
+        )}
 
         {/* 第三者機関検査 */}
         {thirdPartyTested && (

@@ -12,13 +12,26 @@ interface Ingredient {
   interactions?: string[];
 }
 
-interface AutoScoreResult {
+export interface IngredientSafetyDetail {
+  name: string;
+  baseScore: number;
+  evidenceLevelPenalty: number;
+  sideEffectsPenalty: number;
+  interactionsPenalty: number;
+  categoryBonus: number;
+  finalScore: number;
+  sideEffectsCount: number;
+  interactionsCount: number;
+}
+
+export interface AutoScoreResult {
   evidenceScore: number;
   evidenceLevel: "S" | "A" | "B" | "C" | "D";
   safetyScore: number;
   safetyLevel: "S" | "A" | "B" | "C" | "D";
   overallScore: number;
   foundIngredients: string[];
+  safetyDetails: IngredientSafetyDetail[];
 }
 
 /**
@@ -141,10 +154,13 @@ export function scoreToEvidenceLevel(
 }
 
 /**
- * 成分の安全性スコアを計算
+ * 成分の安全性スコアを計算（詳細情報付き）
  */
-export function calculateSafetyScore(ingredient: Ingredient): number {
-  let score = 90; // ベーススコア
+export function calculateSafetyScoreWithDetails(
+  ingredient: Ingredient,
+): IngredientSafetyDetail {
+  const baseScore = 90;
+  let score = baseScore;
 
   // エビデンスレベルが高いほど安全性も高いと仮定
   const evidenceBonus = {
@@ -154,29 +170,48 @@ export function calculateSafetyScore(ingredient: Ingredient): number {
     C: -15,
     D: -20,
   };
-  score += evidenceBonus[ingredient.evidenceLevel || "D"];
+  const evidenceLevelPenalty = evidenceBonus[ingredient.evidenceLevel || "D"];
+  score += evidenceLevelPenalty;
 
   // 副作用の数でペナルティ
   const sideEffectsCount = ingredient.sideEffects?.length || 0;
-  if (sideEffectsCount > 0) {
-    score -= Math.min(sideEffectsCount * 2, 15); // 最大-15点
-  }
+  const sideEffectsPenalty =
+    sideEffectsCount > 0 ? -Math.min(sideEffectsCount * 2, 15) : 0;
+  score += sideEffectsPenalty;
 
   // 相互作用の数でペナルティ
   const interactionsCount = ingredient.interactions?.length || 0;
-  if (interactionsCount > 0) {
-    score -= Math.min(interactionsCount * 1.5, 10); // 最大-10点
-  }
+  const interactionsPenalty =
+    interactionsCount > 0 ? -Math.min(interactionsCount * 1.5, 10) : 0;
+  score += interactionsPenalty;
 
   // カテゴリによる調整
-  if (
-    ingredient.category === "ビタミン" ||
-    ingredient.category === "ミネラル"
-  ) {
-    score += 5; // 基本的な栄養素は安全性が高い
-  }
+  const categoryBonus =
+    ingredient.category === "ビタミン" || ingredient.category === "ミネラル"
+      ? 5
+      : 0;
+  score += categoryBonus;
 
-  return Math.max(Math.min(score, 100), 0); // 0-100に正規化
+  const finalScore = Math.max(Math.min(score, 100), 0); // 0-100に正規化
+
+  return {
+    name: ingredient.name,
+    baseScore,
+    evidenceLevelPenalty,
+    sideEffectsPenalty,
+    interactionsPenalty,
+    categoryBonus,
+    finalScore,
+    sideEffectsCount,
+    interactionsCount,
+  };
+}
+
+/**
+ * 成分の安全性スコアを計算（後方互換性のため）
+ */
+export function calculateSafetyScore(ingredient: Ingredient): number {
+  return calculateSafetyScoreWithDetails(ingredient).finalScore;
 }
 
 /**
@@ -252,6 +287,7 @@ export function calculateAutoScores(
       safetyLevel: "D",
       overallScore: 50,
       foundIngredients: [],
+      safetyDetails: [],
     };
   }
 
@@ -259,8 +295,17 @@ export function calculateAutoScores(
   const evidenceScore = calculateOverallEvidenceScore(matchedIngredients);
   const evidenceLevel = scoreToEvidenceLevel(evidenceScore);
 
-  // 安全性スコア計算（全成分を考慮）
-  const safetyScore = calculateOverallSafetyScore(matchedIngredients);
+  // 安全性スコア計算（全成分を考慮、詳細情報も取得）
+  const safetyDetails = matchedIngredients.map((ing) =>
+    calculateSafetyScoreWithDetails(ing),
+  );
+  const safetyScore =
+    safetyDetails.length > 0
+      ? Math.round(
+          safetyDetails.reduce((sum, detail) => sum + detail.finalScore, 0) /
+            safetyDetails.length,
+        )
+      : 50;
   const safetyLevel = scoreToEvidenceLevel(safetyScore);
 
   // 総合スコア
@@ -273,5 +318,6 @@ export function calculateAutoScores(
     safetyLevel,
     overallScore,
     foundIngredients: matchedIngredients.map((ing) => ing.name),
+    safetyDetails,
   };
 }

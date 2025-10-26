@@ -19,7 +19,10 @@ import Image from "next/image";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
-import { calculateAutoScores } from "@/lib/auto-scoring";
+import {
+  calculateAutoScores,
+  type IngredientSafetyDetail,
+} from "@/lib/auto-scoring";
 
 interface PriceData {
   source: string;
@@ -294,6 +297,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     product.ingredients.length === 0;
 
   let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
+  let safetyDetails: IngredientSafetyDetail[] = [];
 
   if (needsAutoScoring) {
     const autoScores = calculateAutoScores(product.name, allIngredients);
@@ -302,6 +306,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       safety: autoScores.safetyScore,
       overall: autoScores.overallScore,
     };
+    safetyDetails = autoScores.safetyDetails;
 
     console.log(`[Auto-Scoring] ${product.name}:`, {
       foundIngredients: autoScores.foundIngredients,
@@ -309,6 +314,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       evidenceLevel: autoScores.evidenceLevel,
       safetyScore: autoScores.safetyScore,
       safetyLevel: autoScores.safetyLevel,
+      safetyDetails: autoScores.safetyDetails,
     });
   }
 
@@ -529,6 +535,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           references={product.references || []}
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
+          safetyDetails={safetyDetails}
           className="mb-8"
         />
 
