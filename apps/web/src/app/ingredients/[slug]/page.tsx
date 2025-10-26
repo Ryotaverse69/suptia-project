@@ -539,7 +539,7 @@ export default async function IngredientPage({ params }: Props) {
                       豊富に含まれる食品
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {ingredient.foodSources.map((source, index) => {
+                      {(ingredient.foodSources || []).map((source, index) => {
                         // 不要な定型文を削除（コロン＋フレーズをすべて削除）
                         const cleanedSource = source
                           .replace(

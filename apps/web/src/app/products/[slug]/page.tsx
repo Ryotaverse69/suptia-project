@@ -241,6 +241,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               height={300}
               className="rounded-lg shadow-sm"
               priority
+              unoptimized
             />
           </div>
         )}

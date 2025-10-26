@@ -17,7 +17,6 @@ function buildDevCSP() {
 
 const nextConfig = {
   images: {
-    unoptimized: true, // 一時的に画像最適化を無効化
     remotePatterns: [
       {
         protocol: "https",

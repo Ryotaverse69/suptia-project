@@ -47,7 +47,7 @@ interface IngredientWithStats extends Ingredient {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..12]{
+  const query = `*[_type == "product"] | order(priceJPY asc){
     name,
     priceJPY,
     servingsPerContainer,
@@ -380,6 +380,7 @@ export default async function Home() {
                             alt={product.name}
                             fill
                             className="object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
@@ -478,6 +479,7 @@ export default async function Home() {
                             alt={ingredient.name}
                             fill
                             className="object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
