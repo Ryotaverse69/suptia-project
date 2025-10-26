@@ -1,0 +1,74 @@
+[
+  {
+    "brand": "DHC",
+    "productName": "ビタミンC",
+    "searchKeyword": "DHC ビタミンC ハードカプセル",
+    "ingredient": "ビタミンC（アスコルビン酸）"
+  },
+  {
+    "brand": "DHC",
+    "productName": "マルチビタミン",
+    "searchKeyword": "DHC マルチビタミン",
+    "ingredient": "マルチビタミン"
+  },
+  {
+    "brand": "ネイチャーメイド",
+    "productName": "マルチビタミン＆ミネラル",
+    "searchKeyword": "ネイチャーメイド マルチビタミン ミネラル",
+    "ingredient": "マルチビタミン"
+  },
+  {
+    "brand": "ディアナチュラ",
+    "productName": "マルチビタミン",
+    "searchKeyword": "ディアナチュラ マルチビタミン",
+    "ingredient": "マルチビタミン"
+  },
+  {
+    "brand": "ファンケル",
+    "productName": "ビタミンC",
+    "searchKeyword": "ファンケル ビタミンC",
+    "ingredient": "ビタミンC（アスコルビン酸）"
+  },
+  {
+    "brand": "ファンケル",
+    "productName": "マルチビタミン",
+    "searchKeyword": "ファンケル マルチビタミン",
+    "ingredient": "マルチビタミン"
+  },
+  {
+    "brand": "DHC",
+    "productName": "亜鉛",
+    "searchKeyword": "DHC 亜鉛",
+    "ingredient": "亜鉛"
+  },
+  {
+    "brand": "DHC",
+    "productName": "コラーゲン",
+    "searchKeyword": "DHC コラーゲン",
+    "ingredient": "コラーゲン"
+  },
+  {
+    "brand": "サントリー",
+    "productName": "セサミンEX",
+    "searchKeyword": "サントリー セサミンEX",
+    "ingredient": "セサミン"
+  },
+  {
+    "brand": "ディアナチュラ",
+    "productName": "ビタミンC",
+    "searchKeyword": "ディアナチュラ ビタミンC",
+    "ingredient": "ビタミンC（アスコルビン酸）"
+  },
+  {
+    "brand": "NOW Foods",
+    "productName": "ビタミンD3",
+    "searchKeyword": "NOW Foods ビタミンD3",
+    "ingredient": "ビタミンD"
+  },
+  {
+    "brand": "グロング",
+    "productName": "BCAA",
+    "searchKeyword": "グロング BCAA",
+    "ingredient": "BCAA(分岐鎖アミノ酸)"
+  }
+]

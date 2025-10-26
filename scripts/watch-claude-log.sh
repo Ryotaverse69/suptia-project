@@ -8,6 +8,7 @@ NOTIFIER="$SCRIPT_DIR/notify.sh"
 # 設定
 CHECK_INTERVAL=2        # チェック間隔（秒）
 STABLE_DURATION=5       # ログ更新が止まってから通知までの時間（秒）
+COOLDOWN_PERIOD=60      # 通知間隔の最小時間（秒）- これより短い間隔では通知しない
 
 # 色とアイコン
 GREEN='\033[0;32m'
@@ -41,6 +42,8 @@ echo -e "${GREEN}🤖 Claude Code 応答完了監視を開始します（ログ�
 
 LAST_PROCESSING=""
 LOW_ACTIVITY_START=""
+NOTIFICATION_SENT=""
+LAST_NOTIFICATION_TIME=0  # 最後に通知を送った時刻
 
 while true; do
     # Claude Codeプロセスを確認
@@ -73,6 +76,7 @@ while true; do
             echo -e "${YELLOW}⚡ Claude Code が処理中です... （ログ更新中）${NC}"
             LAST_PROCESSING="true"
             LOW_ACTIVITY_START=""
+            NOTIFICATION_SENT=""  # ログが再度更新されたので、フラグをリセット
         fi
     else
         # アイドル状態（ログ更新が止まった）
@@ -83,24 +87,36 @@ while true; do
         fi
 
         # アイドル状態の継続時間をチェック
-        if [ -n "$LOW_ACTIVITY_START" ]; then
+        if [ -n "$LOW_ACTIVITY_START" ] && [ "$NOTIFICATION_SENT" != "true" ]; then
             CURRENT_TIME=$(date +%s)
             IDLE_DURATION=$((CURRENT_TIME - LOW_ACTIVITY_START))
 
             if [ "$IDLE_DURATION" -ge "$STABLE_DURATION" ]; then
-                echo -e "${GREEN}✅ Claude Code の応答が完了しました！${NC}"
+                # 最後の通知からの経過時間をチェック
+                CURRENT_TIME=$(date +%s)
+                TIME_SINCE_LAST_NOTIFICATION=$((CURRENT_TIME - LAST_NOTIFICATION_TIME))
 
-                # 通知を送信
-                if command -v terminal-notifier &> /dev/null; then
-                    terminal-notifier \
-                        -title "🤖 Claude Code" \
-                        -subtitle "応答完了" \
-                        -message "応答が完了しました！ご確認ください。" \
-                        -sound "Tink" \
-                        -group "claude-work"
+                if [ "$TIME_SINCE_LAST_NOTIFICATION" -ge "$COOLDOWN_PERIOD" ]; then
+                    echo -e "${GREEN}✅ Claude Code の応答が完了しました！${NC}"
+
+                    # 通知を送信
+                    if command -v terminal-notifier &> /dev/null; then
+                        terminal-notifier \
+                            -title "🤖 Claude Code" \
+                            -subtitle "応答完了" \
+                            -message "応答が完了しました！ご確認ください。" \
+                            -sound "Tink" \
+                            -group "claude-work"
+                    fi
+
+                    LAST_NOTIFICATION_TIME=$CURRENT_TIME  # 通知時刻を記録
+                    NOTIFICATION_SENT="true"  # 通知済みフラグをセット
+                else
+                    # クールダウン期間中
+                    REMAINING=$((COOLDOWN_PERIOD - TIME_SINCE_LAST_NOTIFICATION))
+                    echo -e "${BLUE}⏰ 通知のクールダウン中（残り${REMAINING}秒）${NC}"
+                    NOTIFICATION_SENT="true"  # 通知済みとしてマーク（繰り返し表示を防ぐ）
                 fi
-
-                LOW_ACTIVITY_START=""
             fi
         fi
     fi
