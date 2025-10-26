@@ -16,7 +16,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://suptia.com"),
   title: {
-    default: "サプティア | 科学的根拠に基づくサプリメント比較",
+    default: "サプティア | サプリメント最安値・コスパ・成分の比較",
     template: "%s | サプティア",
   },
   description:
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     url: "https://suptia.com",
     siteName: "サプティア",
-    title: "サプティア | 科学的根拠に基づくサプリメント比較",
+    title: "サプティア | サプリメント最安値・コスパ・成分の比較",
     description:
       "科学的根拠に基づくサプリメント比較メタサーチ。あなたに最適なサプリメントを見つけるお手伝いをします。",
     images: [
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "サプティア | 科学的根拠に基づくサプリメント比較",
+    title: "サプティア | サプリメント最安値・コスパ・成分の比較",
     description:
       "科学的根拠に基づくサプリメント比較メタサーチ。あなたに最適なサプリメントを見つけるお手伝いをします。",
     images: ["/og-image.png"],
