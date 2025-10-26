@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
@@ -85,13 +84,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
           {/* Product image */}
           {displayImageUrl ? (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={displayImageUrl}
               alt={name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              unoptimized
+              className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
