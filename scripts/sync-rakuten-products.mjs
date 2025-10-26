@@ -259,6 +259,9 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
           _type: 'reference',
           _ref: brand?._id || 'brand-unknown',
         },
+        source: 'rakuten', // 取得元ECサイト
+        itemCode: product.identifiers.rakutenItemCode, // EC商品コード
+        affiliateUrl: product.affiliateUrl || product.url, // アフィリエイトURL
         identifiers: {
           rakutenItemCode: product.identifiers.rakutenItemCode,
         },

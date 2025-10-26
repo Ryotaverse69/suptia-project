@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
-import { TrendingUp, Shield, Award } from "lucide-react";
+import { TrendingUp, Shield, Award, Sparkles } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
 import {
   calculateComprehensiveCost,
   getCostEfficiencyLabel,
 } from "@/lib/cost-calculator";
+import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
 
 interface ProductCardProps {
   product: {
@@ -30,6 +32,7 @@ interface ProductCardProps {
     safetyScore?: number;
     imageUrl?: string;
     externalImageUrl?: string;
+    badges?: BadgeType[]; // 称号バッジ
   };
 }
 
@@ -48,7 +51,11 @@ export function ProductCard({ product }: ProductCardProps) {
     safetyScore = 95,
     imageUrl,
     externalImageUrl,
+    badges = [],
   } = product;
+
+  // 完璧なサプリメント判定
+  const isPerfect = isPerfectSupplement(badges);
 
   // 画像URL: 外部画像URL > imageUrl > プレースホルダー
   const displayImageUrl = externalImageUrl || imageUrl;
@@ -78,11 +85,13 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
           {/* Product image */}
           {displayImageUrl ? (
-            <img
+            <Image
               src={displayImageUrl}
               alt={name}
-              className="w-full h-full object-cover"
-              loading="lazy"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              unoptimized
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
@@ -90,27 +99,39 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {isBestValue && (
-            <div className="absolute top-4 left-4 z-10">
-              <Badge
-                variant="bestValue"
-                className="flex items-center gap-1.5 glass-mint shadow-soft px-3 py-1.5 font-light"
-              >
-                <TrendingUp size={14} />
-                ベストバリュー
-              </Badge>
+          {/* 5冠達成バッジ */}
+          {isPerfect && (
+            <div className="absolute top-4 left-0 right-0 z-10 flex justify-center">
+              <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
+                <Sparkles size={16} className="animate-spin" />
+                <span className="font-bold text-sm">
+                  🏆 5冠達成！完璧なサプリメント
+                </span>
+                <Sparkles size={16} className="animate-spin" />
+              </div>
             </div>
           )}
 
-          {safetyScore >= 90 && (
-            <div className="absolute top-4 right-4 z-10">
-              <Badge
-                variant="success"
-                className="flex items-center gap-1.5 glass-mint shadow-soft px-3 py-1.5 font-light"
-              >
-                <Shield size={14} />
-                高安全性
-              </Badge>
+          {/* 称号バッジ（最大3つまで表示） */}
+          {!isPerfect && badges.length > 0 && (
+            <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap gap-2">
+              {badges.slice(0, 3).map((badgeType) => {
+                const badgeInfo = getBadgeInfo(badgeType);
+                return (
+                  <div
+                    key={badgeType}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border-2 backdrop-blur-sm ${badgeInfo.color}`}
+                  >
+                    <span>{badgeInfo.icon}</span>
+                    <span>{badgeInfo.label}</span>
+                  </div>
+                );
+              })}
+              {badges.length > 3 && (
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 border-2 border-gray-200 text-gray-700">
+                  +{badges.length - 3}
+                </div>
+              )}
             </div>
           )}
         </div>

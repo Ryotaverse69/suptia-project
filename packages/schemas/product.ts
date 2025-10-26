@@ -30,6 +30,47 @@ export const product = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "source",
+      title: "取得元ECサイト",
+      type: "string",
+      options: {
+        list: [
+          { title: "楽天市場", value: "rakuten" },
+          { title: "Yahoo!ショッピング", value: "yahoo" },
+          { title: "Amazon", value: "amazon" },
+          { title: "iHerb", value: "iherb" },
+          { title: "手動登録", value: "manual" },
+        ],
+      },
+      description: "商品データの取得元ECサイト（フィルタリングに使用）",
+    }),
+    defineField({
+      name: "janCode",
+      title: "JANコード（便利なショートカット）",
+      type: "string",
+      description: "identifiers.janのショートカット（クエリの簡略化用）",
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          if (!value) return true;
+          const isValid = /^\d{8}$|^\d{13}$/.test(value);
+          return (
+            isValid || "JANコードは8桁または13桁の数字である必要があります"
+          );
+        }),
+    }),
+    defineField({
+      name: "itemCode",
+      title: "EC商品コード",
+      type: "string",
+      description: "楽天itemCode、Yahoo商品コードなど",
+    }),
+    defineField({
+      name: "affiliateUrl",
+      title: "アフィリエイトURL",
+      type: "url",
+      description: "メインのアフィリエイトリンク",
+    }),
+    defineField({
       name: "identifiers",
       title: "商品識別子",
       type: "object",
@@ -203,6 +244,35 @@ export const product = defineType({
       type: "array",
       of: [{ type: "string" }],
       description: "アレルギー情報、相互作用など",
+    }),
+    defineField({
+      name: "references",
+      title: "参考文献",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "title",
+              title: "タイトル",
+              type: "string",
+            },
+            {
+              name: "url",
+              title: "URL",
+              type: "url",
+            },
+            {
+              name: "source",
+              title: "出典",
+              type: "string",
+              description: "PubMed, 厚生労働省など",
+            },
+          ],
+        },
+      ],
+      description: "科学的根拠となる論文や公的機関の情報",
     }),
     defineField({
       name: "description",

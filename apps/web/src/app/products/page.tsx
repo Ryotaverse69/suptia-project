@@ -2,11 +2,17 @@ import { Metadata } from "next";
 import { sanity } from "@/lib/sanity.client";
 import { ProductGrid } from "@/components/ProductGrid";
 import { ProductFilters } from "@/components/ProductFilters";
+import { ProductStats } from "@/components/ProductStats";
 import { generateItemListStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { Search, SlidersHorizontal } from "lucide-react";
+import {
+  evaluateBadges,
+  BadgeType,
+  ProductForBadgeEvaluation,
+} from "@/lib/badges";
 
 // 開発中は常に最新データを取得
 export const dynamic = "force-dynamic";
@@ -24,6 +30,8 @@ interface Product {
     country?: string;
   };
   priceJPY: number;
+  servingsPerContainer?: number;
+  servingsPerDay?: number;
   scores?: {
     overall?: number;
     safety?: number;
@@ -37,6 +45,11 @@ interface Product {
   availability?: string;
   form?: string;
   thirdPartyTested?: boolean;
+  source?: string;
+  priceData?: Array<{
+    source: string;
+    amount: number;
+  }>;
   images?: Array<{
     asset: {
       url: string;
@@ -55,6 +68,8 @@ interface SearchParams {
   minPrice?: string;
   maxPrice?: string;
   minScore?: string;
+  badges?: string; // カンマ区切りのバッジタイプ
+  ecSites?: string; // カンマ区切りのECサイト
   sort?: string;
 }
 
@@ -103,7 +118,14 @@ async function getAllBrands(): Promise<Brand[]> {
 
 // 商品を取得（フィルタリング＆ソート対応）
 async function getProducts(params: SearchParams): Promise<Product[]> {
-  const { brand, minPrice, maxPrice, minScore, sort = "overall" } = params;
+  const {
+    brand,
+    minPrice,
+    maxPrice,
+    minScore,
+    ecSites,
+    sort = "overall",
+  } = params;
 
   // フィルター条件を構築
   const filters: string[] = [
@@ -125,6 +147,12 @@ async function getProducts(params: SearchParams): Promise<Product[]> {
 
   if (minScore) {
     filters.push(`scores.overall >= ${minScore}`);
+  }
+
+  // ECサイトフィルター
+  if (ecSites) {
+    const siteList = ecSites.split(",").map((s) => `"${s.trim()}"`);
+    filters.push(`source in [${siteList.join(", ")}]`);
   }
 
   const filterQuery = filters.join(" && ");
@@ -158,11 +186,15 @@ async function getProducts(params: SearchParams): Promise<Product[]> {
       country
     },
     priceJPY,
+    servingsPerContainer,
+    servingsPerDay,
     scores,
     reviewStats,
     availability,
     form,
     thirdPartyTested,
+    source,
+    priceData,
     "images": images[0...1]{
       "asset": asset->
     }
@@ -179,10 +211,50 @@ async function getProducts(params: SearchParams): Promise<Product[]> {
 
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const [products, brands] = await Promise.all([
+  const [allProducts, brands] = await Promise.all([
     getProducts(params),
     getAllBrands(),
   ]);
+
+  // 称号を計算
+  const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
+    (p) => ({
+      _id: p._id,
+      priceJPY: p.priceJPY,
+      servingsPerContainer: p.servingsPerContainer,
+      servingsPerDay: p.servingsPerDay,
+      evidenceLevel: p.scores?.evidence
+        ? p.scores.evidence >= 90
+          ? "S"
+          : p.scores.evidence >= 80
+            ? "A"
+            : p.scores.evidence >= 70
+              ? "B"
+              : p.scores.evidence >= 60
+                ? "C"
+                : "D"
+        : undefined,
+      safetyScore: p.scores?.safety,
+      priceData: p.priceData,
+    }),
+  );
+
+  const productsWithBadges = allProducts.map((product) => {
+    const badges = evaluateBadges(
+      productsForEvaluation.find((p) => p._id === product._id)!,
+      productsForEvaluation,
+    );
+    return { ...product, badges };
+  });
+
+  // 称号フィルターを適用
+  let filteredProducts = productsWithBadges;
+  if (params.badges) {
+    const requiredBadges = params.badges.split(",") as BadgeType[];
+    filteredProducts = productsWithBadges.filter((product) =>
+      requiredBadges.every((badge) => product.badges.includes(badge)),
+    );
+  }
 
   // Generate JSON-LD structured data for product list
   const siteUrl = getSiteUrl();
@@ -190,7 +262,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     name: "サプリメント商品一覧",
     description:
       "安全性、エビデンス、コストパフォーマンスの3つのスコアで評価された厳選サプリメント",
-    items: products.map((product, index) => ({
+    items: filteredProducts.map((product, index) => ({
       name: product.name,
       url: `${siteUrl}/products/${product.slug.current}`,
       position: index + 1,
@@ -212,7 +284,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1400px]">
             <h1 className="text-4xl font-bold mb-4">サプリメント商品一覧</h1>
             <p className="text-primary-100 text-lg">
-              科学的根拠に基づいて評価された{products.length}
+              科学的根拠に基づいて評価された{filteredProducts.length}
               件の商品から、あなたに最適なサプリメントを見つけましょう
             </p>
           </div>
@@ -220,6 +292,9 @@ export default async function ProductsPage({ searchParams }: Props) {
 
         {/* メインコンテンツ */}
         <div className="mx-auto px-6 lg:px-12 xl:px-16 py-10 max-w-[1400px]">
+          {/* 統計情報セクション */}
+          <ProductStats products={productsWithBadges} className="mb-8" />
+
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* 左サイドバー：フィルター */}
             <aside className="lg:col-span-1">
@@ -236,7 +311,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
             {/* 商品グリッド */}
             <main className="lg:col-span-3">
-              {products.length === 0 ? (
+              {filteredProducts.length === 0 ? (
                 <div className="text-center py-20">
                   <Search className="mx-auto text-primary-300 mb-4" size={64} />
                   <h3 className="text-2xl font-bold text-primary-900 mb-2">
@@ -247,7 +322,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                   </p>
                 </div>
               ) : (
-                <ProductGrid products={products} currentSort={params.sort} />
+                <ProductGrid
+                  products={filteredProducts}
+                  currentSort={params.sort}
+                />
               )}
             </main>
           </div>

@@ -256,6 +256,10 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
           _type: 'reference',
           _ref: brand?._id || 'brand-unknown',
         },
+        source: 'yahoo', // 取得元ECサイト
+        janCode: product.identifiers.jan, // JANコード（ショートカット）
+        itemCode: product.identifiers.yahooCode, // EC商品コード
+        affiliateUrl: product.affiliateUrl || product.url, // アフィリエイトURL
         identifiers: {
           yahooCode: product.identifiers.yahooCode,
           jan: product.identifiers.jan,

@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { BADGE_DEFINITIONS, BadgeType } from "@/lib/badges";
 
 interface Brand {
   _id: string;
@@ -18,9 +19,19 @@ interface ProductFiltersProps {
     minPrice?: string;
     maxPrice?: string;
     minScore?: string;
+    badges?: string; // カンマ区切りのバッジタイプ
+    ecSites?: string; // カンマ区切りのECサイト
     sort?: string;
   };
 }
+
+// ECサイト定義
+const EC_SITES = [
+  { id: "rakuten", name: "楽天市場", icon: "🛍️" },
+  { id: "yahoo", name: "Yahoo!ショッピング", icon: "🟣" },
+  { id: "amazon", name: "Amazon", icon: "📦" },
+  { id: "iherb", name: "iHerb", icon: "🌿" },
+] as const;
 
 export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
   const router = useRouter();
@@ -30,6 +41,20 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
   const [minPrice, setMinPrice] = useState(currentParams.minPrice || "");
   const [maxPrice, setMaxPrice] = useState(currentParams.maxPrice || "");
   const [minScore, setMinScore] = useState(currentParams.minScore || "");
+
+  // 称号フィルター（複数選択可能）
+  const [selectedBadges, setSelectedBadges] = useState<Set<BadgeType>>(
+    new Set(
+      currentParams.badges
+        ? (currentParams.badges.split(",") as BadgeType[])
+        : [],
+    ),
+  );
+
+  // ECサイトフィルター（複数選択可能）
+  const [selectedECSites, setSelectedECSites] = useState<Set<string>>(
+    new Set(currentParams.ecSites ? currentParams.ecSites.split(",") : []),
+  );
 
   // フィルターを適用
   const applyFilters = useCallback(() => {
@@ -60,6 +85,20 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
       params.delete("minScore");
     }
 
+    // 称号フィルター
+    if (selectedBadges.size > 0) {
+      params.set("badges", Array.from(selectedBadges).join(","));
+    } else {
+      params.delete("badges");
+    }
+
+    // ECサイトフィルター
+    if (selectedECSites.size > 0) {
+      params.set("ecSites", Array.from(selectedECSites).join(","));
+    } else {
+      params.delete("ecSites");
+    }
+
     // ソート条件は保持
     const currentSort = searchParams.get("sort");
     if (currentSort) {
@@ -67,7 +106,16 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     }
 
     router.push(`/products?${params.toString()}`);
-  }, [selectedBrand, minPrice, maxPrice, minScore, searchParams, router]);
+  }, [
+    selectedBrand,
+    minPrice,
+    maxPrice,
+    minScore,
+    selectedBadges,
+    selectedECSites,
+    searchParams,
+    router,
+  ]);
 
   // フィルターをリセット
   const resetFilters = useCallback(() => {
@@ -75,6 +123,8 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     setMinPrice("");
     setMaxPrice("");
     setMinScore("");
+    setSelectedBadges(new Set());
+    setSelectedECSites(new Set());
 
     // ソート条件のみ保持
     const currentSort = searchParams.get("sort");
@@ -85,7 +135,35 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     }
   }, [searchParams, router]);
 
-  const hasActiveFilters = selectedBrand || minPrice || maxPrice || minScore;
+  const hasActiveFilters =
+    selectedBrand ||
+    minPrice ||
+    maxPrice ||
+    minScore ||
+    selectedBadges.size > 0 ||
+    selectedECSites.size > 0;
+
+  // 称号トグル処理
+  const toggleBadge = (badgeType: BadgeType) => {
+    const newSet = new Set(selectedBadges);
+    if (newSet.has(badgeType)) {
+      newSet.delete(badgeType);
+    } else {
+      newSet.add(badgeType);
+    }
+    setSelectedBadges(newSet);
+  };
+
+  // ECサイトトグル処理
+  const toggleECSite = (siteId: string) => {
+    const newSet = new Set(selectedECSites);
+    if (newSet.has(siteId)) {
+      newSet.delete(siteId);
+    } else {
+      newSet.add(siteId);
+    }
+    setSelectedECSites(newSet);
+  };
 
   return (
     <div className="space-y-6">
@@ -153,6 +231,64 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
         </select>
       </div>
 
+      {/* 称号フィルター */}
+      <div>
+        <label className="block text-sm font-semibold text-primary-900 mb-3">
+          🏆 称号で絞り込み
+        </label>
+        <div className="space-y-2">
+          {Object.entries(BADGE_DEFINITIONS).map(([type, badge]) => (
+            <label
+              key={type}
+              className="flex items-center gap-2 cursor-pointer hover:bg-primary-50 p-2 rounded-lg transition-colors"
+            >
+              <input
+                type="checkbox"
+                checked={selectedBadges.has(type as BadgeType)}
+                onChange={() => toggleBadge(type as BadgeType)}
+                className="rounded border-primary-300 text-primary focus:ring-primary focus:ring-offset-0"
+              />
+              <span className="text-lg">{badge.icon}</span>
+              <span className="text-sm text-primary-900">{badge.label}</span>
+            </label>
+          ))}
+        </div>
+        {selectedBadges.size > 0 && (
+          <p className="text-xs text-primary-600 mt-2">
+            {selectedBadges.size}つの称号で絞り込み中
+          </p>
+        )}
+      </div>
+
+      {/* ECサイトフィルター */}
+      <div>
+        <label className="block text-sm font-semibold text-primary-900 mb-3">
+          🛒 販売サイトで絞り込み
+        </label>
+        <div className="space-y-2">
+          {EC_SITES.map((site) => (
+            <label
+              key={site.id}
+              className="flex items-center gap-2 cursor-pointer hover:bg-primary-50 p-2 rounded-lg transition-colors"
+            >
+              <input
+                type="checkbox"
+                checked={selectedECSites.has(site.id)}
+                onChange={() => toggleECSite(site.id)}
+                className="rounded border-primary-300 text-primary focus:ring-primary focus:ring-offset-0"
+              />
+              <span className="text-lg">{site.icon}</span>
+              <span className="text-sm text-primary-900">{site.name}</span>
+            </label>
+          ))}
+        </div>
+        {selectedECSites.size > 0 && (
+          <p className="text-xs text-primary-600 mt-2">
+            {selectedECSites.size}つのサイトで絞り込み中
+          </p>
+        )}
+      </div>
+
       {/* ボタン */}
       <div className="space-y-2 pt-4 border-t border-primary-200">
         <button
@@ -185,13 +321,25 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
                 ブランド: {brands.find((b) => b._id === selectedBrand)?.name}
               </div>
             )}
-            {minPrice && (
-              <div>最低価格: {formatPrice(Number(minPrice))}</div>
-            )}
-            {maxPrice && (
-              <div>最高価格: {formatPrice(Number(maxPrice))}</div>
-            )}
+            {minPrice && <div>最低価格: {formatPrice(Number(minPrice))}</div>}
+            {maxPrice && <div>最高価格: {formatPrice(Number(maxPrice))}</div>}
             {minScore && <div>最低スコア: {minScore}以上</div>}
+            {selectedBadges.size > 0 && (
+              <div>
+                称号:{" "}
+                {Array.from(selectedBadges)
+                  .map((b) => BADGE_DEFINITIONS[b].label)
+                  .join(", ")}
+              </div>
+            )}
+            {selectedECSites.size > 0 && (
+              <div>
+                販売サイト:{" "}
+                {Array.from(selectedECSites)
+                  .map((s) => EC_SITES.find((site) => site.id === s)?.name)
+                  .join(", ")}
+              </div>
+            )}
           </div>
         </div>
       )}

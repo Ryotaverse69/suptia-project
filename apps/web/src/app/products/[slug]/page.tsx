@@ -4,6 +4,10 @@ import { WarningBanner } from "@/components/WarningBanner";
 import { PriceTable } from "@/components/PriceTable";
 import { PriceComparison } from "@/components/PriceComparison";
 import { PriceHistoryChart } from "@/components/PriceHistoryChart";
+import { ProductBadges, BadgeSummary } from "@/components/ProductBadges";
+import { IngredientComparison } from "@/components/IngredientComparison";
+import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
+import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -14,6 +18,7 @@ import { isValidSlug } from "@/lib/sanitize";
 import Image from "next/image";
 import { headers } from "next/headers";
 import Script from "next/script";
+import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
 
 interface PriceData {
   source: string;
@@ -59,6 +64,21 @@ interface Product {
   itemCode?: string;
   affiliateUrl?: string;
   source?: string;
+  scores?: {
+    safety?: number;
+    evidence?: number;
+    overall?: number;
+  };
+  ingredients?: Array<{
+    amountMgPerServing: number;
+  }>;
+  thirdPartyTested?: boolean;
+  warnings?: string[];
+  references?: Array<{
+    title?: string;
+    url?: string;
+    source?: string;
+  }>;
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -89,7 +109,12 @@ async function getProduct(slug: string): Promise<Product | null> {
     janCode,
     itemCode,
     affiliateUrl,
-    source
+    source,
+    scores,
+    ingredients,
+    thirdPartyTested,
+    warnings,
+    references
   }`;
 
   try {
@@ -139,6 +164,61 @@ async function getRelatedProductsByJan(
   }
 }
 
+/**
+ * 全商品を取得（称号計算用）
+ */
+async function getAllProducts(): Promise<Product[]> {
+  const query = `*[_type == "product" && availability == "in-stock"]{
+    _id,
+    priceJPY,
+    servingsPerContainer,
+    servingsPerDay,
+    scores,
+    ingredients,
+    priceData
+  }`;
+
+  try {
+    const products = await sanityServer.fetch(query);
+    return products || [];
+  } catch (error) {
+    console.error("Failed to fetch all products:", error);
+    return [];
+  }
+}
+
+/**
+ * 類似商品を取得（同じ主要成分を含む商品）
+ */
+async function getSimilarProducts(
+  productId: string,
+  limit: number = 5,
+): Promise<
+  Array<{
+    name: string;
+    ingredientAmount: number;
+    servingsPerDay: number;
+    priceJPY: number;
+    servingsPerContainer: number;
+  }>
+> {
+  const query = `*[_type == "product" && _id != $productId && availability == "in-stock"]{
+    name,
+    'ingredientAmount': ingredients[0].amountMgPerServing,
+    servingsPerDay,
+    priceJPY,
+    servingsPerContainer
+  }[0...${limit}]`;
+
+  try {
+    const products = await sanityServer.fetch(query, { productId });
+    return products || [];
+  } catch (error) {
+    console.error("Failed to fetch similar products:", error);
+    return [];
+  }
+}
+
 interface PageProps {
   params: {
     slug: string;
@@ -151,6 +231,61 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!product) {
     notFound();
   }
+
+  // 全商品を取得して称号を計算
+  const allProducts = await getAllProducts();
+
+  // 称号計算用にデータを変換
+  const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
+    (p) => ({
+      _id: p._id,
+      priceJPY: p.priceJPY,
+      servingsPerContainer: p.servingsPerContainer,
+      servingsPerDay: p.servingsPerDay,
+      ingredientAmount: p.ingredients?.[0]?.amountMgPerServing,
+      evidenceLevel: p.scores?.evidence
+        ? p.scores.evidence >= 90
+          ? "S"
+          : p.scores.evidence >= 80
+            ? "A"
+            : p.scores.evidence >= 70
+              ? "B"
+              : p.scores.evidence >= 60
+                ? "C"
+                : "D"
+        : undefined,
+      safetyScore: p.scores?.safety,
+      priceData: p.priceData,
+    }),
+  );
+
+  // 現在の商品の称号を計算
+  const currentProductForEvaluation = productsForEvaluation.find(
+    (p) => p._id === product._id,
+  );
+  const badges = currentProductForEvaluation
+    ? evaluateBadges(currentProductForEvaluation, productsForEvaluation)
+    : [];
+
+  // 類似商品を取得
+  const similarProducts = await getSimilarProducts(product._id, 5);
+
+  // 主要成分データを準備
+  const mainIngredient = product.ingredients?.[0];
+  const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
+
+  // エビデンスレベルを判定
+  const evidenceLevel = product.scores?.evidence
+    ? product.scores.evidence >= 90
+      ? ("S" as const)
+      : product.scores.evidence >= 80
+        ? ("A" as const)
+        : product.scores.evidence >= 70
+          ? ("B" as const)
+          : product.scores.evidence >= 60
+            ? ("C" as const)
+            : ("D" as const)
+    : undefined;
 
   // JANコードで関連商品を取得して価格比較データを作成
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
@@ -227,7 +362,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {product.name}
           </h1>
-          <p className="text-lg text-gray-600">{product.brandName}</p>
+          <p className="text-lg text-gray-600 mb-4">{product.brandName}</p>
+
+          {/* Badge Summary */}
+          <BadgeSummary badges={badges} />
         </div>
 
         {/* Product Image */}
@@ -245,6 +383,49 @@ export default async function ProductDetailPage({ params }: PageProps) {
             />
           </div>
         )}
+
+        {/* Product Badges - 獲得した称号 */}
+        <ProductBadges badges={badges} className="mb-8" />
+
+        {/* 成分量比較 */}
+        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
+          <IngredientComparison
+            currentProduct={{
+              name: product.name,
+              ingredientAmount: mainIngredientAmount,
+              servingsPerDay: product.servingsPerDay,
+            }}
+            similarProducts={similarProducts}
+            ingredientName="主要成分"
+            className="mb-8"
+          />
+        )}
+
+        {/* コストパフォーマンス詳細 */}
+        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
+          <CostEffectivenessDetail
+            currentProduct={{
+              name: product.name,
+              priceJPY: product.priceJPY,
+              ingredientAmount: mainIngredientAmount,
+              servingsPerContainer: product.servingsPerContainer,
+              servingsPerDay: product.servingsPerDay,
+            }}
+            similarProducts={similarProducts}
+            className="mb-8"
+          />
+        )}
+
+        {/* エビデンスと安全性の詳細 */}
+        <EvidenceSafetyDetail
+          evidenceLevel={evidenceLevel}
+          evidenceScore={product.scores?.evidence}
+          safetyScore={product.scores?.safety}
+          thirdPartyTested={product.thirdPartyTested || false}
+          warnings={product.warnings || []}
+          references={product.references || []}
+          className="mb-8"
+        />
 
         {/* Product Description */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
