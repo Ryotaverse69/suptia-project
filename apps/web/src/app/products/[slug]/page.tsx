@@ -384,24 +384,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Product Badges - 獲得した称号 */}
-        <ProductBadges badges={badges} className="mb-8" />
+        {/* 1. Product Description - 商品の詳細 */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">商品説明</h2>
+          <p className="text-gray-700 leading-relaxed">{description}</p>
+        </div>
 
-        {/* 成分量比較 */}
-        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
-          <IngredientComparison
-            currentProduct={{
-              name: product.name,
-              ingredientAmount: mainIngredientAmount,
-              servingsPerDay: product.servingsPerDay,
-            }}
-            similarProducts={similarProducts}
-            ingredientName="主要成分"
-            className="mb-8"
-          />
-        )}
+        {/* 2. Price Comparison - 最安値比較 */}
+        <PriceComparison priceData={mergedPriceData} className="mb-8" />
 
-        {/* コストパフォーマンス詳細 */}
+        {/* 3. Cost Effectiveness - コスパ比較 */}
         {mainIngredientAmount > 0 && similarProducts.length > 0 && (
           <CostEffectivenessDetail
             currentProduct={{
@@ -416,7 +408,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
           />
         )}
 
-        {/* エビデンスと安全性の詳細 */}
+        {/* 4. Ingredient Comparison - 含有量比較 */}
+        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
+          <IngredientComparison
+            currentProduct={{
+              name: product.name,
+              ingredientAmount: mainIngredientAmount,
+              servingsPerDay: product.servingsPerDay,
+            }}
+            similarProducts={similarProducts}
+            ingredientName="主要成分"
+            className="mb-8"
+          />
+        )}
+
+        {/* 5-6. Evidence & Safety - エビデンスと安全性 */}
         <EvidenceSafetyDetail
           evidenceLevel={evidenceLevel}
           evidenceScore={product.scores?.evidence}
@@ -427,12 +433,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
           className="mb-8"
         />
 
-        {/* Product Description */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">商品説明</h2>
-          <p className="text-gray-700 leading-relaxed">{description}</p>
-        </div>
+        {/* 7. Product Badges - 獲得した称号の説明 */}
+        <ProductBadges badges={badges} className="mb-8" />
 
+        {/* Additional Information */}
         {/* Price Table Component */}
         <PriceTable
           product={{
@@ -443,9 +447,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
           }}
           className="mb-8"
         />
-
-        {/* Price Comparison Component */}
-        <PriceComparison priceData={mergedPriceData} className="mb-8" />
 
         {/* Price History Chart */}
         <PriceHistoryChart
