@@ -9,5 +9,5 @@ export const sanityServer = createClient({
   apiVersion: "2025-07-01",
   useCdn: false, // Disable CDN for server-side to get fresh data
   token: process.env.SANITY_API_TOKEN, // Optional token for write operations
-  perspective: process.env.SANITY_API_TOKEN ? "previewDrafts" : "published",
+  perspective: "published", // 本番では常にpublishedを使用
 });
