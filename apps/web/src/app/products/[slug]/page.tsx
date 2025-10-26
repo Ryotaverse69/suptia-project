@@ -67,7 +67,7 @@ async function getProduct(slug: string): Promise<Product | null> {
     return null;
   }
 
-  const query = `*[_type == "product" && slug.current == $slug && (source == "rakuten" || source == "yahoo")][0]{
+  const query = `*[_type == "product" && slug.current == $slug][0]{
     _id,
     name,
     'brandName': brand->name,
