@@ -19,6 +19,7 @@ import Image from "next/image";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
+import { calculateAutoScores } from "@/lib/auto-scoring";
 
 interface PriceData {
   source: string;
@@ -235,6 +236,39 @@ async function getSimilarProducts(
   }
 }
 
+/**
+ * 全成分マスタデータを取得
+ */
+async function getAllIngredients(): Promise<
+  Array<{
+    _id: string;
+    name: string;
+    nameEn: string;
+    evidenceLevel?: "S" | "A" | "B" | "C" | "D";
+    category?: string;
+    sideEffects?: string[];
+    interactions?: string[];
+  }>
+> {
+  const query = `*[_type == "ingredient"]{
+    _id,
+    name,
+    nameEn,
+    evidenceLevel,
+    category,
+    sideEffects,
+    interactions
+  }`;
+
+  try {
+    const ingredients = await sanityServer.fetch(query);
+    return ingredients || [];
+  } catch (error) {
+    console.error("Failed to fetch ingredients:", error);
+    return [];
+  }
+}
+
 interface PageProps {
   params: {
     slug: string;
@@ -248,31 +282,75 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // 全成分マスタデータを取得
+  const allIngredients = await getAllIngredients();
+
+  // スコアの自動計算（scoresがない、またはingredientsが空の場合）
+  const needsAutoScoring =
+    !product.scores ||
+    !product.scores.evidence ||
+    !product.scores.safety ||
+    !product.ingredients ||
+    product.ingredients.length === 0;
+
+  let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
+
+  if (needsAutoScoring) {
+    const autoScores = calculateAutoScores(product.name, allIngredients);
+    finalScores = {
+      evidence: autoScores.evidenceScore,
+      safety: autoScores.safetyScore,
+      overall: autoScores.overallScore,
+    };
+
+    console.log(`[Auto-Scoring] ${product.name}:`, {
+      foundIngredients: autoScores.foundIngredients,
+      evidenceScore: autoScores.evidenceScore,
+      evidenceLevel: autoScores.evidenceLevel,
+      safetyScore: autoScores.safetyScore,
+      safetyLevel: autoScores.safetyLevel,
+    });
+  }
+
   // 全商品を取得して称号を計算
   const allProducts = await getAllProducts();
 
-  // 称号計算用にデータを変換
+  // 称号計算用にデータを変換（自動スコアを適用）
   const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
-    (p) => ({
-      _id: p._id,
-      priceJPY: p.priceJPY,
-      servingsPerContainer: p.servingsPerContainer,
-      servingsPerDay: p.servingsPerDay,
-      ingredientAmount: p.ingredients?.[0]?.amountMgPerServing,
-      evidenceLevel: p.scores?.evidence
-        ? p.scores.evidence >= 90
-          ? "S"
-          : p.scores.evidence >= 80
-            ? "A"
-            : p.scores.evidence >= 70
-              ? "B"
-              : p.scores.evidence >= 60
-                ? "C"
-                : "D"
-        : undefined,
-      safetyScore: p.scores?.safety,
-      priceData: p.priceData,
-    }),
+    (p) => {
+      // 各商品にも自動スコア計算を適用
+      let evidenceScore = 50;
+      let safetyScore = 50;
+
+      if (p.scores?.evidence && p.scores?.safety) {
+        evidenceScore = p.scores.evidence;
+        safetyScore = p.scores.safety;
+      } else {
+        const autoScores = calculateAutoScores(p.name || "", allIngredients);
+        evidenceScore = autoScores.evidenceScore;
+        safetyScore = autoScores.safetyScore;
+      }
+
+      return {
+        _id: p._id,
+        priceJPY: p.priceJPY,
+        servingsPerContainer: p.servingsPerContainer,
+        servingsPerDay: p.servingsPerDay,
+        ingredientAmount: p.ingredients?.[0]?.amountMgPerServing,
+        evidenceLevel:
+          evidenceScore >= 90
+            ? "S"
+            : evidenceScore >= 80
+              ? "A"
+              : evidenceScore >= 70
+                ? "B"
+                : evidenceScore >= 60
+                  ? "C"
+                  : "D",
+        safetyScore,
+        priceData: p.priceData,
+      };
+    },
   );
 
   // 現在の商品の称号を計算
@@ -293,18 +371,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const ingredientName = mainIngredientInfo?.name;
   const ingredientEvidenceLevel = mainIngredientInfo?.evidenceLevel;
 
-  // エビデンスレベルを判定
-  const evidenceLevel = product.scores?.evidence
-    ? product.scores.evidence >= 90
+  // エビデンスレベルを判定（自動計算されたスコアを使用）
+  const evidenceScore = finalScores.evidence ?? 50;
+  const evidenceLevel =
+    evidenceScore >= 90
       ? ("S" as const)
-      : product.scores.evidence >= 80
+      : evidenceScore >= 80
         ? ("A" as const)
-        : product.scores.evidence >= 70
+        : evidenceScore >= 70
           ? ("B" as const)
-          : product.scores.evidence >= 60
+          : evidenceScore >= 60
             ? ("C" as const)
-            : ("D" as const)
-    : undefined;
+            : ("D" as const);
 
   // JANコードで関連商品を取得して価格比較データを作成
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
@@ -444,8 +522,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {/* 5-6. Evidence & Safety - エビデンスと安全性 */}
         <EvidenceSafetyDetail
           evidenceLevel={evidenceLevel}
-          evidenceScore={product.scores?.evidence}
-          safetyScore={product.scores?.safety}
+          evidenceScore={finalScores.evidence}
+          safetyScore={finalScores.safety}
           thirdPartyTested={product.thirdPartyTested || false}
           warnings={product.warnings || []}
           references={product.references || []}
