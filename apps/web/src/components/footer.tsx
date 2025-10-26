@@ -2,26 +2,27 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { Globe, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
+// import { useState } from "react"; // 言語選択機能を実装時に有効化
+// import { Globe, ChevronDown } from "lucide-react"; // 言語選択機能を実装時に有効化
+// import { cn } from "@/lib/utils/cn"; // 言語選択機能を実装時に有効化
 
 export function Footer() {
-  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("日本語");
-  const [currentCurrency, setCurrentCurrency] = useState("JPY");
+  // 言語選択機能 - 将来実装時に有効化
+  // const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  // const [currentLanguage, setCurrentLanguage] = useState("日本語");
+  // const [currentCurrency, setCurrentCurrency] = useState("JPY");
 
-  const languages = [
-    { code: "ja", name: "日本語", currency: "JPY" },
-    { code: "en", name: "English", currency: "USD" },
-    { code: "zh", name: "中文", currency: "CNY" },
-  ];
+  // const languages = [
+  //   { code: "ja", name: "日本語", currency: "JPY" },
+  //   { code: "en", name: "English", currency: "USD" },
+  //   { code: "zh", name: "中文", currency: "CNY" },
+  // ];
 
-  const handleLanguageChange = (lang: { name: string; currency: string }) => {
-    setCurrentLanguage(lang.name);
-    setCurrentCurrency(lang.currency);
-    setLanguageMenuOpen(false);
-  };
+  // const handleLanguageChange = (lang: { name: string; currency: string }) => {
+  //   setCurrentLanguage(lang.name);
+  //   setCurrentCurrency(lang.currency);
+  //   setLanguageMenuOpen(false);
+  // };
   return (
     <footer className="border-t bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-12">
@@ -181,8 +182,9 @@ export function Footer() {
           </div>
         </div>
 
-        {/* 言語と通貨の選択 */}
-        <div className="border-t pt-6 mb-6">
+        {/* 言語と通貨の選択 - 一時的に非表示（将来実装予定） */}
+        {/* TODO: 多言語・多通貨対応を実装したら有効化する */}
+        {/* <div className="border-t pt-6 mb-6">
           <div className="flex items-center justify-center gap-4">
             <span className="text-sm text-muted-foreground">言語と通貨:</span>
             <div className="relative">
@@ -228,7 +230,7 @@ export function Footer() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Copyright */}
         <div className="border-t pt-6 text-center text-sm text-muted-foreground">
