@@ -87,7 +87,7 @@ export default function HowToUsePage() {
                       エビデンスランクフィルター
                     </h3>
                     <p className="text-primary-700">
-                      S/A/B/Cの科学的根拠レベルで絞り込み
+                      S~Dの科学的根拠レベルで絞り込み
                     </p>
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function HowToUsePage() {
                       エビデンスレベル確認
                     </h3>
                     <p className="text-primary-700">
-                      各成分のエビデンスランク（S/A/B/C）を確認して、科学的根拠に基づいた選択
+                      各成分のエビデンスランク（S~D）を確認して、科学的根拠に基づいた選択
                     </p>
                   </div>
                 </div>

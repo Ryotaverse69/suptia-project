@@ -37,9 +37,13 @@ export default function AboutPage() {
             サプティアとは
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-primary-100">
-            あなたに最適なサプリメントを見つける、科学的根拠に基づいた比較検索プラットフォーム。
+            あなたに最適なサプリメントを見つける、
             <br />
-            複数のECサイトから最安値を比較し、透明性にこだわった新しいサプリメント選びを体験してください。
+            科学的根拠に基づいた比較検索プラットフォーム。
+            <br />
+            複数のECサイトから最安値を比較し、
+            <br />
+            透明性にこだわった新しいサプリメント選びを体験してください。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -121,7 +125,7 @@ export default function AboutPage() {
                 科学的根拠
               </h3>
               <p className="text-primary-700">
-                すべての情報は査読済み論文に基づいています。エビデンスランク（S/A/B/C）を明確に表示し、信頼できる選択をサポート。
+                すべての情報は査読済み論文に基づいています。エビデンスランク（S~D）を明確に表示し、信頼できる選択をサポート。
               </p>
             </div>
 
