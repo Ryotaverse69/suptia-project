@@ -45,6 +45,11 @@ interface Ingredient {
   slug: {
     current: string;
   };
+  coverImage?: {
+    asset: {
+      url: string;
+    };
+  };
 }
 
 interface IngredientWithStats extends Ingredient {
@@ -86,7 +91,12 @@ async function getIngredients(): Promise<Ingredient[]> {
     nameEn,
     category,
     description,
-    slug
+    slug,
+    "coverImage": coverImage{
+      "asset": asset->{
+        url
+      }
+    }
   }`;
 
   try {
@@ -146,7 +156,12 @@ async function getPopularIngredients(): Promise<Ingredient[]> {
     nameEn,
     category,
     description,
-    slug
+    slug,
+    "coverImage": coverImage{
+      "asset": asset->{
+        url
+      }
+    }
   }`;
 
   try {

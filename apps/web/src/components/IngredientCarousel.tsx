@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Pill } from "lucide-react";
 
 interface Ingredient {
   name: string;
@@ -12,6 +13,11 @@ interface Ingredient {
   description: string;
   slug: {
     current: string;
+  };
+  coverImage?: {
+    asset: {
+      url: string;
+    };
   };
 }
 
@@ -91,34 +97,59 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
                 href={`/ingredients/${ingredient.slug.current}`}
                 className="flex-shrink-0 w-80 group"
               >
-                <div className="bg-white border border-primary-200 rounded-xl p-6 hover:border-primary hover:shadow-lg transition-all duration-300 h-full">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-xl font-bold text-primary-900 group-hover:text-primary transition-colors">
+                <div className="bg-white border border-primary-200 rounded-xl overflow-hidden hover:border-primary hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                  {/* アイキャッチ画像 */}
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-50 to-accent-mint/20">
+                    {ingredient.coverImage?.asset?.url ? (
+                      <Image
+                        src={ingredient.coverImage.asset.url}
+                        alt={ingredient.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Pill
+                          className="text-primary-300/40"
+                          size={64}
+                          strokeWidth={1}
+                        />
+                      </div>
+                    )}
+                    {/* カテゴリバッジ */}
+                    <div className="absolute top-3 right-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                          categoryColors[ingredient.category] ||
+                          categoryColors.other
+                        }`}
+                      >
+                        {categoryLabels[ingredient.category] || "その他"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* コンテンツ */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="mb-3">
+                      <h3 className="text-xl font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
                         {ingredient.name}
                       </h3>
-                      <p className="text-sm text-primary-600 mt-1">
+                      <p className="text-sm text-primary-600">
                         {ingredient.nameEn}
                       </p>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        categoryColors[ingredient.category] ||
-                        categoryColors.other
-                      }`}
-                    >
-                      {categoryLabels[ingredient.category] || "その他"}
-                    </span>
-                  </div>
-                  <p className="text-primary-700 text-sm leading-relaxed line-clamp-3 mb-4">
-                    {ingredient.description}
-                  </p>
-                  <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
-                    詳しく見る
-                    <ArrowRight
-                      size={16}
-                      className="ml-1 group-hover:translate-x-1 transition-transform"
-                    />
+                    <p className="text-primary-700 text-sm leading-relaxed line-clamp-3 mb-4 flex-1">
+                      {ingredient.description}
+                    </p>
+                    <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
+                      詳しく見る
+                      <ArrowRight
+                        size={16}
+                        className="ml-1 group-hover:translate-x-1 transition-transform"
+                      />
+                    </div>
                   </div>
                 </div>
               </Link>

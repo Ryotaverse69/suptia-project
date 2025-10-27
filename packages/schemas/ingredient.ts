@@ -55,6 +55,17 @@ export const ingredient = defineType({
       group: "basic",
     }),
     defineField({
+      name: "coverImage",
+      title: "アイキャッチ画像",
+      type: "image",
+      description:
+        "成分ガイドのアイキャッチ画像（推奨サイズ: 1200x630px）トップページの成分カルーセルにも使用されます",
+      options: {
+        hotspot: true,
+      },
+      group: "basic",
+    }),
+    defineField({
       name: "category",
       title: "カテゴリー",
       type: "string",
