@@ -8,8 +8,8 @@ interface Ingredient {
   nameEn: string;
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
   category?: string;
-  sideEffects?: string[];
-  interactions?: string[];
+  sideEffects?: string[] | string; // 配列または文字列の両方に対応
+  interactions?: string[] | string; // 配列または文字列の両方に対応
 }
 
 export interface IngredientSafetyDetail {
@@ -174,13 +174,23 @@ export function calculateSafetyScoreWithDetails(
   score += evidenceLevelPenalty;
 
   // 副作用の数でペナルティ
-  const sideEffectsCount = ingredient.sideEffects?.length || 0;
+  // 配列の場合は要素数、文字列の場合は存在する場合は1としてカウント
+  const sideEffectsCount = Array.isArray(ingredient.sideEffects)
+    ? ingredient.sideEffects.length
+    : ingredient.sideEffects
+      ? 1
+      : 0;
   const sideEffectsPenalty =
     sideEffectsCount > 0 ? -Math.min(sideEffectsCount * 2, 15) : 0;
   score += sideEffectsPenalty;
 
   // 相互作用の数でペナルティ
-  const interactionsCount = ingredient.interactions?.length || 0;
+  // 配列の場合は要素数、文字列の場合は存在する場合は1としてカウント
+  const interactionsCount = Array.isArray(ingredient.interactions)
+    ? ingredient.interactions.length
+    : ingredient.interactions
+      ? 1
+      : 0;
   const interactionsPenalty =
     interactionsCount > 0 ? -Math.min(interactionsCount * 1.5, 10) : 0;
   score += interactionsPenalty;

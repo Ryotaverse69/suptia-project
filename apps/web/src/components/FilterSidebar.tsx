@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  SlidersHorizontal,
+  Search,
+} from "lucide-react";
 
 interface FilterSection {
   title: string;
-  filterKey: "priceRange" | "rating" | "safetyScore";
+  filterKey: "priceRange" | "evidenceLevel" | "safetyRank";
   options: { label: string; value: string; count?: number }[];
 }
 
@@ -21,36 +26,40 @@ const filterSections: FilterSection[] = [
     ],
   },
   {
-    title: "評価",
-    filterKey: "rating",
+    title: "エビデンスランク",
+    filterKey: "evidenceLevel",
     options: [
-      { label: "⭐ 4.5以上", value: "4.5+" },
-      { label: "⭐ 4.0以上", value: "4.0+" },
-      { label: "⭐ 3.5以上", value: "3.5+" },
+      { label: "S（最高品質）", value: "S" },
+      { label: "A（高品質）", value: "A" },
+      { label: "B（中品質）", value: "B" },
+      { label: "C（低品質）", value: "C" },
     ],
   },
   {
-    title: "安全性スコア",
-    filterKey: "safetyScore",
+    title: "安全性ランク",
+    filterKey: "safetyRank",
     options: [
-      { label: "90点以上", value: "90+" },
-      { label: "80点以上", value: "80+" },
-      { label: "70点以上", value: "70+" },
+      { label: "S（90点以上）", value: "90+" },
+      { label: "A（80点以上）", value: "80+" },
+      { label: "B（70点以上）", value: "70+" },
+      { label: "C（60点以上）", value: "60+" },
     ],
   },
 ];
 
 interface FilterSidebarProps {
   onFilterChange?: (filters: {
+    searchQuery?: string;
     priceRange?: string | null;
-    rating?: string | null;
-    safetyScore?: string | null;
+    evidenceLevel?: string | null;
+    safetyRank?: string | null;
   }) => void;
   onClearFilters?: () => void;
   activeFilters?: {
+    searchQuery?: string;
     priceRange?: string | null;
-    rating?: string | null;
-    safetyScore?: string | null;
+    evidenceLevel?: string | null;
+    safetyRank?: string | null;
   };
 }
 
@@ -61,6 +70,9 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(filterSections.map((s) => s.title)),
+  );
+  const [searchQuery, setSearchQuery] = useState(
+    activeFilters.searchQuery || "",
   );
 
   const toggleSection = (title: string) => {
@@ -74,7 +86,7 @@ export function FilterSidebar({
   };
 
   const handleFilterToggle = (
-    filterKey: "priceRange" | "rating" | "safetyScore",
+    filterKey: "priceRange" | "evidenceLevel" | "safetyRank",
     value: string,
   ) => {
     if (!onFilterChange) return;
@@ -87,15 +99,26 @@ export function FilterSidebar({
     });
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (onFilterChange) {
+      onFilterChange({ searchQuery: query });
+    }
+  };
+
   const clearFilters = () => {
+    setSearchQuery("");
     if (onClearFilters) {
       onClearFilters();
     }
   };
 
-  const activeFilterCount = Object.values(activeFilters).filter(
-    (v) => v !== null && v !== undefined,
-  ).length;
+  const activeFilterCount =
+    Object.entries(activeFilters).filter(
+      ([key, value]) =>
+        key !== "searchQuery" && value !== null && value !== undefined,
+    ).length + (activeFilters.searchQuery ? 1 : 0);
 
   return (
     <div className="w-full lg:w-72 glass rounded-2xl border border-white/30 shadow-glass">
@@ -119,6 +142,23 @@ export function FilterSidebar({
             {activeFilterCount}件のフィルター適用中
           </div>
         )}
+      </div>
+
+      {/* 検索窓 */}
+      <div className="p-5 border-b border-white/20">
+        <div className="relative">
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400"
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="商品名で検索..."
+            className="w-full pl-10 pr-4 py-2.5 glass-blue rounded-lg text-sm font-light placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+          />
+        </div>
       </div>
 
       <div className="divide-y divide-white/20">

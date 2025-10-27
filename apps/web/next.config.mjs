@@ -3,13 +3,14 @@
 // CSP helper (development only). Production CSP is set via middleware with per-request nonce
 function buildDevCSP() {
   const policies = [
-    "default-src 'self'",
-    "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp data:",
-    "connect-src 'self' https://*.sanity.io",
+    "default-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp data: blob:",
+    "connect-src 'self' https://*.sanity.io ws: wss:",
     "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
     "font-src 'self' data:",
-    "script-src 'self' 'unsafe-eval'", // Next.js dev needs unsafe-eval
-    "upgrade-insecure-requests",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Next.js dev needs unsafe-eval
+    // upgrade-insecure-requests をコメントアウト（開発環境でIPアドレスアクセスのため）
+    // "upgrade-insecure-requests",
   ];
 
   return policies.join("; ");

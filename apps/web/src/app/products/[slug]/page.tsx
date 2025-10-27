@@ -421,7 +421,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     { name: "商品", url: "/products" },
     { name: product.name, url: `/products/${product.slug.current}` },
   ]);
-  const nonce = headers().get("x-nonce") || undefined;
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
 
   return (
     <>

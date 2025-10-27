@@ -23,6 +23,11 @@ interface ProductCardProps {
     servingsPerContainer?: number;
     ingredients?: Array<{
       amountMgPerServing: number;
+      ingredient?: {
+        name: string;
+        nameEn: string;
+        category?: string;
+      };
     }>;
     effectiveCostPerDay?: number; // 後方互換性のため残す
     rating?: number;
@@ -130,6 +135,30 @@ export function ProductCard({ product }: ProductCardProps) {
                   +{badges.length - 3}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 成分タグ（画像下部） */}
+          {ingredients && ingredients.length > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-3 py-2">
+              <div className="flex flex-wrap gap-1.5">
+                {ingredients.slice(0, 2).map(
+                  (item, index) =>
+                    item.ingredient && (
+                      <div
+                        key={index}
+                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
+                      >
+                        {item.ingredient.name}
+                      </div>
+                    ),
+                )}
+                {ingredients.length > 2 && (
+                  <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/70 text-primary-700">
+                    +{ingredients.length - 2}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

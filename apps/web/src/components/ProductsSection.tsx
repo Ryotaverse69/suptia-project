@@ -22,6 +22,11 @@ interface Product {
   servingsPerContainer?: number;
   ingredients?: Array<{
     amountMgPerServing: number;
+    ingredient?: {
+      name: string;
+      nameEn: string;
+      category?: string;
+    };
   }>;
 }
 
@@ -38,15 +43,23 @@ type SortOption =
 
 export function ProductsSection({ products }: ProductsSectionProps) {
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [priceRange, setPriceRange] = useState<string | null>(null);
-  const [ratingFilter, setRatingFilter] = useState<string | null>(null);
-  const [safetyScoreFilter, setSafetyScoreFilter] = useState<string | null>(
+  const [evidenceLevelFilter, setEvidenceLevelFilter] = useState<string | null>(
     null,
   );
+  const [safetyRankFilter, setSafetyRankFilter] = useState<string | null>(null);
 
   // フィルタリングとソート
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
+
+    // 検索クエリフィルター
+    if (searchQuery) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
 
     // 価格帯フィルター
     if (priceRange) {
@@ -62,22 +75,19 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       });
     }
 
-    // 評価フィルター
-    if (ratingFilter) {
-      filtered = filtered.filter((product) => {
-        if (ratingFilter === "4.5+") return product.rating >= 4.5;
-        if (ratingFilter === "4.0+") return product.rating >= 4.0;
-        if (ratingFilter === "3.5+") return product.rating >= 3.5;
-        return true;
-      });
+    // エビデンスランクフィルター（現在はダミーデータのためスキップ）
+    if (evidenceLevelFilter) {
+      // TODO: 実装予定
+      // filtered = filtered.filter((product) => product.evidenceLevel === evidenceLevelFilter);
     }
 
-    // 安全性スコアフィルター
-    if (safetyScoreFilter) {
+    // 安全性ランクフィルター
+    if (safetyRankFilter) {
       filtered = filtered.filter((product) => {
-        if (safetyScoreFilter === "90+") return product.safetyScore >= 90;
-        if (safetyScoreFilter === "80+") return product.safetyScore >= 80;
-        if (safetyScoreFilter === "70+") return product.safetyScore >= 70;
+        if (safetyRankFilter === "90+") return product.safetyScore >= 90;
+        if (safetyRankFilter === "80+") return product.safetyScore >= 80;
+        if (safetyRankFilter === "70+") return product.safetyScore >= 70;
+        if (safetyRankFilter === "60+") return product.safetyScore >= 60;
         return true;
       });
     }
@@ -107,23 +117,34 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     });
 
     return filtered;
-  }, [products, sortBy, priceRange, ratingFilter, safetyScoreFilter]);
+  }, [
+    products,
+    sortBy,
+    searchQuery,
+    priceRange,
+    evidenceLevelFilter,
+    safetyRankFilter,
+  ]);
 
   const handleFilterChange = (filters: {
+    searchQuery?: string;
     priceRange?: string | null;
-    rating?: string | null;
-    safetyScore?: string | null;
+    evidenceLevel?: string | null;
+    safetyRank?: string | null;
   }) => {
+    if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
     if (filters.priceRange !== undefined) setPriceRange(filters.priceRange);
-    if (filters.rating !== undefined) setRatingFilter(filters.rating);
-    if (filters.safetyScore !== undefined)
-      setSafetyScoreFilter(filters.safetyScore);
+    if (filters.evidenceLevel !== undefined)
+      setEvidenceLevelFilter(filters.evidenceLevel);
+    if (filters.safetyRank !== undefined)
+      setSafetyRankFilter(filters.safetyRank);
   };
 
   const handleClearFilters = () => {
+    setSearchQuery("");
     setPriceRange(null);
-    setRatingFilter(null);
-    setSafetyScoreFilter(null);
+    setEvidenceLevelFilter(null);
+    setSafetyRankFilter(null);
   };
 
   return (
@@ -135,9 +156,10 @@ export function ProductsSection({ products }: ProductsSectionProps) {
             onFilterChange={handleFilterChange}
             onClearFilters={handleClearFilters}
             activeFilters={{
+              searchQuery,
               priceRange,
-              rating: ratingFilter,
-              safetyScore: safetyScoreFilter,
+              evidenceLevel: evidenceLevelFilter,
+              safetyRank: safetyRankFilter,
             }}
           />
         </aside>

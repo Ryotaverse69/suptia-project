@@ -379,7 +379,8 @@ export default async function IngredientPage({ params }: Props) {
         )
       : null;
 
-  const nonce = headers().get("x-nonce") || undefined;
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
 
   return (
     <>

@@ -16,6 +16,11 @@ export function WarningBanner({
 }: WarningBannerProps) {
   const [isDismissed, setIsDismissed] = useState(false);
 
+  // 開発環境でのみ表示
+  if (process.env.NODE_ENV !== "development") {
+    return null;
+  }
+
   if (violations.length === 0 || isDismissed) {
     return null;
   }

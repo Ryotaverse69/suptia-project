@@ -2,7 +2,6 @@ import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { HeroSearch } from "@/components/HeroSearch";
 import { ProductCard } from "@/components/ProductCard";
-import { ProductsSection } from "@/components/ProductsSection";
 import { IngredientCarousel } from "@/components/IngredientCarousel";
 import { generateItemListStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
@@ -28,6 +27,14 @@ interface Product {
   slug: {
     current: string;
   };
+  ingredients?: Array<{
+    amountMgPerServing: number;
+    ingredient?: {
+      name: string;
+      nameEn: string;
+      category?: string;
+    };
+  }>;
 }
 
 interface Ingredient {
@@ -47,13 +54,21 @@ interface IngredientWithStats extends Ingredient {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc){
+  const query = `*[_type == "product"] | order(priceJPY asc)[0..7]{
     name,
     priceJPY,
     servingsPerContainer,
     servingsPerDay,
     externalImageUrl,
-    slug
+    slug,
+    ingredients[]{
+      amountMgPerServing,
+      ingredient->{
+        name,
+        nameEn,
+        category
+      }
+    }
   }`;
 
   try {
@@ -83,6 +98,19 @@ async function getIngredients(): Promise<Ingredient[]> {
   }
 }
 
+// 全商品の件数を取得
+async function getTotalProductCount(): Promise<number> {
+  const query = `count(*[_type == "product" && defined(priceJPY) && priceJPY > 0])`;
+
+  try {
+    const count = await sanity.fetch(query);
+    return count || 0;
+  } catch (error) {
+    console.error("Failed to fetch product count:", error);
+    return 0;
+  }
+}
+
 // おすすめサプリを取得（上位4件）
 async function getFeaturedProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(priceJPY asc)[0..3]{
@@ -91,7 +119,15 @@ async function getFeaturedProducts(): Promise<Product[]> {
     servingsPerContainer,
     servingsPerDay,
     externalImageUrl,
-    slug
+    slug,
+    ingredients[]{
+      amountMgPerServing,
+      ingredient->{
+        name,
+        nameEn,
+        category
+      }
+    }
   }`;
 
   try {
@@ -177,6 +213,7 @@ export default async function Home() {
   const ingredients = await getIngredients();
   const featuredProducts = await getFeaturedProducts();
   const popularIngredientsWithStats = await getPopularIngredientsWithStats();
+  const totalProductCount = await getTotalProductCount();
 
   // Calculate effective cost for each product
   const productsWithCost = products.map((product, index) => {
@@ -236,7 +273,8 @@ export default async function Home() {
     })),
   });
 
-  const nonce = headers().get("x-nonce") || undefined;
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
 
   return (
     <>
@@ -535,7 +573,39 @@ export default async function Home() {
         )}
 
         {/* Main Content - すべてのサプリメント */}
-        <ProductsSection products={productsWithCost} />
+        {productsWithCost.length > 0 && (
+          <section className="py-12 border-b border-primary-100">
+            <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-3xl font-light text-primary-900 tracking-wide">
+                    すべてのサプリメント
+                  </h2>
+                  <p className="text-primary-600 mt-2 font-light">
+                    {totalProductCount}件の商品
+                  </p>
+                </div>
+              </div>
+
+              {/* 4列グリッド表示 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {productsWithCost.map((product, index) => (
+                  <ProductCard key={index} product={product} />
+                ))}
+              </div>
+
+              {/* もっと見るボタン */}
+              <div className="mt-10 text-center">
+                <Link
+                  href="/products"
+                  className="inline-block px-10 py-4 glass-blue rounded-xl text-primary-800 font-medium shadow-glass hover:shadow-glass-hover transition-all duration-300"
+                >
+                  もっと見る
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Ingredient Carousel */}
         <IngredientCarousel ingredients={ingredients} />

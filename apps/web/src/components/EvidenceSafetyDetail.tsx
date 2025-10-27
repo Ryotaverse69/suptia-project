@@ -83,10 +83,10 @@ export function EvidenceSafetyDetail({
     D: {
       label: "エビデンスD - 未検証",
       description: "理論的根拠のみで、科学的研究による実証が不十分です。",
-      color: "from-gray-500 to-gray-700",
-      bgColor: "bg-gray-50",
-      borderColor: "border-gray-300",
-      textColor: "text-gray-900",
+      color: "from-red-500 to-red-700",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-300",
+      textColor: "text-red-900",
     },
   };
 
@@ -95,6 +95,7 @@ export function EvidenceSafetyDetail({
     : evidenceLevelInfo.D;
 
   // 安全性レベルの判定（S/A/B/C/D）
+  // ※ エビデンスレベルと色を統一
   const getSafetyLevel = (score: number) => {
     if (score >= 90)
       return {
@@ -102,9 +103,9 @@ export function EvidenceSafetyDetail({
         label: "安全性S - 最高レベル",
         description:
           "非常に高い安全性が確認されています。重大な副作用の報告がなく、長期使用の実績があります。",
-        color: "text-green-700",
-        bgColor: "bg-green-50",
-        borderColor: "border-green-300",
+        color: "text-purple-700",
+        bgColor: "bg-purple-50",
+        borderColor: "border-purple-300",
         icon: CheckCircle2,
       };
     if (score >= 80)
@@ -124,9 +125,9 @@ export function EvidenceSafetyDetail({
         label: "安全性B - 中程度の安全性",
         description:
           "一般的に安全ですが、一部の方には注意が必要な場合があります。",
-        color: "text-yellow-700",
-        bgColor: "bg-yellow-50",
-        borderColor: "border-yellow-300",
+        color: "text-green-700",
+        bgColor: "bg-green-50",
+        borderColor: "border-green-300",
         icon: AlertTriangle,
       };
     if (score >= 60)
@@ -134,9 +135,9 @@ export function EvidenceSafetyDetail({
         grade: "C",
         label: "安全性C - 注意が必要",
         description: "使用には注意が必要です。医師への相談を推奨します。",
-        color: "text-orange-700",
-        bgColor: "bg-orange-50",
-        borderColor: "border-orange-300",
+        color: "text-yellow-700",
+        bgColor: "bg-yellow-50",
+        borderColor: "border-yellow-300",
         icon: AlertTriangle,
       };
     return {
@@ -213,7 +214,9 @@ export function EvidenceSafetyDetail({
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">{ingredientName}:</span>
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold">
+                <span
+                  className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${evidenceLevelInfo[ingredientEvidenceLevel]?.color} text-white font-bold`}
+                >
                   {ingredientEvidenceLevel}
                 </span>
               </div>
