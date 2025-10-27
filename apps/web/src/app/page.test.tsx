@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "./page";
+import { sanity } from "@/lib/sanity.client";
 
 // Mock Next.js headers
 vi.mock("next/headers", () => ({
@@ -23,22 +24,69 @@ vi.mock("next/navigation", () => ({
 // Mock Sanity client
 vi.mock("@/lib/sanity.client", () => ({
   sanity: {
-    fetch: vi.fn().mockResolvedValue([
-      {
-        name: "Test Product",
-        priceJPY: 1000,
-        servingsPerContainer: 30,
-        servingsPerDay: 1,
-        slug: { current: "test-product" },
-      },
-    ]),
+    fetch: vi.fn(),
   },
 }));
 
-// Mock environment variables
+// モックデータと環境変数のセットアップ
 beforeEach(() => {
+  // 環境変数の設定
   process.env.NEXT_PUBLIC_SANITY_PROJECT_ID = "test-project";
   process.env.NEXT_PUBLIC_SANITY_DATASET = "test";
+  process.env.NEXT_PUBLIC_SITE_URL = "http://localhost:3000";
+
+  // モックされたsanity.fetchを取得
+  const mockFetch = vi.mocked(sanity.fetch);
+
+  // モックのリセット
+  mockFetch.mockReset();
+
+  // 1回目: getProducts() - 商品一覧
+  mockFetch.mockResolvedValueOnce([
+    {
+      name: "Test Product",
+      priceJPY: 1000,
+      servingsPerContainer: 30,
+      servingsPerDay: 1,
+      slug: { current: "test-product" },
+      ingredients: [
+        {
+          amountMgPerServing: 100,
+          ingredient: {
+            name: "ビタミンC",
+            nameEn: "Vitamin C",
+            category: "ビタミン",
+          },
+        },
+      ],
+    },
+  ] as any);
+
+  // 2回目: getIngredients() - 成分一覧
+  mockFetch.mockResolvedValueOnce([
+    {
+      name: "ビタミンC",
+      nameEn: "Vitamin C",
+      category: "ビタミン",
+      description: "テスト説明",
+      slug: { current: "vitamin-c" },
+    },
+  ] as any);
+
+  // 3回目: getFeaturedProducts() - おすすめ商品
+  mockFetch.mockResolvedValueOnce([
+    {
+      name: "Featured Product",
+      priceJPY: 1500,
+      servingsPerContainer: 60,
+      servingsPerDay: 2,
+      slug: { current: "featured-product" },
+      ingredients: [],
+    },
+  ] as any);
+
+  // 4回目以降: getPopularIngredientsWithStats() および統計データ
+  mockFetch.mockResolvedValue([] as any);
 });
 
 describe("Home Page", () => {
