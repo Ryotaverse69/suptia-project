@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Pill } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { IngredientCoverSVG } from "./IngredientCoverSVG";
 
 interface Ingredient {
   name: string;
@@ -98,36 +98,14 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
                 className="flex-shrink-0 w-80 group"
               >
                 <div className="bg-white border border-primary-200 rounded-xl overflow-hidden hover:border-primary hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-                  {/* アイキャッチ画像 */}
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-50 to-accent-mint/20">
-                    {ingredient.coverImage?.asset?.url ? (
-                      <Image
-                        src={ingredient.coverImage.asset.url}
-                        alt={ingredient.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Pill
-                          className="text-primary-300/40"
-                          size={64}
-                          strokeWidth={1}
-                        />
-                      </div>
-                    )}
-                    {/* カテゴリバッジ */}
-                    <div className="absolute top-3 right-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
-                          categoryColors[ingredient.category] ||
-                          categoryColors.other
-                        }`}
-                      >
-                        {categoryLabels[ingredient.category] || "その他"}
-                      </span>
-                    </div>
+                  {/* SVGアイキャッチ画像 */}
+                  <div className="h-48 overflow-hidden group-hover:scale-[1.02] transition-transform duration-300">
+                    <IngredientCoverSVG
+                      name={ingredient.name}
+                      nameEn={ingredient.nameEn}
+                      category={ingredient.category}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   {/* コンテンツ */}

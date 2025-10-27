@@ -3,6 +3,7 @@ import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { HeroSearch } from "@/components/HeroSearch";
 import { ProductCard } from "@/components/ProductCard";
 import { IngredientCarousel } from "@/components/IngredientCarousel";
+import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
 import { generateItemListStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
@@ -524,27 +525,14 @@ export default async function Home() {
                       href={`/search?q=${encodeURIComponent(ingredient.name)}`}
                       className="group flex-shrink-0 w-[280px] bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                     >
-                      {/* 商品画像 */}
-                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
-                        {ingredient.sampleImageUrl ? (
-                          <Image
-                            src={ingredient.sampleImageUrl}
-                            alt={ingredient.name}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
-                            <Award size={48} strokeWidth={1} />
-                          </div>
-                        )}
-                        {/* カテゴリバッジ */}
-                        <div className="absolute top-2 left-2">
-                          <div className="px-3 py-1 bg-primary rounded text-white text-xs font-bold">
-                            {ingredient.category}
-                          </div>
-                        </div>
+                      {/* SVGアイキャッチ画像 */}
+                      <div className="relative aspect-[4/3] overflow-hidden">
+                        <IngredientCoverSVG
+                          name={ingredient.name}
+                          nameEn={ingredient.nameEn}
+                          category={ingredient.category}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
 
                       {/* 商品情報 */}

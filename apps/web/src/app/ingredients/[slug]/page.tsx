@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { IngredientContent } from "@/components/IngredientContent";
+import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
 import {
   IngredientWarnings,
   IngredientSummary,
@@ -439,54 +440,15 @@ export default async function IngredientPage({ params }: Props) {
         <article className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1200px]">
           {/* ヘッダー */}
           <header className="mb-12">
-            {/* アイキャッチ画像 */}
-            {ingredient.coverImage?.asset?.url && (
-              <div className="relative w-full h-64 md:h-80 lg:h-96 mb-8 rounded-2xl overflow-hidden shadow-lg">
-                <Image
-                  src={ingredient.coverImage.asset.url}
-                  alt={
-                    ingredient.coverImage.alt || `${ingredient.name}のイメージ`
-                  }
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                {/* グラデーションオーバーレイ */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                {/* タイトルオーバーレイ */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                  <p className="text-white/90 text-sm md:text-base mb-2">
-                    {ingredient.category}
-                  </p>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
-                    {ingredient.name}
-                  </h1>
-                  <p className="text-xl md:text-2xl text-white/90">
-                    {ingredient.nameEn}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* 画像がない場合の従来のヘッダー */}
-            {!ingredient.coverImage?.asset?.url && (
-              <div className="flex items-start gap-4 mb-4">
-                <div className="p-3 bg-primary-100 rounded-lg">
-                  <Pill className="text-primary" size={32} />
-                </div>
-                <div>
-                  <p className="text-sm text-primary-700 mb-1">
-                    {ingredient.category}
-                  </p>
-                  <h1 className="text-4xl font-bold text-primary-900 mb-2">
-                    {ingredient.name}
-                  </h1>
-                  <p className="text-xl text-primary-700">
-                    {ingredient.nameEn}
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* SVGアイキャッチ画像 */}
+            <div className="w-full mb-8 rounded-2xl overflow-hidden shadow-lg">
+              <IngredientCoverSVG
+                name={ingredient.name}
+                nameEn={ingredient.nameEn}
+                category={ingredient.category}
+                className="w-full h-auto"
+              />
+            </div>
 
             {/* エビデンスレベル */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-mint/10 border border-accent-mint/30 rounded-lg">
