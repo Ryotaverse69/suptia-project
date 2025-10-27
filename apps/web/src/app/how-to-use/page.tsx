@@ -74,7 +74,7 @@ export default function HowToUsePage() {
                       キーワード検索
                     </h3>
                     <p className="text-primary-700">
-                      「ビタミンC」「免疫力」「美肌」など、自由に検索
+                      「ビタミンC」「免疫力」「美肌」など、自由に検索。商品名検索窓で更に絞り込みも可能
                     </p>
                   </div>
                 </div>
@@ -84,10 +84,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      カテゴリー別検索
+                      エビデンスランクフィルター
                     </h3>
                     <p className="text-primary-700">
-                      ビタミン、ミネラル、脂肪酸など、カテゴリーから選択
+                      S/A/B/Cの科学的根拠レベルで絞り込み
                     </p>
                   </div>
                 </div>
@@ -97,10 +97,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      目的別検索
+                      安全性ランクフィルター
                     </h3>
                     <p className="text-primary-700">
-                      「骨の健康」「エネルギー補給」など、目的から探せる
+                      S〜D（90点以上〜60点以上）の安全性ランクで絞り込み
                     </p>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function HowToUsePage() {
                 多角的に比較検討
               </h2>
               <p className="mb-6 text-lg text-primary-700">
-                価格、成分量、安全性、レビューなど、複数の視点から製品を比較。データに基づいた賢い選択ができます。
+                価格、成分量、安全性、エビデンスレベルなど、複数の視点から製品を比較。データに基づいた賢い選択ができます。
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -206,7 +206,7 @@ export default function HowToUsePage() {
                       価格・コスト比較
                     </h3>
                     <p className="text-primary-700">
-                      複数のECサイトから最安値を自動検索
+                      楽天市場・Yahoo!ショッピングから最安値を自動検索（Amazon準備中）
                     </p>
                   </div>
                 </div>
@@ -242,10 +242,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      ユーザーレビュー
+                      エビデンスレベル確認
                     </h3>
                     <p className="text-primary-700">
-                      実際の使用者のリアルな評価を確認
+                      各成分のエビデンスランク（S/A/B/C）を確認して、科学的根拠に基づいた選択
                     </p>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function HowToUsePage() {
                       複数ECサイトから最安値検索
                     </h3>
                     <p className="text-primary-700">
-                      Amazon、楽天、iHerbなど主要サイトを自動比較
+                      楽天市場、Yahoo!ショッピングの価格を自動比較（Amazon・iHerb準備中）
                     </p>
                   </div>
                 </div>
@@ -314,14 +314,14 @@ export default function HowToUsePage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-lg border border-accent-mint bg-accent-mint/10 p-4">
                   <div>
-                    <div className="font-semibold text-primary-900">Amazon</div>
-                    <div className="text-sm text-primary-700">
-                      送料無料・翌日配送
+                    <div className="font-semibold text-primary-900">
+                      楽天市場
                     </div>
+                    <div className="text-sm text-primary-700">ポイント10倍</div>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-accent-mint">
-                      ¥1,200
+                      ¥1,380
                     </div>
                     <div className="text-xs text-accent-mint font-medium">
                       最安値
@@ -331,26 +331,28 @@ export default function HowToUsePage() {
                 <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
                   <div>
                     <div className="font-semibold text-primary-900">
-                      楽天市場
+                      Yahoo!ショッピング
                     </div>
-                    <div className="text-sm text-primary-700">ポイント10倍</div>
+                    <div className="text-sm text-primary-700">
+                      PayPayポイント
+                    </div>
                   </div>
                   <div className="text-lg font-bold text-primary-700">
-                    ¥1,380
+                    ¥1,420
                   </div>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
+                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50/50 p-4 opacity-60">
                   <div>
-                    <div className="font-semibold text-primary-900">iHerb</div>
-                    <div className="text-sm text-primary-700">初回15%OFF</div>
+                    <div className="font-semibold text-primary-900">
+                      Amazon（準備中）
+                    </div>
+                    <div className="text-sm text-primary-700">近日対応予定</div>
                   </div>
-                  <div className="text-lg font-bold text-primary-700">
-                    ¥1,450
-                  </div>
+                  <div className="text-lg font-bold text-primary-700">-</div>
                 </div>
               </div>
               <button className="mt-6 w-full rounded-lg bg-gradient-to-r from-primary to-primary-600 px-6 py-3 font-semibold text-white transition-all hover:scale-105 hover:shadow-lg">
-                Amazonで購入する
+                楽天市場で購入する
               </button>
             </div>
           </div>
@@ -424,7 +426,7 @@ export default function HowToUsePage() {
             さあ、サプティアを使ってみよう
           </h2>
           <p className="mb-8 text-xl text-primary-100">
-            1,200以上の検証済みサプリメントから、あなたにぴったりの1つを見つけましょう。
+            69以上の厳選サプリメントから、あなたにぴったりの1つを見つけましょう。毎週新商品追加中。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link

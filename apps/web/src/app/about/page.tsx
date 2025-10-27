@@ -37,9 +37,9 @@ export default function AboutPage() {
             サプティアとは
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-primary-100">
-            あなたに最適なサプリメントを見つける、日本最大級の比較検索プラットフォーム。
+            あなたに最適なサプリメントを見つける、科学的根拠に基づいた比較検索プラットフォーム。
             <br />
-            科学的根拠と透明性にこだわった、新しいサプリメント選びを体験してください。
+            複数のECサイトから最安値を比較し、透明性にこだわった新しいサプリメント選びを体験してください。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -64,18 +64,23 @@ export default function AboutPage() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-primary">1,200+</div>
-              <div className="text-primary-700">検証済みサプリメント</div>
+              <div className="mb-2 text-4xl font-bold text-primary">69+</div>
+              <div className="text-primary-700">掲載サプリメント</div>
+              <div className="text-sm text-primary-500 mt-1">毎週更新中</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-primary">98%</div>
-              <div className="text-primary-700">平均安全性スコア</div>
-            </div>
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-primary">
-                50,000+
+              <div className="mb-2 text-4xl font-bold text-primary">3社</div>
+              <div className="text-primary-700">連携ECサイト</div>
+              <div className="text-sm text-primary-500 mt-1">
+                楽天・Yahoo・Amazon（準備中）
               </div>
-              <div className="text-primary-700">ユーザーレビュー</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-4xl font-bold text-primary">S〜D</div>
+              <div className="text-primary-700">安全性ランク評価</div>
+              <div className="text-sm text-primary-500 mt-1">
+                科学的根拠に基づく
+              </div>
             </div>
           </div>
         </div>
@@ -103,7 +108,7 @@ export default function AboutPage() {
                 簡単検索
               </h3>
               <p className="text-primary-700">
-                目的や成分から、あなたにぴったりのサプリメントを数秒で検索。複数のECサイトから最安値も比較できます。
+                目的や成分から、あなたにぴったりのサプリメントを数秒で検索。商品名検索窓で絞り込みも可能。楽天・Yahoo!ショッピングから最安値を比較できます。
               </p>
             </div>
 
@@ -116,7 +121,7 @@ export default function AboutPage() {
                 科学的根拠
               </h3>
               <p className="text-primary-700">
-                すべての情報は査読済み論文に基づいています。エビデンスレベルを明確に表示し、信頼できる選択をサポート。
+                すべての情報は査読済み論文に基づいています。エビデンスランク（S/A/B/C）を明確に表示し、信頼できる選択をサポート。
               </p>
             </div>
 
@@ -142,7 +147,7 @@ export default function AboutPage() {
                 安全性チェック
               </h3>
               <p className="text-primary-700">
-                第三者認証、製造プロセス、原材料の透明性を独自のスコアリングシステムで評価。安心して選べます。
+                第三者認証、製造プロセス、原材料の透明性を独自のスコアリングシステムで評価。安全性ランク（S〜D）で一目で判断できます。
               </p>
             </div>
 
@@ -152,10 +157,10 @@ export default function AboutPage() {
                 <Star size={28} />
               </div>
               <h3 className="mb-3 text-xl font-bold text-primary-900">
-                ユーザーレビュー
+                詳細フィルター
               </h3>
               <p className="text-primary-700">
-                実際に使用したユーザーのリアルな声を集約。効果実感や副作用など、生の情報を参考にできます。
+                価格帯、エビデンスランク、安全性ランク、商品名で簡単に絞り込み。あなたのニーズにぴったりの商品を素早く見つけられます。
               </p>
             </div>
 
@@ -165,10 +170,10 @@ export default function AboutPage() {
                 <TrendingUp size={28} />
               </div>
               <h3 className="mb-3 text-xl font-bold text-primary-900">
-                AIレコメンド
+                AIレコメンド（準備中）
               </h3>
               <p className="text-primary-700">
-                あなたの健康目標、体質、予算に合わせて、AIが最適な製品を提案。パーソナライズされた選択を実現。
+                将来的には、あなたの健康目標、体質、予算に合わせて、AIが最適な製品を提案。パーソナライズされた選択を実現します。
               </p>
             </div>
           </div>
@@ -376,7 +381,7 @@ export default function AboutPage() {
             今すぐ、最適なサプリメントを見つけよう
           </h2>
           <p className="mb-8 text-xl text-primary-100">
-            1,200以上の検証済みサプリメントから、あなたにぴったりの1つを。
+            69以上の厳選サプリメントから、あなたにぴったりの1つを。毎週新商品追加中。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
