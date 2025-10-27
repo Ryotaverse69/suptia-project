@@ -447,6 +447,30 @@ export default async function Home() {
                             おすすめ
                           </div>
                         </div>
+                        {/* 成分タグ（画像下部） */}
+                        {product.ingredients &&
+                          product.ingredients.length > 0 && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-3 py-2">
+                              <div className="flex flex-wrap gap-1.5">
+                                {product.ingredients.slice(0, 2).map(
+                                  (item, index) =>
+                                    item.ingredient && (
+                                      <div
+                                        key={index}
+                                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
+                                      >
+                                        {item.ingredient.name}
+                                      </div>
+                                    ),
+                                )}
+                                {product.ingredients.length > 2 && (
+                                  <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/70 text-primary-700">
+                                    +{product.ingredients.length - 2}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                       </div>
 
                       {/* 商品情報 */}
