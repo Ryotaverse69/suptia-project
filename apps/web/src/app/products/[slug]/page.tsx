@@ -8,6 +8,7 @@ import { ProductBadges, BadgeSummary } from "@/components/ProductBadges";
 import { IngredientComparison } from "@/components/IngredientComparison";
 import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
 import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
+import { ImageLightbox } from "@/components/ImageLightbox";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -222,16 +223,54 @@ async function getSimilarProducts(
     servingsPerContainer: number;
   }>
 > {
-  const query = `*[_type == "product" && _id != $productId && availability == "in-stock"]{
-    name,
-    'ingredientAmount': ingredients[0].amountMgPerServing,
-    servingsPerDay,
-    priceJPY,
-    servingsPerContainer
-  }[0...${limit}]`;
-
   try {
-    const products = await sanityServer.fetch(query, { productId });
+    // 1. 現在の商品の主要成分を取得
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{
+      ingredients[]{
+        ingredient->{
+          _id
+        }
+      }
+    }`;
+
+    const currentProduct = await sanityServer.fetch(currentProductQuery, {
+      productId,
+    });
+
+    if (
+      !currentProduct?.ingredients ||
+      currentProduct.ingredients.length === 0
+    ) {
+      console.warn("No ingredients found for product:", productId);
+      return [];
+    }
+
+    // 主要成分（最初の成分）のIDを取得
+    const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+
+    if (!mainIngredientId) {
+      console.warn("Main ingredient ID not found for product:", productId);
+      return [];
+    }
+
+    // 2. 同じ主要成分を含む他の商品を検索
+    const similarProductsQuery = `*[_type == "product"
+      && _id != $productId
+      && availability == "in-stock"
+      && $mainIngredientId in ingredients[].ingredient._ref
+    ]{
+      name,
+      'ingredientAmount': ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing,
+      servingsPerDay,
+      priceJPY,
+      servingsPerContainer
+    }[0...${limit}]`;
+
+    const products = await sanityServer.fetch(similarProductsQuery, {
+      productId,
+      mainIngredientId,
+    });
+
     return products || [];
   } catch (error) {
     console.error("Failed to fetch similar products:", error);
@@ -476,14 +515,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {(product.externalImageUrl ||
           (product.images && product.images.length > 0)) && (
           <div className="mb-8">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <ImageLightbox
               src={product.externalImageUrl || product.images![0].asset.url}
               alt={product.images?.[0]?.alt || product.name}
               width={400}
               height={300}
-              className="rounded-lg shadow-sm"
-              loading="eager"
             />
           </div>
         )}
