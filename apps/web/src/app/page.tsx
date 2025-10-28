@@ -64,7 +64,8 @@ interface IngredientWithStats extends Ingredient {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..7]{
+  // 重複を考慮して多めに取得（30件）
+  const query = `*[_type == "product"] | order(priceJPY asc)[0..29]{
     name,
     priceJPY,
     servingsPerContainer,
@@ -82,8 +83,25 @@ async function getProducts(): Promise<Product[]> {
   }`;
 
   try {
-    const products = await sanity.fetch(query);
-    return products || [];
+    const allProducts = await sanity.fetch(query);
+    if (!allProducts || allProducts.length === 0) return [];
+
+    // slugで重複を除外（最初に見つかった商品のみ保持）
+    const uniqueProducts: Product[] = [];
+    const seenSlugs = new Set<string>();
+
+    for (const product of allProducts) {
+      const slugCurrent = product.slug?.current;
+      if (slugCurrent && !seenSlugs.has(slugCurrent)) {
+        seenSlugs.add(slugCurrent);
+        uniqueProducts.push(product);
+
+        // 8件集まったら終了
+        if (uniqueProducts.length >= 8) break;
+      }
+    }
+
+    return uniqueProducts;
   } catch (error) {
     console.error("Failed to fetch products:", error);
     return [];
@@ -130,6 +148,7 @@ async function getTotalProductCount(): Promise<number> {
 // おすすめスコア = (キャンペーン: 100点) + (割引率 × 2)
 // キャンペーン商品と割引率が高い商品を優先表示
 async function getFeaturedProducts(): Promise<Product[]> {
+  // 重複を考慮して多めに取得（20件）
   const query = `*[_type == "product" && availability == "in-stock"] {
     name,
     priceJPY,
@@ -156,11 +175,28 @@ async function getFeaturedProducts(): Promise<Product[]> {
       coalesce(discountPercentage, 0) > 0 => coalesce(discountPercentage, 0) * 2,
       0
     )
-  } | order(recommendationScore desc, discountPercentage desc)[0..3]`;
+  } | order(recommendationScore desc, discountPercentage desc)[0..19]`;
 
   try {
-    const products = await sanity.fetch(query);
-    return products || [];
+    const allProducts = await sanity.fetch(query);
+    if (!allProducts || allProducts.length === 0) return [];
+
+    // slugで重複を除外（最初に見つかった商品のみ保持）
+    const uniqueProducts: Product[] = [];
+    const seenSlugs = new Set<string>();
+
+    for (const product of allProducts) {
+      const slugCurrent = product.slug?.current;
+      if (slugCurrent && !seenSlugs.has(slugCurrent)) {
+        seenSlugs.add(slugCurrent);
+        uniqueProducts.push(product);
+
+        // 4件集まったら終了
+        if (uniqueProducts.length >= 4) break;
+      }
+    }
+
+    return uniqueProducts;
   } catch (error) {
     console.error("Failed to fetch featured products:", error);
     return [];
