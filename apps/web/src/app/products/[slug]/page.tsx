@@ -516,17 +516,27 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* Product Image */}
-        {(product.externalImageUrl ||
-          (product.images && product.images.length > 0)) && (
-          <div className="mb-8">
+        <div className="mb-8">
+          {product.externalImageUrl ||
+          (product.images && product.images.length > 0) ? (
             <ImageLightbox
               src={product.externalImageUrl || product.images![0].asset.url}
               alt={product.images?.[0]?.alt || product.name}
               width={400}
               height={300}
             />
-          </div>
-        )}
+          ) : (
+            <div className="w-full max-w-md mx-auto h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm flex items-center justify-center border-2 border-dashed border-gray-300">
+              <div className="text-center p-6">
+                <div className="text-6xl mb-3">📦</div>
+                <p className="text-gray-500 font-medium">商品画像準備中</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  画像は順次追加予定です
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* 1. Product Description - 商品の詳細 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
