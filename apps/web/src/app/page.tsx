@@ -22,6 +22,10 @@ import Image from "next/image";
 interface Product {
   name: string;
   priceJPY: number;
+  originalPrice?: number;
+  discountPercentage?: number;
+  isCampaign?: boolean;
+  campaignEndDate?: string;
   servingsPerContainer: number;
   servingsPerDay: number;
   externalImageUrl?: string;
@@ -123,10 +127,16 @@ async function getTotalProductCount(): Promise<number> {
 }
 
 // おすすめサプリを取得（上位4件）
+// おすすめスコア = (キャンペーン: 100点) + (割引率 × 2)
+// キャンペーン商品と割引率が高い商品を優先表示
 async function getFeaturedProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..3]{
+  const query = `*[_type == "product" && availability == "in-stock"] {
     name,
     priceJPY,
+    originalPrice,
+    discountPercentage,
+    isCampaign,
+    campaignEndDate,
     servingsPerContainer,
     servingsPerDay,
     externalImageUrl,
@@ -138,8 +148,15 @@ async function getFeaturedProducts(): Promise<Product[]> {
         nameEn,
         category
       }
-    }
-  }`;
+    },
+    // おすすめスコアを計算
+    "recommendationScore": select(
+      isCampaign == true && campaignEndDate > now() => 100 + coalesce(discountPercentage, 0) * 2,
+      isCampaign == true => 100 + coalesce(discountPercentage, 0) * 2,
+      coalesce(discountPercentage, 0) > 0 => coalesce(discountPercentage, 0) * 2,
+      0
+    )
+  } | order(recommendationScore desc, discountPercentage desc)[0..3]`;
 
   try {
     const products = await sanity.fetch(query);
@@ -445,11 +462,19 @@ export default async function Home() {
                             <Award size={48} strokeWidth={1} />
                           </div>
                         )}
-                        {/* ベストバリューバッジ */}
-                        <div className="absolute top-2 left-2">
-                          <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold">
-                            おすすめ
-                          </div>
+                        {/* キャンペーン・割引バッジ */}
+                        <div className="absolute top-2 left-2 flex flex-col gap-2">
+                          {product.isCampaign && (
+                            <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold shadow-md">
+                              🎉 キャンペーン中
+                            </div>
+                          )}
+                          {product.discountPercentage &&
+                            product.discountPercentage > 0 && (
+                              <div className="px-3 py-1 bg-orange-500 rounded text-white text-xs font-bold shadow-md">
+                                {product.discountPercentage.toFixed(0)}% OFF
+                              </div>
+                            )}
                         </div>
                         {/* 成分タグ（画像下部） */}
                         {product.ingredients &&
@@ -494,15 +519,17 @@ export default async function Home() {
                           </span>
                         </div>
 
-                        {/* 他のサイトより安い表示 */}
+                        {/* 価格（割引前価格がある場合は表示） */}
                         <div className="mb-3">
-                          <div className="inline-block px-2 py-1 bg-red-500 text-white rounded text-xs font-bold mb-1">
-                            他のサイトより{Math.floor(Math.random() * 30 + 10)}
-                            %お得
-                          </div>
+                          {product.originalPrice &&
+                            product.originalPrice > product.priceJPY && (
+                              <div className="text-sm text-gray-500 line-through">
+                                ¥{product.originalPrice.toLocaleString()}
+                              </div>
+                            )}
                         </div>
 
-                        {/* 価格 */}
+                        {/* 現在価格 */}
                         <div className="flex items-end justify-between mb-3">
                           {/* 左側: 商品価格 */}
                           <div>

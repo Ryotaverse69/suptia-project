@@ -78,6 +78,32 @@ export function IngredientComparison({
         </div>
       )}
 
+      {/* 比較の結果（比較セクションの上に表示） */}
+      {sortedProducts.length > 1 && (
+        <div className="mb-6 p-5 bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-400 rounded-xl shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 text-3xl">📊</div>
+            <div>
+              <h3 className="text-lg font-bold text-blue-900 mb-2">
+                比較の結果
+              </h3>
+              <p className="text-base text-blue-800 leading-relaxed">
+                この商品は{sortedProducts.length}商品中
+                <strong className="mx-1">
+                  第{sortedProducts.findIndex((p) => p.isCurrent) + 1}位
+                </strong>
+                の含有量です。
+                {sortedProducts[0].isCurrent && (
+                  <span className="ml-1 text-green-700 font-bold">
+                    最も多くの{ingredientName}を含んでいます！
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 商品別の成分量バー */}
       <div className="space-y-4">
         {sortedProducts.map((product, index) => {
@@ -101,10 +127,10 @@ export function IngredientComparison({
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className={`text-sm font-semibold ${
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className={`text-sm font-semibold break-words leading-tight mb-1 ${
                           product.isCurrent
                             ? "text-primary"
                             : "text-primary-700"
@@ -112,14 +138,14 @@ export function IngredientComparison({
                       >
                         {product.name}
                         {product.isCurrent && " (この商品)"}
-                      </span>
+                      </div>
                       {isHighest && (
-                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                        <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">
                           📊 最高含有量
                         </span>
                       )}
                     </div>
-                    <span className="text-sm font-bold text-primary-900 whitespace-nowrap ml-2">
+                    <span className="text-sm font-bold text-primary-900 whitespace-nowrap flex-shrink-0 ml-2">
                       {product.dailyAmount.toLocaleString()}mg/日
                     </span>
                   </div>
@@ -171,30 +197,6 @@ export function IngredientComparison({
           );
         })}
       </div>
-
-      {/* サマリー */}
-      {sortedProducts.length > 1 && (
-        <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
-          <div className="flex items-start gap-2">
-            <TrendingUp size={16} className="text-primary mt-0.5" />
-            <div className="text-sm text-primary-800">
-              <p className="font-semibold mb-1">比較結果</p>
-              <p>
-                この商品は{sortedProducts.length}商品中
-                <strong>
-                  第{sortedProducts.findIndex((p) => p.isCurrent) + 1}位
-                </strong>
-                の含有量です。
-                {sortedProducts[0].isCurrent && (
-                  <span className="ml-1 text-green-700 font-bold">
-                    最も多くの{ingredientName}を含んでいます！
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -499,6 +499,44 @@ export const product = defineType({
       description: "過去の価格変動履歴（最大100件）",
       readOnly: true,
     }),
+    // キャンペーン・割引情報
+    defineField({
+      name: "originalPrice",
+      title: "元の価格（割引前）",
+      type: "number",
+      description: "割引前の価格（円）。設定すると割引率が自動計算されます",
+      validation: (Rule) => Rule.min(0),
+    }),
+    defineField({
+      name: "discountPercentage",
+      title: "割引率（%）",
+      type: "number",
+      description: "自動計算: ((元の価格 - 現在価格) / 元の価格) × 100",
+      readOnly: true,
+    }),
+    defineField({
+      name: "isCampaign",
+      title: "キャンペーン商品",
+      type: "boolean",
+      description: "キャンペーン対象商品としてマークする",
+      initialValue: false,
+    }),
+    defineField({
+      name: "campaignEndDate",
+      title: "キャンペーン終了日",
+      type: "datetime",
+      description: "キャンペーンの終了日時",
+      hidden: ({ document }) => !document?.isCampaign,
+    }),
+    defineField({
+      name: "recommendationScore",
+      title: "おすすめスコア",
+      type: "number",
+      description:
+        "おすすめ度スコア = (キャンペーン: 100点) + (割引率 × 2) ※自動計算",
+      initialValue: 0,
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {

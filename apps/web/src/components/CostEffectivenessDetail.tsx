@@ -159,6 +159,25 @@ export function CostEffectivenessDetail({
         </div>
       </div>
 
+      {/* 比較の結果（比較セクションの上に表示） */}
+      {sortedByCostPerMg.length > 1 && (
+        <div className="mb-6 p-5 bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-400 rounded-xl shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 text-3xl">📊</div>
+            <div>
+              <h3 className="text-lg font-bold text-blue-900 mb-2">
+                比較の結果
+              </h3>
+              <p className="text-base text-blue-800 leading-relaxed">
+                {isBestValue
+                  ? "この商品は最もコストパフォーマンスに優れています。同じ成分をより安く摂取できます。"
+                  : `最もコスパの良い商品と比較すると、1mgあたり¥${(currentCostPerMg - sortedByCostPerMg[0].costPerMg).toFixed(2)}高くなります。`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 他商品との比較 */}
       {sortedByCostPerMg.length > 1 && (
         <div>
@@ -189,22 +208,24 @@ export function CostEffectivenessDetail({
                     )}
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex items-start gap-2 flex-1 min-w-0">
+                          <span className="text-sm font-semibold flex-shrink-0">
                             {index + 1}位
                           </span>
-                          <span className="text-sm truncate">
-                            {product.name}
-                            {product.isCurrent && " (この商品)"}
-                          </span>
-                          {index === 0 && (
-                            <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
-                              💡 最高コスパ
-                            </span>
-                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm break-words leading-tight mb-1">
+                              {product.name}
+                              {product.isCurrent && " (この商品)"}
+                            </div>
+                            {index === 0 && (
+                              <span className="inline-block px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
+                                💡 最高コスパ
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <span className="text-sm font-bold whitespace-nowrap ml-2">
+                        <span className="text-sm font-bold whitespace-nowrap flex-shrink-0">
                           ¥{product.costPerMg.toFixed(2)}/mg
                         </span>
                       </div>
@@ -251,16 +272,6 @@ export function CostEffectivenessDetail({
           </div>
         </div>
       )}
-
-      {/* まとめ */}
-      <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
-        <p className="text-sm text-primary-800">
-          <strong>💡 ポイント:</strong>{" "}
-          {isBestValue
-            ? "この商品は最もコストパフォーマンスに優れています。同じ成分をより安く摂取できます。"
-            : `最もコスパの良い商品と比較すると、1mgあたり¥${(currentCostPerMg - sortedByCostPerMg[0].costPerMg).toFixed(2)}高くなります。`}
-        </p>
-      </div>
     </div>
   );
 }
