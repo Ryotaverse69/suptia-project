@@ -322,7 +322,7 @@ export default async function Home() {
 
       <div className="min-h-screen bg-gradient-pastel">
         {/* Hero Section with Search */}
-        <HeroSearch />
+        <HeroSearch popularSearches={popularIngredientsWithStats} />
 
         {/* How to Use Suptia - 3 Steps */}
         <div className="glass shadow-glass border-b border-white/30">

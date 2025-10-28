@@ -5,7 +5,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoleculeBackground } from "./MoleculeBackground";
 
-export function HeroSearch() {
+interface PopularSearch {
+  name: string;
+}
+
+interface HeroSearchProps {
+  popularSearches?: PopularSearch[];
+}
+
+export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
@@ -117,26 +125,28 @@ export function HeroSearch() {
           </div>
         </form>
 
-        <div className="flex flex-wrap gap-2 justify-center items-center">
-          <span className="text-white/90 text-xs font-light tracking-wide drop-shadow">
-            人気の検索:
-          </span>
-          {["ビタミンD", "オメガ3", "マグネシウム", "プロテイン"].map((tag) => (
-            <button
-              key={tag}
-              onClick={() => {
-                router.push(`/search?q=${encodeURIComponent(tag)}`);
-              }}
-              className="px-5 py-2 text-white rounded-full text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
-              style={{
-                boxShadow:
-                  "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-              }}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        {popularSearches.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-center items-center">
+            <span className="text-white/90 text-xs font-light tracking-wide drop-shadow">
+              人気の検索:
+            </span>
+            {popularSearches.slice(0, 4).map((search) => (
+              <button
+                key={search.name}
+                onClick={() => {
+                  router.push(`/search?q=${encodeURIComponent(search.name)}`);
+                }}
+                className="px-5 py-2 text-white rounded-full text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
+                style={{
+                  boxShadow:
+                    "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                }}
+              >
+                {search.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

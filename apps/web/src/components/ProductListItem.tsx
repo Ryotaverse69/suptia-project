@@ -90,8 +90,13 @@ export function ProductListItem({ product }: ProductListItemProps) {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
-                  <Award size={64} strokeWidth={1} />
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                  <div className="text-center">
+                    <div className="text-6xl mb-3 opacity-40">📦</div>
+                    <p className="text-sm text-gray-400 font-medium">
+                      画像準備中
+                    </p>
+                  </div>
                 </div>
               )}
 

@@ -114,8 +114,8 @@ export function IngredientComparison({
             <div className="space-y-2">
               <div className="flex items-start gap-3">
                 {/* 商品画像 */}
-                {product.imageUrl && (
-                  <div className="flex-shrink-0 w-16 h-16 relative rounded overflow-hidden bg-gray-100">
+                <div className="flex-shrink-0 w-16 h-16 relative rounded overflow-hidden bg-gray-100">
+                  {product.imageUrl ? (
                     <Image
                       src={product.imageUrl}
                       alt={product.name}
@@ -123,8 +123,12 @@ export function IngredientComparison({
                       sizes="64px"
                       className="object-contain"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                      <span className="text-2xl opacity-30">📦</span>
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-2">
