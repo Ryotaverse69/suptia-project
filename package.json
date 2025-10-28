@@ -68,7 +68,9 @@
     "skill:pipeline": "tsx .claude/skills/run-pipeline.ts",
     "skill:list": "tsx .claude/skills/run-pipeline.ts list",
     "skills:install": "cd .claude/skills && npm install",
-    "skills:help": "echo 'Available Skills: validate, import, optimize, price, dev, compliance, pipeline'"
+    "skills:help": "echo 'Available Skills: validate, import, optimize, price, dev, compliance, pipeline'",
+    "scores:update": "node scripts/update-scores.mjs",
+    "scores:auto": "node scripts/update-scores.mjs"
   },
   "devDependencies": {
     "husky": "^9.0.0",

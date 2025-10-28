@@ -1,0 +1,50 @@
+name: スコア自動更新
+
+on:
+  # 毎日深夜4時（JST）に実行 = UTC 19:00（商品同期の1時間後）
+  schedule:
+    - cron: '0 19 * * *'
+
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  update-scores:
+    name: 商品・成分スコア更新
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > apps/web/.env.local << EOF
+          NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}
+          SANITY_API_VERSION=${{ secrets.SANITY_API_VERSION }}
+          EOF
+
+      - name: Update scores
+        run: node scripts/update-scores.mjs
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ スコア更新が失敗しました"
+          exit 1
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ スコア更新が成功しました"
