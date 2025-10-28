@@ -73,13 +73,6 @@ export default function AffiliatePage() {
             </div>
 
             <div className="border rounded-lg p-4">
-              <h3 className="font-semibold mb-2">Qoo10</h3>
-              <p className="text-sm text-muted-foreground">
-                Qoo10のアフィリエイトプログラムに参加しています。当サイトからQoo10へのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。
-              </p>
-            </div>
-
-            <div className="border rounded-lg p-4">
               <h3 className="font-semibold mb-2">iHerb</h3>
               <p className="text-sm text-muted-foreground">
                 iHerbのアフィリエイトプログラムに参加しています。当サイトからiHerbへのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。
@@ -146,6 +139,14 @@ export default function AffiliatePage() {
           <p className="mb-4">
             可能な限り複数のECサイトでの価格比較を提供し、ユーザーが最もお得な選択肢を見つけられるようサポートします。
           </p>
+          <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4">
+            <p className="font-semibold mb-2">📊 価格比較の表示順について</p>
+            <p className="text-sm">
+              商品詳細ページの価格比較では、アフィリエイト報酬額に関係なく、
+              <strong>常に最安値を最上位に表示</strong>
+              します。顧客利益を最優先し、公平かつ透明性のある価格比較を提供します。
+            </p>
+          </div>
         </section>
 
         <section className="mb-8">
