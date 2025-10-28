@@ -151,13 +151,17 @@ async function getFeaturedProducts(): Promise<Product[]> {
 }
 
 // 人気の成分を取得（上位6件）
+// 人気度スコア = (商品数 × 10) + (表示回数 × 1)
 async function getPopularIngredients(): Promise<Ingredient[]> {
-  const query = `*[_type == "ingredient"][0..5]{
+  const query = `*[_type == "ingredient"] | order(coalesce(popularityScore, 0) desc)[0..5]{
     name,
     nameEn,
     category,
     description,
     slug,
+    viewCount,
+    popularityScore,
+    "productCount": count(*[_type == "product" && references(^._id)]),
     "coverImage": coverImage{
       "asset": asset->{
         url

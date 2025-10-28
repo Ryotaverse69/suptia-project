@@ -12,6 +12,7 @@ import {
   IngredientWarnings,
   IngredientSummary,
 } from "@/components/IngredientWarnings";
+import { IngredientViewTracker } from "@/components/IngredientViewTracker";
 import { formatTextWithParagraphs, formatList } from "@/lib/text-formatter";
 import {
   generateBreadcrumbStructuredData,
@@ -416,6 +417,9 @@ export default async function IngredientPage({ params }: Props) {
           {JSON.stringify(faqJsonLd)}
         </Script>
       )}
+
+      {/* 表示回数トラッキング */}
+      <IngredientViewTracker slug={slug} />
 
       <div className="min-h-screen bg-background">
         {/* パンくずリスト */}

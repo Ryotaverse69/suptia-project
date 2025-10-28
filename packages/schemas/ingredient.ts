@@ -26,6 +26,10 @@ export const ingredient = defineType({
       name: "seo",
       title: "SEO設定",
     },
+    {
+      name: "analytics",
+      title: "統計・分析",
+    },
   ],
   fields: [
     // 基本情報
@@ -450,6 +454,27 @@ export const ingredient = defineType({
       of: [{ type: "string" }],
       description: "健康目標や効果に関するタグ",
       hidden: true,
+    }),
+    // 統計・分析
+    defineField({
+      name: "viewCount",
+      title: "表示回数",
+      type: "number",
+      description: "成分ガイド記事の表示回数（自動更新）",
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0).integer(),
+      group: "analytics",
+      readOnly: true,
+    }),
+    defineField({
+      name: "popularityScore",
+      title: "人気度スコア",
+      type: "number",
+      description: "人気度スコア = (商品数 × 10) + (表示回数 × 1) ※自動計算",
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0),
+      group: "analytics",
+      readOnly: true,
     }),
   ],
   preview: {
