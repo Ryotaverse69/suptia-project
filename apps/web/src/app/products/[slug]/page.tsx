@@ -217,6 +217,8 @@ async function getSimilarProducts(
 ): Promise<
   Array<{
     name: string;
+    slug: { current: string };
+    imageUrl?: string;
     ingredientAmount: number;
     servingsPerDay: number;
     priceJPY: number;
@@ -260,6 +262,8 @@ async function getSimilarProducts(
       && $mainIngredientId in ingredients[].ingredient._ref
     ]{
       name,
+      slug,
+      'imageUrl': coalesce(images[0].asset->url, externalImageUrl),
       'ingredientAmount': ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing,
       servingsPerDay,
       priceJPY,
@@ -538,6 +542,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <CostEffectivenessDetail
             currentProduct={{
               name: product.name,
+              slug: product.slug,
+              imageUrl:
+                product.images?.[0]?.asset?.url || product.externalImageUrl,
               priceJPY: product.priceJPY,
               ingredientAmount: mainIngredientAmount,
               servingsPerContainer: product.servingsPerContainer,
@@ -553,6 +560,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <IngredientComparison
             currentProduct={{
               name: product.name,
+              slug: product.slug,
+              imageUrl:
+                product.images?.[0]?.asset?.url || product.externalImageUrl,
               ingredientAmount: mainIngredientAmount,
               servingsPerDay: product.servingsPerDay,
             }}

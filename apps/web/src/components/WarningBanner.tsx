@@ -16,6 +16,11 @@ export function WarningBanner({
 }: WarningBannerProps) {
   const [isDismissed, setIsDismissed] = useState(false);
 
+  // 警告バナーを完全に非表示（顧客に見せない）
+  return null;
+
+  // 以下は開発用コード（必要に応じて有効化）
+  /*
   // 開発環境でのみ表示
   if (process.env.NODE_ENV !== "development") {
     return null;
@@ -24,6 +29,7 @@ export function WarningBanner({
   if (violations.length === 0 || isDismissed) {
     return null;
   }
+  */
 
   const handleDismiss = () => {
     setIsDismissed(true);

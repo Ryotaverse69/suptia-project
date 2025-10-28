@@ -403,11 +403,19 @@ export const product = defineType({
               options: {
                 list: [
                   { title: "楽天", value: "rakuten" },
+                  { title: "Yahoo!ショッピング", value: "yahoo" },
                   { title: "Amazon", value: "amazon" },
                   { title: "iHerb", value: "iherb" },
                 ],
               },
               validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "shopName",
+              title: "店舗名",
+              type: "string",
+              description:
+                "楽天市場内の店舗名（例: マツモトキヨシ楽天市場店）、Amazonセラー名など",
             },
             {
               name: "amount",
@@ -444,12 +452,14 @@ export const product = defineType({
           preview: {
             select: {
               source: "source",
+              shopName: "shopName",
               amount: "amount",
               fetchedAt: "fetchedAt",
             },
-            prepare({ source, amount, fetchedAt }) {
+            prepare({ source, shopName, amount, fetchedAt }) {
+              const shopLabel = shopName ? ` - ${shopName}` : "";
               return {
-                title: `${source}: ¥${amount?.toLocaleString()}`,
+                title: `${source}${shopLabel}: ¥${amount?.toLocaleString()}`,
                 subtitle: fetchedAt
                   ? new Date(fetchedAt).toLocaleString("ja-JP")
                   : "未取得",

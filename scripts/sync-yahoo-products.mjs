@@ -122,7 +122,7 @@ class YahooAdapter {
 
 // Sanity操作
 async function queryProducts() {
-  const query = encodeURIComponent('*[_type == "product"]{ _id, name, identifiers }');
+  const query = encodeURIComponent('*[_type == "product"]{ _id, name, janCode, identifiers, priceData }');
   const url = `${SANITY_API_URL}/query/${SANITY_DATASET}?query=${query}`;
 
   const response = await fetch(url, {
@@ -213,12 +213,20 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
 
   for (const product of products) {
     try {
-      // 既存商品チェック（Yahoo!商品コードまたはJANコードで照合）
-      const existing = existingProducts.find(
-        p =>
-          p.identifiers?.yahooCode === product.identifiers.yahooCode ||
-          (product.identifiers.jan && p.identifiers?.jan === product.identifiers.jan)
-      );
+      // 既存商品チェック（JANコード優先、なければYahoo!商品コードで照合）
+      let existing = null;
+      if (product.identifiers.jan) {
+        // JANコードがある場合: JANコードで検索（他のECサイトから取得した同一商品を見つけられる）
+        existing = existingProducts.find(
+          p => p.janCode === product.identifiers.jan || p.identifiers?.jan === product.identifiers.jan
+        );
+      }
+      if (!existing) {
+        // JANコードがない、または見つからない場合: yahooCodeで検索
+        existing = existingProducts.find(
+          p => p.identifiers?.yahooCode === product.identifiers.yahooCode
+        );
+      }
 
       // ブランド取得または作成
       const brandName = product.brand || 'その他のブランド';
@@ -240,6 +248,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       // 価格データ
       const priceData = {
         source: 'yahoo',
+        shopName: product.brand, // Yahoo!の場合、brandは店舗名（shopName）
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
@@ -288,9 +297,19 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         // 既存商品は価格データと価格履歴を更新
         console.log(`  🔄 更新: ${product.name.substring(0, 50)}...`);
 
+        // 既存のpriceDataから同じsource + shopNameのエントリを探す
+        const existingPriceData = existing.priceData || [];
+        const filteredPriceData = existingPriceData.filter(
+          pd => !(pd.source === 'yahoo' && pd.shopName === product.brand)
+        );
+
+        // 新しいpriceDataを追加
+        const updatedPriceData = [...filteredPriceData, priceData];
+
         // 価格履歴エントリ
         const priceHistoryEntry = {
           source: 'yahoo',
+          shopName: product.brand,
           amount: product.price,
           recordedAt: new Date().toISOString(),
         };
@@ -304,10 +323,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
               'reviewStats.averageRating': product.rating || 0,
               'reviewStats.reviewCount': product.reviewCount || 0,
               ...(product.imageUrl && { externalImageUrl: product.imageUrl }),
-            },
-            insert: {
-              after: 'priceData[-1]',
-              items: [priceData],
+              priceData: updatedPriceData, // priceData全体を置き換え
             },
           },
         });

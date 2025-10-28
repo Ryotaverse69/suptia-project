@@ -179,24 +179,33 @@ export function ProductListItem({ product }: ProductListItemProps) {
           {/* 価格とボタン */}
           <div className="flex flex-row md:flex-col items-end md:items-end justify-between md:justify-end md:w-48 flex-shrink-0">
             {/* 価格表示 */}
-            <div className="text-right mb-4">
-              <div className="text-xs text-primary-600 mb-1">最安値</div>
-              <div className="text-3xl font-bold text-primary-900">
-                {effectiveCostPerDay
-                  ? formatCostJPY(effectiveCostPerDay)
-                  : formatCostJPY(priceJPY)}
+            <div className="text-right mb-4 space-y-3">
+              {/* 商品価格 */}
+              <div>
+                <div className="text-xs text-gray-500 mb-1">商品価格</div>
+                <div className="text-3xl font-bold text-gray-900">
+                  {formatCostJPY(priceJPY)}
+                </div>
               </div>
+
+              {/* 1日あたり価格 */}
               {effectiveCostPerDay && (
-                <div className="text-xs text-primary-600 mt-1">1日あたり</div>
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">最安値</div>
+                  <div className="text-3xl font-bold text-green-600">
+                    {formatCostJPY(effectiveCostPerDay)}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">1日あたり</div>
+                </div>
               )}
             </div>
 
-            {/* 料金を表示ボタン */}
+            {/* 比較するボタン */}
             <Link
               href={`/products/${slug.current}`}
               className="bg-primary hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
             >
-              料金を表示
+              比較する
             </Link>
           </div>
         </div>

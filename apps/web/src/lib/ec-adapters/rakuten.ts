@@ -214,6 +214,9 @@ export class RakutenAdapter implements ECAdapter {
    * 楽天の商品データを共通形式に変換
    */
   private normalizeProduct(item: RakutenItem): ECProduct {
+    // itemCaptionからJANコードを抽出
+    const janCode = this.extractJanCode(item.itemCaption);
+
     return {
       id: item.itemCode,
       name: item.itemName,
@@ -229,10 +232,51 @@ export class RakutenAdapter implements ECAdapter {
       description: item.itemCaption,
       inStock: item.availability === 1,
       identifiers: {
-        // 楽天商品コードからJANを抽出する場合はここで処理
-        // 現状は楽天商品コードのみ
+        rakutenItemCode: item.itemCode,
+        ...(janCode && { jan: janCode }),
       },
     };
+  }
+
+  /**
+   * 商品説明文からJANコードを抽出
+   *
+   * 楽天APIはJANコード専用フィールドを持たないため、
+   * itemCaption（商品説明）から正規表現で抽出します。
+   *
+   * 対応パターン:
+   * - "JANコード:1234567890123"
+   * - "JAN:1234567890123"
+   * - "JAN 1234567890123"
+   * - "JANコード 1234567890123"
+   *
+   * @param caption 商品説明文
+   * @returns JANコード（8桁または13桁）、見つからない場合はundefined
+   */
+  private extractJanCode(caption?: string): string | undefined {
+    if (!caption) return undefined;
+
+    // JANコードのパターン: 8桁または13桁の数字
+    // よくある表記: "JANコード:1234567890123", "JAN:1234567890123", "JAN 1234567890123"
+    const patterns = [
+      /JAN\s*コード\s*[:：]\s*(\d{8,13})/i,
+      /JAN\s*[:：]\s*(\d{8,13})/i,
+      /JAN\s+(\d{8,13})/i,
+      /JAN\s*コード\s+(\d{8,13})/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = caption.match(pattern);
+      if (match && match[1]) {
+        const code = match[1];
+        // 8桁または13桁のみ許可（JANコードの標準形式）
+        if (code.length === 8 || code.length === 13) {
+          return code;
+        }
+      }
+    }
+
+    return undefined;
   }
 
   /**

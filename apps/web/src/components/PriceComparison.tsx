@@ -1,9 +1,14 @@
 /**
  * 複数ECサイトの価格比較コンポーネント
+ *
+ * 「案A: 全体統合（最安値優先）」を実装
+ * - 全てのECサイト・店舗を混ぜて最安値順に表示
+ * - 楽天市場内の各店舗、Yahoo!ショッピング内の各店舗も個別表示
  */
 
 interface PriceData {
   source: string;
+  shopName?: string; // 店舗名（楽天市場内の店舗、Amazonセラーなど）
   amount: number;
   currency: string;
   url: string;
@@ -74,10 +79,12 @@ export function PriceComparison({
     <div
       className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 ${className}`}
     >
-      <h2 className="text-xl font-semibold mb-4">💰 価格比較</h2>
-      <p className="text-sm text-gray-600 mb-4">
-        複数のECサイトから最安値を比較できます
-      </p>
+      <h2 className="text-xl font-semibold mb-4">💰 価格比較（最安値順）</h2>
+      <div className="mb-4 space-y-2">
+        <p className="text-sm text-gray-600">
+          複数のECサイト・店舗から最安値を比較できます
+        </p>
+      </div>
 
       <div className="space-y-3">
         {sortedPrices.map((price, index) => {
@@ -116,6 +123,13 @@ export function PriceComparison({
                       </span>
                     )}
                   </div>
+
+                  {/* 店舗名表示（楽天市場内の店舗、Yahoo!ショッピング内の店舗など） */}
+                  {price.shopName && (
+                    <div className="mb-1 text-sm text-gray-600">
+                      {price.shopName}
+                    </div>
+                  )}
 
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-gray-900">

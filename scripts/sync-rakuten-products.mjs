@@ -104,6 +104,9 @@ class RakutenAdapter {
       imageUrl = originalUrl.split('?')[0];
     }
 
+    // itemCaptionからJANコードを抽出
+    const janCode = this.extractJanCode(item.itemCaption);
+
     return {
       id: item.itemCode,
       name: item.itemName,
@@ -120,14 +123,46 @@ class RakutenAdapter {
       inStock: item.availability === 1,
       identifiers: {
         rakutenItemCode: item.itemCode,
+        ...(janCode && { jan: janCode }),
       },
     };
+  }
+
+  /**
+   * 商品説明文からJANコードを抽出
+   *
+   * @param {string} caption 商品説明文
+   * @returns {string|undefined} JANコード（8桁または13桁）
+   */
+  extractJanCode(caption) {
+    if (!caption) return undefined;
+
+    // JANコードのパターン: 8桁または13桁の数字
+    const patterns = [
+      /JAN\s*コード\s*[:：]\s*(\d{8,13})/i,
+      /JAN\s*[:：]\s*(\d{8,13})/i,
+      /JAN\s+(\d{8,13})/i,
+      /JAN\s*コード\s+(\d{8,13})/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = caption.match(pattern);
+      if (match && match[1]) {
+        const code = match[1];
+        // 8桁または13桁のみ許可
+        if (code.length === 8 || code.length === 13) {
+          return code;
+        }
+      }
+    }
+
+    return undefined;
   }
 }
 
 // Sanity操作
 async function queryProducts() {
-  const query = encodeURIComponent('*[_type == "product"]{ _id, name, identifiers }');
+  const query = encodeURIComponent('*[_type == "product"]{ _id, name, janCode, identifiers, priceData }');
   const url = `${SANITY_API_URL}/query/${SANITY_DATASET}?query=${query}`;
 
   const response = await fetch(url, {
@@ -218,10 +253,20 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
 
   for (const product of products) {
     try {
-      // 既存商品チェック（楽天商品コードで照合）
-      const existing = existingProducts.find(
-        p => p.identifiers?.rakutenItemCode === product.identifiers.rakutenItemCode
-      );
+      // 既存商品チェック（JANコード優先、なければrakutenItemCodeで照合）
+      let existing = null;
+      if (product.identifiers.jan) {
+        // JANコードがある場合: JANコードで検索（他のECサイトから取得した同一商品を見つけられる）
+        existing = existingProducts.find(
+          p => p.janCode === product.identifiers.jan || p.identifiers?.jan === product.identifiers.jan
+        );
+      }
+      if (!existing) {
+        // JANコードがない、または見つからない場合: rakutenItemCodeで検索
+        existing = existingProducts.find(
+          p => p.identifiers?.rakutenItemCode === product.identifiers.rakutenItemCode
+        );
+      }
 
       // ブランド取得または作成
       const brandName = product.brand || 'その他のブランド';
@@ -243,6 +288,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       // 価格データ
       const priceData = {
         source: 'rakuten',
+        shopName: product.brand, // 楽天の場合、brandは店舗名（shopName）
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
@@ -262,8 +308,12 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         source: 'rakuten', // 取得元ECサイト
         itemCode: product.identifiers.rakutenItemCode, // EC商品コード
         affiliateUrl: product.affiliateUrl || product.url, // アフィリエイトURL
+        ...(product.identifiers.jan && {
+          janCode: product.identifiers.jan, // JANコード（ショートカット）
+        }),
         identifiers: {
           rakutenItemCode: product.identifiers.rakutenItemCode,
+          ...(product.identifiers.jan && { jan: product.identifiers.jan }),
         },
         urls: {
           rakuten: product.affiliateUrl || product.url,
@@ -290,9 +340,19 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         // 既存商品は価格データと価格履歴を更新
         console.log(`  🔄 更新: ${product.name.substring(0, 50)}...`);
 
+        // 既存のpriceDataから同じsource + shopNameのエントリを探す
+        const existingPriceData = existing.priceData || [];
+        const filteredPriceData = existingPriceData.filter(
+          pd => !(pd.source === 'rakuten' && pd.shopName === product.brand)
+        );
+
+        // 新しいpriceDataを追加
+        const updatedPriceData = [...filteredPriceData, priceData];
+
         // 価格履歴エントリ
         const priceHistoryEntry = {
           source: 'rakuten',
+          shopName: product.brand,
           amount: product.price,
           recordedAt: new Date().toISOString(),
         };
@@ -306,10 +366,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
               'reviewStats.averageRating': product.rating || 0,
               'reviewStats.reviewCount': product.reviewCount || 0,
               ...(product.imageUrl && { externalImageUrl: product.imageUrl }),
-            },
-            insert: {
-              after: 'priceData[-1]',
-              items: [priceData],
+              priceData: updatedPriceData, // priceData全体を置き換え
             },
           },
         });

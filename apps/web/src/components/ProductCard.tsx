@@ -172,38 +172,33 @@ export function ProductCard({ product }: ProductCardProps) {
             <StarRating rating={rating} reviewCount={reviewCount} size="sm" />
           </div>
 
-          <div className="space-y-2 text-sm text-primary-700 font-light">
-            <div className="flex justify-between">
-              <span>商品価格</span>
-              <span className="font-normal">{formatCostJPY(priceJPY)}</span>
+          {/* 価格情報 - 商品価格と1日あたりの両方を表示 */}
+          <div className="flex items-end justify-between">
+            {/* 左側: 商品価格 */}
+            <div>
+              <div className="text-xs text-gray-500 mb-1">商品価格</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {formatCostJPY(priceJPY)}
+              </div>
             </div>
+
+            {/* 右側: 1日あたりの価格 */}
             {effectiveCostPerDay && (
-              <div className="flex justify-between">
-                <span>1日あたり</span>
-                <span className="font-normal text-accent-mint">
+              <div className="text-right">
+                <div className="text-xs text-gray-500 mb-1">最安値</div>
+                <div className="text-xl font-bold text-green-600">
                   {formatCostJPY(effectiveCostPerDay)}
-                </span>
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">1日あたり</div>
               </div>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="pt-0 pb-5 px-5">
-          <div className="w-full flex items-center justify-between">
-            <div>
-              <div className="text-2xl font-light text-primary-900 tracking-wide">
-                {formatCostJPY(priceJPY)}
-              </div>
-              {effectiveCostPerDay && (
-                <div className="text-xs text-primary-600 mt-1 font-light">
-                  {formatCostJPY(effectiveCostPerDay)}/日
-                </div>
-              )}
-            </div>
-            <button className="glass-purple hover:shadow-glow-purple text-white font-light px-6 py-3 rounded-xl transition-all duration-300 border border-white/20">
-              詳細を見る
-            </button>
-          </div>
+        <CardFooter className="pt-4 pb-5 px-5">
+          <button className="w-full bg-primary hover:bg-primary-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
+            比較する
+          </button>
         </CardFooter>
       </Card>
     </Link>

@@ -4,10 +4,14 @@
  */
 
 import { Calculator, TrendingDown, Award } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface CostEffectivenessDetailProps {
   currentProduct: {
     name: string;
+    slug?: { current: string };
+    imageUrl?: string;
     priceJPY: number;
     ingredientAmount: number; // mg
     servingsPerDay: number;
@@ -15,6 +19,8 @@ interface CostEffectivenessDetailProps {
   };
   similarProducts?: Array<{
     name: string;
+    slug?: { current: string };
+    imageUrl?: string;
     priceJPY: number;
     ingredientAmount: number;
     servingsPerDay: number;
@@ -166,10 +172,62 @@ export function CostEffectivenessDetail({
                 : ((product.costPerMg - currentCostPerMg) / currentCostPerMg) *
                   100;
 
+              const productContent = (
+                <>
+                  <div className="flex items-start gap-3">
+                    {/* 商品画像 */}
+                    {product.imageUrl && (
+                      <div className="flex-shrink-0 w-16 h-16 relative rounded overflow-hidden bg-gray-100">
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          sizes="64px"
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-semibold">
+                            {index + 1}位
+                          </span>
+                          <span className="text-sm truncate">
+                            {product.name}
+                            {product.isCurrent && " (この商品)"}
+                          </span>
+                          {index === 0 && (
+                            <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
+                              💡 最高コスパ
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-sm font-bold whitespace-nowrap ml-2">
+                          ¥{product.costPerMg.toFixed(2)}/mg
+                        </span>
+                      </div>
+
+                      {!product.isCurrent && (
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                          <TrendingDown size={14} />
+                          <span>
+                            {savingsVsCurrent > 0
+                              ? `この商品より${savingsVsCurrent.toFixed(0)}%割高`
+                              : `この商品より${Math.abs(savingsVsCurrent).toFixed(0)}%お得`}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              );
+
               return (
                 <div
                   key={product.name}
-                  className={`p-4 rounded-lg border-2 ${
+                  className={`rounded-lg border-2 ${
                     product.isCurrent
                       ? "border-primary bg-primary-50"
                       : index === 0
@@ -177,35 +235,15 @@ export function CostEffectivenessDetail({
                         : "border-gray-200 bg-gray-50"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold">
-                        {index + 1}位
-                      </span>
-                      <span className="text-sm">
-                        {product.name}
-                        {product.isCurrent && " (この商品)"}
-                      </span>
-                      {index === 0 && (
-                        <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
-                          💡 最高コスパ
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm font-bold">
-                      ¥{product.costPerMg.toFixed(2)}/mg
-                    </span>
-                  </div>
-
-                  {!product.isCurrent && (
-                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                      <TrendingDown size={14} />
-                      <span>
-                        {savingsVsCurrent > 0
-                          ? `この商品より${savingsVsCurrent.toFixed(0)}%割高`
-                          : `この商品より${Math.abs(savingsVsCurrent).toFixed(0)}%お得`}
-                      </span>
-                    </div>
+                  {!product.isCurrent && product.slug?.current ? (
+                    <Link
+                      href={`/products/${product.slug.current}`}
+                      className="block p-4 hover:opacity-80 transition-opacity"
+                    >
+                      {productContent}
+                    </Link>
+                  ) : (
+                    <div className="p-4">{productContent}</div>
                   )}
                 </div>
               );
