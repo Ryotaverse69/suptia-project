@@ -499,20 +499,34 @@ export default async function Home() {
                         </div>
 
                         {/* 価格 */}
-                        <div className="flex items-end justify-between">
+                        <div className="flex items-end justify-between mb-3">
+                          {/* 左側: 商品価格 */}
                           <div>
-                            <p className="text-2xl font-bold text-primary-900">
+                            <div className="text-xs text-gray-500 mb-1">
+                              商品価格
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900">
+                              ¥{product.priceJPY.toLocaleString()}
+                            </div>
+                          </div>
+
+                          {/* 右側: 1日あたりの価格 */}
+                          <div className="text-right">
+                            <div className="text-xs text-gray-500 mb-1">
+                              最安値
+                            </div>
+                            <div className="text-xl font-bold text-green-600">
                               ¥{product.effectiveCostPerDay.toFixed(0)}
-                            </p>
-                            <p className="text-xs text-primary-600">
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
                               1日あたり
-                            </p>
+                            </div>
                           </div>
                         </div>
 
-                        {/* 価格を比較するボタン */}
-                        <button className="w-full mt-3 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
-                          価格を比較する
+                        {/* 比較するボタン */}
+                        <button className="w-full px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
+                          比較する
                         </button>
                       </div>
                     </Link>
@@ -588,7 +602,7 @@ export default async function Home() {
 
                         {/* 料金プランをチェックボタン */}
                         <button className="w-full mt-2 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
-                          商品を比較する
+                          商品を見る
                         </button>
                       </div>
                     </Link>
