@@ -154,6 +154,73 @@ export function scoreToEvidenceLevel(
 }
 
 /**
+ * 添加物・保存料のリスト（安全性が懸念される成分）
+ */
+const UNSAFE_ADDITIVES = [
+  // 保存料
+  { name: "安息香酸", penalty: -5, severity: "warning" },
+  { name: "安息香酸ナトリウム", penalty: -5, severity: "warning" },
+  { name: "ソルビン酸", penalty: -3, severity: "info" },
+  { name: "ソルビン酸カリウム", penalty: -3, severity: "info" },
+  { name: "パラベン", penalty: -5, severity: "warning" },
+  { name: "パラオキシ安息香酸", penalty: -5, severity: "warning" },
+
+  // 甘味料（人工甘味料）
+  { name: "アスパルテーム", penalty: -4, severity: "warning" },
+  { name: "アセスルファムK", penalty: -4, severity: "warning" },
+  { name: "スクラロース", penalty: -3, severity: "info" },
+  { name: "サッカリン", penalty: -5, severity: "warning" },
+  { name: "サッカリンナトリウム", penalty: -5, severity: "warning" },
+
+  // 着色料（タール系）
+  { name: "赤色2号", penalty: -6, severity: "warning" },
+  { name: "赤色3号", penalty: -6, severity: "warning" },
+  { name: "赤色40号", penalty: -6, severity: "warning" },
+  { name: "赤色102号", penalty: -6, severity: "warning" },
+  { name: "赤色104号", penalty: -6, severity: "warning" },
+  { name: "赤色105号", penalty: -6, severity: "warning" },
+  { name: "赤色106号", penalty: -6, severity: "warning" },
+  { name: "黄色4号", penalty: -6, severity: "warning" },
+  { name: "黄色5号", penalty: -6, severity: "warning" },
+  { name: "青色1号", penalty: -6, severity: "warning" },
+  { name: "青色2号", penalty: -6, severity: "warning" },
+
+  // 酸化防止剤
+  { name: "BHA", penalty: -7, severity: "critical" },
+  { name: "BHT", penalty: -7, severity: "critical" },
+  { name: "ブチルヒドロキシアニソール", penalty: -7, severity: "critical" },
+  { name: "ジブチルヒドロキシトルエン", penalty: -7, severity: "critical" },
+
+  // その他の添加物
+  { name: "亜硝酸ナトリウム", penalty: -8, severity: "critical" },
+  { name: "カラギーナン", penalty: -4, severity: "warning" },
+  { name: "リン酸塩", penalty: -3, severity: "info" },
+  { name: "二酸化チタン", penalty: -5, severity: "warning" },
+  { name: "ステアリン酸マグネシウム", penalty: -2, severity: "info" },
+];
+
+/**
+ * 商品名・説明から添加物を検出
+ */
+export function detectUnsafeAdditives(
+  text: string,
+): Array<{ name: string; penalty: number; severity: string }> {
+  const found: Array<{ name: string; penalty: number; severity: string }> = [];
+  const normalizedText = text.toLowerCase();
+
+  for (const additive of UNSAFE_ADDITIVES) {
+    if (
+      normalizedText.includes(additive.name.toLowerCase()) ||
+      normalizedText.includes(additive.name)
+    ) {
+      found.push(additive);
+    }
+  }
+
+  return found;
+}
+
+/**
  * 成分の安全性スコアを計算（詳細情報付き）
  */
 export function calculateSafetyScoreWithDetails(
@@ -162,13 +229,13 @@ export function calculateSafetyScoreWithDetails(
   const baseScore = 90;
   let score = baseScore;
 
-  // エビデンスレベルが高いほど安全性も高いと仮定
+  // エビデンスレベルによる調整（変更：Sはボーナス、Aは中立）
   const evidenceBonus = {
-    S: 0,
-    A: -5,
-    B: -10,
-    C: -15,
-    D: -20,
+    S: +5, // Sランクにはボーナス
+    A: 0, // Aランクは中立
+    B: -5,
+    C: -10,
+    D: -15,
   };
   const evidenceLevelPenalty = evidenceBonus[ingredient.evidenceLevel || "D"];
   score += evidenceLevelPenalty;
@@ -309,13 +376,32 @@ export function calculateAutoScores(
   const safetyDetails = matchedIngredients.map((ing) =>
     calculateSafetyScoreWithDetails(ing),
   );
-  const safetyScore =
+  let safetyScore =
     safetyDetails.length > 0
       ? Math.round(
           safetyDetails.reduce((sum, detail) => sum + detail.finalScore, 0) /
             safetyDetails.length,
         )
       : 50;
+
+  // 添加物・保存料のチェック
+  const unsafeAdditives = detectUnsafeAdditives(productName);
+  let additivesPenalty = 0;
+  if (unsafeAdditives.length > 0) {
+    additivesPenalty = unsafeAdditives.reduce(
+      (sum, additive) => sum + additive.penalty,
+      0,
+    );
+    safetyScore = Math.max(0, safetyScore + additivesPenalty);
+
+    console.log(`[添加物検出] ${productName}:`, {
+      添加物: unsafeAdditives.map((a) => a.name),
+      ペナルティ合計: additivesPenalty,
+      調整前スコア: safetyScore - additivesPenalty,
+      調整後スコア: safetyScore,
+    });
+  }
+
   const safetyLevel = scoreToEvidenceLevel(safetyScore);
 
   // 総合スコア
