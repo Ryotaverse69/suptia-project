@@ -13,7 +13,19 @@ import {
   Pill,
 } from "lucide-react";
 import type { IngredientSafetyDetail } from "@/lib/auto-scoring";
-import { detectUnsafeAdditives } from "@/lib/auto-scoring";
+import {
+  detectUnsafeAdditives,
+  evidenceLevelToScore,
+} from "@/lib/auto-scoring";
+
+// 成分別エビデンス詳細
+export interface IngredientEvidenceDetail {
+  name: string;
+  evidenceLevel: "S" | "A" | "B" | "C" | "D";
+  evidenceScore: number;
+  amountMg: number;
+  ratio: number; // 配合率（0-1）
+}
 
 interface EvidenceSafetyDetailProps {
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
@@ -29,6 +41,7 @@ interface EvidenceSafetyDetailProps {
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
+  evidenceDetails?: IngredientEvidenceDetail[]; // 成分別エビデンス詳細
   allIngredients?: string;
   className?: string;
 }
@@ -43,6 +56,7 @@ export function EvidenceSafetyDetail({
   ingredientName,
   ingredientEvidenceLevel,
   safetyDetails = [],
+  evidenceDetails = [],
   allIngredients,
   className = "",
 }: EvidenceSafetyDetailProps) {
@@ -209,31 +223,111 @@ export function EvidenceSafetyDetail({
           </div>
         )}
 
-        {/* 成分のエビデンスレベル */}
-        {ingredientName && ingredientEvidenceLevel && (
+        {/* 成分別エビデンス詳細 */}
+        {evidenceDetails.length > 0 && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">
-              主要成分のエビデンス評価
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <Microscope size={16} className="text-blue-600" />
+              成分別エビデンス評価の詳細（配合率ベース）
             </h3>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">{ingredientName}:</span>
-                <span
-                  className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${evidenceLevelInfo[ingredientEvidenceLevel]?.color} text-white font-bold`}
-                >
-                  {ingredientEvidenceLevel}
-                </span>
-              </div>
-              <span className="text-xs text-gray-600">
-                {evidenceLevelInfo[ingredientEvidenceLevel]?.label}
-              </span>
+            <div className="space-y-3">
+              {evidenceDetails.map((detail, index) => {
+                const ratioPercent = Math.round(detail.ratio * 1000) / 10;
+                const contribution = Math.round(
+                  detail.evidenceScore * detail.ratio,
+                );
+                const levelInfo = evidenceLevelInfo[detail.evidenceLevel];
+
+                return (
+                  <div
+                    key={index}
+                    className="p-3 bg-white border border-blue-200 rounded-lg"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-800">
+                          {detail.name}
+                        </p>
+                        <span
+                          className={`inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r ${levelInfo.color} text-white text-xs font-bold`}
+                        >
+                          {detail.evidenceLevel}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          エビデンススコア:
+                        </span>
+                        <span className="font-bold text-blue-700">
+                          {detail.evidenceScore}点
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-xs text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <span className="w-24">配合量:</span>
+                        <span className="font-mono">{detail.amountMg}mg</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="w-24">配合率:</span>
+                        <span className="font-mono font-semibold text-blue-700">
+                          {ratioPercent}%
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-green-700 mt-2 pt-2 border-t border-gray-200">
+                        <TrendingUp size={14} />
+                        <span className="w-24">スコア貢献度:</span>
+                        <span className="font-mono font-bold">
+                          +{contribution}点
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          （{detail.evidenceScore}点 × {ratioPercent}%）
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <p className="text-xs text-gray-600 mt-2">
-              この成分自体の科学的根拠は{ingredientEvidenceLevel}
-              ランクに評価されています。
+            <p className="text-xs text-gray-500 mt-3">
+              ※
+              総合エビデンススコアは、各成分のエビデンススコアを配合率で重み付けして算出しています。
             </p>
           </div>
         )}
+
+        {/* 成分のエビデンスレベル（単一成分の場合） */}
+        {ingredientName &&
+          ingredientEvidenceLevel &&
+          evidenceDetails.length === 0 && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                主要成分のエビデンス評価
+              </h3>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    {ingredientName}:
+                  </span>
+                  <span
+                    className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${evidenceLevelInfo[ingredientEvidenceLevel]?.color} text-white font-bold`}
+                  >
+                    {ingredientEvidenceLevel}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-600">
+                  {evidenceLevelInfo[ingredientEvidenceLevel]?.label}
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 mt-2">
+                この成分自体の科学的根拠は{ingredientEvidenceLevel}
+                ランクに評価されています。
+              </p>
+            </div>
+          )}
 
         {/* 参考文献 */}
         {references.length > 0 && (

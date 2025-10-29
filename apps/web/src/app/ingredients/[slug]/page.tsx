@@ -8,10 +8,7 @@ import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { IngredientContent } from "@/components/IngredientContent";
 import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
-import {
-  IngredientWarnings,
-  IngredientSummary,
-} from "@/components/IngredientWarnings";
+import { IngredientSummary } from "@/components/IngredientWarnings";
 import { IngredientViewTracker } from "@/components/IngredientViewTracker";
 import { formatTextWithParagraphs, formatList } from "@/lib/text-formatter";
 import {
@@ -273,12 +270,36 @@ function parseMarkdownWithInternalLinks(
 
 // 動的ルートの生成
 export async function generateStaticParams() {
-  const query = `*[_type == "ingredient"]{ "slug": slug.current }`;
+  const query = `*[_type == "ingredient" && defined(slug.current)]{ "slug": slug.current }`;
   try {
     const ingredients = await sanity.fetch(query);
-    return ingredients.map((ingredient: { slug: string }) => ({
-      slug: ingredient.slug,
-    }));
+    // slugが文字列であることを確認
+    const params = ingredients
+      .map((ingredient: { slug: string | any }) => {
+        // slugがオブジェクトの場合は.currentプロパティを取得
+        const slugValue =
+          typeof ingredient.slug === "string"
+            ? ingredient.slug
+            : ingredient.slug?.current || null;
+
+        if (!slugValue || typeof slugValue !== "string") {
+          console.warn(
+            "Invalid slug format:",
+            ingredient.slug,
+            typeof ingredient.slug,
+          );
+          return null;
+        }
+
+        return { slug: slugValue };
+      })
+      .filter(
+        (param: { slug: string } | null): param is { slug: string } =>
+          param !== null,
+      );
+
+    console.log(`Generated ${params.length} static params for ingredients`);
+    return params;
   } catch (error) {
     console.error("Failed to fetch ingredient slugs:", error);
     return [];
@@ -479,15 +500,6 @@ export default async function IngredientPage({ params }: Props) {
 
           {/* 要約（1行） */}
           <IngredientSummary description={ingredient.description} />
-
-          {/* 危険性・警告表示 */}
-          <IngredientWarnings
-            sideEffects={ingredient.sideEffects}
-            interactions={ingredient.interactions}
-            riskLevel={ingredient.riskLevel}
-            specialWarnings={ingredient.specialWarnings}
-            overdoseRisks={ingredient.overdoseRisks}
-          />
 
           {/* メインコンテンツ */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -724,42 +736,61 @@ export default async function IngredientPage({ params }: Props) {
             {/* 右カラム：サイドバー */}
             <aside className="space-y-6">
               {/* 関連成分 */}
-              {Array.isArray(ingredient.relatedIngredients) &&
-                ingredient.relatedIngredients.length > 0 && (
-                  <div className="bg-white border border-primary-200 rounded-lg p-6 sticky top-20">
-                    <h3 className="text-lg font-bold text-primary-900 mb-4">
-                      関連する成分
-                    </h3>
-                    <div className="space-y-2">
-                      {ingredient.relatedIngredients.map((related) => (
+              <div className="bg-white border border-primary-200 rounded-lg p-6 sticky top-20">
+                {Array.isArray(ingredient.relatedIngredients) &&
+                  ingredient.relatedIngredients.length > 0 && (
+                    <>
+                      <h3 className="text-lg font-bold text-primary-900 mb-4">
+                        関連する成分
+                      </h3>
+                      <div className="space-y-2 mb-6">
+                        {ingredient.relatedIngredients.map((related) => (
+                          <Link
+                            key={related.slug.current}
+                            href={`/ingredients/${related.slug.current}`}
+                            className="block px-4 py-2 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+                          >
+                            <span className="text-primary-900 font-medium">
+                              {related.name}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="border-t border-primary-200 pt-6 space-y-3">
                         <Link
-                          key={related.slug.current}
-                          href={`/ingredients/${related.slug.current}`}
-                          className="block px-4 py-2 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+                          href="/ingredients"
+                          className="block px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-center font-semibold"
                         >
-                          <span className="text-primary-900 font-medium">
-                            {related.name}
-                          </span>
+                          成分ガイド一覧
                         </Link>
-                      ))}
-                    </div>
+                        <Link
+                          href="/guide/dangerous-ingredients"
+                          className="block px-4 py-3 bg-orange-100 text-orange-900 border border-orange-300 rounded-lg hover:bg-orange-200 transition-colors text-center font-semibold"
+                        >
+                          ⚠️ 危険成分ガイド
+                        </Link>
+                      </div>
+                    </>
+                  )}
 
-                    <div className="mt-6 pt-6 border-t border-primary-200 space-y-3">
-                      <Link
-                        href="/ingredients"
-                        className="block px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-center font-semibold"
-                      >
-                        成分ガイド一覧
-                      </Link>
-                      <Link
-                        href="/guide/dangerous-ingredients"
-                        className="block px-4 py-3 bg-orange-100 text-orange-900 border border-orange-300 rounded-lg hover:bg-orange-200 transition-colors text-center font-semibold"
-                      >
-                        ⚠️ 危険成分ガイド
-                      </Link>
-                    </div>
+                {(!Array.isArray(ingredient.relatedIngredients) ||
+                  ingredient.relatedIngredients.length === 0) && (
+                  <div className="space-y-3">
+                    <Link
+                      href="/ingredients"
+                      className="block px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-center font-semibold"
+                    >
+                      成分ガイド一覧
+                    </Link>
+                    <Link
+                      href="/guide/dangerous-ingredients"
+                      className="block px-4 py-3 bg-orange-100 text-orange-900 border border-orange-300 rounded-lg hover:bg-orange-200 transition-colors text-center font-semibold"
+                    >
+                      ⚠️ 危険成分ガイド
+                    </Link>
                   </div>
                 )}
+              </div>
             </aside>
           </div>
         </article>

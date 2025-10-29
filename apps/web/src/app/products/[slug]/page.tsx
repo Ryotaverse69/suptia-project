@@ -24,8 +24,11 @@ import {
   calculateAutoScores,
   calculateEvidenceScoreByRatio,
   calculateSafetyScoreByRatio,
+  evidenceLevelToScore,
+  scoreToEvidenceLevel,
   type IngredientSafetyDetail,
 } from "@/lib/auto-scoring";
+import type { IngredientEvidenceDetail } from "@/components/EvidenceSafetyDetail";
 
 interface PriceData {
   source: string;
