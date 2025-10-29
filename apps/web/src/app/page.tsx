@@ -144,11 +144,23 @@ async function getTotalProductCount(): Promise<number> {
   }
 }
 
-// おすすめサプリを取得（上位4件）
+// 商品名を正規化（重複判定用）
+function normalizeProductName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[【】\[\]（）()「」『』\s・\/]/g, "") // 記号・空白を除去
+    .replace(/ポイント\d+倍/g, "") // "ポイント5倍"を除去
+    .replace(/約\d+[ヶケか]月分/g, "") // "約6ヶ月分"を除去
+    .replace(/\d+粒/g, "") // "150粒"を除去
+    .replace(/メール便.*$/g, "") // "メール便送料無料"を除去
+    .slice(0, 30); // 最初の30文字で比較
+}
+
+// おすすめサプリを取得（横スクロールで10件表示）
 // おすすめスコア = (キャンペーン: 100点) + (割引率 × 2)
 // キャンペーン商品と割引率が高い商品を優先表示
 async function getFeaturedProducts(): Promise<Product[]> {
-  // 重複を考慮して多めに取得（20件）
+  // 重複を考慮して多めに取得（50件）
   const query = `*[_type == "product" && availability == "in-stock"] {
     name,
     priceJPY,
@@ -175,24 +187,33 @@ async function getFeaturedProducts(): Promise<Product[]> {
       coalesce(discountPercentage, 0) > 0 => coalesce(discountPercentage, 0) * 2,
       0
     )
-  } | order(recommendationScore desc, discountPercentage desc)[0..19]`;
+  } | order(recommendationScore desc, discountPercentage desc)[0..49]`;
 
   try {
     const allProducts = await sanity.fetch(query);
     if (!allProducts || allProducts.length === 0) return [];
 
-    // slugで重複を除外（最初に見つかった商品のみ保持）
+    // slugと正規化された商品名で重複を除外
     const uniqueProducts: Product[] = [];
     const seenSlugs = new Set<string>();
+    const seenNormalizedNames = new Set<string>();
 
     for (const product of allProducts) {
       const slugCurrent = product.slug?.current;
-      if (slugCurrent && !seenSlugs.has(slugCurrent)) {
+      const normalizedName = normalizeProductName(product.name);
+
+      // slugまたは正規化名が重複していない場合のみ追加
+      if (
+        slugCurrent &&
+        !seenSlugs.has(slugCurrent) &&
+        !seenNormalizedNames.has(normalizedName)
+      ) {
         seenSlugs.add(slugCurrent);
+        seenNormalizedNames.add(normalizedName);
         uniqueProducts.push(product);
 
-        // 4件集まったら終了
-        if (uniqueProducts.length >= 4) break;
+        // 10件集まったら終了
+        if (uniqueProducts.length >= 10) break;
       }
     }
 
@@ -203,10 +224,10 @@ async function getFeaturedProducts(): Promise<Product[]> {
   }
 }
 
-// 人気の成分を取得（上位6件）
+// 人気の成分を取得（横スクロールで10件表示）
 // 人気度スコア = (商品数 × 10) + (表示回数 × 1)
 async function getPopularIngredients(): Promise<Ingredient[]> {
-  const query = `*[_type == "ingredient"] | order(coalesce(popularityScore, 0) desc)[0..5]{
+  const query = `*[_type == "ingredient"] | order(coalesce(popularityScore, 0) desc)[0..9]{
     name,
     nameEn,
     category,
@@ -466,7 +487,7 @@ export default async function Home() {
                   おすすめのサプリメント
                 </h2>
                 <Link
-                  href="#all-products"
+                  href="/products"
                   className="text-primary hover:text-primary-700 font-medium text-sm flex items-center gap-1"
                 >
                   他の商品を見る
