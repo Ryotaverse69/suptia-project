@@ -148,12 +148,24 @@ async function getTotalProductCount(): Promise<number> {
 function normalizeProductName(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[【】\[\]（）()「」『』\s・\/]/g, "") // 記号・空白を除去
+    .replace(/[【】\[\]（）()「」『』\s・\/＼]/g, "") // 記号・空白を除去
     .replace(/ポイント\d+倍/g, "") // "ポイント5倍"を除去
     .replace(/約\d+[ヶケか]月分/g, "") // "約6ヶ月分"を除去
+    .replace(/\d+日分/g, "") // "30日分"を除去
     .replace(/\d+粒/g, "") // "150粒"を除去
+    .replace(/\d+mg/g, "") // "1000mg"を除去
+    .replace(/\d+\.?\d*g/g, "") // "57.2g"を除去
+    .replace(/\d+iu/g, "") // "2000IU"を除去
+    .replace(/\d+μg/g, "") // "800μg"を除去
     .replace(/メール便.*$/g, "") // "メール便送料無料"を除去
-    .slice(0, 30); // 最初の30文字で比較
+    .replace(/送料無料.*$/g, "") // "送料無料"を除去
+    .replace(/楽天.*$/g, "") // "楽天お買い物マラソン"を除去
+    .replace(/だけの/g, "") // "だけの"を除去
+    .replace(/栄養機能食品/g, "") // "栄養機能食品"を除去
+    .replace(/カルシウム不使用/g, "") // "カルシウム不使用"を除去
+    .replace(/日本製/g, "") // "日本製"を除去
+    .replace(/ハロウィン/g, "") // "ハロウィン"を除去
+    .slice(0, 15); // 最初の15文字で比較（より厳格に）
 }
 
 // おすすめサプリを取得（横スクロールで10件表示）
