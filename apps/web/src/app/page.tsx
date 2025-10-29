@@ -149,7 +149,10 @@ async function getTotalProductCount(): Promise<number> {
 function normalizeProductName(name: string): string {
   let normalized = name
     .toLowerCase()
-    // まず全ての数字と単位を除去
+    // 最初に全ての記号・括弧・空白を除去（全角・半角両方）
+    .replace(/[【】\[\]（）()「」『』\s・\/／＼＼｜]/g, "")
+    // 数字と単位を除去
+    .replace(/約/g, "") // 「約」を除去
     .replace(/\d+\.?\d*(ヶ|ケ|か)?月分/g, "")
     .replace(/\d+日分/g, "")
     .replace(/\d+粒/g, "")
@@ -158,8 +161,6 @@ function normalizeProductName(name: string): string {
     .replace(/\d+\.?\d*g/g, "")
     .replace(/\d+\.?\d*iu/g, "")
     .replace(/\d+μg/g, "")
-    // 記号・括弧・空白を全て除去
-    .replace(/[【】\[\]（）()「」『』\s・\/＼｜]/g, "")
     // プロモーション文言を除去
     .replace(/ポイント\d+倍/g, "")
     .replace(/メール便.*$/g, "")
@@ -177,7 +178,8 @@ function normalizeProductName(name: string): string {
     .replace(/配合/g, "")
     .replace(/ダイエット/g, "")
     .replace(/diet/g, "")
-    .replace(/摂取量/g, "");
+    .replace(/摂取量/g, "")
+    .replace(/粒/g, ""); // 残った「粒」も除去
 
   // 「サプリメント」や「サプリ」も統一
   normalized = normalized.replace(/サプリメント/g, "サプリ");
