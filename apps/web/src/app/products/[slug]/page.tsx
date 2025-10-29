@@ -48,6 +48,7 @@ interface Product {
   servingsPerContainer: number;
   servingsPerDay: number;
   description?: string;
+  allIngredients?: string;
   slug: {
     current: string;
   };
@@ -107,6 +108,7 @@ async function getProduct(slug: string): Promise<Product | null> {
     servingsPerContainer,
     servingsPerDay,
     description,
+    allIngredients,
     slug,
     images[]{
       asset->{
@@ -593,6 +595,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
           safetyDetails={safetyDetails}
+          allIngredients={product.allIngredients}
           className="mb-8"
         />
 

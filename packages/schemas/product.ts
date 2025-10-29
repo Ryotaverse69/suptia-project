@@ -287,6 +287,14 @@ export const product = defineType({
         }).warning(),
     }),
     defineField({
+      name: "allIngredients",
+      title: "全成分表示",
+      type: "text",
+      description:
+        "全成分リスト（有効成分、添加物、保存料を含む）。商品パッケージや公式情報に記載されている全成分を入力してください。",
+      rows: 5,
+    }),
+    defineField({
       name: "form",
       title: "剤形",
       type: "string",

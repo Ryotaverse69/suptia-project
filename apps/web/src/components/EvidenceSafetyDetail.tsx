@@ -10,8 +10,10 @@ import {
   ExternalLink,
   TrendingDown,
   TrendingUp,
+  Pill,
 } from "lucide-react";
 import type { IngredientSafetyDetail } from "@/lib/auto-scoring";
+import { detectUnsafeAdditives } from "@/lib/auto-scoring";
 
 interface EvidenceSafetyDetailProps {
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
@@ -27,6 +29,7 @@ interface EvidenceSafetyDetailProps {
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
+  allIngredients?: string;
   className?: string;
 }
 
@@ -40,6 +43,7 @@ export function EvidenceSafetyDetail({
   ingredientName,
   ingredientEvidenceLevel,
   safetyDetails = [],
+  allIngredients,
   className = "",
 }: EvidenceSafetyDetailProps) {
   // エビデンスレベルの説明
@@ -428,6 +432,96 @@ export function EvidenceSafetyDetail({
                 </ul>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* 全成分表示 */}
+        {allIngredients && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <Pill size={20} className="text-blue-600" />
+              全成分表示
+            </h3>
+
+            {(() => {
+              const unsafeAdditives = detectUnsafeAdditives(allIngredients);
+              const hasConcerns = unsafeAdditives.length > 0;
+
+              return (
+                <>
+                  {/* 懸念される添加物の警告 */}
+                  {hasConcerns && (
+                    <div className="mb-4 p-3 bg-orange-50 border-2 border-orange-400 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle
+                          size={18}
+                          className="text-orange-700 mt-0.5"
+                        />
+                        <div className="flex-1">
+                          <p className="font-bold text-orange-800 mb-2">
+                            懸念される添加物が検出されました
+                          </p>
+                          <div className="space-y-1">
+                            {unsafeAdditives.map((additive, index) => {
+                              const severityColors = {
+                                critical:
+                                  "bg-red-100 text-red-800 border-red-300",
+                                warning:
+                                  "bg-orange-100 text-orange-800 border-orange-300",
+                                info: "bg-yellow-100 text-yellow-800 border-yellow-300",
+                              };
+                              const colorClass =
+                                severityColors[
+                                  additive.severity as keyof typeof severityColors
+                                ] || severityColors.info;
+
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-2 text-sm"
+                                >
+                                  <span
+                                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-md border ${colorClass} font-medium`}
+                                  >
+                                    {additive.name}
+                                    <span className="text-xs font-mono">
+                                      ({additive.penalty}点)
+                                    </span>
+                                  </span>
+                                  {additive.severity === "critical" && (
+                                    <span className="text-xs text-red-700 font-medium">
+                                      要注意
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <p className="text-xs text-orange-700 mt-2">
+                            ※
+                            これらの添加物は安全性に懸念があるため、安全性スコアに影響しています。
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 全成分リスト */}
+                  <div className="p-4 bg-white border border-gray-200 rounded-lg">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+                      {allIngredients}
+                    </p>
+                  </div>
+
+                  {!hasConcerns && (
+                    <div className="mt-3 flex items-center gap-2 text-sm text-green-700">
+                      <CheckCircle2 size={16} />
+                      <span>懸念される添加物は検出されませんでした。</span>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
 
