@@ -744,12 +744,18 @@ export default async function IngredientPage({ params }: Props) {
                       ))}
                     </div>
 
-                    <div className="mt-6 pt-6 border-t border-primary-200">
+                    <div className="mt-6 pt-6 border-t border-primary-200 space-y-3">
                       <Link
                         href="/ingredients"
                         className="block px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-center font-semibold"
                       >
                         成分ガイド一覧
+                      </Link>
+                      <Link
+                        href="/guide/dangerous-ingredients"
+                        className="block px-4 py-3 bg-orange-100 text-orange-900 border border-orange-300 rounded-lg hover:bg-orange-200 transition-colors text-center font-semibold"
+                      >
+                        ⚠️ 危険成分ガイド
                       </Link>
                     </div>
                   </div>
