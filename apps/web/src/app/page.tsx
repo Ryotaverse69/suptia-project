@@ -145,27 +145,45 @@ async function getTotalProductCount(): Promise<number> {
 }
 
 // 商品名を正規化（重複判定用）
+// より積極的なパターンマッチングで実質的に同じ商品を判定
 function normalizeProductName(name: string): string {
-  return name
+  let normalized = name
     .toLowerCase()
-    .replace(/[【】\[\]（）()「」『』\s・\/＼]/g, "") // 記号・空白を除去
-    .replace(/ポイント\d+倍/g, "") // "ポイント5倍"を除去
-    .replace(/約\d+[ヶケか]月分/g, "") // "約6ヶ月分"を除去
-    .replace(/\d+日分/g, "") // "30日分"を除去
-    .replace(/\d+粒/g, "") // "150粒"を除去
-    .replace(/\d+mg/g, "") // "1000mg"を除去
-    .replace(/\d+\.?\d*g/g, "") // "57.2g"を除去
-    .replace(/\d+iu/g, "") // "2000IU"を除去
-    .replace(/\d+μg/g, "") // "800μg"を除去
-    .replace(/メール便.*$/g, "") // "メール便送料無料"を除去
-    .replace(/送料無料.*$/g, "") // "送料無料"を除去
-    .replace(/楽天.*$/g, "") // "楽天お買い物マラソン"を除去
-    .replace(/だけの/g, "") // "だけの"を除去
-    .replace(/栄養機能食品/g, "") // "栄養機能食品"を除去
-    .replace(/カルシウム不使用/g, "") // "カルシウム不使用"を除去
-    .replace(/日本製/g, "") // "日本製"を除去
-    .replace(/ハロウィン/g, "") // "ハロウィン"を除去
-    .slice(0, 15); // 最初の15文字で比較（より厳格に）
+    // まず全ての数字と単位を除去
+    .replace(/\d+\.?\d*(ヶ|ケ|か)?月分/g, "")
+    .replace(/\d+日分/g, "")
+    .replace(/\d+粒/g, "")
+    .replace(/\d+錠/g, "")
+    .replace(/\d+\.?\d*mg/g, "")
+    .replace(/\d+\.?\d*g/g, "")
+    .replace(/\d+\.?\d*iu/g, "")
+    .replace(/\d+μg/g, "")
+    // 記号・括弧・空白を全て除去
+    .replace(/[【】\[\]（）()「」『』\s・\/＼｜]/g, "")
+    // プロモーション文言を除去
+    .replace(/ポイント\d+倍/g, "")
+    .replace(/メール便.*$/g, "")
+    .replace(/送料無料.*$/g, "")
+    .replace(/楽天.*$/g, "")
+    // 一般的な修飾語を除去
+    .replace(/だけの/g, "")
+    .replace(/高吸収/g, "")
+    .replace(/栄養機能食品/g, "")
+    .replace(/カルシウム不使用/g, "")
+    .replace(/日本製/g, "")
+    .replace(/手軽/g, "")
+    .replace(/ハロウィン/g, "")
+    .replace(/ミネラル類/g, "")
+    .replace(/配合/g, "")
+    .replace(/ダイエット/g, "")
+    .replace(/diet/g, "")
+    .replace(/摂取量/g, "");
+
+  // 「サプリメント」や「サプリ」も統一
+  normalized = normalized.replace(/サプリメント/g, "サプリ");
+
+  // 最初の10文字のみ比較（商品の核心部分）
+  return normalized.slice(0, 10);
 }
 
 // おすすめサプリを取得（横スクロールで10件表示）
@@ -205,7 +223,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
     const allProducts = await sanity.fetch(query);
     if (!allProducts || allProducts.length === 0) return [];
 
-    // slugと正規化された商品名で重複を除外
+    // 2段階の重複チェック：slug、正規化された商品名
     const uniqueProducts: Product[] = [];
     const seenSlugs = new Set<string>();
     const seenNormalizedNames = new Set<string>();
@@ -214,19 +232,26 @@ async function getFeaturedProducts(): Promise<Product[]> {
       const slugCurrent = product.slug?.current;
       const normalizedName = normalizeProductName(product.name);
 
-      // slugまたは正規化名が重複していない場合のみ追加
-      if (
-        slugCurrent &&
-        !seenSlugs.has(slugCurrent) &&
-        !seenNormalizedNames.has(normalizedName)
-      ) {
-        seenSlugs.add(slugCurrent);
-        seenNormalizedNames.add(normalizedName);
-        uniqueProducts.push(product);
-
-        // 10件集まったら終了
-        if (uniqueProducts.length >= 10) break;
+      // slug または正規化名が重複している場合はスキップ
+      if (!slugCurrent || seenSlugs.has(slugCurrent)) {
+        continue;
       }
+      if (seenNormalizedNames.has(normalizedName)) {
+        console.log(
+          `[重複スキップ] ${product.name} → 正規化名: ${normalizedName}`,
+        );
+        continue;
+      }
+
+      // 重複していない場合のみ追加
+      seenSlugs.add(slugCurrent);
+      seenNormalizedNames.add(normalizedName);
+      uniqueProducts.push(product);
+
+      console.log(`[追加] ${product.name} → 正規化名: ${normalizedName}`);
+
+      // 10件集まったら終了
+      if (uniqueProducts.length >= 10) break;
     }
 
     return uniqueProducts;
