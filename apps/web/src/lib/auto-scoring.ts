@@ -292,7 +292,51 @@ export function calculateSafetyScore(ingredient: Ingredient): number {
 }
 
 /**
- * 複数の成分から総合安全性スコアを計算
+ * 複数の成分から総合安全性スコアを計算（配合率ベース）
+ * @param ingredientsWithAmount 成分データと配合量の配列
+ * @returns 安全性スコア（0-100）
+ */
+export function calculateSafetyScoreByRatio(
+  ingredientsWithAmount: Array<{
+    ingredient: Ingredient;
+    amountMg: number;
+  }>,
+): { score: number; details: IngredientSafetyDetail[] } {
+  if (ingredientsWithAmount.length === 0) {
+    return { score: 50, details: [] };
+  }
+
+  // 全成分の配合量合計を計算
+  const totalAmount = ingredientsWithAmount.reduce(
+    (sum, item) => sum + item.amountMg,
+    0,
+  );
+
+  if (totalAmount === 0) {
+    return { score: 50, details: [] };
+  }
+
+  // 各成分の安全性詳細を取得
+  const safetyDetails = ingredientsWithAmount.map((item) =>
+    calculateSafetyScoreWithDetails(item.ingredient),
+  );
+
+  // 各成分の安全性スコアを配合率で重み付けして合計
+  const weightedScore = ingredientsWithAmount.reduce((sum, item, index) => {
+    const ratio = item.amountMg / totalAmount; // 配合率
+    const safetyScore = safetyDetails[index].finalScore;
+    return sum + safetyScore * ratio;
+  }, 0);
+
+  return {
+    score: Math.round(weightedScore),
+    details: safetyDetails,
+  };
+}
+
+/**
+ * 複数の成分から総合安全性スコアを計算（旧方式：後方互換性のため残す）
+ * @deprecated 配合率ベースのcalculateSafetyScoreByRatio()を使用してください
  */
 export function calculateOverallSafetyScore(ingredients: Ingredient[]): number {
   if (ingredients.length === 0) return 50; // デフォルト
@@ -306,7 +350,39 @@ export function calculateOverallSafetyScore(ingredients: Ingredient[]): number {
 }
 
 /**
- * 複数の成分から総合エビデンススコアを計算
+ * 複数の成分から総合エビデンススコアを計算（配合率ベース）
+ * @param ingredientsWithAmount 成分データと配合量の配列
+ * @returns エビデンススコア（0-100）
+ */
+export function calculateEvidenceScoreByRatio(
+  ingredientsWithAmount: Array<{
+    ingredient: Ingredient;
+    amountMg: number;
+  }>,
+): number {
+  if (ingredientsWithAmount.length === 0) return 50; // デフォルト
+
+  // 全成分の配合量合計を計算
+  const totalAmount = ingredientsWithAmount.reduce(
+    (sum, item) => sum + item.amountMg,
+    0,
+  );
+
+  if (totalAmount === 0) return 50; // 配合量が0の場合はデフォルト
+
+  // 各成分のエビデンススコアを配合率で重み付けして合計
+  const weightedScore = ingredientsWithAmount.reduce((sum, item) => {
+    const ratio = item.amountMg / totalAmount; // 配合率
+    const evidenceScore = evidenceLevelToScore(item.ingredient.evidenceLevel);
+    return sum + evidenceScore * ratio;
+  }, 0);
+
+  return Math.round(weightedScore);
+}
+
+/**
+ * 複数の成分から総合エビデンススコアを計算（旧方式：後方互換性のため残す）
+ * @deprecated 配合率ベースのcalculateEvidenceScoreByRatio()を使用してください
  */
 export function calculateOverallEvidenceScore(
   ingredients: Ingredient[],

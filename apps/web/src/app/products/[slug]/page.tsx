@@ -22,6 +22,8 @@ import Script from "next/script";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
 import {
   calculateAutoScores,
+  calculateEvidenceScoreByRatio,
+  calculateSafetyScoreByRatio,
   type IngredientSafetyDetail,
 } from "@/lib/auto-scoring";
 
@@ -333,18 +335,60 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // 全成分マスタデータを取得
   const allIngredients = await getAllIngredients();
 
-  // スコアの自動計算（scoresがない、またはingredientsが空の場合）
-  const needsAutoScoring =
-    !product.scores ||
-    !product.scores.evidence ||
-    !product.scores.safety ||
-    !product.ingredients ||
-    product.ingredients.length === 0;
-
+  // スコアの自動計算
   let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
   let safetyDetails: IngredientSafetyDetail[] = [];
 
-  if (needsAutoScoring) {
+  // 商品に成分データがあり、全ての成分にingredient情報がある場合は配合率ベースで計算
+  const hasValidIngredients =
+    product.ingredients &&
+    product.ingredients.length > 0 &&
+    product.ingredients.every(
+      (ing) => ing.ingredient && ing.amountMgPerServing > 0,
+    );
+
+  if (hasValidIngredients) {
+    // 配合率ベースのスコア計算
+    const ingredientsWithAmount = product.ingredients!.map((ing) => ({
+      ingredient: ing.ingredient!,
+      amountMg: ing.amountMgPerServing,
+    }));
+
+    const evidenceScore = calculateEvidenceScoreByRatio(ingredientsWithAmount);
+    const safetyResult = calculateSafetyScoreByRatio(ingredientsWithAmount);
+
+    finalScores = {
+      evidence: evidenceScore,
+      safety: safetyResult.score,
+      overall: Math.round((evidenceScore + safetyResult.score) / 2),
+    };
+    safetyDetails = safetyResult.details;
+
+    console.log(`[配合率ベーススコア計算] ${product.name}:`, {
+      成分数: ingredientsWithAmount.length,
+      配合量合計: ingredientsWithAmount.reduce(
+        (sum, item) => sum + item.amountMg,
+        0,
+      ),
+      配合率: ingredientsWithAmount.map((item, index, arr) => ({
+        成分: item.ingredient.name,
+        配合量: item.amountMg,
+        配合率:
+          Math.round(
+            (item.amountMg / arr.reduce((sum, i) => sum + i.amountMg, 0)) *
+              1000,
+          ) / 10,
+      })),
+      evidenceScore,
+      safetyScore: safetyResult.score,
+      overall: finalScores.overall,
+    });
+  } else if (
+    !product.scores ||
+    !product.scores.evidence ||
+    !product.scores.safety
+  ) {
+    // 成分データがない、または不完全な場合は商品名から推測（フォールバック）
     const autoScores = calculateAutoScores(product.name, allIngredients);
     finalScores = {
       evidence: autoScores.evidenceScore,
@@ -353,7 +397,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     };
     safetyDetails = autoScores.safetyDetails;
 
-    console.log(`[Auto-Scoring] ${product.name}:`, {
+    console.log(`[商品名ベーススコア計算] ${product.name}:`, {
       foundIngredients: autoScores.foundIngredients,
       evidenceScore: autoScores.evidenceScore,
       evidenceLevel: autoScores.evidenceLevel,
@@ -366,20 +410,43 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // 全商品を取得して称号を計算
   const allProducts = await getAllProducts();
 
-  // 称号計算用にデータを変換（自動スコアを適用）
+  // 称号計算用にデータを変換（配合率ベースのスコアを適用）
   const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
     (p) => {
-      // 各商品にも自動スコア計算を適用
+      // 各商品にもスコア計算を適用
       let evidenceScore = 50;
       let safetyScore = 50;
 
+      // 既にスコアがある場合はそれを使用
       if (p.scores?.evidence && p.scores?.safety) {
         evidenceScore = p.scores.evidence;
         safetyScore = p.scores.safety;
       } else {
-        const autoScores = calculateAutoScores(p.name || "", allIngredients);
-        evidenceScore = autoScores.evidenceScore;
-        safetyScore = autoScores.safetyScore;
+        // 成分データがある場合は配合率ベースで計算
+        const hasValidIngredients =
+          p.ingredients &&
+          p.ingredients.length > 0 &&
+          p.ingredients.every(
+            (ing: any) => ing.ingredient && ing.amountMgPerServing > 0,
+          );
+
+        if (hasValidIngredients) {
+          const ingredientsWithAmount = p.ingredients!.map((ing: any) => ({
+            ingredient: ing.ingredient,
+            amountMg: ing.amountMgPerServing,
+          }));
+
+          evidenceScore = calculateEvidenceScoreByRatio(ingredientsWithAmount);
+          const safetyResult = calculateSafetyScoreByRatio(
+            ingredientsWithAmount,
+          );
+          safetyScore = safetyResult.score;
+        } else {
+          // フォールバック: 商品名から推測
+          const autoScores = calculateAutoScores(p.name || "", allIngredients);
+          evidenceScore = autoScores.evidenceScore;
+          safetyScore = autoScores.safetyScore;
+        }
       }
 
       return {
