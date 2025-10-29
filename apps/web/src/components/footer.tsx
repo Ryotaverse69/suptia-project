@@ -136,6 +136,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/guide/dangerous-ingredients"
+                  className="hover:text-foreground transition-colors"
+                >
+                  危険成分ガイド
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/sitemap"
                   className="hover:text-foreground transition-colors"
                 >

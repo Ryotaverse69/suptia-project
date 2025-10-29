@@ -52,14 +52,6 @@ export function Header() {
               サプティアの使い方
             </Link>
 
-            {/* Dangerous Ingredients Guide */}
-            <Link
-              href="/guide/dangerous-ingredients"
-              className="text-sm text-red-600 hover:text-red-700 transition-colors font-semibold"
-            >
-              ⚠️ 危険成分ガイド
-            </Link>
-
             {/* Login Button - Hidden for now */}
             {/* <Link
               href="/login"
@@ -102,15 +94,6 @@ export function Header() {
               className="block px-2 py-2 text-primary-800 hover:text-primary transition-colors font-medium"
             >
               サプティアの使い方
-            </Link>
-
-            {/* Dangerous Ingredients Guide - Mobile */}
-            <Link
-              href="/guide/dangerous-ingredients"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-2 py-2 text-red-600 hover:text-red-700 transition-colors font-semibold"
-            >
-              ⚠️ 危険成分ガイド
             </Link>
 
             {/* Login - Mobile - Hidden for now */}
