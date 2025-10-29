@@ -341,6 +341,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // スコアの自動計算
   let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
   let safetyDetails: IngredientSafetyDetail[] = [];
+  let evidenceDetails: IngredientEvidenceDetail[] = [];
 
   // 商品に成分データがあり、全ての成分にingredient情報がある場合は配合率ベースで計算
   const hasValidIngredients =
@@ -359,6 +360,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
     const evidenceScore = calculateEvidenceScoreByRatio(ingredientsWithAmount);
     const safetyResult = calculateSafetyScoreByRatio(ingredientsWithAmount);
+
+    // エビデンス詳細を生成
+    const totalAmount = ingredientsWithAmount.reduce(
+      (sum, item) => sum + item.amountMg,
+      0,
+    );
+    evidenceDetails = ingredientsWithAmount.map((item) => {
+      const ratio = item.amountMg / totalAmount;
+      const evidenceLevel = item.ingredient.evidenceLevel || ("D" as const);
+      return {
+        name: item.ingredient.name,
+        evidenceLevel: evidenceLevel as "S" | "A" | "B" | "C" | "D",
+        evidenceScore: evidenceLevelToScore(evidenceLevel),
+        amountMg: item.amountMg,
+        ratio: ratio,
+      };
+    });
 
     finalScores = {
       evidence: evidenceScore,
@@ -385,7 +403,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
       evidenceScore,
       safetyScore: safetyResult.score,
       overall: finalScores.overall,
+      evidenceDetails: evidenceDetails.length,
     });
+    console.log(`[エビデンス詳細] evidenceDetails:`, evidenceDetails);
   } else if (
     !product.scores ||
     !product.scores.evidence ||
@@ -665,6 +685,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
           safetyDetails={safetyDetails}
+          evidenceDetails={evidenceDetails}
           allIngredients={product.allIngredients}
           className="mb-8"
         />

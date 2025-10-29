@@ -261,7 +261,12 @@ export default async function IngredientsPage() {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {[...ingredients]
-                  .sort((a, b) => a.slug.current.localeCompare(b.slug.current))
+                  .filter((ingredient) => ingredient.slug?.current)
+                  .sort((a, b) =>
+                    (a.slug?.current || "").localeCompare(
+                      b.slug?.current || "",
+                    ),
+                  )
                   .map((ingredient) => (
                     <Link
                       key={ingredient.slug.current}
