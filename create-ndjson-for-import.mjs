@@ -24,22 +24,33 @@ async function createNDJSON() {
 
       // Sanityドキュメント形式に変換
       const doc = {
-        _id: `ingredient-${article.slug}`,
+        _id: `ingredient-${article.slug?.current || article.slug}`,
         _type: 'ingredient',
         name: article.name,
         nameEn: article.nameEn,
         slug: {
           _type: 'slug',
-          current: article.slug
+          current: article.slug?.current || article.slug
         },
         category: article.category,
         evidenceLevel: article.evidenceLevel,
+        safetyLevel: article.safetyLevel,
+        riskLevel: article.riskLevel,
         description: article.description,
         benefits: article.benefits,
         foodSources: article.foodSources,
         recommendedDosage: article.recommendedDosage,
         sideEffects: article.sideEffects,
         interactions: article.interactions,
+        overdoseRisks: article.overdoseRisks,
+        specialWarnings: article.specialWarnings?.map((warning, index) => ({
+          _key: `warning-${index}`,
+          _type: 'specialWarning',
+          severity: warning.severity,
+          message: warning.message,
+          affectedGroups: warning.affectedGroups
+        })),
+        contraindications: article.contraindications,
         faqs: article.faqs?.map((faq, index) => ({
           _key: `faq-${index}`,
           _type: 'faq',
@@ -50,7 +61,8 @@ async function createNDJSON() {
           _key: `ref-${index}`,
           _type: 'reference',
           title: ref.title,
-          url: ref.url
+          url: ref.url,
+          year: ref.year
         })),
         relatedIngredients: article.relatedIngredients,
         scientificBackground: article.scientificBackground,
