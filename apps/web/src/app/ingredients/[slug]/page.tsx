@@ -104,6 +104,14 @@ interface Ingredient {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string[];
+  // 危険性関連（新規）
+  riskLevel?: "low" | "medium" | "high" | "critical";
+  overdoseRisks?: string[];
+  specialWarnings?: Array<{
+    severity: "critical" | "warning" | "info";
+    message: string;
+    affectedGroups?: string[];
+  }>;
 }
 
 interface RelatedProduct {
@@ -171,7 +179,10 @@ async function getIngredient(slug: string): Promise<Ingredient | null> {
     references,
     seoTitle,
     seoDescription,
-    seoKeywords
+    seoKeywords,
+    riskLevel,
+    overdoseRisks,
+    specialWarnings
   }`;
 
   try {
@@ -469,10 +480,13 @@ export default async function IngredientPage({ params }: Props) {
           {/* 要約（1行） */}
           <IngredientSummary description={ingredient.description} />
 
-          {/* 妊婦・授乳婦への警告 */}
+          {/* 危険性・警告表示 */}
           <IngredientWarnings
             sideEffects={ingredient.sideEffects}
             interactions={ingredient.interactions}
+            riskLevel={ingredient.riskLevel}
+            specialWarnings={ingredient.specialWarnings}
+            overdoseRisks={ingredient.overdoseRisks}
           />
 
           {/* メインコンテンツ */}

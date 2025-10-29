@@ -13,7 +13,7 @@ export interface Ingredient {
   recommendedDosage: string;
   sideEffects: string[];
   interactions: string[];
-  evidenceLevel: "高" | "中" | "低";
+  evidenceLevel: "高" | "中" | "低" | "S" | "A" | "B" | "C" | "D";
   scientificBackground: string;
   foodSources: string[];
   relatedIngredients: string[];
@@ -25,6 +25,15 @@ export interface Ingredient {
     title: string;
     url?: string;
   }>;
+  // 危険性・安全性関連（新規）
+  riskLevel?: "low" | "medium" | "high" | "critical";
+  overdoseRisks?: string[];
+  specialWarnings?: Array<{
+    severity: "critical" | "warning" | "info";
+    message: string;
+    affectedGroups?: string[];
+  }>;
+  contraindications?: string[];
 }
 
 export const ingredientsData: Ingredient[] = [

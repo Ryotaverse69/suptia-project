@@ -228,6 +228,22 @@ export const ingredient = defineType({
 
     // 安全性
     defineField({
+      name: "riskLevel",
+      title: "総合リスクレベル",
+      type: "string",
+      description: "この成分の総合的な危険度レベル（危険成分ガイドで使用）",
+      options: {
+        list: [
+          { title: "低リスク: 一般的に安全", value: "low" },
+          { title: "中リスク: 特定条件下で注意", value: "medium" },
+          { title: "高リスク: 広範囲で注意必要", value: "high" },
+          { title: "最高リスク: 使用前に必ず医師相談", value: "critical" },
+        ],
+      },
+      initialValue: "low",
+      group: "safety",
+    }),
+    defineField({
       name: "sideEffects",
       title: "副作用・注意点",
       type: "array",
@@ -245,6 +261,57 @@ export const ingredient = defineType({
           }
           return true;
         }),
+      group: "safety",
+    }),
+    defineField({
+      name: "overdoseRisks",
+      title: "過剰摂取のリスク",
+      type: "array",
+      of: [{ type: "string" }],
+      description:
+        "過剰摂取時の具体的なリスクを記載（上限量、症状、対処法など）",
+      group: "safety",
+    }),
+    defineField({
+      name: "specialWarnings",
+      title: "特別警告",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "severity",
+              title: "重要度",
+              type: "string",
+              options: {
+                list: [
+                  { title: "🚨 緊急", value: "critical" },
+                  { title: "⚠️ 警告", value: "warning" },
+                  { title: "ℹ️ 情報", value: "info" },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "message",
+              title: "警告メッセージ",
+              type: "text",
+              rows: 3,
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "affectedGroups",
+              title: "対象者",
+              type: "array",
+              of: [{ type: "string" }],
+              description: "この警告が適用される対象者（例：妊婦、腎臓病患者）",
+            },
+          ],
+        },
+      ],
+      description:
+        "重要度の高い警告を目立つ形で表示（危険成分ガイドのトップに表示）",
       group: "safety",
     }),
     defineField({
