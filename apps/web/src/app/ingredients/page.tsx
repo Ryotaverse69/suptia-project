@@ -54,16 +54,19 @@ interface Ingredient {
   evidenceLevel: string;
 }
 
-// カテゴリー一覧
-const ingredientCategories = [
+// カテゴリーの表示順序
+const categoryOrder = [
   "ビタミン",
   "ミネラル",
   "脂肪酸",
   "アミノ酸",
-  "プロバイオティクス",
+  "ホルモン",
+  "抗酸化",
   "ハーブ",
+  "プロバイオティクス",
   "その他",
-] as const;
+  "other", // 英語のカテゴリーも対応
+];
 
 async function getIngredients(): Promise<Ingredient[]> {
   const query = `*[_type == "ingredient"] | order(category asc, name asc){
@@ -87,8 +90,23 @@ async function getIngredients(): Promise<Ingredient[]> {
 export default async function IngredientsPage() {
   const ingredients = await getIngredients();
 
+  // 動的にカテゴリーを抽出
+  const uniqueCategories = Array.from(
+    new Set(ingredients.map((ing) => ing.category).filter(Boolean)),
+  );
+
+  // カテゴリーを表示順序でソート（未定義のものは最後）
+  const sortedCategories = uniqueCategories.sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
+
   // カテゴリー別に成分を整理
-  const ingredientsByCategory = ingredientCategories.map((category) => ({
+  const ingredientsByCategory = sortedCategories.map((category) => ({
     category,
     ingredients: ingredients.filter((ing) => ing.category === category),
   }));
