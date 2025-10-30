@@ -9,9 +9,7 @@ export default function CookiesPage() {
       <h1 className="text-4xl font-bold mb-8">Cookieポリシー</h1>
 
       <div className="prose prose-slate max-w-none">
-        <p className="text-muted-foreground mb-8">
-          最終更新日: {new Date().toLocaleDateString("ja-JP")}
-        </p>
+        <p className="text-muted-foreground mb-8">最終更新日: 2025年10月30日</p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">1. Cookieとは</h2>

@@ -12,9 +12,7 @@ export default function AffiliatePage() {
       <h1 className="text-4xl font-bold mb-8">アフィリエイト開示</h1>
 
       <div className="prose prose-slate max-w-none">
-        <p className="text-muted-foreground mb-8">
-          最終更新日: {new Date().toLocaleDateString("ja-JP")}
-        </p>
+        <p className="text-muted-foreground mb-8">最終更新日: 2025年10月30日</p>
 
         <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
           <h3 className="font-bold text-lg mb-3">📢 透明性の原則</h3>

@@ -11,9 +11,7 @@ export default function DisclaimerPage() {
       <h1 className="text-4xl font-bold mb-8">免責事項</h1>
 
       <div className="prose prose-slate max-w-none">
-        <p className="text-muted-foreground mb-8">
-          最終更新日: {new Date().toLocaleDateString("ja-JP")}
-        </p>
+        <p className="text-muted-foreground mb-8">最終更新日: 2025年10月30日</p>
 
         <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
           <h3 className="font-bold text-lg mb-3">⚠️ 重要な免責事項</h3>
