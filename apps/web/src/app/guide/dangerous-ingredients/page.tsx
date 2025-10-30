@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { sanity } from "@/lib/sanity.client";
 import Link from "next/link";
 import type { Ingredient } from "@/data/ingredients";
+import { ContraindicationChecklist } from "@/components/ContraindicationChecklist";
 
 export const metadata: Metadata = {
   title: "危険成分ガイド | Suptia（サプティア）",
@@ -270,35 +271,10 @@ export default async function DangerousIngredientsPage() {
             あなたの状況に当てはまるものをチェック
           </h2>
 
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <p className="text-gray-700 mb-4">
-              以下の項目に当てはまる場合、注意が必要な成分があります。該当する項目をクリックしてください。
-            </p>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {Array.from(contraindicationMap.entries())
-                .sort(([, a], [, b]) => b.length - a.length)
-                .slice(0, 12)
-                .map(([tag, ingredients]) => (
-                  <button
-                    key={tag}
-                    className="text-left p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-gray-900 group-hover:text-blue-900">
-                        {contraindicationLabels[tag] || tag}
-                      </h3>
-                      <span className="text-2xl font-bold text-gray-600 group-hover:text-blue-600">
-                        {ingredients.length}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 group-hover:text-blue-800">
-                      注意が必要な成分
-                    </p>
-                  </button>
-                ))}
-            </div>
-          </div>
+          <ContraindicationChecklist
+            contraindicationMap={contraindicationMap}
+            contraindicationLabels={contraindicationLabels}
+          />
         </div>
 
         {/* 成分検索へのリンク */}
