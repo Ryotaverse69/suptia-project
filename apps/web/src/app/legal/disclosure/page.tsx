@@ -11,9 +11,7 @@ export default function DisclosurePage() {
       <h1 className="text-4xl font-bold mb-8">特定商取引法に基づく表記</h1>
 
       <div className="prose prose-slate max-w-none">
-        <p className="text-muted-foreground mb-8">
-          特定商取引法に基づき、以下の通り表記します。
-        </p>
+        <p className="text-muted-foreground mb-8">最終更新日: 2025年10月30日</p>
 
         <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
           <p className="font-semibold mb-2">📢 重要なお知らせ</p>
@@ -191,12 +189,6 @@ export default function DisclosurePage() {
             </p>
           </div>
         </section>
-
-        <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 mt-8">
-          <p className="text-sm text-muted-foreground">
-            最終更新日: 2025年10月30日
-          </p>
-        </div>
       </div>
     </div>
   );
