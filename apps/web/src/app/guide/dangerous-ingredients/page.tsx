@@ -117,6 +117,7 @@ const contraindicationLabels: Record<string, string> = {
   "anticoagulant-use": "抗凝固薬服用中",
   "antiplatelet-use": "抗血小板薬服用中",
   "antidepressant-use": "抗うつ薬服用中",
+  "anticonvulsant-use": "抗てんかん薬服用中",
   "immunosuppressant-use": "免疫抑制薬服用中",
   "hormone-therapy": "ホルモン剤服用中",
   chemotherapy: "化学療法中",
@@ -124,6 +125,11 @@ const contraindicationLabels: Record<string, string> = {
   "shellfish-allergy": "貝アレルギー",
   "soy-allergy": "大豆アレルギー",
   "nut-allergy": "ナッツアレルギー",
+  hypercalcemia: "高カルシウム血症",
+  hemochromatosis: "鉄過剰症",
+  "stomach-ulcer": "胃潰瘍",
+  smoking: "喫煙者",
+  asthma: "喘息",
 };
 
 export default async function DangerousIngredientsPage() {
