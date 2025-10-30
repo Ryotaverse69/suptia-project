@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { IngredientSearch } from "@/components/IngredientSearch";
 
+// ISR: 1時間ごとにページを再生成
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "成分ガイド｜サプリメント成分の効果と科学的根拠 - サプティア",
   description:
