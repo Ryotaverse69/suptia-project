@@ -31,29 +31,40 @@ export default function DisclosurePage() {
               <div>サプティア (Suptia)</div>
             </div>
             <div className="flex">
-              <div className="font-semibold w-48">運営者</div>
-              <div>[運営者名・法人名]</div>
+              <div className="font-semibold w-48">運営形態</div>
+              <div>個人事業主</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">運営責任者</div>
-              <div>[代表者名]</div>
+              <div>長谷川　亮太</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">所在地</div>
-              <div>[所在地住所]</div>
+              <div>請求があり次第遅滞なく開示します</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">電話番号</div>
-              <div>[電話番号]</div>
+              <div>請求があり次第遅滞なく開示します</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">メールアドレス</div>
-              <div>[contact@suptia.example.com]</div>
+              <div>info@suptia.com</div>
             </div>
             <div className="flex">
               <div className="font-semibold w-48">URL</div>
               <div>https://suptia.com</div>
             </div>
+          </div>
+          <div className="mt-4 text-sm text-muted-foreground bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+            <p className="mb-2">
+              <span className="font-semibold">
+                📍 所在地・電話番号の開示について
+              </span>
+            </p>
+            <p>
+              特定商取引法に基づき、所在地および電話番号については、ご請求があり次第遅滞なく開示いたします。
+              開示をご希望の場合は、上記メールアドレスまでお問い合わせください。
+            </p>
           </div>
         </section>
 
@@ -168,7 +179,7 @@ export default function DisclosurePage() {
                   こちら
                 </a>
               </li>
-              <li>メールアドレス: [contact@suptia.example.com]</li>
+              <li>メールアドレス: info@suptia.com</li>
             </ul>
             <p className="text-sm text-muted-foreground mt-4">
               ※ お問い合わせへの回答には数日かかる場合があります。
@@ -176,11 +187,9 @@ export default function DisclosurePage() {
           </div>
         </section>
 
-        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 mt-8">
-          <p className="text-sm">
-            <span className="font-semibold">⚠️ 注意事項:</span>
-            本ページの [ ]
-            内の情報は、実際の運営者情報に置き換える必要があります。
+        <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 mt-8">
+          <p className="text-sm text-muted-foreground">
+            最終更新日: 2025年10月30日
           </p>
         </div>
       </div>
