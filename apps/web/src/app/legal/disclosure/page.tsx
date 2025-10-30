@@ -55,16 +55,21 @@ export default function DisclosurePage() {
               <div>https://suptia.com</div>
             </div>
           </div>
-          <div className="mt-4 text-sm text-muted-foreground bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-            <p className="mb-2">
-              <span className="font-semibold">
-                📍 所在地・電話番号の開示について
-              </span>
-            </p>
-            <p>
-              特定商取引法に基づき、所在地および電話番号については、ご請求があり次第遅滞なく開示いたします。
-              開示をご希望の場合は、上記メールアドレスまでお問い合わせください。
-            </p>
+          <div className="mt-6 bg-amber-50 dark:bg-amber-950/20 border-2 border-amber-400 dark:border-amber-600 rounded-lg p-6">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">📍</div>
+              <div>
+                <p className="font-bold text-lg mb-2 text-amber-900 dark:text-amber-100">
+                  所在地・電話番号の開示について
+                </p>
+                <p className="text-amber-800 dark:text-amber-200 leading-relaxed">
+                  特定商取引法に基づき、所在地および電話番号については、ご請求があり次第遅滞なく開示いたします。
+                  開示をご希望の場合は、上記メールアドレス（
+                  <span className="font-semibold">info@suptia.com</span>
+                  ）までお問い合わせください。
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
