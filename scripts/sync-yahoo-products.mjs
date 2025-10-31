@@ -32,7 +32,8 @@ const envContent = readFileSync(envPath, 'utf8');
 
 const SANITY_API_TOKEN = envContent.match(/SANITY_API_TOKEN=(.+)/)?.[1]?.trim();
 const YAHOO_CLIENT_ID = envContent.match(/YAHOO_SHOPPING_CLIENT_ID=(.+)/)?.[1]?.trim();
-const YAHOO_AFFILIATE_ID = envContent.match(/YAHOO_AFFILIATE_ID=(.+)/)?.[1]?.trim();
+const VALUE_COMMERCE_SID = envContent.match(/VALUE_COMMERCE_SID=(.+)/)?.[1]?.trim();
+const VALUE_COMMERCE_PID = envContent.match(/VALUE_COMMERCE_PID=(.+)/)?.[1]?.trim();
 
 if (!SANITY_API_TOKEN) {
   console.error('❌ SANITY_API_TOKEN が見つかりません');
@@ -45,6 +46,11 @@ if (!YAHOO_CLIENT_ID) {
   process.exit(1);
 }
 
+if (!VALUE_COMMERCE_SID || !VALUE_COMMERCE_PID) {
+  console.warn('⚠️  VALUE_COMMERCE_SID または VALUE_COMMERCE_PID が見つかりません');
+  console.warn('💡 バリューコマースの環境変数を追加すると、アフィリエイトリンクが生成されます');
+}
+
 // Sanity設定
 const SANITY_PROJECT_ID = 'fny3jdcg';
 const SANITY_DATASET = 'production';
@@ -53,9 +59,10 @@ const SANITY_API_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API
 
 // YahooAdapter（簡易版 - 本番ではlib/ec-adaptersを使用）
 class YahooAdapter {
-  constructor(clientId, affiliateId) {
+  constructor(clientId, valueCommerceSid, valueCommercePid) {
     this.clientId = clientId;
-    this.affiliateId = affiliateId;
+    this.valueCommerceSid = valueCommerceSid;
+    this.valueCommercePid = valueCommercePid;
     this.baseUrl = 'https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch';
   }
 
@@ -92,11 +99,16 @@ class YahooAdapter {
     };
   }
 
-  normalizeProduct(item) {
-    let affiliateUrl = item.url;
-    if (this.affiliateId) {
-      affiliateUrl = `${this.affiliateId}${encodeURIComponent(item.url)}`;
+  generateValueCommerceUrl(originalUrl) {
+    if (!this.valueCommerceSid || !this.valueCommercePid) {
+      return originalUrl;
     }
+    const encodedUrl = encodeURIComponent(originalUrl);
+    return `https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=${this.valueCommerceSid}&pid=${this.valueCommercePid}&vc_url=${encodedUrl}`;
+  }
+
+  normalizeProduct(item) {
+    const affiliateUrl = this.generateValueCommerceUrl(item.url);
 
     return {
       id: item.code,
@@ -399,7 +411,7 @@ async function main() {
 
   try {
     // Yahoo! API初期化
-    const yahoo = new YahooAdapter(YAHOO_CLIENT_ID, YAHOO_AFFILIATE_ID);
+    const yahoo = new YahooAdapter(YAHOO_CLIENT_ID, VALUE_COMMERCE_SID, VALUE_COMMERCE_PID);
 
     // Yahoo!から商品取得
     const searchResult = await yahoo.search(keyword, { limit });

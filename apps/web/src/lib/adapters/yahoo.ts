@@ -16,7 +16,8 @@ import type {
  */
 export interface YahooAdapterConfig extends AdapterConfig {
   clientId: string; // アプリケーションID
-  affiliateId?: string;
+  valueCommerceSid?: string; // バリューコマース サイトID
+  valueCommercePid?: string; // バリューコマース プログラムID
 }
 
 /**
@@ -78,6 +79,20 @@ export class YahooAdapter extends BaseAdapter {
   }
 
   /**
+   * バリューコマースのアフィリエイトリンクを生成
+   */
+  private generateValueCommerceUrl(originalUrl: string): string {
+    const { valueCommerceSid, valueCommercePid } = this.yahooConfig;
+
+    if (!valueCommerceSid || !valueCommercePid) {
+      return originalUrl;
+    }
+
+    const encodedUrl = encodeURIComponent(originalUrl);
+    return `https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=${valueCommerceSid}&pid=${valueCommercePid}&vc_url=${encodedUrl}`;
+  }
+
+  /**
    * 価格情報を取得
    */
   async fetchPrice(
@@ -107,14 +122,16 @@ export class YahooAdapter extends BaseAdapter {
         item.priceLabel?.premiumPrice ||
         item.price;
 
+      // バリューコマースのアフィリエイトリンクを生成
+      const affiliateUrl = this.generateValueCommerceUrl(item.url);
+
       const priceData: PriceData = {
         amount: price,
         currency: "JPY",
         source: "shopping.yahoo.co.jp",
         fetchedAt: new Date(),
         confidence: 0.9, // Yahoo!APIは高信頼度
-        url: item.affiliateUrl || item.url,
-        affiliateTag: this.yahooConfig.affiliateId,
+        url: affiliateUrl,
       };
 
       return { success: true, data: priceData };
@@ -218,12 +235,6 @@ export class YahooAdapter extends BaseAdapter {
       params.append("query", query);
     } else {
       throw new Error("有効な商品識別子が指定されていません");
-    }
-
-    // アフィリエイトID
-    if (this.yahooConfig.affiliateId) {
-      params.append("affiliate_type", "vc"); // バリューコマース
-      params.append("affiliate_id", this.yahooConfig.affiliateId);
     }
 
     const url = `${this.baseUrl}?${params.toString()}`;

@@ -1,71 +1,132 @@
 #!/usr/bin/env node
 
+/**
+ * 11個の成分記事をSanityにインポートするスクリプト
+ */
+
 import { createClient } from '@sanity/client';
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const client = createClient({
-  projectId: 'fny3jdcg',
-  dataset: 'production',
-  token: process.env.SANITY_API_TOKEN,
-  apiVersion: '2024-01-01',
-  useCdn: false,
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-async function importIngredients() {
-  console.log('🚀 Sanityに成分データをインポートします...\n');
+// 環境変数読み込み
+const envPath = join(__dirname, '../apps/web/.env.local');
+const envContent = readFileSync(envPath, 'utf8');
 
-  const ingredientsData = JSON.parse(readFileSync('/tmp/ingredients-fresh.json', 'utf-8'));
+const SANITY_API_TOKEN = envContent.match(/SANITY_API_TOKEN=(.+)/)?.[1]?.trim();
 
-  // Get all ingredient slugs to validate references
-  const allSlugs = ingredientsData.map(ing => ing.slug);
-
-  for (const ingredient of ingredientsData) {
-    try {
-      console.log(`📝 インポート中: ${ingredient.name} (${ingredient.slug})`);
-
-      const docId = `ingredient-${ingredient.slug}`;
-
-      // Convert relatedIngredients from slug strings to references
-      // Only include references that exist in our data
-      const relatedIngredients = (ingredient.relatedIngredients || [])
-        .filter(slug => allSlugs.includes(slug))
-        .map(slug => ({
-          _type: 'reference',
-          _ref: `ingredient-${slug}`,
-          _key: slug,
-        }));
-
-      const doc = {
-        _id: docId,
-        _type: 'ingredient',
-        name: ingredient.name,
-        nameEn: ingredient.nameEn,
-        slug: {
-          _type: 'slug',
-          current: ingredient.slug,
-        },
-        category: ingredient.category,
-        description: ingredient.description,
-        benefits: ingredient.benefits,
-        recommendedDosage: ingredient.recommendedDosage,
-        sideEffects: ingredient.sideEffects || [],
-        interactions: ingredient.interactions || [],
-        evidenceLevel: ingredient.evidenceLevel,
-        scientificBackground: ingredient.scientificBackground,
-        foodSources: ingredient.foodSources || [],
-        relatedIngredients,
-        faqs: ingredient.faqs || [],
-        references: ingredient.references || [],
-      };
-
-      await client.createOrReplace(doc);
-      console.log(`✅ 成功: ${ingredient.name}\n`);
-    } catch (error) {
-      console.error(`❌ エラー (${ingredient.name}):`, error.message);
-    }
-  }
-
-  console.log('🎉 インポート完了！');
+if (!SANITY_API_TOKEN) {
+  console.error('❌ SANITY_API_TOKEN が見つかりません');
+  process.exit(1);
 }
 
-importIngredients().catch(console.error);
+// Sanity設定
+const SANITY_PROJECT_ID = 'fny3jdcg';
+const SANITY_DATASET = 'production';
+
+const client = createClient({
+  projectId: SANITY_PROJECT_ID,
+  dataset: SANITY_DATASET,
+  apiVersion: '2024-01-01',
+  useCdn: false,
+  token: SANITY_API_TOKEN,
+});
+
+// インポートする成分記事ファイル
+const ingredientFiles = [
+  'whey-protein-article.json',
+  'coq10-article.json',
+  'l-theanine-article.json',
+  'gaba-article.json',
+  'glycine-article.json',
+  'valerian-article.json',
+  'elderberry-article.json',
+  'echinacea-article.json',
+  'hmb-article.json',
+  'beta-alanine-article.json',
+  'rhodiola-article.json',
+];
+
+async function importIngredients() {
+  console.log('🚀 成分記事のインポートを開始します...\n');
+  console.log('═══════════════════════════════════════════════════');
+
+  let successCount = 0;
+  let errorCount = 0;
+  let skippedCount = 0;
+
+  try {
+    for (const fileName of ingredientFiles) {
+      const filePath = join(__dirname, '..', fileName);
+
+      try {
+        // JSONファイル読み込み
+        const jsonContent = readFileSync(filePath, 'utf8');
+        const ingredientData = JSON.parse(jsonContent);
+
+        console.log(`\n📄 処理中: ${ingredientData.name} (${ingredientData.nameEn})`);
+        console.log(`   ファイル: ${fileName}`);
+
+        // slugから_idを生成
+        const documentId = ingredientData.slug.current;
+
+        // 既存のドキュメントをチェック
+        const existingDoc = await client.fetch(
+          `*[_type == "ingredient" && slug.current == $slug][0]`,
+          { slug: documentId }
+        );
+
+        if (existingDoc) {
+          console.log(`   ⚠️  既に存在します (ID: ${existingDoc._id})`);
+          console.log(`   → スキップします`);
+          skippedCount++;
+          continue;
+        }
+
+        // ドキュメントを作成
+        const doc = {
+          _id: documentId,
+          _type: 'ingredient',
+          ...ingredientData,
+        };
+
+        await client.createOrReplace(doc);
+
+        console.log(`   ✅ インポート成功`);
+        console.log(`   - 効能: ${ingredientData.benefits?.length || 0}件`);
+        console.log(`   - FAQ: ${ingredientData.faqs?.length || 0}件`);
+        console.log(`   - 参考文献: ${ingredientData.references?.length || 0}件`);
+        successCount++;
+
+      } catch (error) {
+        console.log(`   ❌ エラー: ${error.message}`);
+        errorCount++;
+      }
+    }
+
+    console.log('\n═══════════════════════════════════════════════════');
+    console.log('              インポート完了サマリー');
+    console.log('═══════════════════════════════════════════════════');
+    console.log(`✅ 成功: ${successCount}件`);
+    console.log(`⚠️  スキップ: ${skippedCount}件（既存）`);
+    console.log(`❌ エラー: ${errorCount}件`);
+    console.log(`📊 合計: ${ingredientFiles.length}件`);
+
+    if (successCount > 0) {
+      console.log('\n🎉 成分記事のインポートが完了しました！');
+      console.log('\n次のステップ:');
+      console.log('1. Sanity Studioでインポートされた記事を確認');
+      console.log('2. Webサイトで成分ページが正しく表示されるか確認');
+      console.log('3. 目的別ガイドページで成分リンクが動作するか確認');
+    }
+
+  } catch (error) {
+    console.error('\n❌ 予期しないエラーが発生しました:', error);
+    process.exit(1);
+  }
+}
+
+importIngredients();

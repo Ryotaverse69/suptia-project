@@ -48,11 +48,16 @@ export class YahooAdapter implements ECAdapter {
   readonly name = "yahoo" as const;
 
   private readonly clientId: string;
-  private readonly affiliateId?: string;
+  private readonly valueCommerceSid?: string;
+  private readonly valueCommercePid?: string;
   private readonly baseUrl =
     "https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch";
 
-  constructor(clientId: string, affiliateId?: string) {
+  constructor(
+    clientId: string,
+    valueCommerceSid?: string,
+    valueCommercePid?: string,
+  ) {
     if (!clientId) {
       throw new ECAdapterError(
         "Yahoo! Client ID is required",
@@ -62,7 +67,8 @@ export class YahooAdapter implements ECAdapter {
       );
     }
     this.clientId = clientId;
-    this.affiliateId = affiliateId;
+    this.valueCommerceSid = valueCommerceSid;
+    this.valueCommercePid = valueCommercePid;
   }
 
   /**
@@ -182,15 +188,23 @@ export class YahooAdapter implements ECAdapter {
   }
 
   /**
+   * バリューコマースのアフィリエイトリンクを生成
+   */
+  private generateValueCommerceUrl(originalUrl: string): string {
+    if (!this.valueCommerceSid || !this.valueCommercePid) {
+      return originalUrl;
+    }
+
+    const encodedUrl = encodeURIComponent(originalUrl);
+    return `https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=${this.valueCommerceSid}&pid=${this.valueCommercePid}&vc_url=${encodedUrl}`;
+  }
+
+  /**
    * Yahoo!商品データをECProduct形式に正規化
    */
   private normalizeProduct(item: YahooItem): ECProduct {
-    // アフィリエイトリンクの生成
-    let affiliateUrl = item.url;
-    if (this.affiliateId) {
-      // バリューコマース形式のアフィリエイトリンク
-      affiliateUrl = `${this.affiliateId}${encodeURIComponent(item.url)}`;
-    }
+    // バリューコマース形式のアフィリエイトリンクを生成
+    const affiliateUrl = this.generateValueCommerceUrl(item.url);
 
     return {
       id: item.code,

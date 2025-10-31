@@ -93,7 +93,8 @@ export function createAdaptersFromEnv(): ProductPriceAdapter[] {
     adapters.push(
       createAdapter("yahoo", {
         clientId: process.env.YAHOO_SHOPPING_CLIENT_ID,
-        affiliateId: process.env.YAHOO_AFFILIATE_ID,
+        valueCommerceSid: process.env.VALUE_COMMERCE_SID,
+        valueCommercePid: process.env.VALUE_COMMERCE_PID,
       }),
     );
   }
