@@ -105,3 +105,5 @@ fix-*.mjs
 test-*.mjs
 references-issues.json
 encoding-issues.json
+*.bak
+dha-article.json
