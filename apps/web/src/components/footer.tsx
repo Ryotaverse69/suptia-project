@@ -58,42 +58,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/guide/purposes/beauty"
-                  className="hover:text-foreground transition-colors pl-3"
+                  href="/guide/audiences"
+                  className="hover:text-foreground transition-colors"
                 >
-                  ├ 美肌・美容
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guide/purposes/muscle"
-                  className="hover:text-foreground transition-colors pl-3"
-                >
-                  ├ 筋肉増強
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guide/purposes/sleep"
-                  className="hover:text-foreground transition-colors pl-3"
-                >
-                  ├ 睡眠改善
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guide/purposes/immunity"
-                  className="hover:text-foreground transition-colors pl-3"
-                >
-                  ├ 免疫力向上
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guide/purposes/energy"
-                  className="hover:text-foreground transition-colors pl-3"
-                >
-                  └ 疲労回復
+                  対象者別ガイド
                 </Link>
               </li>
             </ul>
