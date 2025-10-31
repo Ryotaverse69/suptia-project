@@ -27,7 +27,78 @@ export function Footer() {
     <footer className="border-t bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+          {/* コンテンツ */}
+          <div>
+            <h3 className="font-bold text-lg mb-4">コンテンツ</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link
+                  href="/ingredients"
+                  className="hover:text-foreground transition-colors"
+                >
+                  成分ガイド
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/dangerous-ingredients"
+                  className="hover:text-foreground transition-colors"
+                >
+                  危険成分ガイド
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes"
+                  className="hover:text-foreground transition-colors"
+                >
+                  目的別ガイド
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes/beauty"
+                  className="hover:text-foreground transition-colors pl-3"
+                >
+                  ├ 美肌・美容
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes/muscle"
+                  className="hover:text-foreground transition-colors pl-3"
+                >
+                  ├ 筋肉増強
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes/sleep"
+                  className="hover:text-foreground transition-colors pl-3"
+                >
+                  ├ 睡眠改善
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes/immunity"
+                  className="hover:text-foreground transition-colors pl-3"
+                >
+                  ├ 免疫力向上
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guide/purposes/energy"
+                  className="hover:text-foreground transition-colors pl-3"
+                >
+                  └ 疲労回復
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* 法的義務・コンプライアンス */}
           <div>
             <h3 className="font-bold text-lg mb-4">法的情報</h3>
@@ -126,22 +197,6 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">サイト情報</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link
-                  href="/ingredients"
-                  className="hover:text-foreground transition-colors"
-                >
-                  成分ガイド
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guide/dangerous-ingredients"
-                  className="hover:text-foreground transition-colors"
-                >
-                  危険成分ガイド
-                </Link>
-              </li>
               <li>
                 <Link
                   href="/sitemap"
