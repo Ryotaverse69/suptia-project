@@ -10,11 +10,21 @@ import {
 
 interface FilterSection {
   title: string;
-  filterKey: "priceRange" | "evidenceLevel" | "safetyRank";
-  options: { label: string; value: string; count?: number }[];
+  filterKey: "priceRange" | "evidenceLevel" | "safetyRank" | "ecSite";
+  options: { label: string; value: string; count?: number; icon?: string }[];
 }
 
 const filterSections: FilterSection[] = [
+  {
+    title: "購入先",
+    filterKey: "ecSite",
+    options: [
+      { label: "楽天市場", value: "rakuten", icon: "🛍️" },
+      { label: "Yahoo!ショッピング", value: "yahoo", icon: "🟣" },
+      { label: "Amazon", value: "amazon", icon: "📦" },
+      { label: "iHerb", value: "iherb", icon: "🌿" },
+    ],
+  },
   {
     title: "価格帯",
     filterKey: "priceRange",
@@ -53,6 +63,7 @@ interface FilterSidebarProps {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     safetyRank?: string | null;
+    ecSite?: string | null;
   }) => void;
   onClearFilters?: () => void;
   activeFilters?: {
@@ -60,6 +71,7 @@ interface FilterSidebarProps {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     safetyRank?: string | null;
+    ecSite?: string | null;
   };
 }
 
@@ -86,7 +98,7 @@ export function FilterSidebar({
   };
 
   const handleFilterToggle = (
-    filterKey: "priceRange" | "evidenceLevel" | "safetyRank",
+    filterKey: "priceRange" | "evidenceLevel" | "safetyRank" | "ecSite",
     value: string,
   ) => {
     if (!onFilterChange) return;
@@ -204,6 +216,9 @@ export function FilterSidebar({
                             }
                             className="rounded border-primary-300 text-primary focus:ring-primary/50 focus:ring-offset-0"
                           />
+                          {option.icon && (
+                            <span className="text-base">{option.icon}</span>
+                          )}
                           <span className="text-sm text-primary-800 group-hover:text-primary-900 font-light transition-colors">
                             {option.label}
                           </span>

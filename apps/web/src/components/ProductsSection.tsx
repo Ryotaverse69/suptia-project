@@ -8,6 +8,7 @@ import { Award } from "lucide-react";
 interface Product {
   name: string;
   priceJPY: number;
+  source?: string;
   slug: {
     current: string;
   };
@@ -49,6 +50,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     null,
   );
   const [safetyRankFilter, setSafetyRankFilter] = useState<string | null>(null);
+  const [ecSiteFilter, setEcSiteFilter] = useState<string | null>(null);
 
   // フィルタリングとソート
   const filteredAndSortedProducts = useMemo(() => {
@@ -92,6 +94,11 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       });
     }
 
+    // ECサイトフィルター
+    if (ecSiteFilter) {
+      filtered = filtered.filter((product) => product.source === ecSiteFilter);
+    }
+
     // ソート
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -124,6 +131,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     priceRange,
     evidenceLevelFilter,
     safetyRankFilter,
+    ecSiteFilter,
   ]);
 
   const handleFilterChange = (filters: {
@@ -131,6 +139,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     safetyRank?: string | null;
+    ecSite?: string | null;
   }) => {
     if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
     if (filters.priceRange !== undefined) setPriceRange(filters.priceRange);
@@ -138,6 +147,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       setEvidenceLevelFilter(filters.evidenceLevel);
     if (filters.safetyRank !== undefined)
       setSafetyRankFilter(filters.safetyRank);
+    if (filters.ecSite !== undefined) setEcSiteFilter(filters.ecSite);
   };
 
   const handleClearFilters = () => {
@@ -145,6 +155,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     setPriceRange(null);
     setEvidenceLevelFilter(null);
     setSafetyRankFilter(null);
+    setEcSiteFilter(null);
   };
 
   return (
@@ -160,6 +171,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
               priceRange,
               evidenceLevel: evidenceLevelFilter,
               safetyRank: safetyRankFilter,
+              ecSite: ecSiteFilter,
             }}
           />
         </aside>
