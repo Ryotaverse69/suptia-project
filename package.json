@@ -73,11 +73,12 @@
     "scores:auto": "node scripts/update-scores.mjs"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "husky": "^9.0.0",
+    "jsdom": "^27.1.0",
     "lint-staged": "^15.0.0",
-    "tsx": "^4.7.0",
     "ora": "^7.0.1",
-    "@types/node": "^20.0.0"
+    "tsx": "^4.7.0"
   },
   "lint-staged": {
     "apps/web/**/*.{js,jsx,ts,tsx}": [

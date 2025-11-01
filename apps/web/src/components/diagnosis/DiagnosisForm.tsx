@@ -100,8 +100,48 @@ export function DiagnosisForm() {
     router.push("/diagnosis/results?" + searchParams.toString());
   };
 
+  // プログレス計算（完了したステップ数）
+  const completedSteps = [
+    selectedGoals.length > 0, // ステップ1
+    true, // ステップ2（予算は常に設定済み）
+    true, // ステップ3（任意なので常に完了扱い）
+    true, // ステップ4（デフォルト値があるので常に完了扱い）
+  ].filter(Boolean).length;
+
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8">
+      {/* 所要時間とプログレスバー */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>約1分で完了</span>
+          </div>
+          <span className="text-sm text-gray-500">
+            ステップ {completedSteps}/4
+          </span>
+        </div>
+
+        {/* プログレスバー */}
+        <div className="flex gap-2">
+          {[1, 2, 3, 4].map((step) => (
+            <div
+              key={step}
+              className={`h-2 flex-1 rounded-full transition-all ${
+                step === 1 && selectedGoals.length > 0
+                  ? "bg-blue-500"
+                  : step === 2 || step === 3 || step === 4
+                  ? "bg-blue-500"
+                  : "bg-gray-200"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className="mb-8">
         <h3 className="text-xl font-bold mb-4 text-gray-800">
           ステップ1: 健康目標を選択してください

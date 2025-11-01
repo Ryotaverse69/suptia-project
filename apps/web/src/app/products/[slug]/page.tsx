@@ -18,7 +18,6 @@ import { notFound } from "next/navigation";
 import { isValidSlug } from "@/lib/sanitize";
 import Image from "next/image";
 import { headers } from "next/headers";
-import Script from "next/script";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
 import {
   calculateAutoScores,
@@ -340,12 +339,14 @@ interface PageProps {
 
 /**
  * アレルギー関連の禁忌タグとそのラベル
+ * ⚠️ 重要: アレルギーは命に関わるため、表現は最大限強く明確に
  */
 const ALLERGY_TAGS: Record<string, string> = {
-  "allergy-prone": "アレルギー体質の方は注意が必要です",
-  "shellfish-allergy": "貝アレルギーの方は使用を控えてください",
-  "soy-allergy": "大豆アレルギーの方は使用を控えてください",
-  "nut-allergy": "ナッツアレルギーの方は使用を控えてください",
+  "allergy-prone":
+    "アレルギー体質の方は、使用前に必ず医師にご相談ください",
+  "shellfish-allergy": "貝アレルギーの方は絶対に使用しないでください",
+  "soy-allergy": "大豆アレルギーの方は絶対に使用しないでください",
+  "nut-allergy": "ナッツアレルギーの方は絶対に使用しないでください",
 };
 
 /**
@@ -636,13 +637,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
   return (
     <>
       {/* JSON-LD Structured Data */}
-      <Script
+      <script
         id="product-jsonld"
         type="application/ld+json"
         nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
-      <Script
+      <script
         id="breadcrumb-jsonld"
         type="application/ld+json"
         nonce={nonce}

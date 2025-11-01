@@ -8,7 +8,6 @@ import {
 } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
-import Script from "next/script";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
@@ -143,7 +142,7 @@ export default async function ProductsPage() {
   return (
     <>
       {/* JSON-LD構造化データ: ItemList */}
-      <Script
+      <script
         id="itemlist-jsonld"
         type="application/ld+json"
         nonce={nonce}
@@ -151,7 +150,7 @@ export default async function ProductsPage() {
       />
 
       {/* JSON-LD構造化データ: Breadcrumb */}
-      <Script
+      <script
         id="breadcrumb-jsonld"
         type="application/ld+json"
         nonce={nonce}

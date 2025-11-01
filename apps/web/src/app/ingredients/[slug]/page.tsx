@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import { RelatedProducts } from "@/components/RelatedProducts";
@@ -434,7 +433,7 @@ export default async function IngredientPage({ params }: Props) {
   return (
     <>
       {/* JSON-LD Structured Data: Article */}
-      <Script
+      <script
         id="article-jsonld"
         type="application/ld+json"
         nonce={nonce}
@@ -442,7 +441,7 @@ export default async function IngredientPage({ params }: Props) {
       />
 
       {/* JSON-LD Structured Data: Breadcrumb */}
-      <Script
+      <script
         id="breadcrumb-jsonld"
         type="application/ld+json"
         nonce={nonce}
@@ -451,7 +450,7 @@ export default async function IngredientPage({ params }: Props) {
 
       {/* JSON-LD Structured Data: FAQ (if exists) */}
       {faqJsonLd && (
-        <Script
+        <script
           id="faq-jsonld"
           type="application/ld+json"
           nonce={nonce}

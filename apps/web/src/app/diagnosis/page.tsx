@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { headers } from "next/headers";
-import Script from "next/script";
+
 import { DiagnosisForm } from "@/components/diagnosis/DiagnosisForm";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
@@ -24,7 +24,7 @@ export default async function DiagnosisPage() {
   return (
     <>
       {/* JSON-LD構造化データ: Breadcrumb */}
-      <Script
+      <script
         id="breadcrumb-jsonld"
         type="application/ld+json"
         nonce={nonce}

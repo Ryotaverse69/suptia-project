@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
+
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import {
@@ -131,7 +131,7 @@ export default async function IngredientsPage() {
   return (
     <>
       {/* JSON-LD構造化データ: Breadcrumb */}
-      <Script
+      <script
         id="breadcrumb-jsonld"
         type="application/ld+json"
         nonce={nonce}

@@ -479,36 +479,48 @@ export function EvidenceSafetyDetail({
         {allergyInfo.length > 0 && (
           <div className="mb-6 p-5 bg-red-50 border-2 border-red-500 rounded-lg">
             <div className="flex items-start gap-3 text-red-900">
-              <AlertTriangle size={24} className="mt-0.5 flex-shrink-0" />
+              <AlertTriangle size={28} className="mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-                  アレルギー注意
+                <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+                  🚨 アレルギー注意
                 </h3>
                 <div className="space-y-3">
                   {allergyInfo.map((allergy, index) => (
                     <div
                       key={index}
-                      className="p-3 bg-white border-l-4 border-red-500 rounded"
+                      className="p-4 bg-white border-l-4 border-red-600 rounded shadow-sm"
                     >
-                      <p className="font-semibold text-red-800 mb-1">
-                        {allergy.label}
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        この商品には
-                        <span className="font-semibold text-red-700">
-                          {allergy.ingredientName}
-                        </span>
-                        が含まれています。
-                      </p>
+                      <div className="space-y-2">
+                        <p className="font-bold text-red-900 text-base">
+                          ⚠️ {allergy.label}
+                        </p>
+                        <p className="text-sm text-red-800 font-semibold">
+                          この商品には
+                          <span className="font-bold text-red-900 underline decoration-2 underline-offset-2">
+                            {allergy.ingredientName}
+                          </span>
+                          が含まれています。
+                        </p>
+                        <div className="mt-2 p-2 bg-red-100 rounded border border-red-300">
+                          <p className="text-xs text-red-900 font-semibold flex items-center gap-1">
+                            <span>💊</span>
+                            <span>
+                              使用前に必ず医師または薬剤師にご相談ください
+                            </span>
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-red-800 mt-3 flex items-start gap-1">
-                  <span className="font-bold">⚠️</span>
-                  <span>
-                    アレルギーをお持ちの方は、使用前に必ず医師または薬剤師にご相談ください。
-                  </span>
-                </p>
+                <div className="mt-4 p-3 bg-red-100 border-2 border-red-600 rounded-lg">
+                  <p className="text-sm text-red-900 font-bold flex items-start gap-2">
+                    <span className="text-xl flex-shrink-0">🚨</span>
+                    <span>
+                      アレルギー反応は生命に関わる危険があります。この商品の使用前に必ず医師または薬剤師にご相談ください。
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

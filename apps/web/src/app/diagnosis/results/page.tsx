@@ -1,5 +1,6 @@
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ShareButtons } from "@/components/diagnosis/ShareButtons";
 import { headers } from "next/headers";
 import {
   recommendProducts,
@@ -128,6 +129,11 @@ export default async function DiagnosisResultsPage({
             <h1 className="text-3xl font-bold text-gray-900">
               あなたにおすすめのサプリメント
             </h1>
+          </div>
+
+          {/* シェアボタン */}
+          <div className="mb-6">
+            <ShareButtons />
           </div>
 
           {/* 診断条件サマリー */}
