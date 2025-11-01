@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const HEALTH_GOALS = [
   { id: "immune-boost", label: "免疫力強化" },
@@ -25,7 +25,11 @@ const HEALTH_CONDITIONS = [
 ];
 
 const PRIORITIES = [
-  { id: "balanced", label: "バランス重視", description: "総合的にバランスよく選ぶ" },
+  {
+    id: "balanced",
+    label: "バランス重視",
+    description: "総合的にバランスよく選ぶ",
+  },
   {
     id: "cost",
     label: "コスト重視",
@@ -50,16 +54,38 @@ const PRIORITIES = [
 
 export function DiagnosisForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [budgetPerDay, setBudgetPerDay] = useState<number>(500);
   const [healthConditions, setHealthConditions] = useState<string[]>([]);
   const [priority, setPriority] = useState<string>("balanced");
 
+  // URLパラメータから初期値を読み込む
+  useEffect(() => {
+    const goalsParam = searchParams.get("goals");
+    const budgetParam = searchParams.get("budget");
+    const conditionsParam = searchParams.get("conditions");
+    const priorityParam = searchParams.get("priority");
+
+    if (goalsParam) {
+      setSelectedGoals(goalsParam.split(",").filter(Boolean));
+    }
+    if (budgetParam) {
+      setBudgetPerDay(Number(budgetParam));
+    }
+    if (conditionsParam) {
+      setHealthConditions(conditionsParam.split(",").filter(Boolean));
+    }
+    if (priorityParam) {
+      setPriority(priorityParam);
+    }
+  }, [searchParams]);
+
   const toggleGoal = (goalId: string) => {
     setSelectedGoals((prev) =>
       prev.includes(goalId)
         ? prev.filter((g) => g !== goalId)
-        : [...prev, goalId]
+        : [...prev, goalId],
     );
   };
 
@@ -114,7 +140,17 @@ export function DiagnosisForm() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
@@ -134,8 +170,8 @@ export function DiagnosisForm() {
                 step === 1 && selectedGoals.length > 0
                   ? "bg-blue-500"
                   : step === 2 || step === 3 || step === 4
-                  ? "bg-blue-500"
-                  : "bg-gray-200"
+                    ? "bg-blue-500"
+                    : "bg-gray-200"
               }`}
             />
           ))}

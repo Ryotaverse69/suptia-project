@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Twitter, MessageCircle, Check } from "lucide-react";
+import { Share2, MessageCircle, Check } from "lucide-react";
 
 interface ShareButtonsProps {
   className?: string;
@@ -21,16 +21,18 @@ export function ShareButtons({ className = "" }: ShareButtonsProps) {
     }
   };
 
-  const handleTwitterShare = () => {
+  const handleXShare = () => {
     const url = window.location.href;
-    const text = "サプティアでサプリメント診断をしました！あなたに最適なサプリメントを見つけよう";
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(twitterUrl, "_blank", "width=550,height=420");
+    const text =
+      "サプティアでサプリメント診断をしました！あなたに最適なサプリメントを見つけよう";
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(xUrl, "_blank", "width=550,height=420");
   };
 
   const handleLineShare = () => {
     const url = window.location.href;
-    const text = "サプティアでサプリメント診断をしました！あなたに最適なサプリメントを見つけよう";
+    const text =
+      "サプティアでサプリメント診断をしました！あなたに最適なサプリメントを見つけよう";
     const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(text + " " + url)}`;
     window.open(lineUrl, "_blank");
   };
@@ -74,13 +76,21 @@ export function ShareButtons({ className = "" }: ShareButtonsProps) {
           )}
         </button>
 
-        {/* Twitter */}
+        {/* X (Twitter) */}
         <button
-          onClick={handleTwitterShare}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
+          onClick={handleXShare}
+          className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition-colors text-sm font-medium"
         >
-          <Twitter size={16} />
-          <span className="hidden sm:inline">Twitter</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+          <span className="hidden sm:inline">X</span>
         </button>
 
         {/* LINE */}

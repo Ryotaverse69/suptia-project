@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
 import type { RecommendationResult } from "@/lib/recommendation-engine";
 
 interface ProductComparisonTableProps {
@@ -21,15 +23,14 @@ export function ProductComparisonTable({
 
   return (
     <div className={className}>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
-        おすすめトップ3
-      </h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-4">おすすめトップ3</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {recommendations.map((rec, index) => (
-          <div
+          <Link
             key={rec.product.id}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow relative"
+            href={`/products/${rec.product.slug || rec.product.id}`}
+            className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all relative block group cursor-pointer"
           >
             {/* ランキング順位 */}
             <div className="absolute top-4 left-4">
@@ -49,24 +50,25 @@ export function ProductComparisonTable({
             {/* 商品画像 */}
             {rec.product.imageUrl && (
               <div className="mb-4 flex justify-center pt-8">
-                <img
-                  src={rec.product.imageUrl}
-                  alt={rec.product.name}
-                  className="w-32 h-32 object-cover rounded-lg shadow-sm"
-                />
+                <div className="w-32 h-32 relative">
+                  <Image
+                    src={rec.product.imageUrl}
+                    alt={rec.product.name}
+                    fill
+                    className="object-cover rounded-lg shadow-sm"
+                  />
+                </div>
               </div>
             )}
 
             {/* 商品名 */}
-            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem]">
+            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem] group-hover:text-blue-600 transition-colors">
               {rec.product.name}
             </h3>
 
             {/* ブランド名 */}
             {rec.product.brand && (
-              <p className="text-sm text-gray-600 mb-4">
-                {rec.product.brand}
-              </p>
+              <p className="text-sm text-gray-600 mb-4">{rec.product.brand}</p>
             )}
 
             {/* 価格 */}
@@ -83,7 +85,14 @@ export function ProductComparisonTable({
                 </div>
               </div>
             </div>
-          </div>
+
+            {/* 詳細を見るインジケーター */}
+            <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+              <span className="text-sm text-blue-600 group-hover:text-blue-700 font-medium">
+                詳細を見る →
+              </span>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
