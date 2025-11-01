@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import Script from "next/script";
 import { headers } from "next/headers";
+import Script from "next/script";
 import { DiagnosisForm } from "@/components/diagnosis/DiagnosisForm";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
@@ -32,6 +32,7 @@ export default async function DiagnosisPage() {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">

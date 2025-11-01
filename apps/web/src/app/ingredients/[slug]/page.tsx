@@ -434,20 +434,29 @@ export default async function IngredientPage({ params }: Props) {
   return (
     <>
       {/* JSON-LD Structured Data: Article */}
-      <Script id="article-jsonld" type="application/ld+json" nonce={nonce}>
-        {JSON.stringify(articleJsonLd)}
-      </Script>
+      <Script
+        id="article-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
 
       {/* JSON-LD Structured Data: Breadcrumb */}
-      <Script id="breadcrumb-jsonld" type="application/ld+json" nonce={nonce}>
-        {JSON.stringify(breadcrumbJsonLd)}
-      </Script>
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
       {/* JSON-LD Structured Data: FAQ (if exists) */}
       {faqJsonLd && (
-        <Script id="faq-jsonld" type="application/ld+json" nonce={nonce}>
-          {JSON.stringify(faqJsonLd)}
-        </Script>
+        <Script
+          id="faq-jsonld"
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
       )}
 
       {/* 表示回数トラッキング */}

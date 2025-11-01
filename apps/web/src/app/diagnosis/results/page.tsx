@@ -1,6 +1,5 @@
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import Script from "next/script";
 import { headers } from "next/headers";
 import {
   recommendProducts,
@@ -101,14 +100,14 @@ export default async function DiagnosisResultsPage({
   return (
     <>
       {/* JSON-LD構造化データ: Breadcrumb */}
-      <Script
-        id="breadcrumb-jsonld"
+      <script
         type="application/ld+json"
         nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
       <div className="min-h-screen bg-gray-50">
+
       {/* ヘッダー */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">

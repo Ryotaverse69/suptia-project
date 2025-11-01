@@ -636,12 +636,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
   return (
     <>
       {/* JSON-LD Structured Data */}
-      <Script id="product-jsonld" type="application/ld+json" nonce={nonce}>
-        {JSON.stringify(productJsonLd)}
-      </Script>
-      <Script id="breadcrumb-jsonld" type="application/ld+json" nonce={nonce}>
-        {JSON.stringify(breadcrumbJsonLd)}
-      </Script>
+      <Script
+        id="product-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Compliance Warning Banner */}
