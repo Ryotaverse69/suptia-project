@@ -92,6 +92,7 @@ interface Product {
       _id: string;
       name: string;
       nameEn: string;
+      slug?: { current: string };
       evidenceLevel?: "S" | "A" | "B" | "C" | "D";
       category?: string;
     };
@@ -142,6 +143,7 @@ async function getProduct(slug: string): Promise<Product | null> {
         _id,
         name,
         nameEn,
+        slug,
         evidenceLevel,
         category
       }
