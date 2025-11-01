@@ -1,0 +1,82 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF5E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE4B5;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Orange gradient -->
+    <radialGradient id="orangeGradient" cx="40%" cy="40%">
+      <stop offset="0%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF8C00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF7F00;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Leaf gradient -->
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#90EE90;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#228B22;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Orange slice gradient -->
+    <radialGradient id="sliceGradient" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#FFE4B5;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+
+  <!-- Whole orange (left) -->
+  <circle cx="280" cy="300" r="140" fill="url(#orangeGradient)" stroke="#FF6347" stroke-width="3"/>
+
+  <!-- Orange texture dots -->
+  <circle cx="250" cy="270" r="3" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="290" cy="260" r="2.5" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="310" cy="290" r="3" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="270" cy="320" r="2" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="300" cy="330" r="2.5" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="240" cy="300" r="2" fill="#FF7F00" opacity="0.6"/>
+  <circle cx="320" cy="310" r="2.5" fill="#FF7F00" opacity="0.6"/>
+
+  <!-- Leaf on whole orange -->
+  <ellipse cx="280" cy="180" rx="25" ry="35" fill="url(#leafGradient)" transform="rotate(-20 280 180)"/>
+  <line x1="280" y1="180" x2="280" y2="220" stroke="#228B22" stroke-width="2"/>
+
+  <!-- Highlight on whole orange -->
+  <ellipse cx="240" cy="250" rx="40" ry="30" fill="white" opacity="0.3"/>
+
+  <!-- Orange slice (right) -->
+  <circle cx="520" cy="300" r="120" fill="url(#sliceGradient)" stroke="#FFA500" stroke-width="4"/>
+
+  <!-- Slice segments -->
+  <g stroke="#FFA500" stroke-width="2" fill="none">
+    <line x1="520" y1="180" x2="520" y2="420"/>
+    <line x1="400" y1="300" x2="640" y2="300"/>
+    <line x1="435" y1="215" x2="605" y2="385"/>
+    <line x1="435" y1="385" x2="605" y2="215"/>
+    <line x1="445" y1="245" x2="595" y2="355"/>
+    <line x1="445" y1="355" x2="595" y2="245"/>
+  </g>
+
+  <!-- Center circle of slice -->
+  <circle cx="520" cy="300" r="15" fill="white" opacity="0.8"/>
+
+  <!-- Slice membrane -->
+  <path d="M 520 180 Q 580 240 640 300 Q 580 360 520 420 Q 460 360 400 300 Q 460 240 520 180"
+        fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- White pith -->
+  <circle cx="520" cy="300" r="122" fill="none" stroke="white" stroke-width="6" opacity="0.7"/>
+
+  <!-- Title text -->
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FF6347" text-anchor="middle">
+    ビタミンC
+  </text>
+  <text x="400" y="560" font-family="Arial, sans-serif" font-size="24" fill="#666" text-anchor="middle">
+    Vitamin C
+  </text>
+</svg>

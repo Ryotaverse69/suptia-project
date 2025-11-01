@@ -1,0 +1,178 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF5EB;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFE8D6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD9BD;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Carrot gradient -->
+    <linearGradient id="carrotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB347;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF8C42;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E67E22;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Greens gradient -->
+    <linearGradient id="greensGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#90EE90;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5FAD56;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#228B22;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="dropShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="8"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Text gradient -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="150" cy="150" r="80" fill="#FFD9BD" opacity="0.3"/>
+  <circle cx="1050" cy="650" r="100" fill="#FFB347" opacity="0.2"/>
+  <circle cx="1100" cy="200" r="60" fill="#FF8C42" opacity="0.25"/>
+  <circle cx="100" cy="700" r="70" fill="#E67E22" opacity="0.2"/>
+
+  <!-- Left carrot -->
+  <g filter="url(#dropShadow)" transform="translate(280, 200) rotate(-15)">
+    <!-- Carrot body -->
+    <path d="M 100 300 Q 95 250 90 200 Q 85 150 80 100 L 120 100 Q 115 150 110 200 Q 105 250 100 300 Z"
+          fill="url(#carrotGradient)" stroke="#D35400" stroke-width="2"/>
+
+    <!-- Texture lines -->
+    <g stroke="#D35400" stroke-width="1.5" opacity="0.3">
+      <line x1="85" y1="150" x2="115" y2="150"/>
+      <line x1="87" y1="180" x2="113" y2="180"/>
+      <line x1="90" y1="210" x2="110" y2="210"/>
+      <line x1="92" y1="240" x2="108" y2="240"/>
+      <line x1="94" y1="270" x2="106" y2="270"/>
+    </g>
+
+    <!-- Highlight -->
+    <ellipse cx="90" cy="180" rx="8" ry="40" fill="white" opacity="0.4"/>
+
+    <!-- Green top -->
+    <g>
+      <!-- Leaves -->
+      <path d="M 80 100 Q 60 80 50 50 Q 48 30 60 20 Q 70 40 80 100 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+      <path d="M 100 100 Q 100 70 95 40 Q 92 20 105 15 Q 110 35 100 100 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+      <path d="M 120 100 Q 130 75 140 45 Q 145 25 135 18 Q 125 40 120 100 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- Center carrot (large) -->
+  <g filter="url(#dropShadow)" transform="translate(450, 150) rotate(5)">
+    <!-- Carrot body -->
+    <path d="M 120 400 Q 115 330 110 260 Q 105 190 100 120 L 160 120 Q 155 190 150 260 Q 145 330 140 400 Z"
+          fill="url(#carrotGradient)" stroke="#D35400" stroke-width="3"/>
+
+    <!-- Texture lines -->
+    <g stroke="#D35400" stroke-width="2" opacity="0.3">
+      <line x1="105" y1="180" x2="155" y2="180"/>
+      <line x1="107" y1="220" x2="153" y2="220"/>
+      <line x1="110" y1="260" x2="150" y2="260"/>
+      <line x1="113" y1="300" x2="147" y2="300"/>
+      <line x1="116" y1="340" x2="144" y2="340"/>
+      <line x1="118" y1="370" x2="142" y2="370"/>
+    </g>
+
+    <!-- Highlight -->
+    <ellipse cx="110" cy="240" rx="12" ry="60" fill="white" opacity="0.4"/>
+
+    <!-- Small texture dots -->
+    <g fill="#D35400" opacity="0.2">
+      <circle cx="135" cy="200" r="2"/>
+      <circle cx="140" cy="250" r="2.5"/>
+      <circle cx="138" cy="300" r="2"/>
+      <circle cx="135" cy="350" r="2.5"/>
+    </g>
+
+    <!-- Green top -->
+    <g>
+      <!-- Multiple leaves -->
+      <path d="M 100 120 Q 75 90 65 50 Q 60 20 75 10 Q 88 40 100 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="2"/>
+      <path d="M 120 120 Q 115 80 110 45 Q 105 15 120 5 Q 128 40 120 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="2"/>
+      <path d="M 140 120 Q 140 75 135 40 Q 130 12 145 8 Q 150 45 140 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="2"/>
+      <path d="M 160 120 Q 175 85 185 45 Q 192 18 180 12 Q 168 50 160 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="2"/>
+
+      <!-- Leaf veins -->
+      <g stroke="#228B22" stroke-width="1" opacity="0.4">
+        <line x1="75" y1="10" x2="85" y2="70"/>
+        <line x1="120" y1="5" x2="115" y2="60"/>
+        <line x1="145" y1="8" x2="138" y2="65"/>
+        <line x1="180" y1="12" x2="170" y2="70"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Right carrot -->
+  <g filter="url(#dropShadow)" transform="translate(750, 250) rotate(20)">
+    <!-- Carrot body -->
+    <path d="M 80 320 Q 76 270 72 220 Q 68 170 65 120 L 95 120 Q 92 170 88 220 Q 84 270 80 320 Z"
+          fill="url(#carrotGradient)" stroke="#D35400" stroke-width="2"/>
+
+    <!-- Texture lines -->
+    <g stroke="#D35400" stroke-width="1.5" opacity="0.3">
+      <line x1="68" y1="170" x2="92" y2="170"/>
+      <line x1="70" y1="200" x2="90" y2="200"/>
+      <line x1="72" y1="230" x2="88" y2="230"/>
+      <line x1="74" y1="260" x2="86" y2="260"/>
+      <line x1="76" y1="290" x2="84" y2="290"/>
+    </g>
+
+    <!-- Highlight -->
+    <ellipse cx="70" cy="200" rx="7" ry="35" fill="white" opacity="0.4"/>
+
+    <!-- Green top -->
+    <g>
+      <path d="M 65 120 Q 50 95 40 60 Q 35 35 48 28 Q 58 55 65 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+      <path d="M 80 120 Q 80 90 75 55 Q 70 30 82 25 Q 88 55 80 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+      <path d="M 95 120 Q 105 90 115 55 Q 120 30 110 26 Q 100 60 95 120 Z"
+            fill="url(#greensGradient)" stroke="#228B22" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- Text shadow -->
+  <text x="600" y="700" font-family="'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif"
+        font-size="72" font-weight="900" fill="#00000020" text-anchor="middle">
+    ビタミンA
+  </text>
+
+  <!-- Main text -->
+  <text x="600" y="695" font-family="'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif"
+        font-size="72" font-weight="900" fill="url(#textGradient)" text-anchor="middle">
+    ビタミンA
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="750" font-family="Arial, sans-serif"
+        font-size="32" font-weight="300" fill="#666" text-anchor="middle" letter-spacing="2">
+    Vitamin A (Retinol)
+  </text>
+</svg>

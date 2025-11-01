@@ -91,16 +91,25 @@ for (const [janCode, groupProducts] of comparableGroups) {
   );
 
   // priceDataを生成（全商品の価格情報を含む）
-  const priceData = groupProducts.map((product) => ({
-    source: product.source || 'unknown',
-    amount: product.priceJPY,
-    currency: 'JPY',
-    url: product.affiliateUrl || '#',
-    fetchedAt: new Date().toISOString(),
-    confidence: 0.95, // JANコード一致なので高い信頼度
-    storeName: extractStoreName(product.name, product.source),
-    itemCode: product.itemCode,
-  }));
+  const priceData = groupProducts.map((product) => {
+    const quantity = extractQuantity(product.name);
+    const storeName = extractStoreName(product.name, product.source);
+    const unitPrice = Math.round(product.priceJPY / quantity);
+
+    return {
+      source: product.source || 'unknown',
+      amount: product.priceJPY,
+      currency: 'JPY',
+      url: product.affiliateUrl || '#',
+      fetchedAt: new Date().toISOString(),
+      confidence: 0.95, // JANコード一致なので高い信頼度
+      productName: product.name, // 商品名を追加
+      storeName, // 店舗名
+      quantity, // セット数量
+      unitPrice, // 単位価格
+      itemCode: product.itemCode,
+    };
+  });
 
   // 価格順にソート（安い順）
   priceData.sort((a, b) => a.amount - b.amount);
@@ -108,8 +117,9 @@ for (const [janCode, groupProducts] of comparableGroups) {
   console.log(`\n💰 価格一覧（安い順）:`);
   priceData.forEach((pd, index) => {
     const badge = index === 0 ? '🏆 最安値' : '';
+    const quantityLabel = pd.quantity > 1 ? ` (${pd.quantity}個セット, ¥${pd.unitPrice}/個)` : '';
     console.log(
-      `  ${index + 1}. [${pd.source}] ${pd.storeName || '不明'} - ¥${pd.amount.toLocaleString()} ${badge}`
+      `  ${index + 1}. [${pd.source}] ${pd.storeName} - ¥${pd.amount.toLocaleString()}${quantityLabel} ${badge}`
     );
   });
 
@@ -139,19 +149,81 @@ console.log('   商品詳細ページで価格比較セクションを確認し�
 console.log('   例: http://localhost:3000/products/[slug]\n');
 
 /**
- * 商品名またはitemCodeから販売元名を抽出
+ * 商品名からセット数量を検出
+ */
+function extractQuantity(productName) {
+  // パターン1: "3個セット", "3袋セット", "3本セット"
+  const setPattern = /(\d+)(個|袋|本|缶|箱|パック)セット/;
+  const setMatch = productName.match(setPattern);
+  if (setMatch) {
+    return parseInt(setMatch[1], 10);
+  }
+
+  // パターン2: "×3袋", "*3袋", "x3袋"
+  const multiplyPattern = /[×*xX](\d+)(個|袋|本|缶|箱|パック)/;
+  const multiplyMatch = productName.match(multiplyPattern);
+  if (multiplyMatch) {
+    return parseInt(multiplyMatch[1], 10);
+  }
+
+  // パターン3: "(3袋)", "【3袋】"
+  const bracketPattern = /[（(【](\d+)(個|袋|本|缶|箱|パック)[）)】]/;
+  const bracketMatch = productName.match(bracketPattern);
+  if (bracketMatch) {
+    return parseInt(bracketMatch[1], 10);
+  }
+
+  // デフォルト: 単品として扱う
+  return 1;
+}
+
+/**
+ * 商品名から販売元名を抽出
  */
 function extractStoreName(productName, source) {
-  if (source === 'rakuten') {
-    // 楽天の場合、商品名から販売元を推測
-    // 例: "【shop-name】商品名" のパターン
-    const match = productName.match(/【(.+?)】/);
-    if (match) {
-      return match[1];
-    }
-    return '楽天市場';
-  } else if (source === 'yahoo') {
-    return 'Yahoo!ショッピング';
+  // パターン1: 【店舗名】
+  const bracketMatch = productName.match(/【(.+?)】/);
+  if (bracketMatch) {
+    return bracketMatch[1];
   }
-  return source;
+
+  // パターン2: ＼店舗名／
+  const slashMatch = productName.match(/＼(.+?)／/);
+  if (slashMatch) {
+    return slashMatch[1];
+  }
+
+  // パターン3: 既知の店舗名を検索
+  const knownStores = {
+    rakuten: [
+      'ツルハドラッグ',
+      'tsuruha',
+      '楽天24',
+      'rakuten24',
+      'コスメ21',
+      'アットライフ',
+      'at-life',
+      'くすりのフクタロウ',
+      'DHC',
+    ],
+    yahoo: ['エクセレント', 'ekuserennto', 'セルニック', 'selnic', 'ヤフーショッピング'],
+  };
+
+  const storeKeywords = knownStores[source] || [];
+  for (const keyword of storeKeywords) {
+    const regex = new RegExp(keyword, 'i');
+    if (regex.test(productName)) {
+      return keyword;
+    }
+  }
+
+  // デフォルト: ECサイト名を返す
+  const sourceNames = {
+    rakuten: '楽天市場',
+    yahoo: 'Yahoo!ショッピング',
+    amazon: 'Amazon',
+    iherb: 'iHerb',
+  };
+
+  return sourceNames[source] || source;
 }

@@ -1,0 +1,212 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF9F0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFE8CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD9A8;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Orange peel gradient (3D effect) -->
+    <radialGradient id="orangePeel" cx="35%" cy="35%">
+      <stop offset="0%" style="stop-color:#FFB84D;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#FF9F1C;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FF8800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E67700;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Orange flesh gradient -->
+    <radialGradient id="orangeFlesh" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#FFF5E6;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FFE4B5;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#FFD580;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFB84D;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Leaf gradient -->
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8FD14F;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5FAD56;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3D8B37;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Segment gradient -->
+    <linearGradient id="segmentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE4B5;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#FFD180;stop-opacity:0.9" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="8" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Texture pattern -->
+    <pattern id="orangeTexture" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1.5" fill="#FF9F1C" opacity="0.3"/>
+      <circle cx="5" cy="15" r="1" fill="#FF9F1C" opacity="0.2"/>
+      <circle cx="15" cy="5" r="1.2" fill="#FF9F1C" opacity="0.25"/>
+    </pattern>
+
+    <!-- Sparkle -->
+    <radialGradient id="sparkle">
+      <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:white;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+
+  <!-- Decorative circles in background -->
+  <circle cx="150" cy="150" r="80" fill="#FFE4B5" opacity="0.2"/>
+  <circle cx="1050" cy="650" r="100" fill="#FFD580" opacity="0.15"/>
+  <circle cx="1100" cy="200" r="60" fill="#FFB84D" opacity="0.2"/>
+  <circle cx="100" cy="700" r="70" fill="#FF9F1C" opacity="0.15"/>
+
+  <!-- Left orange (whole) with shadow -->
+  <g filter="url(#dropShadow)">
+    <!-- Main orange body -->
+    <circle cx="350" cy="400" r="180" fill="url(#orangePeel)"/>
+
+    <!-- Texture overlay -->
+    <circle cx="350" cy="400" r="180" fill="url(#orangeTexture)"/>
+
+    <!-- Peel texture dots (more detailed) -->
+    <g opacity="0.4">
+      <circle cx="300" cy="350" r="4" fill="#E67700"/>
+      <circle cx="380" cy="340" r="3.5" fill="#E67700"/>
+      <circle cx="420" cy="380" r="4.5" fill="#E67700"/>
+      <circle cx="310" cy="430" r="3" fill="#E67700"/>
+      <circle cx="390" cy="450" r="4" fill="#E67700"/>
+      <circle cx="270" cy="400" r="3.5" fill="#E67700"/>
+      <circle cx="430" cy="420" r="3" fill="#E67700"/>
+      <circle cx="330" cy="320" r="3" fill="#E67700"/>
+      <circle cx="360" cy="480" r="3.5" fill="#E67700"/>
+      <circle cx="250" cy="370" r="2.5" fill="#E67700"/>
+    </g>
+
+    <!-- Leaves on stem -->
+    <g>
+      <!-- Stem -->
+      <rect x="345" y="220" width="10" height="40" fill="#5FAD56" rx="3"/>
+
+      <!-- Left leaf -->
+      <ellipse cx="320" cy="240" rx="35" ry="50" fill="url(#leafGradient)" transform="rotate(-35 320 240)"/>
+      <path d="M 320 210 Q 320 240 320 270" stroke="#3D8B37" stroke-width="2" fill="none"/>
+
+      <!-- Right leaf -->
+      <ellipse cx="380" cy="235" rx="32" ry="48" fill="url(#leafGradient)" transform="rotate(25 380 235)"/>
+      <path d="M 380 210 Q 380 235 380 260" stroke="#3D8B37" stroke-width="2" fill="none"/>
+    </g>
+
+    <!-- Highlight on orange -->
+    <ellipse cx="290" cy="340" rx="70" ry="50" fill="white" opacity="0.4" transform="rotate(-20 290 340)"/>
+    <ellipse cx="270" cy="360" rx="40" ry="30" fill="white" opacity="0.6" transform="rotate(-20 270 360)"/>
+
+    <!-- Sparkles -->
+    <circle cx="280" cy="350" r="8" fill="url(#sparkle)" opacity="0.8"/>
+    <circle cx="310" cy="330" r="5" fill="url(#sparkle)" opacity="0.6"/>
+  </g>
+
+  <!-- Right orange slice with shadow -->
+  <g filter="url(#dropShadow)">
+    <!-- Outer peel ring -->
+    <circle cx="750" cy="400" r="190" fill="none" stroke="url(#orangePeel)" stroke-width="20"/>
+
+    <!-- Inner flesh circle -->
+    <circle cx="750" cy="400" r="170" fill="url(#orangeFlesh)"/>
+
+    <!-- Segments (8 segments) -->
+    <g opacity="0.85">
+      <!-- Vertical segment -->
+      <path d="M 750 230 L 750 240 Q 755 400 750 560 L 750 570 Q 745 400 750 230 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="1"/>
+
+      <!-- Horizontal segment -->
+      <path d="M 580 400 L 590 400 Q 750 405 910 400 L 920 400 Q 750 395 580 400 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="1"/>
+
+      <!-- Diagonal segments (4 more) -->
+      <path d="M 630 280 L 637 287 Q 750 400 863 513 L 870 520 Q 750 400 630 280 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="1"/>
+
+      <path d="M 630 520 L 637 513 Q 750 400 863 287 L 870 280 Q 750 400 630 520 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="1"/>
+
+      <!-- Additional diagonal segments for more detail -->
+      <path d="M 665 255 L 671 261 Q 750 400 829 539 L 835 545 Q 750 400 665 255 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="0.8" opacity="0.7"/>
+
+      <path d="M 665 545 L 671 539 Q 750 400 829 261 L 835 255 Q 750 400 665 545 Z"
+            fill="url(#segmentGradient)" stroke="#FFB84D" stroke-width="0.8" opacity="0.7"/>
+    </g>
+
+    <!-- Center white core -->
+    <circle cx="750" cy="400" r="25" fill="white" opacity="0.9"/>
+    <circle cx="750" cy="400" r="20" fill="#FFF5E6"/>
+
+    <!-- Segment membrane details -->
+    <circle cx="750" cy="400" r="170" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+
+    <!-- Juice droplets -->
+    <circle cx="720" cy="350" r="6" fill="#FFE4B5" opacity="0.8"/>
+    <circle cx="780" cy="430" r="5" fill="#FFE4B5" opacity="0.7"/>
+    <circle cx="700" cy="420" r="4" fill="#FFE4B5" opacity="0.6"/>
+
+    <!-- Highlight on slice -->
+    <ellipse cx="680" cy="330" rx="50" ry="40" fill="white" opacity="0.3" transform="rotate(-30 680 330)"/>
+
+    <!-- Peel texture on ring -->
+    <g opacity="0.3">
+      <circle cx="750" cy="215" r="3" fill="#E67700"/>
+      <circle cx="920" cy="400" r="3.5" fill="#E67700"/>
+      <circle cx="750" cy="585" r="3" fill="#E67700"/>
+      <circle cx="580" cy="400" r="3.5" fill="#E67700"/>
+      <circle cx="850" cy="300" r="2.5" fill="#E67700"/>
+      <circle cx="650" cy="500" r="3" fill="#E67700"/>
+    </g>
+  </g>
+
+  <!-- Floating vitamin C molecules (decorative) -->
+  <g opacity="0.4">
+    <circle cx="200" cy="300" r="15" fill="#FFB84D" opacity="0.5"/>
+    <circle cx="1000" cy="350" r="12" fill="#FF9F1C" opacity="0.5"/>
+    <circle cx="950" cy="500" r="18" fill="#FFD580" opacity="0.5"/>
+    <circle cx="250" cy="550" r="14" fill="#FFE4B5" opacity="0.5"/>
+  </g>
+
+  <!-- Title with gradient -->
+  <defs>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Text shadow -->
+  <text x="600" y="700" font-family="'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif"
+        font-size="72" font-weight="900" fill="#00000020" text-anchor="middle">
+    ビタミンC
+  </text>
+
+  <!-- Main text -->
+  <text x="600" y="695" font-family="'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif"
+        font-size="72" font-weight="900" fill="url(#textGradient)" text-anchor="middle">
+    ビタミンC
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="750" font-family="Arial, sans-serif"
+        font-size="32" font-weight="300" fill="#666" text-anchor="middle" letter-spacing="2">
+    Vitamin C (Ascorbic Acid)
+  </text>
+</svg>

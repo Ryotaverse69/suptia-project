@@ -170,23 +170,19 @@ export default function MenopausePage() {
             </h2>
             <div className="grid gap-6">
               {hormoneIngredients.map((ingredient) => (
-                <div
+                <Link
                   key={ingredient.slug}
-                  className="bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg transition-shadow"
+                  href={`/ingredients/${ingredient.slug}`}
+                  className="block bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg hover:border-purple-300 transition-all group"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
-                      <Link
-                        href={`/ingredients/${ingredient.slug}`}
-                        className="group"
-                      >
-                        <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1">
-                          {ingredient.name}{" "}
-                          <span className="text-sm text-neutral-500 font-normal">
-                            ({ingredient.nameEn})
-                          </span>
-                        </h3>
-                      </Link>
+                      <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1 transition-colors">
+                        {ingredient.name}{" "}
+                        <span className="text-sm text-neutral-500 font-normal">
+                          ({ingredient.nameEn})
+                        </span>
+                      </h3>
                       <p className="text-neutral-600 mb-3">
                         {ingredient.description}
                       </p>
@@ -200,6 +196,22 @@ export default function MenopausePage() {
                           </span>
                         ))}
                       </div>
+                      <div className="text-purple-600 font-medium text-sm group-hover:text-purple-700 flex items-center gap-1">
+                        {ingredient.name}の詳細を見る
+                        <svg
+                          className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
                     <div className="bg-rose-50 border border-rose-200 rounded-lg px-4 py-3 md:min-w-[180px]">
                       <div className="text-xs text-rose-700 font-medium mb-1">
@@ -210,7 +222,7 @@ export default function MenopausePage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -226,23 +238,19 @@ export default function MenopausePage() {
             </h2>
             <div className="grid gap-6">
               {boneHealthIngredients.map((ingredient) => (
-                <div
+                <Link
                   key={ingredient.slug}
-                  className="bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg transition-shadow"
+                  href={`/ingredients/${ingredient.slug}`}
+                  className="block bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg hover:border-purple-300 transition-all group"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
-                      <Link
-                        href={`/ingredients/${ingredient.slug}`}
-                        className="group"
-                      >
-                        <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1">
-                          {ingredient.name}{" "}
-                          <span className="text-sm text-neutral-500 font-normal">
-                            ({ingredient.nameEn})
-                          </span>
-                        </h3>
-                      </Link>
+                      <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1 transition-colors">
+                        {ingredient.name}{" "}
+                        <span className="text-sm text-neutral-500 font-normal">
+                          ({ingredient.nameEn})
+                        </span>
+                      </h3>
                       <p className="text-neutral-600 mb-3">
                         {ingredient.description}
                       </p>
@@ -256,6 +264,22 @@ export default function MenopausePage() {
                           </span>
                         ))}
                       </div>
+                      <div className="text-purple-600 font-medium text-sm group-hover:text-purple-700 flex items-center gap-1">
+                        {ingredient.name}の詳細を見る
+                        <svg
+                          className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
                     <div className="bg-pink-50 border border-pink-200 rounded-lg px-4 py-3 md:min-w-[180px]">
                       <div className="text-xs text-pink-700 font-medium mb-1">
@@ -266,7 +290,7 @@ export default function MenopausePage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -282,23 +306,19 @@ export default function MenopausePage() {
             </h2>
             <div className="grid gap-6">
               {cardiovascularIngredients.map((ingredient) => (
-                <div
+                <Link
                   key={ingredient.slug}
-                  className="bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg transition-shadow"
+                  href={`/ingredients/${ingredient.slug}`}
+                  className="block bg-white rounded-xl shadow-md p-6 border border-neutral-200 hover:shadow-lg hover:border-purple-300 transition-all group"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
-                      <Link
-                        href={`/ingredients/${ingredient.slug}`}
-                        className="group"
-                      >
-                        <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1">
-                          {ingredient.name}{" "}
-                          <span className="text-sm text-neutral-500 font-normal">
-                            ({ingredient.nameEn})
-                          </span>
-                        </h3>
-                      </Link>
+                      <h3 className="text-xl font-bold text-neutral-900 group-hover:text-purple-600 mb-1 transition-colors">
+                        {ingredient.name}{" "}
+                        <span className="text-sm text-neutral-500 font-normal">
+                          ({ingredient.nameEn})
+                        </span>
+                      </h3>
                       <p className="text-neutral-600 mb-3">
                         {ingredient.description}
                       </p>
@@ -312,6 +332,22 @@ export default function MenopausePage() {
                           </span>
                         ))}
                       </div>
+                      <div className="text-purple-600 font-medium text-sm group-hover:text-purple-700 flex items-center gap-1">
+                        {ingredient.name}の詳細を見る
+                        <svg
+                          className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
                     <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 md:min-w-[180px]">
                       <div className="text-xs text-red-700 font-medium mb-1">
@@ -322,7 +358,7 @@ export default function MenopausePage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
