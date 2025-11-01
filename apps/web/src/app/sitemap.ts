@@ -27,20 +27,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 
   // Sanityから商品と成分のslugを取得
-  const [products, ingredients] = await Promise.all([
+  const [productsRaw, ingredientsRaw] = await Promise.all([
     sanity.fetch<ProductSlug[]>(`
-      *[_type == "product" && defined(slug.current)]{
+      *[_type == "product" && defined(slug.current) && slug.current != ""]{
         slug,
         _updatedAt
       }
     `),
     sanity.fetch<IngredientSlug[]>(`
-      *[_type == "ingredient" && defined(slug.current)]{
+      *[_type == "ingredient" && defined(slug.current) && slug.current != ""]{
         slug,
         _updatedAt
       }
     `),
   ]);
+
+  // 重複を除外（slugをキーにして最新のものを残す）
+  const products = Array.from(
+    new Map(productsRaw.map((p) => [p.slug.current, p])).values(),
+  );
+
+  const ingredients = Array.from(
+    new Map(ingredientsRaw.map((i) => [i.slug.current, i])).values(),
+  );
 
   // 静的ページ
   const staticPages: MetadataRoute.Sitemap = [
@@ -61,6 +70,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/diagnosis`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
     },
     {
       url: `${siteUrl}/about`,

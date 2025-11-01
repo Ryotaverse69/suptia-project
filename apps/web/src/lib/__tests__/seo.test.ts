@@ -76,8 +76,9 @@ describe("SEO Utilities", () => {
     it("商品メタデータを生成する", () => {
       const metadata = generateProductMetadata(mockProduct);
 
+      // 新しいSEOロジック: priceJPYがある場合は最安値を表示
       expect(metadata.title).toBe(
-        "ビタミンC 1000mg - テストブランド | サプティア",
+        "ビタミンC 1000mg | 最安値¥2,980から比較 | サプティア",
       );
       expect(metadata.description).toBe("テスト商品の説明");
       expect(metadata.alternates?.canonical).toBe(
@@ -89,10 +90,9 @@ describe("SEO Utilities", () => {
       const productWithoutDesc = { ...mockProduct, description: undefined };
       const metadata = generateProductMetadata(productWithoutDesc);
 
-      expect(metadata.description).toContain(
-        "テストブランドのビタミンC 1000mg",
-      );
-      expect(metadata.description).toContain("￥2,980");
+      // 新しいSEOロジック: 最安値を強調した説明文を生成
+      expect(metadata.description).toContain("ビタミンC 1000mgを徹底比較！");
+      expect(metadata.description).toContain("最安値¥2,980");
     });
 
     it("適切なキーワードが設定される", () => {
@@ -101,6 +101,28 @@ describe("SEO Utilities", () => {
       expect(metadata.keywords).toContain("ビタミンC 1000mg");
       expect(metadata.keywords).toContain("テストブランド");
       expect(metadata.keywords).toContain("サプリメント");
+    });
+
+    it("複数価格がある場合は最安値と最高値を表示する", () => {
+      const productWithMultiplePrices = {
+        ...mockProduct,
+        description: undefined,
+        prices: [
+          { amount: 1880, source: "rakuten" },
+          { amount: 2480, source: "yahoo" },
+          { amount: 2980, source: "amazon" },
+        ],
+      };
+
+      const metadata = generateProductMetadata(productWithMultiplePrices);
+
+      // タイトルに最安値を表示
+      expect(metadata.title).toContain("最安値¥1,880から比較");
+
+      // 説明に最安値と節約額を表示
+      expect(metadata.description).toContain("最安値¥1,880");
+      expect(metadata.description).toContain("最大¥1,100お得"); // 2980 - 1880
+      expect(metadata.description).toContain("3サイトで価格比較");
     });
   });
 
@@ -132,6 +154,40 @@ describe("SEO Utilities", () => {
       const jsonLd = generateProductJsonLd(productWithoutImage);
 
       expect(jsonLd.image).toBe("https://suptia.com/product-placeholder.jpg");
+    });
+
+    it("複数価格がある場合はAggregateOfferを生成する", () => {
+      const productWithMultiplePrices = {
+        ...mockProduct,
+        prices: [
+          { amount: 1880, source: "rakuten" },
+          { amount: 2480, source: "yahoo" },
+          { amount: 2980, source: "amazon" },
+        ],
+      };
+
+      const jsonLd = generateProductJsonLd(productWithMultiplePrices);
+
+      expect(jsonLd.offers["@type"]).toBe("AggregateOffer");
+      expect(jsonLd.offers.lowPrice).toBe(1880);
+      expect(jsonLd.offers.highPrice).toBe(2980);
+      expect(jsonLd.offers.offerCount).toBe(3);
+      expect(jsonLd.offers.priceCurrency).toBe("JPY");
+      expect(jsonLd.offers.availability).toBe("https://schema.org/InStock");
+    });
+
+    it("単一価格の場合はOfferを生成する", () => {
+      const productWithSinglePrice = {
+        ...mockProduct,
+        prices: [{ amount: 2980, source: "rakuten" }],
+      };
+
+      const jsonLd = generateProductJsonLd(productWithSinglePrice);
+
+      expect(jsonLd.offers["@type"]).toBe("Offer");
+      expect(jsonLd.offers.price).toBe(2980);
+      expect(jsonLd.offers.priceCurrency).toBe("JPY");
+      expect(jsonLd.offers.availability).toBe("https://schema.org/InStock");
     });
   });
 
