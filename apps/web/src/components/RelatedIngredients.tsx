@@ -140,7 +140,7 @@ export function RelatedIngredients({
                   : "border-gray-200 bg-gray-50"
               }`}
             >
-              {hasSlug ? (
+              {hasSlug && ingredient.slug?.current ? (
                 <Link
                   href={`/ingredients/${ingredient.slug.current}`}
                   className="block"
