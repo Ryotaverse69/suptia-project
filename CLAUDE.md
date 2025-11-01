@@ -1727,3 +1727,139 @@ Tier 3（中信頼度）:
 | 2025-10-12 | v1.2.0     | Ryota  | ECサイト連携・API統合戦略を追加（Amazon PA-API、楽天API、iHerb対応計画）                                                                                                                                                                                                                                                    |
 | 2025-10-10 | v1.1.0     | Ryota  | UIデザイン構成とコンポーネントライブラリを追加                                                                                                                                                                                                                                                                              |
 | 2025-10-01 | v1.0.0     | Ryota  | 初版作成（Claude Code連携用）                                                                                                                                                                                                                                                                                               |
+
+---
+
+## 🔌 Model Context Protocol (MCP) 統合
+
+SuptiaではModel Context Protocol (MCP)を活用して、外部サービスとのシームレスな統合を実現しています。
+
+### 統合済みMCPサーバー
+
+#### 1. **Supabase MCP** 🗄️
+
+**用途**: ユーザーデータ管理、価格履歴トラッキング、リアルタイム通知
+
+**主な機能**:
+
+- ユーザープロファイル管理（アレルギー、健康目標、懸念事項）
+- 価格アラート機能
+- お気に入り商品管理
+- 価格履歴トラッキング
+- 診断結果の保存・分析
+- 商品閲覧履歴
+
+**データベーステーブル**:
+
+- `user_profiles` - ユーザープロファイル
+- `price_alerts` - 価格アラート
+- `favorites` - お気に入り商品
+- `price_history` - 価格履歴
+- `diagnosis_results` - 診断結果
+- `product_views` - 商品閲覧履歴
+
+**セキュリティ**:
+
+- Row Level Security (RLS) 有効
+- ユーザーは自分のデータのみアクセス可能
+- Service Role Keyで管理操作
+
+#### 2. **Google Search Console MCP** 📊
+
+**用途**: SEO分析、検索パフォーマンス監視、コンテンツ戦略
+
+**主な機能**:
+
+- 検索パフォーマンスデータ取得（クリック数、表示回数、CTR、順位）
+- ページ別パフォーマンス分析
+- 低CTRページの特定・改善提案
+- 新規コンテンツ発見（未カバーの検索クエリ）
+- インデックスカバレッジ確認
+- Core Web Vitals監視
+
+**活用例**:
+
+```
+「過去30日間で表示回数が多いけどCTRが低いページを教えて」
+→ タイトル・ディスクリプション改善案を自動提案
+
+「まだ記事を書いていない成分で検索需要があるものは？」
+→ 新規成分記事の企画・優先順位付け
+```
+
+### セットアップ方法
+
+詳細は [.mcp/README.md](.mcp/README.md) を参照してください。
+
+**簡易手順**:
+
+1. **Supabase**:
+   - プロジェクト作成
+   - `.mcp/supabase-schema.sql` を実行
+   - 環境変数設定（`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`）
+
+2. **Google Search Console**:
+   - Google Cloud Projectでアプリ作成
+   - Search Console API有効化
+   - OAuth 2.0認証情報取得
+   - `scripts/generate-google-auth-url.mjs` でリフレッシュトークン取得
+
+3. **Claude Desktop設定**:
+   - `~/.config/claude/claude_desktop_config.json` に設定追加
+   - Claude Desktopを再起動
+
+### 活用シナリオ
+
+#### シナリオ1: 価格アラート + SEO最適化
+
+```
+1. Supabaseから人気の価格アラート商品を取得
+2. その商品の検索クエリをSearch Consoleから分析
+3. 商品ページのSEOを改善して検索流入を増やす
+```
+
+#### シナリオ2: ユーザー行動分析 + コンテンツ戦略
+
+```
+1. Supabaseのproduct_viewsから人気商品を特定
+2. Search Consoleで関連キーワードの検索ボリューム確認
+3. 需要が高いのに記事がない成分を発見
+4. 新規成分記事を企画・作成
+```
+
+#### シナリオ3: パーソナライズド推薦
+
+```
+1. Supabaseからユーザープロファイル取得（アレルギー、目標）
+2. アレルギー成分を除外した商品を推薦
+3. 診断結果をSupabaseに保存
+4. 次回訪問時に履歴を参照してさらに最適化
+```
+
+### ディレクトリ構造
+
+```
+.mcp/
+├── README.md                            # 詳細ガイド
+├── supabase-schema.sql                  # データベーススキーマ
+├── claude-desktop-config.json           # Claude Desktop設定テンプレート
+├── example-queries.md                   # 実際に使えるクエリ集
+├── supabase-mcp-config.json             # Supabase単体設定
+└── google-search-console-mcp-config.json # GSC単体設定
+
+scripts/
+└── generate-google-auth-url.mjs         # Google OAuth認証ヘルパー
+```
+
+### 参考リソース
+
+- **MCP公式サイト**: https://modelcontextprotocol.io/
+- **Supabase MCP**: https://github.com/modelcontextprotocol/servers/tree/main/src/supabase
+- **Search Console MCP**: https://github.com/modelcontextprotocol/servers/tree/main/src/google-search-console
+- **活用例**: [.mcp/example-queries.md](.mcp/example-queries.md)
+
+---
+
+**最終更新日**: 2025-11-01
+**バージョン**: 1.9.0
+**変更内容**: MCP統合（Supabase、Google Search Console）、セット商品価格比較機能改善

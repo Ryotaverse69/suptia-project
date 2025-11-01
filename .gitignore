@@ -107,3 +107,10 @@ references-issues.json
 encoding-issues.json
 *.bak
 dha-article.json
+
+# MCP設定（認証情報を含む可能性があるため）
+.mcp/*-config.json
+!.mcp/claude-desktop-config.json
+
+# ユーザー固有のMCP設定
+claude_desktop_config.json
