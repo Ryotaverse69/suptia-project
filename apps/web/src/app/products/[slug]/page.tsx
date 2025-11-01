@@ -1,13 +1,13 @@
 import { sanityServer } from "@/lib/sanityServer";
 import { checkCompliance, generateSampleDescription } from "@/lib/compliance";
 import { WarningBanner } from "@/components/WarningBanner";
-import { PriceTable } from "@/components/PriceTable";
 import { PriceComparison } from "@/components/PriceComparison";
 import { PriceHistoryChart } from "@/components/PriceHistoryChart";
 import { ProductBadges, BadgeSummary } from "@/components/ProductBadges";
 import { IngredientComparison } from "@/components/IngredientComparison";
 import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
 import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
+import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import {
   generateProductMetadata,
@@ -699,16 +699,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <ProductBadges badges={badges} className="mb-8" />
 
         {/* Additional Information */}
-        {/* Price Table Component */}
-        <PriceTable
-          product={{
-            name: product.name,
-            priceJPY: product.priceJPY,
-            servingsPerContainer: product.servingsPerContainer,
-            servingsPerDay: product.servingsPerDay,
-          }}
-          className="mb-8"
-        />
+        {/* 8. Related Ingredients - 配合成分ガイド */}
+        {product.ingredients && product.ingredients.length > 0 && (
+          <RelatedIngredients
+            ingredients={product.ingredients}
+            className="mb-8"
+          />
+        )}
 
         {/* Price History Chart */}
         <PriceHistoryChart
