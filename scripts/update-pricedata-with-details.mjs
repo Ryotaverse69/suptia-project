@@ -74,19 +74,55 @@ function extractQuantity(productName) {
 }
 
 /**
+ * itemCodeから店舗名を抽出
+ */
+function extractStoreNameFromItemCode(itemCode) {
+  if (!itemCode) return null;
+
+  const storeCode = itemCode.split(':')[0];
+
+  const storeMapping = {
+    // 楽天市場の店舗
+    tsuruha: 'ツルハドラッグ',
+    'at-life': 'アットライフ',
+    rakuten24: '楽天24',
+    'cosme-cosme21': 'コスメ21',
+    fukutaro: 'くすりのフクタロウ',
+    // Yahoo!ショッピングの店舗
+    ekuserennto: 'エクセレント',
+    selnic: 'セルニック',
+    // その他
+    dhc: 'DHC',
+  };
+
+  return storeMapping[storeCode] || null;
+}
+
+/**
  * 商品名から販売元名を抽出
  */
-function extractStoreName(productName, source) {
+function extractStoreName(productName, source, itemCode = null) {
+  // 優先順位1: itemCodeから店舗名を取得
+  if (itemCode) {
+    const storeFromCode = extractStoreNameFromItemCode(itemCode);
+    if (storeFromCode) {
+      return storeFromCode;
+    }
+  }
+
+  // 優先順位2: 【店舗名】パターン
   const bracketMatch = productName.match(/【(.+?)】/);
   if (bracketMatch) {
     return bracketMatch[1];
   }
 
+  // 優先順位3: ＼店舗名／パターン
   const slashMatch = productName.match(/＼(.+?)／/);
   if (slashMatch) {
     return slashMatch[1];
   }
 
+  // 優先順位4: 既知の店舗名を検索
   const knownStores = {
     rakuten: [
       'ツルハドラッグ',
@@ -110,6 +146,7 @@ function extractStoreName(productName, source) {
     }
   }
 
+  // デフォルト: ECサイト名を返す
   const sourceNames = {
     rakuten: '楽天市場',
     yahoo: 'Yahoo!ショッピング',
@@ -129,15 +166,10 @@ for (const product of products) {
 
   // 各priceDataエントリーを更新
   const updatedPriceData = product.priceData.map((pd) => {
-    // 既に詳細情報がある場合はスキップ
-    if (pd.productName && pd.storeName && pd.quantity && pd.unitPrice) {
-      return pd;
-    }
-
     // productNameから情報を抽出（priceDataにproductNameがない場合は親商品名を使用）
     const productName = pd.productName || product.name;
     const quantity = extractQuantity(productName);
-    const storeName = extractStoreName(productName, pd.source);
+    const storeName = extractStoreName(productName, pd.source, pd.itemCode);
     const unitPrice = Math.round(pd.amount / quantity);
 
     return {
