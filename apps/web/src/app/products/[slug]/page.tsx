@@ -309,6 +309,7 @@ async function getAllIngredients(): Promise<
     category?: string;
     sideEffects?: string[];
     interactions?: string[];
+    contraindications?: string[];
   }>
 > {
   const query = `*[_type == "ingredient"]{
@@ -318,7 +319,8 @@ async function getAllIngredients(): Promise<
     evidenceLevel,
     category,
     sideEffects,
-    interactions
+    interactions,
+    contraindications
   }`;
 
   try {
@@ -336,6 +338,61 @@ interface PageProps {
   };
 }
 
+/**
+ * アレルギー関連の禁忌タグとそのラベル
+ */
+const ALLERGY_TAGS: Record<string, string> = {
+  "allergy-prone": "アレルギー体質の方は注意が必要です",
+  "shellfish-allergy": "貝アレルギーの方は使用を控えてください",
+  "soy-allergy": "大豆アレルギーの方は使用を控えてください",
+  "nut-allergy": "ナッツアレルギーの方は使用を控えてください",
+};
+
+/**
+ * 商品の成分からアレルギー情報を抽出
+ */
+function extractAllergyInfo(
+  productIngredients: Product["ingredients"],
+  allIngredients: Awaited<ReturnType<typeof getAllIngredients>>,
+): Array<{ tag: string; label: string; ingredientName: string }> {
+  if (!productIngredients || productIngredients.length === 0) {
+    return [];
+  }
+
+  const allergyInfo: Array<{
+    tag: string;
+    label: string;
+    ingredientName: string;
+  }> = [];
+  const seenTags = new Set<string>();
+
+  // 商品に含まれる各成分について
+  for (const prodIngredient of productIngredients) {
+    if (!prodIngredient.ingredient?._id) continue;
+
+    // 成分マスタから詳細情報を取得
+    const ingredientDetail = allIngredients.find(
+      (ing) => ing._id === prodIngredient.ingredient!._id,
+    );
+
+    if (!ingredientDetail?.contraindications) continue;
+
+    // アレルギー関連の禁忌タグを抽出
+    for (const tag of ingredientDetail.contraindications) {
+      if (ALLERGY_TAGS[tag] && !seenTags.has(tag)) {
+        allergyInfo.push({
+          tag,
+          label: ALLERGY_TAGS[tag],
+          ingredientName: ingredientDetail.name,
+        });
+        seenTags.add(tag);
+      }
+    }
+  }
+
+  return allergyInfo;
+}
+
 export default async function ProductDetailPage({ params }: PageProps) {
   const product = await getProduct(params.slug);
 
@@ -345,6 +402,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   // 全成分マスタデータを取得
   const allIngredients = await getAllIngredients();
+
+  // アレルギー情報を抽出
+  const allergyInfo = extractAllergyInfo(product.ingredients, allIngredients);
 
   // スコアの自動計算
   let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
@@ -554,9 +614,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
     name: product.name,
     brand: product.brandName,
     priceJPY: product.priceJPY,
+    prices: mergedPriceData?.map((p) => ({
+      amount: p.amount,
+      source: p.source,
+    })),
     slug: product.slug.current,
     description,
     images: product.images?.map((img) => img.asset?.url).filter(Boolean),
+    mainIngredient: mainIngredientInfo?.name,
+    ingredientAmount: mainIngredientAmount,
   });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
@@ -694,6 +760,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           safetyDetails={safetyDetails}
           evidenceDetails={evidenceDetails}
           allIngredients={product.allIngredients}
+          allergyInfo={allergyInfo}
           className="mb-8"
         />
 
@@ -739,12 +806,27 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  // JANコードで関連商品を取得して価格比較データを作成
+  const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
+
+  // 既存のpriceDataとマージ（既存データを優先）
+  const mergedPriceData =
+    product.priceData && product.priceData.length > 0
+      ? product.priceData
+      : relatedPrices;
+
   return generateProductMetadata({
     name: product.name,
     brand: product.brandName,
     priceJPY: product.priceJPY,
+    prices: mergedPriceData?.map((p) => ({
+      amount: p.amount,
+      source: p.source,
+    })),
     slug: product.slug.current,
     description: product.description,
     images: product.images?.map((img) => img.asset?.url).filter(Boolean),
+    mainIngredient: product.ingredients?.[0]?.ingredient?.name,
+    ingredientAmount: product.ingredients?.[0]?.amountMgPerServing,
   });
 }

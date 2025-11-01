@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
+import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import {
   Search,
@@ -11,6 +13,8 @@ import {
   Pill,
 } from "lucide-react";
 import { IngredientSearch } from "@/components/IngredientSearch";
+import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
+import { getSiteUrl } from "@/lib/runtimeConfig";
 
 // ISR: 1時間ごとにページを再生成
 export const revalidate = 3600;
@@ -114,8 +118,27 @@ export default async function IngredientsPage() {
     ingredients: ingredients.filter((ing) => ing.category === category),
   }));
 
+  // 構造化データの生成
+  const siteUrl = getSiteUrl();
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "ホーム", url: `${siteUrl}/` },
+    { name: "成分ガイド", url: `${siteUrl}/ingredients` },
+  ]);
+
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
+
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      {/* JSON-LD構造化データ: Breadcrumb */}
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+
+      <div className="min-h-screen bg-background">
       {/* パンくずリスト */}
       <div className="bg-white border-b border-primary-200">
         <div className="mx-auto px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
@@ -326,5 +349,6 @@ export default async function IngredientsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

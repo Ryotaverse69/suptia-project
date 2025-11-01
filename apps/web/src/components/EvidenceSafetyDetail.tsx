@@ -37,6 +37,11 @@ interface EvidenceSafetyDetailProps {
   safetyDetails?: IngredientSafetyDetail[];
   evidenceDetails?: IngredientEvidenceDetail[]; // 成分別エビデンス詳細
   allIngredients?: string;
+  allergyInfo?: Array<{
+    tag: string;
+    label: string;
+    ingredientName: string;
+  }>;
   className?: string;
 }
 
@@ -51,6 +56,7 @@ export function EvidenceSafetyDetail({
   safetyDetails = [],
   evidenceDetails = [],
   allIngredients,
+  allergyInfo = [],
   className = "",
 }: EvidenceSafetyDetailProps) {
   // エビデンスレベルの説明
@@ -463,6 +469,45 @@ export function EvidenceSafetyDetail({
                 <p className="font-bold">第三者機関検査済み</p>
                 <p className="text-sm">
                   独立した検査機関による品質検査を受けています。
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* アレルギー情報 */}
+        {allergyInfo.length > 0 && (
+          <div className="mb-6 p-5 bg-red-50 border-2 border-red-500 rounded-lg">
+            <div className="flex items-start gap-3 text-red-900">
+              <AlertTriangle size={24} className="mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  アレルギー注意
+                </h3>
+                <div className="space-y-3">
+                  {allergyInfo.map((allergy, index) => (
+                    <div
+                      key={index}
+                      className="p-3 bg-white border-l-4 border-red-500 rounded"
+                    >
+                      <p className="font-semibold text-red-800 mb-1">
+                        {allergy.label}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        この商品には
+                        <span className="font-semibold text-red-700">
+                          {allergy.ingredientName}
+                        </span>
+                        が含まれています。
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-red-800 mt-3 flex items-start gap-1">
+                  <span className="font-bold">⚠️</span>
+                  <span>
+                    アレルギーをお持ちの方は、使用前に必ず医師または薬剤師にご相談ください。
+                  </span>
                 </p>
               </div>
             </div>

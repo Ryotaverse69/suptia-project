@@ -1,5 +1,7 @@
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import Script from "next/script";
+import { headers } from "next/headers";
 import {
   recommendProducts,
   type UserDiagnosisProfile,
@@ -12,6 +14,41 @@ import type { ContraindicationTag } from "@/lib/safety-checker";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { fetchProductsForDiagnosis } from "../actions";
+import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
+import { getSiteUrl } from "@/lib/runtimeConfig";
+
+// 健康状態の日本語ラベル
+const CONDITION_LABELS: Record<ContraindicationTag, string> = {
+  pregnant: "妊娠中",
+  breastfeeding: "授乳中",
+  infants: "乳幼児",
+  children: "小児",
+  elderly: "高齢者",
+  "blood-clotting-disorder": "血液凝固障害",
+  "bleeding-risk": "出血リスク",
+  surgery: "手術予定",
+  diabetes: "糖尿病",
+  hypertension: "高血圧",
+  hypotension: "低血圧",
+  "kidney-disease": "腎臓疾患",
+  "liver-disease": "肝臓疾患",
+  "heart-disease": "心臓疾患",
+  "thyroid-disorder": "甲状腺疾患",
+  "autoimmune-disease": "自己免疫疾患",
+  "digestive-disorder": "消化器疾患",
+  epilepsy: "てんかん",
+  "mental-disorder": "精神疾患",
+  "anticoagulant-use": "抗凝固剤使用中",
+  "antiplatelet-use": "抗血小板薬使用中",
+  "antidepressant-use": "抗うつ薬使用中",
+  "immunosuppressant-use": "免疫抑制剤使用中",
+  "hormone-therapy": "ホルモン療法中",
+  chemotherapy: "化学療法中",
+  "allergy-prone": "アレルギー体質",
+  "shellfish-allergy": "貝アレルギー",
+  "soy-allergy": "大豆アレルギー",
+  "nut-allergy": "ナッツアレルギー",
+};
 
 // Sanityから商品データを取得するようになりました
 
@@ -48,9 +85,30 @@ export default async function DiagnosisResultsPage({
   const recommendations = recommendProducts(products, userProfile);
 
   const topThree = recommendations.slice(0, 3);
+  const otherRecommendations = recommendations.slice(3, 10); // トップ3以外の7件（合計10件）
+
+  // 構造化データの生成
+  const siteUrl = getSiteUrl();
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "ホーム", url: `${siteUrl}/` },
+    { name: "サプリメント診断", url: `${siteUrl}/diagnosis` },
+    { name: "診断結果", url: `${siteUrl}/diagnosis/results` },
+  ]);
+
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      {/* JSON-LD構造化データ: Breadcrumb */}
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+
+      <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
@@ -109,12 +167,12 @@ export default async function DiagnosisResultsPage({
                         key={condition}
                         className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full"
                       >
-                        {condition}
+                        {CONDITION_LABELS[condition] || condition}
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <span className="text-sm text-gray-500">未設定</span>
+                  <span className="text-sm text-gray-500">該当なし</span>
                 )}
               </div>
 
@@ -174,36 +232,56 @@ export default async function DiagnosisResultsPage({
             />
 
             {/* その他の推薦商品 */}
-            {recommendations.length > 3 && (
+            {otherRecommendations.length > 0 && (
               <div className="mt-12">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  その他の推薦商品
+                  他のおすすめ商品
                 </h2>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                   <div className="space-y-4">
-                    {recommendations.slice(3).map((rec) => (
+                    {otherRecommendations.map((rec) => (
                       <div
                         key={rec.product.id}
-                        className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
+                        className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0"
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="text-sm text-gray-500">
-                              #{rec.rank}
-                            </span>
-                            <h3 className="font-semibold text-gray-900">
-                              {rec.product.name}
-                            </h3>
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            総合スコア: {rec.scores.overallScore}/100
+                        {/* ランキング順位 */}
+                        <div className="flex-shrink-0">
+                          <div className="inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-white bg-blue-500">
+                            {rec.rank}
                           </div>
                         </div>
-                        <div className="text-right">
+
+                        {/* 商品画像 */}
+                        {rec.product.imageUrl && (
+                          <div className="flex-shrink-0 w-16 h-16">
+                            <img
+                              src={rec.product.imageUrl}
+                              alt={rec.product.name}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">
+                            {rec.product.name}
+                          </h3>
+                          <div className="text-sm text-gray-600 mt-1">
+                            {rec.product.brand && (
+                              <span>{rec.product.brand}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right space-y-1">
+                          {/* 1日あたりの価格 */}
                           <div className="text-lg font-bold text-gray-900">
                             ¥{Math.round(rec.scores.costDetails.costPerDayJPY)}
-                            /日
+                            <span className="text-sm text-gray-500 ml-1">/日</span>
+                          </div>
+                          {/* 商品価格 */}
+                          <div className="text-xs text-gray-500">
+                            商品価格: ¥{rec.product.priceJPY?.toLocaleString() || "—"}
                           </div>
                         </div>
                       </div>
@@ -227,5 +305,6 @@ export default async function DiagnosisResultsPage({
         )}
       </div>
     </div>
+    </>
   );
 }

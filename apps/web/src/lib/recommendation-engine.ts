@@ -110,6 +110,8 @@ export interface IngredientForDiagnosis {
 export interface ProductForDiagnosis extends ProductCostData {
   id: string;
   name: string;
+  slug?: string;
+  imageUrl?: string;
   brand?: string;
   ingredients: IngredientForDiagnosis[];
 }
@@ -150,12 +152,18 @@ export interface FourScoreEvaluation {
 }
 
 /**
+ * 成績評価（S〜D）
+ */
+export type LetterGrade = "S" | "A" | "B" | "C" | "D";
+
+/**
  * 推薦結果
  */
 export interface RecommendationResult {
   product: ProductForDiagnosis;
   scores: FourScoreEvaluation;
   rank: number;
+  grade: LetterGrade; // 総合評価（S〜D）
   recommendation:
     | "highly-recommended"
     | "recommended"
@@ -287,7 +295,7 @@ function calculateSafetyScore(
 
 /**
  * コストスコアの計算
- * 1日あたりのコストを評価
+ * 【新基準】予算内で最安値を最高評価、安い順に高得点
  */
 function calculateCostScore(
   product: ProductForDiagnosis,
@@ -300,38 +308,70 @@ function calculateCostScore(
   let costEfficiencyRating: "excellent" | "good" | "fair" | "poor" = "good";
 
   if (userBudget && userBudget > 0) {
-    // ユーザーの予算に対する割合でスコア化
-    const budgetRatio = costPerDay / userBudget;
+    // 予算設定あり: 予算内で安い順に高得点
+    if (costPerDay <= userBudget) {
+      // 予算内: 100点から価格に応じて減点（安いほど高得点）
+      // 例: 予算500円の場合
+      //   0円 → 100点
+      //   250円（予算の50%） → 75点
+      //   500円（予算ぴったり） → 50点
+      const budgetRatio = costPerDay / userBudget;
+      score = Math.round(100 - budgetRatio * 50);
 
-    if (budgetRatio <= 0.5) {
-      score = 100;
-      costEfficiencyRating = "excellent";
-    } else if (budgetRatio <= 0.8) {
-      score = 80;
-      costEfficiencyRating = "good";
-    } else if (budgetRatio <= 1.0) {
-      score = 60;
-      costEfficiencyRating = "fair";
-    } else if (budgetRatio <= 1.5) {
-      score = 30;
-      costEfficiencyRating = "poor";
+      if (budgetRatio <= 0.3) {
+        costEfficiencyRating = "excellent";
+      } else if (budgetRatio <= 0.6) {
+        costEfficiencyRating = "excellent";
+      } else if (budgetRatio <= 0.8) {
+        costEfficiencyRating = "good";
+      } else {
+        costEfficiencyRating = "fair";
+      }
     } else {
-      score = 0;
+      // 予算オーバー: 大幅減点
+      const overBudgetRatio = (costPerDay - userBudget) / userBudget;
+      // 予算の10%オーバー → 40点
+      // 予算の50%オーバー → 20点
+      // 予算の100%オーバー（2倍） → 5点
+      score = Math.round(50 - overBudgetRatio * 40);
+      score = Math.max(5, score); // 最低5点は残す
       costEfficiencyRating = "poor";
     }
   } else {
-    // 予算未設定の場合は絶対値で評価
-    if (costPerDay <= 50) {
+    // 予算未設定の場合は絶対値で評価（最安値優遇）
+    // 段階的に細かく評価
+    if (costPerDay <= 20) {
       score = 100;
       costEfficiencyRating = "excellent";
-    } else if (costPerDay <= 100) {
+    } else if (costPerDay <= 40) {
+      score = 95;
+      costEfficiencyRating = "excellent";
+    } else if (costPerDay <= 60) {
+      score = 88;
+      costEfficiencyRating = "excellent";
+    } else if (costPerDay <= 80) {
       score = 80;
       costEfficiencyRating = "good";
-    } else if (costPerDay <= 200) {
-      score = 60;
+    } else if (costPerDay <= 100) {
+      score = 72;
+      costEfficiencyRating = "good";
+    } else if (costPerDay <= 120) {
+      score = 64;
       costEfficiencyRating = "fair";
+    } else if (costPerDay <= 150) {
+      score = 55;
+      costEfficiencyRating = "fair";
+    } else if (costPerDay <= 180) {
+      score = 46;
+      costEfficiencyRating = "fair";
+    } else if (costPerDay <= 200) {
+      score = 38;
+      costEfficiencyRating = "poor";
+    } else if (costPerDay <= 250) {
+      score = 28;
+      costEfficiencyRating = "poor";
     } else {
-      score = 30;
+      score = 15;
       costEfficiencyRating = "poor";
     }
   }
@@ -437,22 +477,25 @@ export function evaluateProduct(
 
 /**
  * 優先事項に応じた重み付けを取得
+ * 【新基準】コスト（最安値・コスパ）を最優先、次に安全性を重視
  */
 function getWeights(
   priority: UserPriority,
 ): Record<"effectiveness" | "safety" | "cost" | "evidence", number> {
   switch (priority) {
     case "effectiveness":
-      return { effectiveness: 0.5, safety: 0.2, cost: 0.15, evidence: 0.15 };
+      return { effectiveness: 0.4, safety: 0.25, cost: 0.25, evidence: 0.1 };
     case "safety":
-      return { effectiveness: 0.2, safety: 0.5, cost: 0.15, evidence: 0.15 };
+      return { effectiveness: 0.1, safety: 0.5, cost: 0.3, evidence: 0.1 };
     case "cost":
-      return { effectiveness: 0.2, safety: 0.2, cost: 0.5, evidence: 0.1 };
+      // コスト重視: 最安値・コスパを最優先
+      return { effectiveness: 0.1, safety: 0.25, cost: 0.6, evidence: 0.05 };
     case "evidence":
-      return { effectiveness: 0.2, safety: 0.2, cost: 0.1, evidence: 0.5 };
+      return { effectiveness: 0.15, safety: 0.25, cost: 0.3, evidence: 0.3 };
     case "balanced":
     default:
-      return { effectiveness: 0.3, safety: 0.3, cost: 0.2, evidence: 0.2 };
+      // バランス重視でもコストを最優先（50%）、次に安全性（30%）
+      return { effectiveness: 0.1, safety: 0.3, cost: 0.5, evidence: 0.1 };
   }
 }
 
@@ -530,6 +573,22 @@ function generateWarnings(scores: FourScoreEvaluation): string[] {
 }
 
 /**
+ * 総合スコアから成績評価（S〜D）を判定
+ * Sランク: 90点以上（最優秀）
+ * Aランク: 80〜89点（優秀）
+ * Bランク: 70〜79点（良好）
+ * Cランク: 60〜69点（可）
+ * Dランク: 59点以下（不可）
+ */
+export function calculateLetterGrade(overallScore: number): LetterGrade {
+  if (overallScore >= 90) return "S";
+  if (overallScore >= 80) return "A";
+  if (overallScore >= 70) return "B";
+  if (overallScore >= 60) return "C";
+  return "D";
+}
+
+/**
  * 推薦レベルを判定
  */
 function determineRecommendationLevel(
@@ -563,10 +622,12 @@ export function recommendProduct(
   const reasons = generateReasons(product, scores, userProfile);
   const warnings = generateWarnings(scores);
   const recommendation = determineRecommendationLevel(scores);
+  const grade = calculateLetterGrade(scores.overallScore);
 
   return {
     product,
     scores,
+    grade,
     recommendation,
     reasons,
     warnings,

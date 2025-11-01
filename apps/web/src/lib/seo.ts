@@ -68,16 +68,68 @@ export interface ProductSEOData {
   name: string;
   brand: string;
   description?: string;
-  priceJPY: number;
+  priceJPY?: number; // 単一価格（後方互換性）
+  prices?: Array<{
+    // 複数価格対応
+    amount: number;
+    source?: string;
+  }>;
   slug: string;
   images?: string[];
+  mainIngredient?: string; // 主成分
+  ingredientAmount?: number; // 成分量（mg/日）
 }
 
 export function generateProductMetadata(product: ProductSEOData): Metadata {
-  const title = `${product.name} - ${product.brand}`;
-  const description =
-    product.description ||
-    `${product.brand}の${product.name}。価格: ${formatPrice(product.priceJPY)}。詳細な価格分析と成分情報をご覧いただけます。`;
+  // 価格情報の取得
+  let lowestPrice = product.priceJPY || 0;
+  let highestPrice = product.priceJPY || 0;
+  let priceCount = 0;
+
+  if (product.prices && product.prices.length > 0) {
+    const validPrices = product.prices.filter((p) => p.amount > 0);
+    if (validPrices.length > 0) {
+      lowestPrice = Math.min(...validPrices.map((p) => p.amount));
+      highestPrice = Math.max(...validPrices.map((p) => p.amount));
+      priceCount = validPrices.length;
+    }
+  }
+
+  const savings = highestPrice - lowestPrice;
+
+  // 最適化されたタイトル（具体的な価格情報を含む）
+  const title = lowestPrice > 0
+    ? `${product.name} | 最安値¥${lowestPrice.toLocaleString()}から比較`
+    : `${product.name} - ${product.brand}`;
+
+  // 最適化されたディスクリプション（検索意図に応答）
+  let description = product.description;
+
+  if (!description && lowestPrice > 0) {
+    const parts = [
+      `${product.name}を徹底比較！`,
+      `最安値¥${lowestPrice.toLocaleString()}`,
+    ];
+
+    if (savings > 0) {
+      parts.push(`（最大¥${savings.toLocaleString()}お得）`);
+    }
+
+    if (priceCount > 1) {
+      parts.push(`。楽天・Amazon・Yahoo!など${priceCount}サイトで価格比較`);
+    }
+
+    if (product.mainIngredient && product.ingredientAmount) {
+      parts.push(
+        `。${product.mainIngredient}配合量${product.ingredientAmount}mg/日`,
+      );
+    }
+
+    parts.push("。");
+    description = parts.join("");
+  } else if (!description) {
+    description = `${product.brand}の${product.name}。詳細な価格分析と成分情報をご覧いただけます。`;
+  }
 
   return generateMetadata({
     title,
@@ -89,14 +141,19 @@ export function generateProductMetadata(product: ProductSEOData): Metadata {
       "サプリメント",
       "栄養補助食品",
       "価格比較",
+      "最安値",
       "コスト分析",
+      ...(product.mainIngredient ? [product.mainIngredient] : []),
     ],
   });
 }
 
 // JSON-LD structured data generators
 export function generateProductJsonLd(product: ProductSEOData) {
-  return {
+  const siteUrl = getSiteUrl();
+
+  // 基本情報
+  const jsonLd: any = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
@@ -105,16 +162,49 @@ export function generateProductJsonLd(product: ProductSEOData) {
       name: product.brand,
     },
     description: product.description || `${product.brand}の${product.name}`,
-    offers: {
+    image: product.images?.[0] || `${siteUrl}/product-placeholder.jpg`,
+    url: `${siteUrl}/products/${product.slug}`,
+  };
+
+  // オファー情報（複数価格対応）
+  if (product.prices && product.prices.length > 0) {
+    const validPrices = product.prices.filter((p) => p.amount > 0);
+    if (validPrices.length > 1) {
+      // AggregateOffer（複数ECサイトの価格帯）
+      const lowestPrice = Math.min(...validPrices.map((p) => p.amount));
+      const highestPrice = Math.max(...validPrices.map((p) => p.amount));
+
+      jsonLd.offers = {
+        "@type": "AggregateOffer",
+        priceCurrency: "JPY",
+        lowPrice: lowestPrice,
+        highPrice: highestPrice,
+        offerCount: validPrices.length,
+        availability: "https://schema.org/InStock",
+        url: `${siteUrl}/products/${product.slug}`,
+      };
+    } else if (validPrices.length === 1) {
+      // 単一価格
+      jsonLd.offers = {
+        "@type": "Offer",
+        price: validPrices[0].amount,
+        priceCurrency: "JPY",
+        availability: "https://schema.org/InStock",
+        url: `${siteUrl}/products/${product.slug}`,
+      };
+    }
+  } else if (product.priceJPY) {
+    // 後方互換性：単一価格
+    jsonLd.offers = {
       "@type": "Offer",
       price: product.priceJPY,
       priceCurrency: "JPY",
       availability: "https://schema.org/InStock",
-      url: `${getSiteUrl()}/products/${product.slug}`,
-    },
-    image: product.images?.[0] || `${getSiteUrl()}/product-placeholder.jpg`,
-    url: `${getSiteUrl()}/products/${product.slug}`,
-  };
+      url: `${siteUrl}/products/${product.slug}`,
+    };
+  }
+
+  return jsonLd;
 }
 
 export function generateBreadcrumbJsonLd(

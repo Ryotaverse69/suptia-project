@@ -1,12 +1,50 @@
+import { Metadata } from "next";
 import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { ProductsSection } from "@/components/ProductsSection";
-import { generateItemListStructuredData } from "@/lib/structured-data";
+import {
+  generateItemListStructuredData,
+  generateBreadcrumbStructuredData,
+} from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
 import Script from "next/script";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "サプリメント商品一覧｜価格比較・成分量・コスパで選ぶ - サプティア",
+  description:
+    "楽天・Amazon・Yahoo!などの複数ECサイトでサプリメントを価格比較。成分量・コスパ・安全性・エビデンスレベルで徹底評価。最安値のサプリメントが見つかります。",
+  keywords: [
+    "サプリメント",
+    "商品一覧",
+    "価格比較",
+    "最安値",
+    "コスパ",
+    "成分量",
+    "安全性",
+    "エビデンス",
+    "楽天",
+    "Amazon",
+    "Yahoo!ショッピング",
+  ],
+  openGraph: {
+    title: "サプリメント商品一覧 - サプティア",
+    description:
+      "楽天・Amazon・Yahoo!などの複数ECサイトでサプリメントを価格比較。成分量・コスパ・安全性で最適な商品を見つけられます。",
+    type: "website",
+    url: "https://suptia.com/products",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "サプリメント商品一覧 - サプティア",
+    description: "複数ECサイトでサプリメントを価格比較。最安値が見つかります。",
+  },
+  alternates: {
+    canonical: "https://suptia.com/products",
+  },
+};
 
 interface Product {
   name: string;
@@ -87,20 +125,37 @@ export default async function ProductsPage() {
   // 構造化データの生成
   const siteUrl = getSiteUrl();
 
-  const structuredData = generateItemListStructuredData({
+  const itemListData = generateItemListStructuredData({
     items: productsWithCost.map((product) => ({
       name: product.name,
       url: `${siteUrl}/products/${product.slug.current}`,
     })),
   });
 
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "ホーム", url: `${siteUrl}/` },
+    { name: "商品一覧", url: `${siteUrl}/products` },
+  ]);
+
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
+
   return (
     <>
-      {/* JSON-LD構造化データ */}
+      {/* JSON-LD構造化データ: ItemList */}
       <Script
-        id="structured-data"
+        id="itemlist-jsonld"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListData) }}
+      />
+
+      {/* JSON-LD構造化データ: Breadcrumb */}
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
       <div className="min-h-screen bg-gradient-to-b from-white via-primary-50/30 to-white">

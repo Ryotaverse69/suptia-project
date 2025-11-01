@@ -153,7 +153,12 @@ export function generateProductStructuredData(params: {
   description?: string;
   imageUrl?: string;
   brand?: string;
-  price: number;
+  price?: number; // 単一価格（オプション）
+  prices?: Array<{
+    // 複数価格対応（優先）
+    amount: number;
+    source?: string;
+  }>;
   priceCurrency?: string;
   url?: string;
   availability?: "InStock" | "OutOfStock" | "PreOrder";
@@ -186,16 +191,38 @@ export function generateProductStructuredData(params: {
     };
   }
 
-  // オファー情報
-  structuredData.offers = {
-    "@type": "Offer",
-    url: params.url,
-    priceCurrency: params.priceCurrency || "JPY",
-    price: params.price,
-    availability: params.availability
-      ? `https://schema.org/${params.availability}`
-      : "https://schema.org/InStock",
-  };
+  // オファー情報（複数価格対応）
+  if (params.prices && params.prices.length > 0) {
+    const validPrices = params.prices.filter((p) => p.amount > 0);
+    if (validPrices.length > 0) {
+      const lowestPrice = Math.min(...validPrices.map((p) => p.amount));
+      const highestPrice = Math.max(...validPrices.map((p) => p.amount));
+
+      // AggregateOffer（複数ECサイトの価格帯）
+      structuredData.offers = {
+        "@type": "AggregateOffer",
+        priceCurrency: params.priceCurrency || "JPY",
+        lowPrice: lowestPrice,
+        highPrice: highestPrice,
+        offerCount: validPrices.length,
+        availability: params.availability
+          ? `https://schema.org/${params.availability}`
+          : "https://schema.org/InStock",
+        url: params.url,
+      } as any;
+    }
+  } else if (params.price) {
+    // 単一価格の場合
+    structuredData.offers = {
+      "@type": "Offer",
+      url: params.url,
+      priceCurrency: params.priceCurrency || "JPY",
+      price: params.price,
+      availability: params.availability
+        ? `https://schema.org/${params.availability}`
+        : "https://schema.org/InStock",
+    };
+  }
 
   // 評価情報
   if (params.rating && params.rating.count > 0) {

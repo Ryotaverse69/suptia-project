@@ -1,0 +1,36 @@
+[
+  {
+    "id": "product-rakuten-arkwise-vitamin-d-2000iu",
+    "name": "不明",
+    "slug": "unknown",
+    "brand": "不明",
+    "price": 0,
+    "detectedIngredients": [
+      {
+        "slug": "vitamin-d",
+        "name": "ビタミンD"
+      },
+      {
+        "slug": "protein",
+        "name": "プロテイン"
+      }
+    ]
+  },
+  {
+    "id": "product-rakuten-solia-vitamin-c-liposome",
+    "name": "不明",
+    "slug": "unknown",
+    "brand": "不明",
+    "price": 0,
+    "detectedIngredients": [
+      {
+        "slug": "vitamin-c",
+        "name": "ビタミンC"
+      },
+      {
+        "slug": "calcium",
+        "name": "カルシウム"
+      }
+    ]
+  }
+]

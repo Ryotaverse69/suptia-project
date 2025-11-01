@@ -18,6 +18,8 @@ export async function fetchProductsForDiagnosis(): Promise<
   const query = `*[_type == "product" && availability == "in-stock"] {
     _id,
     name,
+    "slug": slug.current,
+    "imageUrl": externalImageUrl,
     "brand": brand->name,
     priceJPY,
     servingsPerDay,
@@ -42,6 +44,8 @@ export async function fetchProductsForDiagnosis(): Promise<
     return products.map((product: any) => ({
       id: product._id,
       name: product.name,
+      slug: product.slug,
+      imageUrl: product.imageUrl,
       brand: product.brand,
       priceJPY: product.priceJPY,
       servingsPerDay: product.servingsPerDay,

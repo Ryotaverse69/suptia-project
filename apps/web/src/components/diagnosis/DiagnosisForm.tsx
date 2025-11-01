@@ -1,0 +1,234 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const HEALTH_GOALS = [
+  { id: "immune-boost", label: "免疫力強化" },
+  { id: "energy-recovery", label: "疲労回復・エネルギー" },
+  { id: "skin-health", label: "美肌・肌の健康" },
+  { id: "bone-health", label: "骨の健康" },
+  { id: "heart-health", label: "心臓・循環器の健康" },
+  { id: "brain-function", label: "脳機能・集中力" },
+];
+
+const HEALTH_CONDITIONS = [
+  { id: "pregnant", label: "妊娠中" },
+  { id: "breastfeeding", label: "授乳中" },
+  { id: "allergies", label: "アレルギー体質" },
+  { id: "medications", label: "薬を服用中" },
+  { id: "liver-disease", label: "肝臓疾患" },
+  { id: "kidney-disease", label: "腎臓疾患" },
+  { id: "diabetes", label: "糖尿病" },
+  { id: "heart-disease", label: "心臓疾患" },
+  { id: "none", label: "該当なし" },
+];
+
+const PRIORITIES = [
+  { id: "balanced", label: "バランス重視", description: "総合的にバランスよく選ぶ" },
+  {
+    id: "cost",
+    label: "コスト重視",
+    description: "なるべく安く抑えたい",
+  },
+  {
+    id: "safety",
+    label: "安全性重視",
+    description: "安全性を最優先したい",
+  },
+  {
+    id: "evidence",
+    label: "エビデンス重視",
+    description: "科学的根拠を重視したい",
+  },
+  {
+    id: "effectiveness",
+    label: "効果重視",
+    description: "効果の高さを重視したい",
+  },
+];
+
+export function DiagnosisForm() {
+  const router = useRouter();
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [budgetPerDay, setBudgetPerDay] = useState<number>(500);
+  const [healthConditions, setHealthConditions] = useState<string[]>([]);
+  const [priority, setPriority] = useState<string>("balanced");
+
+  const toggleGoal = (goalId: string) => {
+    setSelectedGoals((prev) =>
+      prev.includes(goalId)
+        ? prev.filter((g) => g !== goalId)
+        : [...prev, goalId]
+    );
+  };
+
+  const toggleHealthCondition = (conditionId: string) => {
+    setHealthConditions((prev) => {
+      // 「該当なし」を選択した場合、他の選択を解除
+      if (conditionId === "none") {
+        return prev.includes("none") ? [] : ["none"];
+      }
+
+      // 他の項目を選択した場合、「該当なし」を解除
+      const filtered = prev.filter((c) => c !== "none");
+      return filtered.includes(conditionId)
+        ? filtered.filter((c) => c !== conditionId)
+        : [...filtered, conditionId];
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (selectedGoals.length === 0) {
+      alert("少なくとも1つの健康目標を選択してください");
+      return;
+    }
+
+    const searchParams = new URLSearchParams();
+    searchParams.append("goals", selectedGoals.join(","));
+    searchParams.append("budget", String(budgetPerDay));
+    searchParams.append("priority", priority);
+
+    // 健康状態（「該当なし」以外）
+    const conditions = healthConditions.filter((c) => c !== "none");
+    if (conditions.length > 0) {
+      searchParams.append("conditions", conditions.join(","));
+    }
+
+    router.push("/diagnosis/results?" + searchParams.toString());
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8">
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4 text-gray-800">
+          ステップ1: 健康目標を選択してください
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {HEALTH_GOALS.map((goal) => (
+            <button
+              key={goal.id}
+              type="button"
+              onClick={() => toggleGoal(goal.id)}
+              className={
+                selectedGoals.includes(goal.id)
+                  ? "p-4 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-700 font-semibold transition-all"
+                  : "p-4 rounded-lg border-2 border-gray-200 hover:border-blue-300 text-gray-700 transition-all"
+              }
+            >
+              {goal.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-3 text-gray-800">
+          ステップ2: 1日あたりの予算を設定
+        </h3>
+        <div className="flex items-center space-x-4">
+          <input
+            type="range"
+            min="100"
+            max="2000"
+            step="100"
+            value={budgetPerDay}
+            onChange={(e) => setBudgetPerDay(Number(e.target.value))}
+            className="flex-1 h-2 bg-gray-200 rounded-lg"
+          />
+          <span className="text-2xl font-bold text-blue-600 min-w-[120px] text-right">
+            ¥{budgetPerDay.toLocaleString()}/day
+          </span>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4 text-gray-800">
+          ステップ3: 健康状態・懸念事項（任意）
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          該当する項目があれば選択してください。安全性チェックに使用されます。
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {HEALTH_CONDITIONS.map((condition) => (
+            <button
+              key={condition.id}
+              type="button"
+              onClick={() => toggleHealthCondition(condition.id)}
+              className={
+                healthConditions.includes(condition.id)
+                  ? condition.id === "none"
+                    ? "p-3 rounded-lg border-2 border-green-500 bg-green-50 text-green-700 font-semibold transition-all text-sm"
+                    : "p-3 rounded-lg border-2 border-orange-500 bg-orange-50 text-orange-700 font-semibold transition-all text-sm"
+                  : "p-3 rounded-lg border-2 border-gray-200 hover:border-orange-300 text-gray-700 transition-all text-sm"
+              }
+            >
+              {condition.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4 text-gray-800">
+          ステップ4: 優先事項を選択
+        </h3>
+        <div className="space-y-3">
+          {PRIORITIES.map((priorityOption) => (
+            <label
+              key={priorityOption.id}
+              className={
+                priority === priorityOption.id
+                  ? "flex items-start p-4 rounded-lg border-2 border-purple-500 bg-purple-50 cursor-pointer transition-all"
+                  : "flex items-start p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all"
+              }
+            >
+              <input
+                type="radio"
+                name="priority"
+                value={priorityOption.id}
+                checked={priority === priorityOption.id}
+                onChange={(e) => setPriority(e.target.value)}
+                className="mt-1 mr-3 h-4 w-4 text-purple-600"
+              />
+              <div className="flex-1">
+                <div
+                  className={
+                    priority === priorityOption.id
+                      ? "font-semibold text-purple-700"
+                      : "font-semibold text-gray-800"
+                  }
+                >
+                  {priorityOption.label}
+                </div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {priorityOption.description}
+                </div>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={selectedGoals.length === 0}
+        className={
+          selectedGoals.length === 0
+            ? "w-full py-4 rounded-lg text-white font-bold text-lg bg-gray-300 cursor-not-allowed transition-all"
+            : "w-full py-4 rounded-lg text-white font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+        }
+      >
+        おすすめを診断する
+      </button>
+
+      {selectedGoals.length === 0 && (
+        <p className="text-center text-sm text-red-500 mt-3">
+          少なくとも1つの健康目標を選択してください
+        </p>
+      )}
+    </form>
+  );
+}
