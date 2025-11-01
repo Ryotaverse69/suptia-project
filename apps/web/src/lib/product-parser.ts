@@ -33,23 +33,63 @@ export function extractQuantity(productName: string): number {
 }
 
 /**
+ * itemCodeから店舗名を抽出
+ * 例: "tsuruha:10020349" → "ツルハドラッグ"
+ */
+function extractStoreNameFromItemCode(itemCode: string): string | null {
+  if (!itemCode) return null;
+
+  // itemCodeの形式: "店舗コード:商品ID"
+  const storeCode = itemCode.split(":")[0];
+
+  // 店舗コードと店舗名のマッピング
+  const storeMapping: Record<string, string> = {
+    // 楽天市場の店舗
+    tsuruha: "ツルハドラッグ",
+    "at-life": "アットライフ",
+    rakuten24: "楽天24",
+    "cosme-cosme21": "コスメ21",
+    fukutaro: "くすりのフクタロウ",
+    // Yahoo!ショッピングの店舗
+    ekuserennto: "エクセレント",
+    selnic: "セルニック",
+    // その他
+    dhc: "DHC",
+  };
+
+  return storeMapping[storeCode] || null;
+}
+
+/**
  * 商品名から販売元（店舗名）を抽出
  * 例: "【ツルハドラッグ】商品名" → "ツルハドラッグ"
  */
-export function extractStoreName(productName: string, source: string): string {
-  // パターン1: 【店舗名】
+export function extractStoreName(
+  productName: string,
+  source: string,
+  itemCode?: string,
+): string {
+  // 優先順位1: itemCodeから店舗名を取得
+  if (itemCode) {
+    const storeFromCode = extractStoreNameFromItemCode(itemCode);
+    if (storeFromCode) {
+      return storeFromCode;
+    }
+  }
+
+  // 優先順位2: 【店舗名】パターン
   const bracketMatch = productName.match(/【(.+?)】/);
   if (bracketMatch) {
     return bracketMatch[1];
   }
 
-  // パターン2: ＼店舗名／
+  // 優先順位3: ＼店舗名／パターン
   const slashMatch = productName.match(/＼(.+?)／/);
   if (slashMatch) {
     return slashMatch[1];
   }
 
-  // パターン3: 既知の店舗名を検索
+  // 優先順位4: 既知の店舗名を検索
   const knownStores: Record<string, string[]> = {
     rakuten: [
       "ツルハドラッグ",
@@ -115,9 +155,10 @@ export function parseProductInfo(
   productName: string,
   source: string,
   totalPrice: number,
+  itemCode?: string,
 ): ParsedProductInfo {
   const quantity = extractQuantity(productName);
-  const storeName = extractStoreName(productName, source);
+  const storeName = extractStoreName(productName, source, itemCode);
   const unitPrice = calculateUnitPrice(totalPrice, quantity);
   const isBulk = quantity > 1;
 

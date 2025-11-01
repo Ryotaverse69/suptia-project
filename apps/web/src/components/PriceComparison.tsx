@@ -18,6 +18,7 @@ interface PriceData {
   shopName?: string; // 店舗名（旧フィールド、下位互換のため保持）
   storeName?: string; // 店舗名（新フィールド）
   productName?: string; // 商品名（数量検出用）
+  itemCode?: string; // 商品コード（店舗名検出用）
   amount: number;
   currency: string;
   url: string;
@@ -36,7 +37,7 @@ export function PriceComparison({
   priceData,
   className = "",
 }: PriceComparisonProps) {
-  const [showBulkPrices, setShowBulkPrices] = useState(false);
+  const [showBulkPrices, setShowBulkPrices] = useState(true);
 
   if (!priceData || priceData.length === 0) {
     return null;
@@ -44,21 +45,27 @@ export function PriceComparison({
 
   // 価格データを処理（数量・店舗名・単位価格を追加）
   const processedPrices = priceData.map((price) => {
-    // 既に処理済みの場合はそのまま使用
-    if (price.quantity && price.unitPrice && price.storeName) {
-      return price;
-    }
-
-    // 商品名から情報を抽出
+    // Sanityから取得したデータがあればそれを優先、なければparseする
     const productName = price.productName || "";
-    const parsed = parseProductInfo(productName, price.source, price.amount);
+    const parsed = parseProductInfo(
+      productName,
+      price.source,
+      price.amount,
+      price.itemCode,
+    );
+
+    // 最終的なquantity値（Sanityの値を優先）
+    const finalQuantity = price.quantity || parsed.quantity;
+    const finalUnitPrice = price.unitPrice || parsed.unitPrice;
+    const isBulk = finalQuantity > 1;
 
     return {
       ...price,
-      quantity: price.quantity || parsed.quantity,
-      unitPrice: price.unitPrice || parsed.unitPrice,
+      quantity: finalQuantity,
+      unitPrice: finalUnitPrice,
+      // Sanityのデータを優先（正しい店舗名が既に設定されているため）
       storeName: price.storeName || price.shopName || parsed.storeName,
-      isBulk: parsed.isBulk,
+      isBulk: isBulk,
     };
   });
 
@@ -66,10 +73,40 @@ export function PriceComparison({
   const singlePrices = processedPrices.filter((p) => (p.quantity || 1) === 1);
   const bulkPrices = processedPrices.filter((p) => (p.quantity || 1) > 1);
 
+  // デバッグ用ログ
+  console.log("🔍 PriceComparison Debug:");
+  console.log("  Total prices:", processedPrices.length);
+  console.log("  Single prices:", singlePrices.length);
+  console.log("  Bulk prices:", bulkPrices.length);
+  console.log(
+    "  Bulk price details:",
+    bulkPrices.map((p) => ({
+      quantity: p.quantity,
+      amount: p.amount,
+      unitPrice: p.unitPrice,
+      storeName: p.storeName,
+      isBulk: p.isBulk,
+    })),
+  );
+
   // 表示する価格リスト
   const displayPrices = showBulkPrices
     ? [...singlePrices, ...bulkPrices]
     : singlePrices;
+
+  // デバッグ用ログ - 表示される価格
+  console.log("📺 Display Info:");
+  console.log("  showBulkPrices:", showBulkPrices);
+  console.log("  displayPrices count:", displayPrices.length);
+  console.log(
+    "  displayPrices details:",
+    displayPrices.map((p) => ({
+      quantity: p.quantity,
+      isBulk: p.isBulk,
+      storeName: p.storeName,
+      amount: p.amount,
+    })),
+  );
 
   // 最安値を見つける（単位価格ベース）
   const minUnitPrice = Math.min(
@@ -132,7 +169,7 @@ export function PriceComparison({
         {bulkPrices.length > 0 && (
           <button
             onClick={() => setShowBulkPrices(!showBulkPrices)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all"
           >
             {showBulkPrices
               ? `単品のみ表示 (${singlePrices.length}件)`

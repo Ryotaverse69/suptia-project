@@ -7,7 +7,6 @@ import {
   Shield,
   AlertTriangle,
   CheckCircle2,
-  ExternalLink,
   TrendingDown,
   TrendingUp,
   Pill,
@@ -33,11 +32,6 @@ interface EvidenceSafetyDetailProps {
   safetyScore?: number;
   thirdPartyTested?: boolean;
   warnings?: string[];
-  references?: Array<{
-    title?: string;
-    url?: string;
-    source?: string;
-  }>;
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
@@ -52,7 +46,6 @@ export function EvidenceSafetyDetail({
   safetyScore = 0,
   thirdPartyTested = false,
   warnings = [],
-  references = [],
   ingredientName,
   ingredientEvidenceLevel,
   safetyDetails = [],
@@ -328,39 +321,6 @@ export function EvidenceSafetyDetail({
               </p>
             </div>
           )}
-
-        {/* 参考文献 */}
-        {references.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              参考文献
-            </h3>
-            <div className="space-y-2">
-              {references.map((ref, index) => (
-                <a
-                  key={index}
-                  href={ref.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
-                >
-                  <ExternalLink
-                    size={16}
-                    className="text-primary mt-0.5 group-hover:scale-110 transition-transform"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 group-hover:text-primary transition-colors">
-                      {ref.title}
-                    </p>
-                    {ref.source && (
-                      <p className="text-xs text-gray-500 mt-1">{ref.source}</p>
-                    )}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* 安全性 */}
@@ -647,39 +607,6 @@ export function EvidenceSafetyDetail({
             </li>
           </ul>
         </div>
-
-        {/* 参考文献 */}
-        {references.length > 0 && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <ExternalLink size={16} />
-              参考文献
-            </h4>
-            <ul className="space-y-2">
-              {references.map((ref, index) => (
-                <li key={index} className="text-sm">
-                  <a
-                    href={ref.url || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 hover:underline flex items-start gap-2"
-                  >
-                    <span className="text-gray-500">[{index + 1}]</span>
-                    <span className="flex-1">
-                      {ref.title || "参考文献"}
-                      {ref.source && (
-                        <span className="text-gray-600 ml-2">
-                          ({ref.source})
-                        </span>
-                      )}
-                    </span>
-                    <ExternalLink size={12} className="mt-1 flex-shrink-0" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </div>
   );

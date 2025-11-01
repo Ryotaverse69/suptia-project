@@ -37,6 +37,12 @@ interface PriceData {
   url: string;
   fetchedAt: string;
   confidence?: number;
+  quantity?: number;
+  unitPrice?: number;
+  storeName?: string;
+  productName?: string;
+  itemCode?: string;
+  shopName?: string;
 }
 
 interface PriceHistory {
@@ -681,7 +687,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
           safetyScore={finalScores.safety}
           thirdPartyTested={product.thirdPartyTested || false}
           warnings={product.warnings || []}
-          references={product.references || []}
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
           safetyDetails={safetyDetails}
