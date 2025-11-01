@@ -260,7 +260,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       // 価格データ
       const priceData = {
         source: 'yahoo',
-        shopName: product.brand, // Yahoo!の場合、brandは店舗名（shopName）
+        storeName: product.brand, // Yahoo!APIのshopNameを店舗名として使用
+        shopName: product.brand, // 後方互換性のため保持
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
@@ -309,10 +310,10 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         // 既存商品は価格データと価格履歴を更新
         console.log(`  🔄 更新: ${product.name.substring(0, 50)}...`);
 
-        // 既存のpriceDataから同じsource + shopNameのエントリを探す
+        // 既存のpriceDataからYahoo!のエントリを全て削除（shopNameやstoreNameの不一致を考慮）
         const existingPriceData = existing.priceData || [];
         const filteredPriceData = existingPriceData.filter(
-          pd => !(pd.source === 'yahoo' && pd.shopName === product.brand)
+          pd => pd.source !== 'yahoo'
         );
 
         // 新しいpriceDataを追加

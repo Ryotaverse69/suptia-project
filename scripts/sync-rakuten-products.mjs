@@ -288,7 +288,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       // 価格データ
       const priceData = {
         source: 'rakuten',
-        shopName: product.brand, // 楽天の場合、brandは店舗名（shopName）
+        storeName: product.brand, // 楽天APIのshopNameを店舗名として使用
+        shopName: product.brand, // 後方互換性のため保持
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
@@ -340,10 +341,10 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         // 既存商品は価格データと価格履歴を更新
         console.log(`  🔄 更新: ${product.name.substring(0, 50)}...`);
 
-        // 既存のpriceDataから同じsource + shopNameのエントリを探す
+        // 既存のpriceDataから楽天のエントリを全て削除（shopNameやstoreNameの不一致を考慮）
         const existingPriceData = existing.priceData || [];
         const filteredPriceData = existingPriceData.filter(
-          pd => !(pd.source === 'rakuten' && pd.shopName === product.brand)
+          pd => pd.source !== 'rakuten'
         );
 
         // 新しいpriceDataを追加
