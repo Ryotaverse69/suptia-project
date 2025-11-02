@@ -126,8 +126,32 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
           </div>
         </form>
 
+        {/* Popular Searches */}
+        {popularSearches.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-center items-center mb-8">
+            <span className="text-white/90 text-xs font-light tracking-wide drop-shadow">
+              人気の検索:
+            </span>
+            {popularSearches.slice(0, 4).map((search) => (
+              <button
+                key={search.name}
+                onClick={() => {
+                  router.push(`/search?q=${encodeURIComponent(search.name)}`);
+                }}
+                className="px-3 py-1 text-white rounded-full text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
+                style={{
+                  boxShadow:
+                    "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                }}
+              >
+                {search.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Diagnosis CTA Button */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center">
           <Link
             href="/diagnosis"
             className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-xl border border-white/20"
@@ -163,29 +187,6 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
             </svg>
           </Link>
         </div>
-
-        {popularSearches.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-center items-center">
-            <span className="text-white/90 text-xs font-light tracking-wide drop-shadow">
-              人気の検索:
-            </span>
-            {popularSearches.slice(0, 4).map((search) => (
-              <button
-                key={search.name}
-                onClick={() => {
-                  router.push(`/search?q=${encodeURIComponent(search.name)}`);
-                }}
-                className="px-5 py-2 text-white rounded-full text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
-                style={{
-                  boxShadow:
-                    "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-                }}
-              >
-                {search.name}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

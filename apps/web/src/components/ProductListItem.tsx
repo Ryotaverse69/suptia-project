@@ -10,9 +10,9 @@ interface ProductListItemProps {
   product: {
     name: string;
     priceJPY: number;
-    slug: {
+    slug?: {
       current: string;
-    };
+    } | null;
     servingsPerDay?: number;
     servingsPerContainer?: number;
     ingredients?: Array<{
@@ -48,6 +48,11 @@ export function ProductListItem({ product }: ProductListItemProps) {
   // 画像URL: 外部画像URL > imageUrl > プレースホルダー
   const displayImageUrl = externalImageUrl || imageUrl;
 
+  // slugが存在しない場合は商品名をエンコードして使用
+  const productSlug =
+    slug?.current ||
+    encodeURIComponent((name || "product").toLowerCase().replace(/\s+/g, "-"));
+
   // 実効コストを自動計算（データが揃っている場合）
   let calculatedCost;
   if (
@@ -80,7 +85,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
       <div className="flex flex-col md:flex-row">
         {/* 左側：商品画像 */}
         <div className="relative w-full md:w-80 h-64 md:h-auto flex-shrink-0">
-          <Link href={`/products/${slug.current}`}>
+          <Link href={`/products/${productSlug}`}>
             <div className="relative w-full h-full overflow-hidden bg-gradient-blue">
               {displayImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -132,7 +137,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
         <div className="flex-1 flex flex-col md:flex-row p-5">
           {/* 商品詳細 */}
           <div className="flex-1 pr-0 md:pr-6 mb-4 md:mb-0">
-            <Link href={`/products/${slug.current}`}>
+            <Link href={`/products/${productSlug}`}>
               <div className="mb-3">
                 {/* 星評価バッジ */}
                 <div className="flex items-center gap-2 mb-2">
@@ -207,7 +212,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
 
             {/* 比較するボタン */}
             <Link
-              href={`/products/${slug.current}`}
+              href={`/products/${productSlug}`}
               className="bg-primary hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
             >
               比較する
