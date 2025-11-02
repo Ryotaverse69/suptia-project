@@ -240,8 +240,16 @@ export function DiagnosisForm() {
                 value={budgetPerDay}
                 onChange={(e) => {
                   const value = Number(e.target.value);
-                  if (value >= 100 && value <= 5000) {
+                  if (!isNaN(value)) {
                     setBudgetPerDay(value);
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = Number(e.target.value);
+                  if (value < 100) {
+                    setBudgetPerDay(100);
+                  } else if (value > 5000) {
+                    setBudgetPerDay(5000);
                   }
                 }}
                 className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
