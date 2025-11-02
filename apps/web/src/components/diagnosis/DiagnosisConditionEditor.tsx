@@ -250,6 +250,7 @@ export function DiagnosisConditionEditor({
                     max="5000"
                     step="100"
                     value={budget === 0 ? "" : budget}
+                    placeholder="半角数字で入力"
                     onChange={(e) => {
                       const inputValue = e.target.value;
                       if (inputValue === "") {

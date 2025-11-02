@@ -238,6 +238,7 @@ export function DiagnosisForm() {
                 max="5000"
                 step="100"
                 value={budgetPerDay === 0 ? "" : budgetPerDay}
+                placeholder="半角数字で入力"
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   if (inputValue === "") {
