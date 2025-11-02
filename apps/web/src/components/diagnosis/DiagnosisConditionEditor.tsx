@@ -223,7 +223,7 @@ export function DiagnosisConditionEditor({
             </button>
           </div>
           {editingBudget ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <input
                 type="range"
                 min="100"
@@ -235,6 +235,30 @@ export function DiagnosisConditionEditor({
               />
               <div className="text-center text-xl font-bold text-blue-600">
                 ¥{budget}
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600 whitespace-nowrap">
+                  直接入力:
+                </label>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    ¥
+                  </span>
+                  <input
+                    type="number"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value={budget}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      if (value >= 100 && value <= 5000) {
+                        setBudget(value);
+                      }
+                    }}
+                    className="w-full pl-7 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
             </div>
           ) : (

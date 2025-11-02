@@ -209,19 +209,45 @@ export function DiagnosisForm() {
         <h3 className="text-xl font-bold mb-3 text-gray-800">
           ステップ2: 1日あたりの予算を設定
         </h3>
-        <div className="flex items-center space-x-4">
-          <input
-            type="range"
-            min="100"
-            max="5000"
-            step="100"
-            value={budgetPerDay}
-            onChange={(e) => setBudgetPerDay(Number(e.target.value))}
-            className="flex-1 h-2 bg-gray-200 rounded-lg"
-          />
-          <span className="text-2xl font-bold text-blue-600 min-w-[120px] text-right">
-            ¥{budgetPerDay.toLocaleString()}/day
-          </span>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <input
+              type="range"
+              min="100"
+              max="5000"
+              step="100"
+              value={budgetPerDay}
+              onChange={(e) => setBudgetPerDay(Number(e.target.value))}
+              className="flex-1 h-2 bg-gray-200 rounded-lg"
+            />
+            <span className="text-2xl font-bold text-blue-600 min-w-[120px] text-right">
+              ¥{budgetPerDay.toLocaleString()}/day
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600 whitespace-nowrap">
+              直接入力:
+            </label>
+            <div className="relative flex-1 max-w-xs">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                ¥
+              </span>
+              <input
+                type="number"
+                min="100"
+                max="5000"
+                step="100"
+                value={budgetPerDay}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value >= 100 && value <= 5000) {
+                    setBudgetPerDay(value);
+                  }
+                }}
+                className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
