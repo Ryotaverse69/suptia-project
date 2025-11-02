@@ -239,9 +239,14 @@ export function DiagnosisForm() {
                 step="100"
                 value={budgetPerDay}
                 onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (!isNaN(value)) {
-                    setBudgetPerDay(value);
+                  const inputValue = e.target.value;
+                  if (inputValue === "") {
+                    setBudgetPerDay(0);
+                  } else {
+                    const value = Number(inputValue);
+                    if (!isNaN(value)) {
+                      setBudgetPerDay(value);
+                    }
                   }
                 }}
                 onBlur={(e) => {

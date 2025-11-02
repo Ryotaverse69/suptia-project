@@ -251,9 +251,14 @@ export function DiagnosisConditionEditor({
                     step="100"
                     value={budget}
                     onChange={(e) => {
-                      const value = Number(e.target.value);
-                      if (!isNaN(value)) {
-                        setBudget(value);
+                      const inputValue = e.target.value;
+                      if (inputValue === "") {
+                        setBudget(0);
+                      } else {
+                        const value = Number(inputValue);
+                        if (!isNaN(value)) {
+                          setBudget(value);
+                        }
                       }
                     }}
                     onBlur={(e) => {
