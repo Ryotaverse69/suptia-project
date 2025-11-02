@@ -237,7 +237,7 @@ export function DiagnosisForm() {
                 min="100"
                 max="5000"
                 step="100"
-                value={budgetPerDay}
+                value={budgetPerDay === 0 ? "" : budgetPerDay}
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   if (inputValue === "") {
@@ -251,7 +251,7 @@ export function DiagnosisForm() {
                 }}
                 onBlur={(e) => {
                   const value = Number(e.target.value);
-                  if (value < 100) {
+                  if (value < 100 || isNaN(value)) {
                     setBudgetPerDay(100);
                   } else if (value > 5000) {
                     setBudgetPerDay(5000);

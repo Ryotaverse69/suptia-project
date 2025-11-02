@@ -249,7 +249,7 @@ export function DiagnosisConditionEditor({
                     min="100"
                     max="5000"
                     step="100"
-                    value={budget}
+                    value={budget === 0 ? "" : budget}
                     onChange={(e) => {
                       const inputValue = e.target.value;
                       if (inputValue === "") {
@@ -263,7 +263,7 @@ export function DiagnosisConditionEditor({
                     }}
                     onBlur={(e) => {
                       const value = Number(e.target.value);
-                      if (value < 100) {
+                      if (value < 100 || isNaN(value)) {
                         setBudget(100);
                       } else if (value > 5000) {
                         setBudget(5000);
