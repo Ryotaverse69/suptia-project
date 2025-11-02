@@ -227,7 +227,7 @@ export function DiagnosisConditionEditor({
               <input
                 type="range"
                 min="100"
-                max="2000"
+                max="5000"
                 step="100"
                 value={budget}
                 onChange={(e) => setBudget(Number(e.target.value))}
