@@ -9,6 +9,7 @@
 
 import type { ECAdapter, ECProduct, SearchOptions, SearchResult } from "./base";
 import { ECAdapterError, RateLimitError } from "./base";
+import { extractBrandFromProductName } from "./utils";
 
 /**
  * Yahoo!ショッピングAPI レスポンス型定義
@@ -206,6 +207,9 @@ export class YahooAdapter implements ECAdapter {
     // バリューコマース形式のアフィリエイトリンクを生成
     const affiliateUrl = this.generateValueCommerceUrl(item.url);
 
+    // 商品名からブランド名（発売元・メーカー）を抽出
+    const brandName = extractBrandFromProductName(item.name);
+
     return {
       id: item.code,
       name: item.name,
@@ -214,7 +218,8 @@ export class YahooAdapter implements ECAdapter {
       url: item.url,
       affiliateUrl,
       imageUrl: item.image?.medium || item.image?.small,
-      brand: item.store?.name,
+      brand: brandName, // 商品名から抽出したブランド名（発売元）
+      shopName: item.store?.name || "", // Yahoo!ショッピング内の店舗名（販売元）※APIが情報を提供しないため通常は空
       rating: item.review?.rate,
       reviewCount: item.review?.count,
       source: "yahoo",

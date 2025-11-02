@@ -3,17 +3,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Heart, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+  const [guideMenuOpen, setGuideMenuOpen] = useState(false);
 
   // Close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setDesktopMenuOpen(false);
+    setGuideMenuOpen(false);
   }, []);
 
   // Prevent body scroll when mobile menu is open
@@ -56,22 +58,73 @@ export function Header() {
             </Link>
 
             {/* Right: Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
-              {/* About Link */}
+            <nav className="hidden md:flex items-center gap-4">
+              {/* Favorites Link */}
               <Link
-                href="/about"
-                className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
+                href="/favorites"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-primary-800 hover:text-primary transition-colors font-medium rounded-lg hover:bg-primary-50"
               >
-                サプティアとは
+                <Heart size={18} />
+                <span>お気に入り</span>
               </Link>
 
-              {/* How to Use Link */}
-              <Link
-                href="/how-to-use"
-                className="text-sm text-primary-800 hover:text-primary transition-colors font-medium"
-              >
-                サプティアの使い方
-              </Link>
+              {/* Guide Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setGuideMenuOpen(!guideMenuOpen)}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-primary-800 hover:text-primary transition-colors font-medium rounded-lg hover:bg-primary-50"
+                >
+                  <BookOpen size={18} />
+                  <span>ガイド</span>
+                  <motion.div
+                    animate={{ rotate: guideMenuOpen ? 180 : 0 }}
+                    transition={{
+                      duration: 0.25,
+                      ease: [0.4, 0, 0.2, 1],
+                    }}
+                  >
+                    <ChevronDown size={16} />
+                  </motion.div>
+                </button>
+
+                {/* Guide Dropdown Menu */}
+                <AnimatePresence>
+                  {guideMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                      transition={{
+                        duration: 0.25,
+                        ease: [0.4, 0, 0.2, 1],
+                      }}
+                      className="absolute left-0 top-full mt-2 w-56 bg-white/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%)",
+                        boxShadow:
+                          "0 8px 32px 0 rgba(0, 102, 204, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+                      }}
+                      onMouseLeave={() => setGuideMenuOpen(false)}
+                    >
+                      <Link
+                        href="/about"
+                        onClick={() => setGuideMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        サプティアとは
+                      </Link>
+                      <Link
+                        href="/how-to-use"
+                        onClick={() => setGuideMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        サプティアの使い方
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Diagnosis Link - Highlighted */}
               <Link
@@ -193,7 +246,7 @@ export function Header() {
         </div>
       </header>
 
-      {/* Desktop Menu Overlay with AnimatePresence */}
+      {/* Desktop Menu Overlays with AnimatePresence */}
       <AnimatePresence>
         {desktopMenuOpen && (
           <motion.div
@@ -203,6 +256,19 @@ export function Header() {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="hidden md:block fixed inset-0 z-[45] bg-gradient-to-br from-primary-900/20 via-primary-500/10 to-transparent backdrop-blur-sm"
             onClick={() => setDesktopMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {guideMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="hidden md:block fixed inset-0 z-[45] bg-gradient-to-br from-primary-900/20 via-primary-500/10 to-transparent backdrop-blur-sm"
+            onClick={() => setGuideMenuOpen(false)}
           />
         )}
       </AnimatePresence>
@@ -245,24 +311,6 @@ export function Header() {
                   ホーム
                 </Link>
 
-                {/* About - Mobile */}
-                <Link
-                  href="/about"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
-                >
-                  サプティアとは
-                </Link>
-
-                {/* How to Use - Mobile */}
-                <Link
-                  href="/how-to-use"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
-                >
-                  サプティアの使い方
-                </Link>
-
                 {/* Diagnosis - Mobile (Highlighted) */}
                 <Link
                   href="/diagnosis"
@@ -283,6 +331,42 @@ export function Header() {
                     <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                   </svg>
                   診断する
+                </Link>
+
+                {/* Divider */}
+                <div className="border-t border-white/40 my-3"></div>
+
+                {/* Favorites - Mobile */}
+                <Link
+                  href="/favorites"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm flex items-center gap-2"
+                >
+                  <Heart size={18} />
+                  お気に入り
+                </Link>
+
+                {/* Guide Section Header */}
+                <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                  ガイド
+                </div>
+
+                {/* About - Mobile */}
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                >
+                  サプティアとは
+                </Link>
+
+                {/* How to Use - Mobile */}
+                <Link
+                  href="/how-to-use"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                >
+                  サプティアの使い方
                 </Link>
 
                 {/* Divider */}

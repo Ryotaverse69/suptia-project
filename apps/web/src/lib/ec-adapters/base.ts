@@ -21,8 +21,10 @@ export interface ECProduct {
   url: string;
   /** 商品画像URL */
   imageUrl?: string;
-  /** ブランド名 */
+  /** ブランド名（発売元・メーカー） */
   brand?: string;
+  /** 店舗名（販売元） */
+  shopName?: string;
   /** 平均評価（0-5） */
   rating?: number;
   /** レビュー数 */

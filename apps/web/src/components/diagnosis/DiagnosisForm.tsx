@@ -140,11 +140,14 @@ export function DiagnosisForm() {
   ].filter(Boolean).length;
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8"
+    >
       {/* 所要時間とプログレスバー */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -161,17 +164,17 @@ export function DiagnosisForm() {
             </svg>
             <span>約1分で完了</span>
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-xs sm:text-sm text-gray-500">
             ステップ {completedSteps}/4
           </span>
         </div>
 
         {/* プログレスバー */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
-              className={`h-2 flex-1 rounded-full transition-all ${
+              className={`h-1.5 sm:h-2 flex-1 rounded-full transition-all ${
                 step === 1 && selectedGoals.length > 0
                   ? "bg-blue-500"
                   : step === 2 || step === 3 || step === 4
@@ -183,11 +186,11 @@ export function DiagnosisForm() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 text-gray-800">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">
           ステップ1: 健康目標を選択してください
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
           {HEALTH_GOALS.map((goal) => (
             <button
               key={goal.id}
@@ -205,12 +208,12 @@ export function DiagnosisForm() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-bold mb-3 text-gray-800">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-800">
           ステップ2: 1日あたりの予算を設定
         </h3>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <input
               type="range"
               min="100"
@@ -220,15 +223,15 @@ export function DiagnosisForm() {
               onChange={(e) => setBudgetPerDay(Number(e.target.value))}
               className="flex-1 h-2 bg-gray-200 rounded-lg"
             />
-            <span className="text-2xl font-bold text-blue-600 min-w-[120px] text-right">
-              ¥{budgetPerDay.toLocaleString()}/day
+            <span className="text-base sm:text-xl md:text-2xl font-bold text-blue-600 min-w-[80px] sm:min-w-[100px] md:min-w-[120px] text-right whitespace-nowrap">
+              ¥{budgetPerDay.toLocaleString()}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600 whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <label className="text-xs sm:text-sm text-gray-600">
               直接入力:
             </label>
-            <div className="relative flex-1 max-w-xs">
+            <div className="relative flex-1 sm:max-w-xs">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                 ¥
               </span>
@@ -265,14 +268,14 @@ export function DiagnosisForm() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 text-gray-800">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">
           ステップ3: 健康状態・懸念事項（任意）
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
           該当する項目があれば選択してください。安全性チェックに使用されます。
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
           {HEALTH_CONDITIONS.map((condition) => (
             <button
               key={condition.id}
@@ -281,9 +284,9 @@ export function DiagnosisForm() {
               className={
                 healthConditions.includes(condition.id)
                   ? condition.id === "none"
-                    ? "p-3 rounded-lg border-2 border-green-500 bg-green-50 text-green-700 font-semibold transition-all text-sm"
-                    : "p-3 rounded-lg border-2 border-orange-500 bg-orange-50 text-orange-700 font-semibold transition-all text-sm"
-                  : "p-3 rounded-lg border-2 border-gray-200 hover:border-orange-300 text-gray-700 transition-all text-sm"
+                    ? "p-2.5 sm:p-3 rounded-lg border-2 border-green-500 bg-green-50 text-green-700 font-semibold transition-all text-xs sm:text-sm"
+                    : "p-2.5 sm:p-3 rounded-lg border-2 border-orange-500 bg-orange-50 text-orange-700 font-semibold transition-all text-xs sm:text-sm"
+                  : "p-2.5 sm:p-3 rounded-lg border-2 border-gray-200 hover:border-orange-300 text-gray-700 transition-all text-xs sm:text-sm"
               }
             >
               {condition.label}
@@ -292,18 +295,18 @@ export function DiagnosisForm() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 text-gray-800">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">
           ステップ4: 優先事項を選択
         </h3>
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {PRIORITIES.map((priorityOption) => (
             <label
               key={priorityOption.id}
               className={
                 priority === priorityOption.id
-                  ? "flex items-start p-4 rounded-lg border-2 border-purple-500 bg-purple-50 cursor-pointer transition-all"
-                  : "flex items-start p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all"
+                  ? "flex items-start p-3 sm:p-4 rounded-lg border-2 border-purple-500 bg-purple-50 cursor-pointer transition-all"
+                  : "flex items-start p-3 sm:p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all"
               }
             >
               <input
@@ -312,19 +315,19 @@ export function DiagnosisForm() {
                 value={priorityOption.id}
                 checked={priority === priorityOption.id}
                 onChange={(e) => setPriority(e.target.value)}
-                className="mt-1 mr-3 h-4 w-4 text-purple-600"
+                className="mt-0.5 sm:mt-1 mr-2 sm:mr-3 h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-600"
               />
               <div className="flex-1">
                 <div
                   className={
                     priority === priorityOption.id
-                      ? "font-semibold text-purple-700"
-                      : "font-semibold text-gray-800"
+                      ? "font-semibold text-sm sm:text-base text-purple-700"
+                      : "font-semibold text-sm sm:text-base text-gray-800"
                   }
                 >
                   {priorityOption.label}
                 </div>
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
                   {priorityOption.description}
                 </div>
               </div>
@@ -338,15 +341,15 @@ export function DiagnosisForm() {
         disabled={selectedGoals.length === 0}
         className={
           selectedGoals.length === 0
-            ? "w-full py-4 rounded-lg text-white font-bold text-lg bg-gray-300 cursor-not-allowed transition-all"
-            : "w-full py-4 rounded-lg text-white font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+            ? "w-full py-3 sm:py-4 rounded-lg text-white font-bold text-base sm:text-lg bg-gray-300 cursor-not-allowed transition-all"
+            : "w-full py-3 sm:py-4 rounded-lg text-white font-bold text-base sm:text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
         }
       >
         おすすめを診断する
       </button>
 
       {selectedGoals.length === 0 && (
-        <p className="text-center text-sm text-red-500 mt-3">
+        <p className="text-center text-xs sm:text-sm text-red-500 mt-2 sm:mt-3">
           少なくとも1つの健康目標を選択してください
         </p>
       )}

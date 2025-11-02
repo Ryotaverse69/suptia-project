@@ -15,6 +15,7 @@ import {
   ECAdapterError,
   RateLimitError,
 } from "./base";
+import { extractBrandFromProductName } from "./utils";
 
 /**
  * 楽天APIのレスポンス型定義
@@ -217,6 +218,9 @@ export class RakutenAdapter implements ECAdapter {
     // itemCaptionからJANコードを抽出
     const janCode = this.extractJanCode(item.itemCaption);
 
+    // 商品名からブランド名（発売元・メーカー）を抽出
+    const brandName = extractBrandFromProductName(item.itemName);
+
     return {
       id: item.itemCode,
       name: item.itemName,
@@ -225,7 +229,8 @@ export class RakutenAdapter implements ECAdapter {
       url: item.itemUrl,
       affiliateUrl: item.affiliateUrl,
       imageUrl: item.mediumImageUrls?.[0]?.imageUrl,
-      brand: item.shopName, // 楽天はブランド情報がないため店舗名を使用
+      brand: brandName, // 商品名から抽出したブランド名（発売元）
+      shopName: item.shopName, // 楽天市場内の店舗名（販売元）
       rating: item.reviewAverage,
       reviewCount: item.reviewCount,
       source: "rakuten",

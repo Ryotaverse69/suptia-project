@@ -51,6 +51,77 @@ const SANITY_DATASET = 'production';
 const SANITY_API_VERSION = '2023-05-03';
 const SANITY_API_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data`;
 
+// ブランド抽出ユーティリティ
+/**
+ * 商品名からブランド名を抽出
+ */
+function extractBrandFromProductName(productName) {
+  if (!productName) return '';
+
+  // 1. 括弧内の情報を除去（【】、()、[]、<>、＼/、◆、●、★など）
+  let cleaned = productName
+    .replace(/【[^】]*】/g, '') // 【送料無料】など
+    .replace(/＼[^／]*／/g, '') // ＼ポイント5倍／など
+    .replace(/\([^)]*\)/g, '') // (公式)など
+    .replace(/\[[^\]]*\]/g, '') // [限定]など
+    .replace(/<[^>]*>/g, '') // <新商品>など
+    .replace(/◆[^◆]*◆/g, '') // ◆マーク囲み
+    .replace(/●[^●]*●/g, '') // ●マーク囲み
+    .replace(/★[^★]*★/g, '') // ★マーク囲み
+    .replace(/^[＼◆●★■▲▼◎○☆※]/g, '') // プロモーション記号を先頭から削除
+    .trim();
+
+  // 2. 最初の単語を抽出（空白、全角空白、スラッシュ、ハイフンで区切り）
+  const firstWord = cleaned.split(/[\s　/\-]/)[0].trim();
+
+  // 3. ノイズ除去（一般的な接頭辞・サプリメント用語・プロモーション文言）
+  const noisePatterns = [
+    /^サプリメント$/i,
+    /^サプリ$/i,
+    /^supplement$/i,
+    /^健康食品$/i,
+    /^栄養補助食品$/i,
+    /^送料無料$/i,
+    /^公式$/i,
+    /^正規品$/i,
+    /^新品$/i,
+    /ポイント[0-9０-９]+倍/i, // ポイント倍率
+    /[0-9０-９]+%?OFF/i, // 割引率
+    /クーポン/i,
+    /タイムセール/i,
+    /限定/i,
+    /個セット/i,
+    /まとめ買い/i,
+    /メール便/i,
+    /ネコポス/i,
+    /ポスト投函/i,
+    /定期便/i,
+    /選べる/i,
+    /ふるさと納税/i,
+    /エントリーで/i,
+    /POINT/i,
+    /^第[0-9０-９]+類医薬品$/i,
+  ];
+
+  for (const pattern of noisePatterns) {
+    if (pattern.test(firstWord)) {
+      return '';
+    }
+  }
+
+  // 4. 最小文字数チェック（1文字のブランド名は除外）
+  if (firstWord.length < 2) {
+    return '';
+  }
+
+  // 5. プロモーション文字列チェック（記号を含むものは除外）
+  if (/[＼\\\/◆●★■▲▼◎○☆※【】（）《》「」]/.test(firstWord)) {
+    return '';
+  }
+
+  return firstWord;
+}
+
 // RakutenAdapter（簡易版 - 本番ではlib/ec-adaptersを使用）
 class RakutenAdapter {
   constructor(applicationId, affiliateId) {
@@ -107,6 +178,9 @@ class RakutenAdapter {
     // itemCaptionからJANコードを抽出
     const janCode = this.extractJanCode(item.itemCaption);
 
+    // 商品名からブランド名（発売元・メーカー）を抽出
+    const brandName = extractBrandFromProductName(item.itemName);
+
     return {
       id: item.itemCode,
       name: item.itemName,
@@ -115,7 +189,8 @@ class RakutenAdapter {
       url: item.itemUrl,
       affiliateUrl: item.affiliateUrl,
       imageUrl,
-      brand: item.shopName,
+      brand: brandName, // 商品名から抽出したブランド名（発売元）
+      shopName: item.shopName, // 楽天市場内の店舗名（販売元）
       rating: item.reviewAverage,
       reviewCount: item.reviewCount,
       source: 'rakuten',
@@ -288,8 +363,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       // 価格データ
       const priceData = {
         source: 'rakuten',
-        storeName: product.brand, // 楽天APIのshopNameを店舗名として使用
-        shopName: product.brand, // 後方互換性のため保持
+        storeName: product.shopName, // 楽天市場内の店舗名（販売元）
+        shopName: product.shopName, // 後方互換性のため保持
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
@@ -353,7 +428,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         // 価格履歴エントリ
         const priceHistoryEntry = {
           source: 'rakuten',
-          shopName: product.brand,
+          shopName: product.shopName, // 楽天市場内の店舗名（販売元）
           amount: product.price,
           recordedAt: new Date().toISOString(),
         };

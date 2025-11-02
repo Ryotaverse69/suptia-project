@@ -9,6 +9,7 @@ import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
 import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -159,6 +160,43 @@ async function getProduct(slug: string): Promise<Product | null> {
     console.error("Failed to fetch product:", error);
     return null;
   }
+}
+
+/**
+ * priceDataを配列に正規化
+ * オブジェクト形式（キー "0", "1", ... にデータがある形式）を配列に変換
+ */
+function normalizePriceData(priceData: any): PriceData[] {
+  if (!priceData) return [];
+
+  // 既に配列の場合
+  if (Array.isArray(priceData)) {
+    return priceData.filter((p) => p.amount && p.url && p.source);
+  }
+
+  // オブジェクトの場合、キー "0" のデータを配列に変換
+  if (typeof priceData === "object") {
+    // キー "0" が存在し、有効なデータを持っているか確認
+    if (priceData["0"] && priceData["0"].amount && priceData["0"].url) {
+      return [priceData["0"]];
+    }
+
+    // 他の数値キー（"1", "2", ...）も処理
+    const prices: PriceData[] = [];
+    for (const key in priceData) {
+      if (
+        !isNaN(Number(key)) &&
+        priceData[key]?.amount &&
+        priceData[key]?.url
+      ) {
+        prices.push(priceData[key]);
+      }
+    }
+
+    return prices;
+  }
+
+  return [];
 }
 
 /**
@@ -342,8 +380,7 @@ interface PageProps {
  * ⚠️ 重要: アレルギーは命に関わるため、表現は最大限強く明確に
  */
 const ALLERGY_TAGS: Record<string, string> = {
-  "allergy-prone":
-    "アレルギー体質の方は、使用前に必ず医師にご相談ください",
+  "allergy-prone": "アレルギー体質の方は、使用前に必ず医師にご相談ください",
   "shellfish-allergy": "貝アレルギーの方は絶対に使用しないでください",
   "soy-allergy": "大豆アレルギーの方は絶対に使用しないでください",
   "nut-allergy": "ナッツアレルギーの方は絶対に使用しないでください",
@@ -597,11 +634,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // JANコードで関連商品を取得して価格比較データを作成
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
 
+  // 既存のpriceDataを正規化
+  const normalizedPriceData = normalizePriceData(product.priceData);
+
   // 既存のpriceDataとマージ（既存データを優先）
   const mergedPriceData =
-    product.priceData && product.priceData.length > 0
-      ? product.priceData
-      : relatedPrices;
+    normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
 
   // Generate sample description if not available
   const description =
@@ -679,10 +717,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         {/* Product Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {product.name}
-          </h1>
-          <p className="text-lg text-gray-600 mb-4">{product.brandName}</p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {product.name}
+              </h1>
+              <p className="text-lg text-gray-600">{product.brandName}</p>
+            </div>
+
+            {/* お気に入りボタン */}
+            <div className="flex-shrink-0">
+              <FavoriteButton
+                productId={product._id}
+                productName={product.name}
+                size="lg"
+              />
+            </div>
+          </div>
 
           {/* Badge Summary */}
           <BadgeSummary badges={badges} />
@@ -816,11 +867,12 @@ export async function generateMetadata({ params }: PageProps) {
   // JANコードで関連商品を取得して価格比較データを作成
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
 
+  // 既存のpriceDataを正規化
+  const normalizedPriceData = normalizePriceData(product.priceData);
+
   // 既存のpriceDataとマージ（既存データを優先）
   const mergedPriceData =
-    product.priceData && product.priceData.length > 0
-      ? product.priceData
-      : relatedPrices;
+    normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
 
   return generateProductMetadata({
     name: product.name,

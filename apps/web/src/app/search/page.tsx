@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { sanity } from "@/lib/sanity.client";
 import { ProductListItem } from "@/components/ProductListItem";
+import { ProductList } from "@/components/ProductList";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { SearchBar } from "@/components/SearchBar";
 import {
@@ -376,11 +377,7 @@ export default async function SearchPage({
 
             {/* 商品一覧 */}
             {sortedProducts.length > 0 ? (
-              <div className="space-y-4">
-                {sortedProducts.map((product, index) => (
-                  <ProductListItem key={index} product={product} />
-                ))}
-              </div>
+              <ProductList products={sortedProducts} initialDisplayCount={10} />
             ) : (
               <div className="text-center py-20 glass rounded-3xl shadow-glass">
                 <div className="text-primary-300 mb-4">

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
-import { TrendingUp, Shield, Award, Sparkles } from "lucide-react";
+import { TrendingUp, Shield, Award, Sparkles, Heart } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import {
   calculateComprehensiveCost,
   getCostEfficiencyLabel,
@@ -14,6 +15,7 @@ import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
 
 interface ProductCardProps {
   product: {
+    _id: string;
     name: string;
     priceJPY: number;
     slug: {
@@ -42,6 +44,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const {
+    _id,
     name,
     priceJPY,
     slug,
@@ -57,6 +60,9 @@ export function ProductCard({ product }: ProductCardProps) {
     externalImageUrl,
     badges = [],
   } = product;
+
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorite = isFavorite(_id);
 
   // 完璧なサプリメント判定
   const isPerfect = isPerfectSupplement(badges);
@@ -164,6 +170,30 @@ export function ProductCard({ product }: ProductCardProps) {
               </div>
             </div>
           )}
+
+          {/* お気に入りボタン */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleFavorite(_id);
+            }}
+            className={`absolute bottom-3 right-3 z-10 p-2 rounded-full backdrop-blur-xl transition-all duration-300 ${
+              favorite
+                ? "bg-pink-500 hover:bg-pink-600"
+                : "bg-white/80 hover:bg-white"
+            } shadow-lg hover:shadow-xl hover:scale-110`}
+            aria-label={favorite ? "お気に入りから削除" : "お気に入りに追加"}
+          >
+            <Heart
+              size={18}
+              className={`transition-all duration-300 ${
+                favorite
+                  ? "fill-white text-white"
+                  : "text-gray-600 hover:text-pink-500"
+              }`}
+            />
+          </button>
         </div>
 
         <CardContent className="flex-1 pt-5 px-5">

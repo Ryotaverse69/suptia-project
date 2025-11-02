@@ -7,6 +7,7 @@ import { generateOrganizationJsonLd } from "@/lib/seo";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
 import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { CookieSettingsModal } from "@/components/CookieSettingsModal";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
@@ -88,18 +89,20 @@ export default async function RootLayout({
         </Script>
 
         <CookieConsentProvider>
-          {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
-          <GoogleAnalytics />
+          <FavoritesProvider>
+            {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
+            <GoogleAnalytics />
 
-          <Header />
-          {children}
-          <Footer />
+            <Header />
+            {children}
+            <Footer />
 
-          {/* Cookie同意バナー */}
-          <CookieConsentBanner />
+            {/* Cookie同意バナー */}
+            <CookieConsentBanner />
 
-          {/* Cookie設定モーダル */}
-          <CookieSettingsModal />
+            {/* Cookie設定モーダル */}
+            <CookieSettingsModal />
+          </FavoritesProvider>
         </CookieConsentProvider>
       </body>
     </html>
