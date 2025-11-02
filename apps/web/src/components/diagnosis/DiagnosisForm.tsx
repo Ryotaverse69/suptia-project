@@ -26,9 +26,6 @@ const HEALTH_CONDITIONS = [
   { id: "autoimmune-disease", label: "自己免疫疾患" },
   { id: "digestive-disorder", label: "消化器疾患" },
   { id: "mental-disorder", label: "精神疾患" },
-  { id: "shellfish-allergy", label: "貝アレルギー" },
-  { id: "soy-allergy", label: "大豆アレルギー" },
-  { id: "nut-allergy", label: "ナッツアレルギー" },
   { id: "none", label: "該当なし" },
 ];
 
