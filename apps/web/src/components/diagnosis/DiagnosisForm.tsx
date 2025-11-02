@@ -15,12 +15,20 @@ const HEALTH_GOALS = [
 const HEALTH_CONDITIONS = [
   { id: "pregnant", label: "妊娠中" },
   { id: "breastfeeding", label: "授乳中" },
-  { id: "allergies", label: "アレルギー体質" },
-  { id: "medications", label: "薬を服用中" },
+  { id: "allergy-prone", label: "アレルギー体質" },
   { id: "liver-disease", label: "肝臓疾患" },
   { id: "kidney-disease", label: "腎臓疾患" },
   { id: "diabetes", label: "糖尿病" },
   { id: "heart-disease", label: "心臓疾患" },
+  { id: "hypertension", label: "高血圧" },
+  { id: "hypotension", label: "低血圧" },
+  { id: "thyroid-disorder", label: "甲状腺疾患" },
+  { id: "autoimmune-disease", label: "自己免疫疾患" },
+  { id: "digestive-disorder", label: "消化器疾患" },
+  { id: "mental-disorder", label: "精神疾患" },
+  { id: "shellfish-allergy", label: "貝アレルギー" },
+  { id: "soy-allergy", label: "大豆アレルギー" },
+  { id: "nut-allergy", label: "ナッツアレルギー" },
   { id: "none", label: "該当なし" },
 ];
 
