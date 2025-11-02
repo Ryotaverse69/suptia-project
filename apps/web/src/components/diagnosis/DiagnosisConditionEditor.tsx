@@ -30,6 +30,15 @@ const CONDITION_OPTIONS: { id: ContraindicationTag; label: string }[] = [
   { id: "kidney-disease", label: "腎臓疾患" },
   { id: "diabetes", label: "糖尿病" },
   { id: "heart-disease", label: "心臓疾患" },
+  { id: "hypertension", label: "高血圧" },
+  { id: "hypotension", label: "低血圧" },
+  { id: "thyroid-disorder", label: "甲状腺疾患" },
+  { id: "autoimmune-disease", label: "自己免疫疾患" },
+  { id: "digestive-disorder", label: "消化器疾患" },
+  { id: "mental-disorder", label: "精神疾患" },
+  { id: "shellfish-allergy", label: "貝アレルギー" },
+  { id: "soy-allergy", label: "大豆アレルギー" },
+  { id: "nut-allergy", label: "ナッツアレルギー" },
 ];
 
 const PRIORITY_OPTIONS: { id: UserPriority; label: string }[] = [
@@ -96,17 +105,19 @@ export function DiagnosisConditionEditor({
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">診断条件</h2>
+        <h2 className="text-2xl font-bold text-gray-900">診断条件</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 健康目標 */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">健康目標</div>
+            <div className="text-base font-semibold text-gray-700">
+              健康目標
+            </div>
             <button
               onClick={() => setEditingGoals(!editingGoals)}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
               {editingGoals ? "完了" : "編集"}
             </button>
@@ -135,7 +146,7 @@ export function DiagnosisConditionEditor({
                 return (
                   <span
                     key={goal}
-                    className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                    className="inline-block px-3 py-1.5 bg-purple-100 text-purple-700 text-sm font-medium rounded-full"
                   >
                     {option?.label}
                   </span>
@@ -143,17 +154,19 @@ export function DiagnosisConditionEditor({
               })}
             </div>
           ) : (
-            <span className="text-sm text-gray-500">未設定</span>
+            <span className="text-base text-gray-500">未設定</span>
           )}
         </div>
 
         {/* 健康状態 */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">健康状態・懸念</div>
+            <div className="text-base font-semibold text-gray-700">
+              健康状態・懸念
+            </div>
             <button
               onClick={() => setEditingConditions(!editingConditions)}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
               {editingConditions ? "完了" : "編集"}
             </button>
@@ -184,7 +197,7 @@ export function DiagnosisConditionEditor({
                 return (
                   <span
                     key={condition}
-                    className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full"
+                    className="inline-block px-3 py-1.5 bg-amber-100 text-amber-700 text-sm font-medium rounded-full"
                   >
                     {option?.label || condition}
                   </span>
@@ -192,17 +205,19 @@ export function DiagnosisConditionEditor({
               })}
             </div>
           ) : (
-            <span className="text-sm text-gray-500">該当なし</span>
+            <span className="text-base text-gray-500">該当なし</span>
           )}
         </div>
 
         {/* 予算 */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">1日あたりの予算</div>
+            <div className="text-base font-semibold text-gray-700">
+              1日あたりの予算
+            </div>
             <button
               onClick={() => setEditingBudget(!editingBudget)}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
               {editingBudget ? "完了" : "編集"}
             </button>
@@ -218,22 +233,24 @@ export function DiagnosisConditionEditor({
                 onChange={(e) => setBudget(Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg"
               />
-              <div className="text-center text-lg font-semibold text-blue-600">
+              <div className="text-center text-xl font-bold text-blue-600">
                 ¥{budget}
               </div>
             </div>
           ) : (
-            <div className="text-lg font-semibold text-gray-900">¥{budget}</div>
+            <div className="text-xl font-bold text-gray-900">¥{budget}</div>
           )}
         </div>
 
         {/* 優先事項 */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">優先事項</div>
+            <div className="text-base font-semibold text-gray-700">
+              優先事項
+            </div>
             <button
               onClick={() => setEditingPriority(!editingPriority)}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
               {editingPriority ? "完了" : "編集"}
             </button>
@@ -242,7 +259,7 @@ export function DiagnosisConditionEditor({
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as UserPriority)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {PRIORITY_OPTIONS.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -251,7 +268,7 @@ export function DiagnosisConditionEditor({
               ))}
             </select>
           ) : (
-            <div className="text-lg font-semibold text-gray-900">
+            <div className="text-xl font-bold text-gray-900">
               {PRIORITY_OPTIONS.find((o) => o.id === priority)?.label}
             </div>
           )}
