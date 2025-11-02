@@ -2,12 +2,16 @@ import { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 
 /**
- * robots.txt生成
+ * robots.txt 動的生成
  *
  * このファイルは /robots.txt エンドポイントを自動生成します
- * クローラーに対するアクセス制御とサイトマップの場所を指定
+ * 検索エンジンのクロール最適化とインデックス制御を行います
+ *
+ * 主な機能:
+ * - クローラーのアクセス制御
+ * - サイトマップの場所を指定
+ * - 検索エンジン別の最適化ルール
  */
-
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
 
@@ -17,21 +21,35 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
-          "/api/",
-          "/admin/",
-          "/_next/",
-          "/studio/",
-          "*.json$",
-          "*?*", // クエリパラメータ付きURL（重複コンテンツ回避）
+          "/api/", // APIルートは非公開
+          "/_next/", // Next.js内部ファイル
+          "/studio/", // Sanity Studio
+          "/admin/", // 管理画面（将来的に追加する場合）
+          "/*.json$", // JSONファイル
+          "/private/", // プライベートページ（将来的に追加する場合）
         ],
       },
       {
-        // Googleボット専用ルール
+        // Googlebot固有のルール（Yahoo!も同じエンジンを使用）
         userAgent: "Googlebot",
         allow: "/",
-        disallow: ["/api/", "/admin/", "/studio/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+        // フィルター・検索パラメータは許可（重要！）
+      },
+      {
+        // Bingbot固有のルール
+        userAgent: "Bingbot",
+        allow: "/",
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
+      {
+        // Yahoo! Japan（念のため明示的に）
+        userAgent: "Slurp",
+        allow: "/",
+        disallow: ["/api/", "/_next/", "/studio/"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }
