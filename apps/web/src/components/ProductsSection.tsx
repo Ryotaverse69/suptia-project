@@ -6,6 +6,7 @@ import { FilterSidebar } from "@/components/FilterSidebar";
 import { Award } from "lucide-react";
 
 interface Product {
+  _id: string;
   name: string;
   priceJPY: number;
   source?: string;

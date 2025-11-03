@@ -23,6 +23,7 @@ interface Ingredient {
 }
 
 interface Product {
+  _id: string;
   name: string;
   priceJPY: number;
   servingsPerContainer: number;
@@ -53,8 +54,11 @@ async function getIngredient(slug: string): Promise<Ingredient | null> {
 }
 
 // 成分を含む商品を取得
-async function getProductsByIngredient(ingredientId: string): Promise<Product[]> {
+async function getProductsByIngredient(
+  ingredientId: string,
+): Promise<Product[]> {
   const query = `*[_type == "product" && references($ingredientId)] | order(priceJPY asc){
+    _id,
     name,
     priceJPY,
     servingsPerContainer,
@@ -150,11 +154,15 @@ export default async function IngredientComparePage({ params }: Props) {
               <TrendingUp className="text-primary" size={32} />
             </div>
             <div>
-              <p className="text-sm text-primary-700 mb-1">{ingredient.category}</p>
+              <p className="text-sm text-primary-700 mb-1">
+                {ingredient.category}
+              </p>
               <h1 className="text-4xl font-bold text-primary-900">
                 {ingredient.name}を含むサプリメント
               </h1>
-              <p className="text-xl text-primary-700 mt-2">{ingredient.nameEn}</p>
+              <p className="text-xl text-primary-700 mt-2">
+                {ingredient.nameEn}
+              </p>
             </div>
           </div>
 
@@ -171,7 +179,13 @@ export default async function IngredientComparePage({ params }: Props) {
             {productsWithCost.length > 0 && (
               <div className="px-4 py-2 bg-accent-mint/10 rounded-lg">
                 <span className="text-sm text-primary-900">
-                  最安値: <span className="font-bold">¥{Math.min(...productsWithCost.map(p => p.priceJPY)).toLocaleString()}</span>
+                  最安値:{" "}
+                  <span className="font-bold">
+                    ¥
+                    {Math.min(
+                      ...productsWithCost.map((p) => p.priceJPY),
+                    ).toLocaleString()}
+                  </span>
                 </span>
               </div>
             )}
@@ -209,7 +223,8 @@ export default async function IngredientComparePage({ params }: Props) {
             {ingredient.name}についてもっと知る
           </h2>
           <p className="text-primary-700 mb-6">
-            {ingredient.name}の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
+            {ingredient.name}
+            の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
           </p>
           <Link
             href={`/ingredients/${slug}`}

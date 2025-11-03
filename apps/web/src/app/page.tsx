@@ -20,6 +20,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface Product {
+  _id: string;
   name: string;
   priceJPY: number;
   originalPrice?: number;
@@ -66,6 +67,7 @@ interface IngredientWithStats extends Ingredient {
 async function getProducts(): Promise<Product[]> {
   // 重複を考慮して多めに取得（30件）
   const query = `*[_type == "product"] | order(priceJPY asc)[0..29]{
+    _id,
     name,
     priceJPY,
     servingsPerContainer,
@@ -194,6 +196,7 @@ function normalizeProductName(name: string): string {
 async function getFeaturedProducts(): Promise<Product[]> {
   // 重複を考慮して多めに取得（50件）
   const query = `*[_type == "product" && availability == "in-stock"] {
+    _id,
     name,
     priceJPY,
     originalPrice,

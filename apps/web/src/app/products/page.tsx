@@ -46,6 +46,7 @@ export const metadata: Metadata = {
 };
 
 interface Product {
+  _id: string;
   name: string;
   priceJPY: number;
   servingsPerContainer: number;
@@ -68,6 +69,7 @@ interface Product {
 // 全商品を取得
 async function getAllProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(priceJPY asc){
+    _id,
     name,
     priceJPY,
     servingsPerContainer,
