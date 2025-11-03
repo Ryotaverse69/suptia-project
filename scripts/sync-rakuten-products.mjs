@@ -22,6 +22,12 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import {
+  validateProduct,
+  fetchExistingProductIds,
+  checkDuplicate,
+  printFilterStats,
+} from './lib/product-filters.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -417,7 +423,13 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         console.log(`  🔄 更新: ${product.name.substring(0, 50)}...`);
 
         // 既存のpriceDataから楽天のエントリを全て削除（shopNameやstoreNameの不一致を考慮）
-        const existingPriceData = existing.priceData || [];
+        let existingPriceData = existing.priceData || [];
+
+        // priceDataがオブジェクト形式の場合は配列に正規化
+        if (!Array.isArray(existingPriceData)) {
+          existingPriceData = [];
+        }
+
         const filteredPriceData = existingPriceData.filter(
           pd => pd.source !== 'rakuten'
         );
@@ -531,18 +543,70 @@ async function main() {
       return;
     }
 
+    // ========================================
+    // フィルタリング: 非サプリメント商品を除外
+    // ========================================
+    console.log('🔍 商品をフィルタリング中...');
+    const validProducts = [];
+    const invalidProducts = [];
+
+    for (const product of searchResult.products) {
+      const validation = validateProduct(product);
+
+      if (validation.isValid) {
+        validProducts.push(product);
+        console.log(`  ✅ ${product.name.substring(0, 60)}...`);
+      } else {
+        invalidProducts.push({ product, reason: validation.reason });
+        console.log(`  ❌ 除外: ${product.name.substring(0, 50)}... (${validation.reason})`);
+      }
+    }
+
+    if (validProducts.length === 0) {
+      console.log('\n⚠️  サプリメント商品が見つかりませんでした');
+      console.log(`  除外された商品: ${invalidProducts.length}件`);
+      return;
+    }
+
+    console.log(`\n✅ フィルタリング結果: ${validProducts.length}/${searchResult.products.length}件が有効\n`);
+
     // Sanityから既存データ取得
     console.log('📥 Sanityから既存データを取得中...');
-    const [existingProducts, existingBrands] = await Promise.all([
+    const [existingProducts, existingBrands, existingProductIds] = await Promise.all([
       queryProducts(),
       queryBrands(),
+      fetchExistingProductIds(SANITY_API_TOKEN),
     ]);
     console.log(`  商品: ${existingProducts.length}件`);
     console.log(`  ブランド: ${existingBrands.length}件\n`);
 
-    // 同期実行
+    // ========================================
+    // 重複チェック
+    // ========================================
+    console.log('🔍 重複チェック中...');
+    const uniqueProducts = [];
+    const duplicateProducts = [];
+
+    for (const product of validProducts) {
+      const duplicateCheck = checkDuplicate({
+        itemCode: product.identifiers.rakutenItemCode,
+        janCode: product.identifiers.jan,
+        source: 'rakuten',
+      }, existingProductIds);
+
+      if (duplicateCheck.isDuplicate) {
+        duplicateProducts.push({ product, reason: duplicateCheck.reason });
+        console.log(`  ⚠️  重複: ${product.name.substring(0, 50)}... (${duplicateCheck.reason})`);
+      } else {
+        uniqueProducts.push(product);
+      }
+    }
+
+    console.log(`\n✅ 重複チェック完了: ${uniqueProducts.length}件の新規商品、${duplicateProducts.length}件の重複\n`);
+
+    // 同期実行（uniqueProductsのみ）
     const stats = await syncProducts(
-      searchResult.products,
+      uniqueProducts,
       existingProducts,
       existingBrands,
       dryRun
@@ -554,6 +618,14 @@ async function main() {
     console.log(`  🔄 更新: ${stats.updated}件`);
     console.log(`  ⏭️  スキップ: ${stats.skipped}件`);
     console.log(`  ❌ エラー: ${stats.errors}件`);
+
+    // フィルタリング統計
+    console.log('\n📊 フィルタリング統計:');
+    console.log(`  📦 取得商品数: ${searchResult.products.length}件`);
+    console.log(`  ✅ 有効商品数: ${validProducts.length}件`);
+    console.log(`  ❌ 除外商品数: ${invalidProducts.length}件`);
+    console.log(`  ⚠️  重複商品数: ${duplicateProducts.length}件`);
+    console.log(`  🎯 最終登録数: ${stats.created}件`);
 
     if (!dryRun) {
       console.log('\n🌐 Sanityスタジオで確認: http://localhost:3333/structure/product');
