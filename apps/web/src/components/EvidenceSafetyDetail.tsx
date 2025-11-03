@@ -120,9 +120,10 @@ export function EvidenceSafetyDetail({
         label: "安全性S - 最高レベル",
         description:
           "非常に高い安全性が確認されています。重大な副作用の報告がなく、長期使用の実績があります。",
-        color: "text-purple-700",
+        color: "from-purple-500 to-purple-700",
         bgColor: "bg-purple-50",
         borderColor: "border-purple-300",
+        textColor: "text-purple-900",
         icon: CheckCircle2,
       };
     if (score >= 80)
@@ -131,9 +132,10 @@ export function EvidenceSafetyDetail({
         label: "安全性A - 高い安全性",
         description:
           "高い安全性が確認されています。適切な使用下では問題ありません。",
-        color: "text-blue-700",
+        color: "from-blue-500 to-blue-700",
         bgColor: "bg-blue-50",
         borderColor: "border-blue-300",
+        textColor: "text-blue-900",
         icon: CheckCircle2,
       };
     if (score >= 70)
@@ -142,9 +144,10 @@ export function EvidenceSafetyDetail({
         label: "安全性B - 中程度の安全性",
         description:
           "一般的に安全ですが、一部の方には注意が必要な場合があります。",
-        color: "text-green-700",
+        color: "from-green-500 to-green-700",
         bgColor: "bg-green-50",
         borderColor: "border-green-300",
+        textColor: "text-green-900",
         icon: AlertTriangle,
       };
     if (score >= 60)
@@ -152,9 +155,10 @@ export function EvidenceSafetyDetail({
         grade: "C",
         label: "安全性C - 注意が必要",
         description: "使用には注意が必要です。医師への相談を推奨します。",
-        color: "text-yellow-700",
+        color: "from-yellow-500 to-yellow-700",
         bgColor: "bg-yellow-50",
         borderColor: "border-yellow-300",
+        textColor: "text-yellow-900",
         icon: AlertTriangle,
       };
     return {
@@ -162,9 +166,10 @@ export function EvidenceSafetyDetail({
       label: "安全性D - 要注意",
       description:
         "安全性に懸念があります。使用前に必ず医師に相談してください。",
-      color: "text-red-700",
+      color: "from-red-500 to-red-700",
       bgColor: "bg-red-50",
       borderColor: "border-red-300",
+      textColor: "text-red-900",
       icon: AlertTriangle,
     };
   };
@@ -338,20 +343,21 @@ export function EvidenceSafetyDetail({
 
         {/* 安全性レベルバッジ */}
         <div
-          className={`p-6 ${safetyLevel.bgColor} border ${safetyLevel.borderColor} rounded-lg mb-6`}
+          className={`p-6 rounded-xl bg-gradient-to-r ${safetyLevel.color} mb-6`}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <SafetyIcon size={28} className={safetyLevel.color} />
-            <div>
-              <p className={`text-3xl font-bold ${safetyLevel.color}`}>
-                {safetyLevel.grade}ランク
-              </p>
-              <p className={`text-sm font-semibold ${safetyLevel.color}`}>
-                {safetyLevel.label}
-              </p>
-            </div>
+          <div className="text-white">
+            <p className="text-3xl font-bold mb-2">{safetyLevel.grade}ランク</p>
+            <p className="text-lg opacity-90">{safetyLevel.label}</p>
           </div>
-          <p className="text-sm text-gray-700">{safetyLevel.description}</p>
+        </div>
+
+        {/* 説明 */}
+        <div
+          className={`p-4 rounded-lg ${safetyLevel.bgColor} border ${safetyLevel.borderColor} mb-6`}
+        >
+          <p className={`text-sm ${safetyLevel.textColor}`}>
+            {safetyLevel.description}
+          </p>
         </div>
 
         {/* 成分別安全性詳細 */}
