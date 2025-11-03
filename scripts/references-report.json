@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-11-03T11:40:16.899Z",
+  "summary": {
+    "total": 55,
+    "good": 55,
+    "insufficient": 0,
+    "missing": 0
+  },
+  "missingReferences": [],
+  "insufficientReferences": []
+}

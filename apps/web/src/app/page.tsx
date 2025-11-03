@@ -429,16 +429,18 @@ export default async function Home() {
             {/* Steps Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Step 1 */}
-              <div className="group relative">
-                <div className="glass-blue rounded-xl p-6 shadow-soft hover:shadow-glass transition-all duration-300 h-full flex items-center gap-5">
+              <div className="group relative perspective-1000">
+                {/* グロー効果レイヤー（ホバー時） */}
+                <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
+                <div className="glass-blue rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-primary/20 hover:border-primary/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-blue rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-blue rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-blue transition-all duration-500 group-hover:rotate-12">
                     <span className="text-white font-bold text-lg">1</span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-base font-semibold text-primary-900 mb-1">
+                    <h3 className="text-base font-semibold text-primary-900 mb-1 group-hover:text-primary transition-colors duration-300">
                       検索・発見
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
@@ -447,9 +449,9 @@ export default async function Home() {
                   </div>
 
                   {/* Icon */}
-                  <div className="flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
                     <Search
-                      className="text-primary/30"
+                      className="text-primary/30 group-hover:text-primary/60 transition-colors duration-300"
                       size={32}
                       strokeWidth={1.5}
                     />
@@ -458,10 +460,12 @@ export default async function Home() {
               </div>
 
               {/* Step 2 */}
-              <div className="group relative">
-                <div className="glass-mint rounded-xl p-6 shadow-soft hover:shadow-glass transition-all duration-300 h-full flex items-center gap-5">
+              <div className="group relative perspective-1000">
+                {/* グロー効果レイヤー（ホバー時） */}
+                <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-accent-mint/20 via-accent-mint/40 to-accent-mint/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
+                <div className="glass-mint rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-mint/20 hover:border-accent-mint/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-mint rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-mint rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-mint transition-all duration-500 group-hover:rotate-12">
                     <span className="text-primary-900 font-bold text-lg">
                       2
                     </span>
@@ -469,7 +473,7 @@ export default async function Home() {
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-base font-semibold text-primary-900 mb-1">
+                    <h3 className="text-base font-semibold text-primary-900 mb-1 group-hover:text-accent-mint transition-colors duration-300">
                       比較・分析
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
@@ -478,9 +482,9 @@ export default async function Home() {
                   </div>
 
                   {/* Icon */}
-                  <div className="flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
                     <BarChart3
-                      className="text-accent-mint/30"
+                      className="text-accent-mint/30 group-hover:text-accent-mint/60 transition-colors duration-300"
                       size={32}
                       strokeWidth={1.5}
                     />
@@ -489,16 +493,18 @@ export default async function Home() {
               </div>
 
               {/* Step 3 */}
-              <div className="group relative">
-                <div className="glass-purple rounded-xl p-6 shadow-soft hover:shadow-glass transition-all duration-300 h-full flex items-center gap-5">
+              <div className="group relative perspective-1000">
+                {/* グロー効果レイヤー（ホバー時） */}
+                <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-purple-500/20 via-purple-500/40 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
+                <div className="glass-purple rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-purple/20 hover:border-accent-purple/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-purple transition-all duration-500 group-hover:rotate-12">
                     <span className="text-white font-bold text-lg">3</span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-base font-semibold text-primary-900 mb-1">
+                    <h3 className="text-base font-semibold text-primary-900 mb-1 group-hover:text-accent-purple transition-colors duration-300">
                       選択・購入
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
@@ -507,9 +513,9 @@ export default async function Home() {
                   </div>
 
                   {/* Icon */}
-                  <div className="flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="flex-shrink-0 group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
                     <CheckCircle2
-                      className="text-accent-purple/30"
+                      className="text-accent-purple/30 group-hover:text-accent-purple/60 transition-colors duration-300"
                       size={32}
                       strokeWidth={1.5}
                     />

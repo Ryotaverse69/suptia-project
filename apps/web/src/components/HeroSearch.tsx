@@ -16,6 +16,7 @@ interface HeroSearchProps {
 
 export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -93,23 +94,48 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
           </h1>
         </div>
 
-        {/* 3D search box */}
+        {/* 3D search box with focus effects */}
         <form onSubmit={handleSearch} className="relative mb-6 sm:mb-7 md:mb-8">
+          {/* グロー効果のレイヤー（フォーカス時のみ表示） */}
+          {isFocused && (
+            <div
+              className="absolute -inset-[2px] rounded-lg sm:rounded-xl blur-xl animate-pulse-slow"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(100, 229, 179, 0.6), rgba(122, 152, 236, 0.6), rgba(156, 102, 255, 0.6))",
+                zIndex: -1,
+              }}
+            />
+          )}
           <div
-            className="flex items-center rounded-lg sm:rounded-xl overflow-hidden backdrop-blur-2xl border border-white/40 transition-all duration-500 hover:border-white/60"
+            className={`flex items-center rounded-lg sm:rounded-xl overflow-hidden backdrop-blur-2xl border transition-all duration-500 ${
+              isFocused
+                ? "border-white/80 scale-[1.02] shadow-2xl"
+                : "border-white/40 hover:border-white/60"
+            }`}
             style={{
-              background: "rgba(255, 255, 255, 0.12)",
-              boxShadow:
-                "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 20px 60px -10px rgba(59, 102, 224, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.1)",
+              background: isFocused
+                ? "rgba(255, 255, 255, 0.18)"
+                : "rgba(255, 255, 255, 0.12)",
+              boxShadow: isFocused
+                ? "0 12px 48px 0 rgba(31, 38, 135, 0.5), 0 25px 80px -15px rgba(100, 229, 179, 0.4), 0 0 60px 5px rgba(122, 152, 236, 0.3), inset 0 2px 2px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 2px 0 rgba(0, 0, 0, 0.15)"
+                : "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 20px 60px -10px rgba(59, 102, 224, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.1)",
             }}
           >
             <div className="pl-3 sm:pl-4 md:pl-6 pr-2 sm:pr-3">
-              <Search className="text-white/80" size={18} />
+              <Search
+                className={`transition-all duration-300 ${
+                  isFocused ? "text-white scale-110" : "text-white/80"
+                }`}
+                size={18}
+              />
             </div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               placeholder="サプリメント名、成分名で検索..."
               className="flex-1 py-3 sm:py-4 md:py-5 px-1 sm:px-2 text-sm sm:text-base font-light bg-transparent outline-none placeholder:text-white/50 text-white"
             />

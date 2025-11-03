@@ -31,7 +31,7 @@ interface EvidenceSafetyDetailProps {
   evidenceScore?: number;
   safetyScore?: number;
   thirdPartyTested?: boolean;
-  warnings?: string[];
+  warnings?: (string | { message: string; severity?: string; type?: string })[];
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
@@ -543,7 +543,11 @@ export function EvidenceSafetyDetail({
                   {warnings.map((warning, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <span className="text-yellow-600">•</span>
-                      <span>{warning}</span>
+                      <span>
+                        {typeof warning === "string"
+                          ? warning
+                          : warning?.message || ""}
+                      </span>
                     </li>
                   ))}
                 </ul>

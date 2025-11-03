@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
+import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { IngredientContent } from "@/components/IngredientContent";
 import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
@@ -121,6 +122,13 @@ interface RelatedProduct {
     trustScore?: number;
   };
   priceJPY: number;
+  originalPrice?: number;
+  discountPercentage?: number;
+  isCampaign?: boolean;
+  campaignEndDate?: string;
+  servingsPerContainer: number;
+  servingsPerDay: number;
+  externalImageUrl?: string;
   scores?: {
     overall?: number;
     safety?: number;
@@ -137,6 +145,12 @@ interface RelatedProduct {
       url: string;
     };
   }>;
+  // モックデータ用（トップページと同じ）
+  effectiveCostPerDay?: number;
+  rating?: number;
+  reviewCount?: number;
+  isBestValue?: boolean;
+  safetyScore?: number;
 }
 
 interface Props {
@@ -203,6 +217,7 @@ async function getIngredientId(slug: string): Promise<string | null> {
 }
 
 // 関連商品を取得（成分を含む商品）
+// トップページの「おすすめのサプリメント」と同じロジックを使用
 async function getRelatedProducts(
   ingredientId: string,
 ): Promise<RelatedProduct[]> {
@@ -215,13 +230,27 @@ async function getRelatedProducts(
       trustScore
     },
     priceJPY,
+    originalPrice,
+    discountPercentage,
+    isCampaign,
+    campaignEndDate,
+    servingsPerContainer,
+    servingsPerDay,
+    externalImageUrl,
     scores,
     reviewStats,
     availability,
     "images": images[0...1]{
       "asset": asset->
-    }
-  } | order(scores.overall desc)[0...6]`;
+    },
+    // おすすめスコアを計算（トップページと同じロジック）
+    "recommendationScore": select(
+      isCampaign == true && campaignEndDate > now() => 100 + coalesce(discountPercentage, 0) * 2,
+      isCampaign == true => 100 + coalesce(discountPercentage, 0) * 2,
+      coalesce(discountPercentage, 0) > 0 => coalesce(discountPercentage, 0) * 2,
+      0
+    )
+  } | order(recommendationScore desc, discountPercentage desc, priceJPY asc)[0...6]`;
 
   try {
     const products = await sanity.fetch(query, { ingredientId });
@@ -369,6 +398,31 @@ export default async function IngredientPage({ params }: Props) {
     ingredientId ? getRelatedProducts(ingredientId) : Promise.resolve([]),
     getAllIngredients(),
   ]);
+
+  // トップページと同じロジックでモックデータを追加
+  const relatedProductsWithMockData = relatedProducts.map((product, index) => {
+    let effectiveCostPerDay = 0;
+    try {
+      effectiveCostPerDay = calculateEffectiveCostPerDay({
+        priceJPY: product.priceJPY,
+        servingsPerContainer: product.servingsPerContainer,
+        servingsPerDay: product.servingsPerDay,
+      });
+    } catch (error) {
+      // If calculation fails, set to 0
+    }
+
+    return {
+      ...product,
+      effectiveCostPerDay,
+      rating: 4.5 + Math.random() * 0.5, // Mock rating (4.5-5.0)
+      reviewCount: Math.floor(100 + Math.random() * 300), // Mock review count (100-400)
+      isBestValue: product.discountPercentage
+        ? product.discountPercentage > 20
+        : index < 2, // 割引率20%以上または上位2件
+      safetyScore: 90 + Math.floor(Math.random() * 10), // Mock safety score (90-100)
+    };
+  });
 
   // 不要なフレーズをクリーニングする関数
   const cleanText = (text: string | undefined | null): string => {
@@ -805,7 +859,7 @@ export default async function IngredientPage({ params }: Props) {
 
         {/* 関連商品セクション */}
         <RelatedProducts
-          products={relatedProducts}
+          products={relatedProductsWithMockData}
           ingredientName={ingredient.name}
         />
       </div>

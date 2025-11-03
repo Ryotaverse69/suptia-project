@@ -243,6 +243,7 @@ async function getRelatedProductsByJan(
 async function getAllProducts(): Promise<Product[]> {
   const query = `*[_type == "product" && availability == "in-stock"]{
     _id,
+    name,
     priceJPY,
     servingsPerContainer,
     servingsPerDay,
@@ -578,22 +579,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
         }
       }
 
+      console.log(
+        `[スコア→レベル変換] ${p.name}: evidenceScore=${evidenceScore}, safetyScore=${safetyScore}`,
+      );
+
+      const calculatedEvidenceLevel =
+        evidenceScore >= 90
+          ? "S"
+          : evidenceScore >= 80
+            ? "A"
+            : evidenceScore >= 70
+              ? "B"
+              : evidenceScore >= 60
+                ? "C"
+                : "D";
+
+      console.log(
+        `[レベル決定] ${p.name}: evidenceLevel=${calculatedEvidenceLevel}`,
+      );
+
       return {
         _id: p._id,
         priceJPY: p.priceJPY,
         servingsPerContainer: p.servingsPerContainer,
         servingsPerDay: p.servingsPerDay,
         ingredientAmount: p.ingredients?.[0]?.amountMgPerServing,
-        evidenceLevel:
-          evidenceScore >= 90
-            ? "S"
-            : evidenceScore >= 80
-              ? "A"
-              : evidenceScore >= 70
-                ? "B"
-                : evidenceScore >= 60
-                  ? "C"
-                  : "D",
+        evidenceLevel: calculatedEvidenceLevel,
         safetyScore,
         priceData: p.priceData,
       };
@@ -601,12 +612,39 @@ export default async function ProductDetailPage({ params }: PageProps) {
   );
 
   // 現在の商品の称号を計算
+  console.log(`[ID検索] 現在の商品ID: ${product._id}, 商品名: ${product.name}`);
+  console.log(
+    `[ID検索] productsForEvaluationの件数: ${productsForEvaluation.length}`,
+  );
+
   const currentProductForEvaluation = productsForEvaluation.find(
     (p) => p._id === product._id,
   );
+
+  if (!currentProductForEvaluation) {
+    console.log(`[ID検索エラー] 商品が見つかりません: ${product._id}`);
+    console.log(
+      `[ID検索エラー] 利用可能なID一覧:`,
+      productsForEvaluation.slice(0, 5).map((p) => p._id),
+    );
+  } else {
+    console.log(
+      `[ID検索成功] 商品が見つかりました: ${currentProductForEvaluation._id}`,
+    );
+  }
+
+  console.log(`[バッジ計算] ${product.name}:`, {
+    evidenceLevel: currentProductForEvaluation?.evidenceLevel,
+    safetyScore: currentProductForEvaluation?.safetyScore,
+    priceJPY: currentProductForEvaluation?.priceJPY,
+    ingredientAmount: currentProductForEvaluation?.ingredientAmount,
+  });
+
   const badges = currentProductForEvaluation
     ? evaluateBadges(currentProductForEvaluation, productsForEvaluation)
     : [];
+
+  console.log(`[バッジ結果] ${product.name}:`, badges);
 
   // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);

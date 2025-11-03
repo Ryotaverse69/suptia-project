@@ -449,6 +449,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
           patch: {
             id: productId,
             set: {
+              itemCode: product.identifiers.rakutenItemCode, // 追加: EC商品コード
+              affiliateUrl: product.affiliateUrl || product.url, // 追加: アフィリエイトURL
               priceJPY: product.price,
               availability: product.inStock ? 'in-stock' : 'out-of-stock',
               'reviewStats.averageRating': product.rating || 0,

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Star, ShoppingCart, TrendingUp } from "lucide-react";
+import Image from "next/image";
+import { Star, ShoppingCart, TrendingUp, Award } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 
 interface RelatedProduct {
@@ -13,6 +14,13 @@ interface RelatedProduct {
     trustScore?: number;
   } | null;
   priceJPY: number;
+  originalPrice?: number;
+  discountPercentage?: number;
+  isCampaign?: boolean;
+  campaignEndDate?: string;
+  servingsPerContainer: number;
+  servingsPerDay: number;
+  externalImageUrl?: string;
   scores?: {
     overall?: number;
     safety?: number;
@@ -29,6 +37,12 @@ interface RelatedProduct {
       url: string;
     };
   }>;
+  // モックデータ
+  effectiveCostPerDay?: number;
+  rating?: number;
+  reviewCount?: number;
+  isBestValue?: boolean;
+  safetyScore?: number;
 }
 
 interface RelatedProductsProps {
@@ -53,7 +67,7 @@ export function RelatedProducts({
             {ingredientName}を含む推奨商品
           </h2>
           <p className="text-primary-700">
-            総合スコアの高い順に最大6件表示しています
+            キャンペーン・割引率の高い順に最大6件表示しています
           </p>
         </div>
 
@@ -64,90 +78,94 @@ export function RelatedProducts({
               href={`/products/${product.slug.current}`}
               className="group bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
-              {/* 商品画像（将来実装） */}
-              <div className="aspect-[4/3] bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-                {product.brand && (
-                  <div className="text-center">
-                    <p className="text-primary-600 font-semibold text-sm">
-                      {product.brand.name}
-                    </p>
-                    {product.brand.trustScore && (
-                      <p className="text-primary-500 text-xs mt-1">
-                        信頼度: {product.brand.trustScore}
-                      </p>
-                    )}
+              {/* 商品画像 */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+                {product.externalImageUrl ? (
+                  <Image
+                    src={product.externalImageUrl}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+                    <Award size={48} strokeWidth={1} />
                   </div>
                 )}
+                {/* キャンペーン・割引バッジ */}
+                <div className="absolute top-2 left-2 flex flex-col gap-2">
+                  {product.isCampaign && (
+                    <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold shadow-md">
+                      🎉 キャンペーン中
+                    </div>
+                  )}
+                  {product.discountPercentage &&
+                    product.discountPercentage > 0 && (
+                      <div className="px-3 py-1 bg-orange-500 rounded text-white text-xs font-bold shadow-md">
+                        {product.discountPercentage.toFixed(0)}% OFF
+                      </div>
+                    )}
+                </div>
               </div>
 
               <div className="p-5">
-                {/* ブランド名 */}
-                {product.brand && (
-                  <p className="text-sm text-primary-600 mb-1 font-medium">
-                    {product.brand.name}
-                  </p>
-                )}
-
                 {/* 商品名 */}
-                <h3 className="text-lg font-semibold text-primary-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="text-base font-bold text-primary-900 mb-2 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
                   {product.name}
                 </h3>
 
-                {/* レビュー統計 */}
-                {product.reviewStats && product.reviewStats.averageRating && (
+                {/* 評価（モックデータ） */}
+                {product.rating && product.reviewCount && (
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center gap-1">
-                      <Star
-                        className="text-accent-orange fill-accent-orange"
-                        size={16}
-                      />
-                      <span className="text-sm font-semibold text-primary-900">
-                        {product.reviewStats.averageRating.toFixed(1)}
-                      </span>
+                    <div className="flex items-center gap-0.5 px-2 py-1 bg-green-600 text-white rounded text-xs font-bold">
+                      {product.rating.toFixed(1)}
                     </div>
-                    <span className="text-sm text-primary-600">
-                      ({product.reviewStats.reviewCount?.toLocaleString()}件)
+                    <span className="text-xs text-primary-600">
+                      ({product.reviewCount}件)
                     </span>
                   </div>
                 )}
 
-                {/* スコア表示 */}
-                {product.scores && product.scores.overall && (
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-700">
-                        総合スコア
-                      </span>
-                      <span className="text-sm font-bold text-accent-mint">
-                        {product.scores.overall}/100
-                      </span>
-                    </div>
-                    <div className="h-2 bg-primary-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-accent-mint to-primary transition-all"
-                        style={{ width: `${product.scores.overall}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* 価格 */}
-                <div className="flex items-baseline justify-between pt-3 border-t border-primary-100">
-                  <span className="text-2xl font-bold text-primary-900">
-                    {formatPrice(product.priceJPY)}
-                  </span>
-                  <span className="text-sm text-primary-600">税込</span>
+                {/* 価格（割引前価格がある場合は表示） */}
+                <div className="mb-3">
+                  {product.originalPrice &&
+                    product.originalPrice > product.priceJPY && (
+                      <div className="text-sm text-gray-500 line-through">
+                        ¥{product.originalPrice.toLocaleString()}
+                      </div>
+                    )}
                 </div>
 
-                {/* ベストバリューバッジ */}
-                {product.scores &&
-                  product.scores.costEffectiveness &&
-                  product.scores.costEffectiveness >= 90 && (
-                    <div className="mt-3 inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-accent-mint to-green-500 text-white rounded-full text-xs font-semibold">
-                      <TrendingUp size={14} />
-                      ベストバリュー
+                {/* 現在価格 */}
+                <div className="flex items-end justify-between mb-3">
+                  {/* 左側: 商品価格 */}
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">商品価格</div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      ¥{product.priceJPY.toLocaleString()}
                     </div>
-                  )}
+                  </div>
+
+                  {/* 右側: 1日あたりの価格 */}
+                  {product.effectiveCostPerDay !== undefined &&
+                    product.effectiveCostPerDay > 0 && (
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500 mb-1">最安値</div>
+                        <div className="text-xl font-bold text-green-600">
+                          ¥{product.effectiveCostPerDay.toFixed(0)}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-0.5">
+                          1日あたり
+                        </div>
+                      </div>
+                    )}
+                </div>
+
+                {/* 比較するボタン */}
+                <button className="w-full px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
+                  比較する
+                </button>
               </div>
             </Link>
           ))}

@@ -1,12 +1,12 @@
 /**
  * 商品の称号（バッジ）を判定するロジック
  *
- * 5つの称号:
- * 1. 💰 最安値 - 複数ECサイトで最も安い価格
- * 2. 📊 最高含有量 - その成分の含有量が最も多い
- * 3. 💡 ベストバリュー - コスパが最も優れている
+ * 5つの称号（すべてSランク）:
+ * 1. 💰 価格S - 複数ECサイトで最も安い価格
+ * 2. 📊 含有量S - その成分の含有量が最も多い
+ * 3. 💡 コスパS - コスパが最も優れている
  * 4. 🔬 エビデンスS - 最高レベルの科学的根拠
- * 5. 🛡️ 高安全性 - 安全性スコア90点以上
+ * 5. 🛡️ 安全性S - 安全性スコア90点以上
  */
 
 export type BadgeType =
@@ -27,21 +27,21 @@ export interface Badge {
 export const BADGE_DEFINITIONS: Record<BadgeType, Badge> = {
   "lowest-price": {
     type: "lowest-price",
-    label: "最安値",
+    label: "価格S",
     icon: "💰",
     color: "bg-green-50 border-green-200 text-green-700",
     description: "複数ECサイトで最も安い価格",
   },
   "highest-content": {
     type: "highest-content",
-    label: "最高含有量",
+    label: "含有量S",
     icon: "📊",
     color: "bg-blue-50 border-blue-200 text-blue-700",
     description: "成分量が最も多い",
   },
   "best-value": {
     type: "best-value",
-    label: "ベストバリュー",
+    label: "コスパS",
     icon: "💡",
     color: "bg-yellow-50 border-yellow-200 text-yellow-700",
     description: "コスパが最も優れている",
@@ -55,7 +55,7 @@ export const BADGE_DEFINITIONS: Record<BadgeType, Badge> = {
   },
   "high-safety": {
     type: "high-safety",
-    label: "高安全性",
+    label: "安全性S",
     icon: "🛡️",
     color: "bg-red-50 border-red-200 text-red-700",
     description: "安全性スコア90点以上",
@@ -85,17 +85,17 @@ export function evaluateBadges(
 ): BadgeType[] {
   const badges: BadgeType[] = [];
 
-  // 1. 💰 最安値判定
+  // 1. 💰 価格S判定
   if (isLowestPrice(product, allProducts)) {
     badges.push("lowest-price");
   }
 
-  // 2. 📊 最高含有量判定
+  // 2. 📊 含有量S判定
   if (isHighestContent(product, allProducts)) {
     badges.push("highest-content");
   }
 
-  // 3. 💡 ベストバリュー判定
+  // 3. 💡 コスパS判定
   if (isBestValue(product, allProducts)) {
     badges.push("best-value");
   }
@@ -105,7 +105,7 @@ export function evaluateBadges(
     badges.push("evidence-s");
   }
 
-  // 5. 🛡️ 高安全性判定
+  // 5. 🛡️ 安全性S判定
   if (product.safetyScore && product.safetyScore >= 90) {
     badges.push("high-safety");
   }
@@ -114,7 +114,7 @@ export function evaluateBadges(
 }
 
 /**
- * 最安値判定
+ * 価格S判定（最安値）
  */
 function isLowestPrice(
   product: ProductForBadgeEvaluation,
@@ -132,7 +132,7 @@ function isLowestPrice(
 }
 
 /**
- * 最高含有量判定
+ * 含有量S判定（最高含有量）
  */
 function isHighestContent(
   product: ProductForBadgeEvaluation,
@@ -154,7 +154,7 @@ function isHighestContent(
 }
 
 /**
- * ベストバリュー判定（コスパ最高）
+ * コスパS判定（ベストバリュー）
  */
 function isBestValue(
   product: ProductForBadgeEvaluation,

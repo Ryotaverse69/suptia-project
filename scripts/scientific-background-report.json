@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-11-03T11:51:57.590Z",
+  "summary": {
+    "total": 55,
+    "excellent": 21,
+    "sufficient": 34,
+    "tooShort": 0,
+    "empty": 0,
+    "passRate": 100
+  },
+  "empty": [],
+  "tooShort": []
+}
