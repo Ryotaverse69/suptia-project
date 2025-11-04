@@ -347,10 +347,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title =
     ingredient.seoTitle ||
-    `${ingredient.name}の効果と摂取方法｜成分ガイド - サプティア`;
+    `【2025年11月最新】${ingredient.name}の効果と摂取方法を徹底解説｜最安値サプリも紹介 - サプティア`;
   const description =
     ingredient.seoDescription ||
-    `${ingredient.name}（${ingredient.nameEn}）の効果、推奨摂取量、副作用、科学的根拠を徹底解説。サプティアの成分ガイドで、サプリメント選びの参考にしてください。`;
+    `${ingredient.name}（${ingredient.nameEn}）サプリを選ぶ前に必読！効果・推奨摂取量・副作用・科学的エビデンスを徹底解説。楽天・Amazon・Yahoo!の価格比較で最安値が3秒でわかる。${ingredient.category}の専門ガイド。`;
 
   const keywords = ingredient.seoKeywords || [
     ingredient.name,

@@ -98,17 +98,20 @@ export function generateProductMetadata(product: ProductSEOData): Metadata {
   const savings = highestPrice - lowestPrice;
 
   // 最適化されたタイトル（具体的な価格情報を含む）
-  const title = lowestPrice > 0
-    ? `${product.name} | 最安値¥${lowestPrice.toLocaleString()}から比較`
-    : `${product.name} - ${product.brand}`;
+  const now = new Date();
+  const yearMonth = `${now.getFullYear()}年${now.getMonth() + 1}月`;
+  const title =
+    lowestPrice > 0
+      ? `【${yearMonth}最新】${product.name} | 最安値¥${lowestPrice.toLocaleString()}で徹底比較`
+      : `${product.name} - ${product.brand}`;
 
   // 最適化されたディスクリプション（検索意図に応答）
   let description = product.description;
 
   if (!description && lowestPrice > 0) {
     const parts = [
-      `${product.name}を徹底比較！`,
-      `最安値¥${lowestPrice.toLocaleString()}`,
+      `${product.name}を選ぶ前に必読！`,
+      `楽天・Amazon・Yahoo!で最安値¥${lowestPrice.toLocaleString()}`,
     ];
 
     if (savings > 0) {
@@ -116,19 +119,19 @@ export function generateProductMetadata(product: ProductSEOData): Metadata {
     }
 
     if (priceCount > 1) {
-      parts.push(`。楽天・Amazon・Yahoo!など${priceCount}サイトで価格比較`);
+      parts.push(`。${priceCount}サイトの価格を3秒で比較`);
     }
 
     if (product.mainIngredient && product.ingredientAmount) {
       parts.push(
-        `。${product.mainIngredient}配合量${product.ingredientAmount}mg/日`,
+        `。${product.mainIngredient} ${product.ingredientAmount}mg配合`,
       );
     }
 
-    parts.push("。");
+    parts.push(`。成分量・安全性・コスパで${product.brand}を徹底評価。`);
     description = parts.join("");
   } else if (!description) {
-    description = `${product.brand}の${product.name}。詳細な価格分析と成分情報をご覧いただけます。`;
+    description = `${product.brand}の${product.name}を徹底分析。価格・成分量・エビデンス・安全性で科学的に評価。最安値が3秒でわかります。`;
   }
 
   return generateMetadata({
