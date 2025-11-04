@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { formatPrice } from "@/lib/format";
-import { BADGE_DEFINITIONS, BadgeType } from "@/lib/badges";
+import { TierRank } from "@/lib/tier-colors";
 
 interface Brand {
   _id: string;
@@ -19,7 +19,7 @@ interface ProductFiltersProps {
     minPrice?: string;
     maxPrice?: string;
     minScore?: string;
-    badges?: string; // カンマ区切りのバッジタイプ
+    minTierRank?: string; // 最低Tierランク（S/A/B/C/D）
     ecSites?: string; // カンマ区切りのECサイト
     sort?: string;
   };
@@ -42,13 +42,9 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
   const [maxPrice, setMaxPrice] = useState(currentParams.maxPrice || "");
   const [minScore, setMinScore] = useState(currentParams.minScore || "");
 
-  // 称号フィルター（複数選択可能）
-  const [selectedBadges, setSelectedBadges] = useState<Set<BadgeType>>(
-    new Set(
-      currentParams.badges
-        ? (currentParams.badges.split(",") as BadgeType[])
-        : [],
-    ),
+  // 最低Tierランクフィルター
+  const [minTierRank, setMinTierRank] = useState(
+    currentParams.minTierRank || "",
   );
 
   // ECサイトフィルター（複数選択可能）
@@ -85,11 +81,11 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
       params.delete("minScore");
     }
 
-    // 称号フィルター
-    if (selectedBadges.size > 0) {
-      params.set("badges", Array.from(selectedBadges).join(","));
+    // 最低Tierランクフィルター
+    if (minTierRank) {
+      params.set("minTierRank", minTierRank);
     } else {
-      params.delete("badges");
+      params.delete("minTierRank");
     }
 
     // ECサイトフィルター
@@ -111,7 +107,7 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     minPrice,
     maxPrice,
     minScore,
-    selectedBadges,
+    minTierRank,
     selectedECSites,
     searchParams,
     router,
@@ -123,7 +119,7 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     setMinPrice("");
     setMaxPrice("");
     setMinScore("");
-    setSelectedBadges(new Set());
+    setMinTierRank("");
     setSelectedECSites(new Set());
 
     // ソート条件のみ保持
@@ -140,19 +136,8 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
     minPrice ||
     maxPrice ||
     minScore ||
-    selectedBadges.size > 0 ||
+    minTierRank ||
     selectedECSites.size > 0;
-
-  // 称号トグル処理
-  const toggleBadge = (badgeType: BadgeType) => {
-    const newSet = new Set(selectedBadges);
-    if (newSet.has(badgeType)) {
-      newSet.delete(badgeType);
-    } else {
-      newSet.add(badgeType);
-    }
-    setSelectedBadges(newSet);
-  };
 
   // ECサイトトグル処理
   const toggleECSite = (siteId: string) => {
@@ -231,33 +216,25 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
         </select>
       </div>
 
-      {/* 称号フィルター */}
+      {/* Tierランクフィルター */}
       <div>
-        <label className="block text-sm font-semibold text-primary-900 mb-3">
-          🏆 称号で絞り込み
+        <label className="block text-sm font-semibold text-primary-900 mb-2">
+          🏆 最低Tierランク
         </label>
-        <div className="space-y-2">
-          {Object.entries(BADGE_DEFINITIONS).map(([type, badge]) => (
-            <label
-              key={type}
-              className="flex items-center gap-2 cursor-pointer hover:bg-primary-50 p-2 rounded-lg transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={selectedBadges.has(type as BadgeType)}
-                onChange={() => toggleBadge(type as BadgeType)}
-                className="rounded border-primary-300 text-primary focus:ring-primary focus:ring-offset-0"
-              />
-              <span className="text-lg">{badge.icon}</span>
-              <span className="text-sm text-primary-900">{badge.label}</span>
-            </label>
-          ))}
-        </div>
-        {selectedBadges.size > 0 && (
-          <p className="text-xs text-primary-600 mt-2">
-            {selectedBadges.size}つの称号で絞り込み中
-          </p>
-        )}
+        <select
+          value={minTierRank}
+          onChange={(e) => setMinTierRank(e.target.value)}
+          className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+        >
+          <option value="">指定なし</option>
+          <option value="S">Sランク以上（最高）</option>
+          <option value="A">Aランク以上（優秀）</option>
+          <option value="B">Bランク以上（良好）</option>
+          <option value="C">Cランク以上（普通）</option>
+        </select>
+        <p className="text-xs text-primary-600 mt-1">
+          5つの評価軸すべてが指定ランク以上の商品を表示
+        </p>
       </div>
 
       {/* ECサイトフィルター */}
@@ -324,14 +301,7 @@ export function ProductFilters({ brands, currentParams }: ProductFiltersProps) {
             {minPrice && <div>最低価格: {formatPrice(Number(minPrice))}</div>}
             {maxPrice && <div>最高価格: {formatPrice(Number(maxPrice))}</div>}
             {minScore && <div>最低スコア: {minScore}以上</div>}
-            {selectedBadges.size > 0 && (
-              <div>
-                称号:{" "}
-                {Array.from(selectedBadges)
-                  .map((b) => BADGE_DEFINITIONS[b].label)
-                  .join(", ")}
-              </div>
-            )}
+            {minTierRank && <div>最低Tierランク: {minTierRank}ランク以上</div>}
             {selectedECSites.size > 0 && (
               <div>
                 販売サイト:{" "}

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { Award } from "lucide-react";
+import { TierRatings } from "@/lib/tier-ranking";
 
 interface Product {
   _id: string;
@@ -30,6 +31,7 @@ interface Product {
       category?: string;
     };
   }>;
+  tierRatings?: TierRatings;
 }
 
 interface ProductsSectionProps {

@@ -172,12 +172,17 @@ Supabaseのproduct_viewsとfavoritesを結合して、
 
 ```
 Google Search Consoleから、
-Suptiaサイト（https://suptia.vercel.app）の過去7日間の検索パフォーマンスを取得して：
+Suptiaサイト（sc-domain:suptia.com）の過去7日間の検索パフォーマンスを取得して：
 - 総クリック数
 - 総表示回数
 - 平均CTR
 - 平均順位
 ```
+
+**⚠️ 重要**: Search Consoleのプロパティタイプに応じて正しい形式を使用：
+
+- ドメインプロパティ: `sc-domain:suptia.com` ← **Suptiaはこちら**
+- URLプレフィックス: `https://suptia.com/`
 
 #### トップ検索クエリ
 

@@ -432,7 +432,7 @@ export default async function Home() {
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
-                <div className="glass-blue rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-primary/20 hover:border-primary/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-blue rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-primary/20 hover:border-primary/40 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-blue rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-blue transition-all duration-500 group-hover:rotate-12">
                     <span className="text-white font-bold text-lg">1</span>
@@ -463,7 +463,7 @@ export default async function Home() {
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-accent-mint/20 via-accent-mint/40 to-accent-mint/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
-                <div className="glass-mint rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-mint/20 hover:border-accent-mint/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-mint rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-mint/20 hover:border-accent-mint/40 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-mint rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-mint transition-all duration-500 group-hover:rotate-12">
                     <span className="text-primary-900 font-bold text-lg">
@@ -496,7 +496,7 @@ export default async function Home() {
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-purple-500/20 via-purple-500/40 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
-                <div className="glass-purple rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-purple/20 hover:border-accent-purple/40 group-hover:scale-[1.05] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-purple rounded-xl p-6 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex items-center gap-5 relative border border-accent-purple/20 hover:border-accent-purple/40 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-glass group-hover:scale-110 group-hover:shadow-glow-purple transition-all duration-500 group-hover:rotate-12">
                     <span className="text-white font-bold text-lg">3</span>
@@ -547,125 +547,135 @@ export default async function Home() {
               <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 lg:-mx-12 lg:px-12 xl:-mx-16 xl:px-16">
                 <div className="flex gap-4 pb-4">
                   {featuredProductsWithCost.map((product) => (
-                    <Link
+                    <div
                       key={product.slug.current}
-                      href={`/products/${product.slug.current}`}
-                      className="group flex-shrink-0 w-[280px] bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
+                      className="group relative perspective-1000 flex-shrink-0 w-[280px]"
                     >
-                      {/* 商品画像 */}
-                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
-                        {product.externalImageUrl ? (
-                          <Image
-                            src={product.externalImageUrl}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
-                            <Award size={48} strokeWidth={1} />
-                          </div>
-                        )}
-                        {/* キャンペーン・割引バッジ */}
-                        <div className="absolute top-2 left-2 flex flex-col gap-2">
-                          {product.isCampaign && (
-                            <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold shadow-md">
-                              🎉 キャンペーン中
+                      {/* グロー効果レイヤー（ホバー時） */}
+                      <div className="absolute -inset-[1px] rounded-lg bg-gradient-to-br from-primary/20 via-accent-mint/30 to-accent-purple/20 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
+                      <Link
+                        href={`/products/${product.slug.current}`}
+                        className="block bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.015] group-hover:-translate-y-2 hover:border-primary-300 relative"
+                      >
+                        {/* 商品画像 */}
+                        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
+                          {product.externalImageUrl ? (
+                            <Image
+                              src={product.externalImageUrl}
+                              alt={product.name}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-700"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-primary-300/60">
+                              <Award
+                                size={48}
+                                strokeWidth={1}
+                                className="group-hover:scale-125 group-hover:rotate-12 transition-all duration-500"
+                              />
                             </div>
                           )}
-                          {product.discountPercentage &&
-                            product.discountPercentage > 0 && (
-                              <div className="px-3 py-1 bg-orange-500 rounded text-white text-xs font-bold shadow-md">
-                                {product.discountPercentage.toFixed(0)}% OFF
+                          {/* キャンペーン・割引バッジ */}
+                          <div className="absolute top-2 left-2 flex flex-col gap-2">
+                            {product.isCampaign && (
+                              <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                                🎉 キャンペーン中
                               </div>
                             )}
-                        </div>
-                        {/* 成分タグ（画像下部） */}
-                        {product.ingredients &&
-                          product.ingredients.length > 0 && (
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-3 py-2">
-                              <div className="flex flex-wrap gap-1.5">
-                                {product.ingredients.slice(0, 2).map(
-                                  (item, index) =>
-                                    item.ingredient && (
-                                      <div
-                                        key={index}
-                                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
-                                      >
-                                        {item.ingredient.name}
-                                      </div>
-                                    ),
-                                )}
-                                {product.ingredients.length > 2 && (
-                                  <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/70 text-primary-700">
-                                    +{product.ingredients.length - 2}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                      </div>
-
-                      {/* 商品情報 */}
-                      <div className="p-4">
-                        {/* 商品名 */}
-                        <h3 className="text-base font-bold text-primary-900 mb-2 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
-
-                        {/* 評価 */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="flex items-center gap-0.5 px-2 py-1 bg-green-600 text-white rounded text-xs font-bold">
-                            {product.rating.toFixed(1)}
+                            {product.discountPercentage &&
+                              product.discountPercentage > 0 && (
+                                <div className="px-3 py-1 bg-orange-500 rounded text-white text-xs font-bold shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                                  {product.discountPercentage.toFixed(0)}% OFF
+                                </div>
+                              )}
                           </div>
-                          <span className="text-xs text-primary-600">
-                            ({product.reviewCount}件)
-                          </span>
-                        </div>
-
-                        {/* 価格（割引前価格がある場合は表示） */}
-                        <div className="mb-3">
-                          {product.originalPrice &&
-                            product.originalPrice > product.priceJPY && (
-                              <div className="text-sm text-gray-500 line-through">
-                                ¥{product.originalPrice.toLocaleString()}
+                          {/* 成分タグ（画像下部） */}
+                          {product.ingredients &&
+                            product.ingredients.length > 0 && (
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-3 py-2">
+                                <div className="flex flex-wrap gap-1.5">
+                                  {product.ingredients.slice(0, 2).map(
+                                    (item, index) =>
+                                      item.ingredient && (
+                                        <div
+                                          key={index}
+                                          className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
+                                        >
+                                          {item.ingredient.name}
+                                        </div>
+                                      ),
+                                  )}
+                                  {product.ingredients.length > 2 && (
+                                    <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/70 text-primary-700">
+                                      +{product.ingredients.length - 2}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
                         </div>
 
-                        {/* 現在価格 */}
-                        <div className="flex items-end justify-between mb-3">
-                          {/* 左側: 商品価格 */}
-                          <div>
-                            <div className="text-xs text-gray-500 mb-1">
-                              商品価格
+                        {/* 商品情報 */}
+                        <div className="p-4">
+                          {/* 商品名 */}
+                          <h3 className="text-base font-bold text-primary-900 mb-2 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+                            {product.name}
+                          </h3>
+
+                          {/* 評価 */}
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="flex items-center gap-0.5 px-2 py-1 bg-green-600 text-white rounded text-xs font-bold">
+                              {product.rating.toFixed(1)}
                             </div>
-                            <div className="text-2xl font-bold text-gray-900">
-                              ¥{product.priceJPY.toLocaleString()}
+                            <span className="text-xs text-primary-600">
+                              ({product.reviewCount}件)
+                            </span>
+                          </div>
+
+                          {/* 価格（割引前価格がある場合は表示） */}
+                          <div className="mb-3">
+                            {product.originalPrice &&
+                              product.originalPrice > product.priceJPY && (
+                                <div className="text-sm text-gray-500 line-through">
+                                  ¥{product.originalPrice.toLocaleString()}
+                                </div>
+                              )}
+                          </div>
+
+                          {/* 現在価格 */}
+                          <div className="flex items-end justify-between mb-3">
+                            {/* 左側: 商品価格 */}
+                            <div className="group-hover:scale-105 transition-transform duration-300">
+                              <div className="text-xs text-gray-500 mb-1">
+                                商品価格
+                              </div>
+                              <div className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
+                                ¥{product.priceJPY.toLocaleString()}
+                              </div>
+                            </div>
+
+                            {/* 右側: 1日あたりの価格 */}
+                            <div className="text-right group-hover:scale-105 transition-transform duration-300">
+                              <div className="text-xs text-gray-500 mb-1">
+                                最安値
+                              </div>
+                              <div className="text-xl font-bold text-green-600 group-hover:text-green-700 transition-colors duration-300">
+                                ¥{product.effectiveCostPerDay.toFixed(0)}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                1日あたり
+                              </div>
                             </div>
                           </div>
 
-                          {/* 右側: 1日あたりの価格 */}
-                          <div className="text-right">
-                            <div className="text-xs text-gray-500 mb-1">
-                              最安値
-                            </div>
-                            <div className="text-xl font-bold text-green-600">
-                              ¥{product.effectiveCostPerDay.toFixed(0)}
-                            </div>
-                            <div className="text-xs text-gray-500 mt-0.5">
-                              1日あたり
-                            </div>
-                          </div>
+                          {/* 比較するボタン */}
+                          <button className="w-full px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-all duration-300 group-hover:shadow-lg">
+                            比較する
+                          </button>
                         </div>
-
-                        {/* 比較するボタン */}
-                        <button className="w-full px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
-                          比較する
-                        </button>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -694,54 +704,62 @@ export default async function Home() {
               <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 lg:-mx-12 lg:px-12 xl:-mx-16 xl:px-16">
                 <div className="flex gap-4 pb-4">
                   {popularIngredientsWithStats.map((ingredient) => (
-                    <Link
+                    <div
                       key={ingredient.slug.current}
-                      href={`/search?q=${encodeURIComponent(ingredient.name)}`}
-                      className="group flex-shrink-0 w-[280px] bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
+                      className="group relative perspective-1000 flex-shrink-0 w-[280px]"
                     >
-                      {/* SVGアイキャッチ画像 */}
-                      <div className="relative aspect-[4/3] overflow-hidden">
-                        <IngredientCoverSVG
-                          name={ingredient.name}
-                          nameEn={ingredient.nameEn}
-                          category={ingredient.category}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* 商品情報 */}
-                      <div className="p-4">
-                        {/* 成分名 */}
-                        <h3 className="text-base font-bold text-primary-900 mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
-                          {ingredient.name}
-                        </h3>
-                        <p className="text-xs text-primary-600 mb-3">
-                          {ingredient.nameEn}
-                        </p>
-
-                        {/* 統計情報 */}
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="flex items-center gap-1">
-                            <span className="text-sm font-semibold text-primary-900">
-                              {ingredient.productCount}種類
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-primary-600">
-                              最安値
-                            </span>
-                            <span className="text-sm font-bold text-primary-900">
-                              ¥{ingredient.minPrice.toLocaleString()}
-                            </span>
+                      {/* グロー効果レイヤー（ホバー時） */}
+                      <div className="absolute -inset-[1px] rounded-lg bg-gradient-to-br from-accent-mint/30 via-primary/30 to-accent-purple/30 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500" />
+                      <Link
+                        href={`/search?q=${encodeURIComponent(ingredient.name)}`}
+                        className="block bg-white border border-primary-200 rounded-lg overflow-hidden hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.015] group-hover:-translate-y-2 hover:border-primary-300 relative"
+                      >
+                        {/* SVGアイキャッチ画像 */}
+                        <div className="relative aspect-[4/3] overflow-hidden">
+                          <div className="group-hover:scale-110 transition-transform duration-700">
+                            <IngredientCoverSVG
+                              name={ingredient.name}
+                              nameEn={ingredient.nameEn}
+                              category={ingredient.category}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </div>
 
-                        {/* 料金プランをチェックボタン */}
-                        <button className="w-full mt-2 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-colors">
-                          商品を見る
-                        </button>
-                      </div>
-                    </Link>
+                        {/* 商品情報 */}
+                        <div className="p-4">
+                          {/* 成分名 */}
+                          <h3 className="text-base font-bold text-primary-900 mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors duration-300">
+                            {ingredient.name}
+                          </h3>
+                          <p className="text-xs text-primary-600 mb-3 group-hover:text-primary transition-colors duration-300">
+                            {ingredient.nameEn}
+                          </p>
+
+                          {/* 統計情報 */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-1 group-hover:scale-105 transition-transform duration-300">
+                              <span className="text-sm font-semibold text-primary-900">
+                                {ingredient.productCount}種類
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 group-hover:scale-105 transition-transform duration-300">
+                              <span className="text-xs text-primary-600">
+                                最安値
+                              </span>
+                              <span className="text-sm font-bold text-primary-900 group-hover:text-green-600 transition-colors duration-300">
+                                ¥{ingredient.minPrice.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* 料金プランをチェックボタン */}
+                          <button className="w-full mt-2 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-all duration-300 group-hover:shadow-lg">
+                            商品を見る
+                          </button>
+                        </div>
+                      </Link>
+                    </div>
                   ))}
                 </div>
               </div>

@@ -389,6 +389,90 @@ export const product = defineType({
       description: "商品の入手可能性ステータス",
     }),
     defineField({
+      name: "tierRatings",
+      title: "Tierランク評価",
+      type: "object",
+      description:
+        "5つの評価軸でのS~Dランク（価格・コスパ・含有量・エビデンス・安全性）",
+      fields: [
+        {
+          name: "priceRank",
+          title: "💰 価格ランク",
+          type: "string",
+          options: {
+            list: [
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "costEffectivenessRank",
+          title: "💡 コスパランク",
+          type: "string",
+          options: {
+            list: [
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "contentRank",
+          title: "📊 含有量ランク",
+          type: "string",
+          options: {
+            list: [
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "evidenceRank",
+          title: "🔬 エビデンスランク",
+          type: "string",
+          options: {
+            list: [
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "safetyRank",
+          title: "🛡️ 安全性ランク",
+          type: "string",
+          options: {
+            list: [
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+    }),
+    defineField({
       name: "costPerDay",
       title: "1日あたりのコスト（円）",
       type: "number",

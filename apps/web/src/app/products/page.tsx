@@ -10,6 +10,7 @@ import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { TierRatings } from "@/lib/tier-ranking";
 
 export const metadata: Metadata = {
   title: "サプリメント商品一覧｜価格比較・成分量・コスパで選ぶ - サプティア",
@@ -64,6 +65,7 @@ interface Product {
       category?: string;
     };
   }>;
+  tierRatings?: TierRatings;
 }
 
 // 全商品を取得
@@ -84,6 +86,13 @@ async function getAllProducts(): Promise<Product[]> {
         nameEn,
         category
       }
+    },
+    tierRatings {
+      priceRank,
+      costEffectivenessRank,
+      contentRank,
+      evidenceRank,
+      safetyRank
     }
   }`;
 

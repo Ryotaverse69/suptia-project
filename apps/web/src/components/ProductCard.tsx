@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
-import { TrendingUp, Shield, Award, Sparkles, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import {
   calculateComprehensiveCost,
   getCostEfficiencyLabel,
 } from "@/lib/cost-calculator";
-import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
+import { TierBadgeRow, PerfectProductBanner } from "@/components/ui/TierBadge";
+import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
 
 interface ProductCardProps {
   product: {
@@ -38,7 +38,7 @@ interface ProductCardProps {
     safetyScore?: number;
     imageUrl?: string;
     externalImageUrl?: string;
-    badges?: BadgeType[]; // 称号バッジ
+    tierRatings?: TierRatings; // 新: Tierランク評価
   };
 }
 
@@ -58,14 +58,14 @@ export function ProductCard({ product }: ProductCardProps) {
     safetyScore = 95,
     imageUrl,
     externalImageUrl,
-    badges = [],
+    tierRatings,
   } = product;
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(_id);
 
-  // 完璧なサプリメント判定
-  const isPerfect = isPerfectSupplement(badges);
+  // 5冠達成判定（すべてSランク）
+  const isPerfect = tierRatings ? isPerfectProduct(tierRatings) : false;
 
   // 画像URL: 外部画像URL > imageUrl > プレースホルダー
   const displayImageUrl = externalImageUrl || imageUrl;
@@ -114,36 +114,22 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* 5冠達成バッジ */}
           {isPerfect && (
             <div className="absolute top-4 left-0 right-0 z-10 flex justify-center">
-              <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
-                <Sparkles size={16} className="animate-spin" />
+              <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
+                <span className="text-lg">🏆</span>
                 <span className="font-bold text-sm">
-                  🏆 5冠達成！完璧なサプリメント
+                  5冠達成！すべてSランクの最高品
                 </span>
-                <Sparkles size={16} className="animate-spin" />
+                <span className="text-lg">🏆</span>
               </div>
             </div>
           )}
 
-          {/* 称号バッジ（最大3つまで表示） */}
-          {!isPerfect && badges.length > 0 && (
-            <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap gap-2">
-              {badges.slice(0, 3).map((badgeType) => {
-                const badgeInfo = getBadgeInfo(badgeType);
-                return (
-                  <div
-                    key={badgeType}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border-2 backdrop-blur-sm ${badgeInfo.color}`}
-                  >
-                    <span>{badgeInfo.icon}</span>
-                    <span>{badgeInfo.label}</span>
-                  </div>
-                );
-              })}
-              {badges.length > 3 && (
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 border-2 border-gray-200 text-gray-700">
-                  +{badges.length - 3}
-                </div>
-              )}
+          {/* Tierバッジ（5つ常に表示） */}
+          {!isPerfect && tierRatings && (
+            <div className="absolute top-4 left-4 right-4 z-10">
+              <div className="backdrop-blur-md bg-white/90 rounded-lg p-2 shadow-lg">
+                <TierBadgeRow ratings={tierRatings} size="sm" />
+              </div>
             </div>
           )}
 
