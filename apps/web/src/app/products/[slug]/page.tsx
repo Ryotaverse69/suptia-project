@@ -10,6 +10,8 @@ import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { TierBadgeGrid, PerfectProductBanner } from "@/components/ui/TierBadge";
+import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -104,6 +106,14 @@ interface Product {
     url?: string;
     source?: string;
   }>;
+  tierRatings?: {
+    priceRank: string;
+    costEffectivenessRank: string;
+    contentRank: string;
+    evidenceRank: string;
+    safetyRank: string;
+    overallRank?: string;
+  };
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -150,7 +160,15 @@ async function getProduct(slug: string): Promise<Product | null> {
     },
     thirdPartyTested,
     warnings,
-    references
+    references,
+    tierRatings {
+      priceRank,
+      costEffectivenessRank,
+      contentRank,
+      evidenceRank,
+      safetyRank,
+      overallRank
+    }
   }`;
 
   try {
@@ -799,6 +817,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
           )}
         </div>
+
+        {/* Tier Rankings - 総合評価 */}
+        {product.tierRatings && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <TierBadgeGrid
+              ratings={product.tierRatings as unknown as TierRatings}
+            />
+          </div>
+        )}
 
         {/* 1. Product Description - 商品の詳細 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">

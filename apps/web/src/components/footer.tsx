@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram } from "lucide-react";
 // import { useState } from "react"; // 言語選択機能を実装時に有効化
 // import { Globe, ChevronDown } from "lucide-react"; // 言語選択機能を実装時に有効化
 // import { cn } from "@/lib/utils/cn"; // 言語選択機能を実装時に有効化
@@ -207,9 +208,44 @@ export function Footer() {
               科学的根拠に基づくサプリメント比較メタサーチ。
               あなたに最適なサプリメントを見つけるお手伝いをします。
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mb-4">
               ※ 本サイトは医療・診断を目的としたものではありません
             </p>
+
+            {/* Social Media Links */}
+            <div className="mt-6">
+              <h4 className="font-semibold text-sm mb-3">フォローする</h4>
+              <div className="flex gap-3">
+                {/* X (Twitter) */}
+                <Link
+                  href="https://x.com/suptia_official"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors group"
+                  aria-label="XでSuptiaをフォロー"
+                >
+                  <svg
+                    className="w-5 h-5 text-slate-900 dark:text-slate-100 transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </Link>
+
+                {/* Instagram */}
+                <Link
+                  href="https://instagram.com/suptia_jp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 transition-all group"
+                  aria-label="InstagramでSuptiaをフォロー"
+                >
+                  <Instagram className="w-5 h-5 text-white transition-colors" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
 

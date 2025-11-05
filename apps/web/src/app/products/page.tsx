@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { ProductsSection } from "@/components/ProductsSection";
+import { TierRankStats } from "@/components/TierRankStats";
 import {
   generateItemListStructuredData,
   generateBreadcrumbStructuredData,
@@ -92,7 +93,8 @@ async function getAllProducts(): Promise<Product[]> {
       costEffectivenessRank,
       contentRank,
       evidenceRank,
-      safetyRank
+      safetyRank,
+      overallRank
     }
   }`;
 
@@ -180,6 +182,11 @@ export default async function ProductsPage() {
               <span className="font-medium">トップページに戻る</span>
             </Link>
           </div>
+        </div>
+
+        {/* Tier Rank Statistics */}
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-8">
+          <TierRankStats products={productsWithCost} />
         </div>
 
         {/* Main Content */}

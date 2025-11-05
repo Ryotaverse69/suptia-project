@@ -5,7 +5,10 @@
  * 使用する統一カラーパレット
  */
 
-export type TierRank = "S" | "A" | "B" | "C" | "D";
+/**
+ * S+: 5冠達成（全ての評価軸でSランク）の特別ランク
+ */
+export type TierRank = "S+" | "S" | "A" | "B" | "C" | "D";
 
 export interface TierColor {
   rank: TierRank;
@@ -21,6 +24,16 @@ export interface TierColor {
  * Tierランク別カラー定義
  */
 export const TIER_COLORS: Record<TierRank, TierColor> = {
+  "S+": {
+    rank: "S+",
+    label: "S+ランク",
+    bgColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", // gradient purple
+    borderColor: "#a855f7", // purple-500
+    textColor: "#ffffff", // white
+    className:
+      "bg-gradient-to-br from-purple-600 to-pink-600 border-purple-500 text-white shadow-lg",
+    description: "完璧な5冠達成",
+  },
   S: {
     rank: "S",
     label: "Sランク",
@@ -87,6 +100,7 @@ export function getTierClassName(rank: TierRank): string {
  */
 export function getTierScore(rank: TierRank): number {
   const scores: Record<TierRank, number> = {
+    "S+": 6,
     S: 5,
     A: 4,
     B: 3,

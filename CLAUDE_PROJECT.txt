@@ -1,0 +1,425 @@
+# Suptia - AIサプリメント意思決定エンジン
+
+## プロジェクト概要
+「安全 × コスト × エビデンス」を軸にした、科学的根拠に基づくサプリメント比較・推薦プラットフォーム。
+ユーザーが"理由を理解して選べる"AIサプリ比較体験を提供。
+
+## 技術スタック
+- フレームワーク: Next.js 14 (App Router)
+- 言語: TypeScript
+- スタイリング: Tailwind CSS
+- CMS: Sanity v3
+- データベース: Supabase
+- テスト: Vitest + Testing Library
+- デプロイ: Vercel
+
+## コアコンセプト：5つの柱
+
+すべての商品に対して以下の情報を必ず表示：
+
+### 3つの比較
+1. **💰 価格の比較** - 複数ECサイトでの価格比較
+2. **📊 成分量の比較** - 1日あたりの有効成分量を正確に表示
+3. **💡 コスパの比較** - 実効コスト/日（成分量あたりの価格）
+
+### 2つの表示
+4. **🔬 エビデンスレベルの表示** - S/A/B/C/Dの5段階評価
+5. **🛡️ 安全性の表示** - 安全性スコア（0-100点）、副作用・相互作用
+
+## 5つの称号（バッジ）システム
+
+最高評価獲得商品に付与される称号：
+
+| 称号 | 条件 |
+|------|------|
+| 💰 最安値 | 複数ECサイトの中で最も安い価格 |
+| 📊 最高含有量 | その成分の含有量が最も多い |
+| 💡 ベストバリュー | コスパ（成分量あたり価格）が最も優れている |
+| 🔬 エビデンスS | エビデンスレベルがSランク |
+| 🛡️ 高安全性 | 安全性スコア90点以上 |
+
+**5冠達成商品**: すべての称号を獲得した「完璧なサプリメント」は特別に強調表示
+
+## 現在の実装状況（2025年11月）
+
+### ✅ 完了
+- Sanity CMS連携・商品データ管理
+- 検索・フィルター機能（成分名、カテゴリ、価格帯）
+- 商品一覧・詳細ページ
+- 5つの称号判定ロジック＆フィルター
+- 楽天市場API連携（商品同期スクリプト）
+- Yahoo!ショッピングAPI連携
+- 価格比較UI（複数ECサイト）
+- MCP統合（Supabase、Google Search Console）
+- 商品統計表示（5冠達成数、平均称号数）
+
+### 🔄 進行中
+- 成分量比較コンポーネント
+- コストパフォーマンス詳細分析
+- エビデンス・安全性詳細表示
+- 商品データの拡充（参考文献、警告情報）
+
+### ⏳ 予定
+- Amazon PA-API統合（2026年1月〜）
+- iHerb対応（CJ Affiliate経由）
+- 価格アラート機能
+- マイページ（お気に入り、診断履歴）
+- AI診断・パーソナライズド推薦
+
+## 開発規範
+
+### 言語使用ルール
+**重要: Claude Codeとのやり取りは全て日本語で行う**
+- 会話・質問・回答・エラー説明：日本語のみ
+- コミット時の確認：日本語
+- コード内コメント：日本語推奨
+- 例外：変数名・関数名・ファイル名は英語
+
+### 法令遵守
+- 薬機法コンプライアンス厳守
+- 「治る」「治療」「予防する」などの医療表現は禁止
+- 「サポート」「役立つ可能性」などの表現を使用
+- すべての推薦に出典を明示
+
+### コーディング規約
+- TypeScript strictモード
+- ESLint + Prettier
+- コミットメッセージ: `<type>: <subject>` （例: `feat: 商品比較機能を追加`）
+- テスト優先（すべてのロジックはテスト可能に）
+
+## ディレクトリ構造
+
+```
+suptia-project/
+├── apps/
+│   └── web/                    # Next.js フロントエンド
+│       ├── src/
+│       │   ├── app/           # App Router
+│       │   ├── components/    # UIコンポーネント
+│       │   ├── lib/           # ユーティリティ・ロジック
+│       │   │   ├── badges.ts          # 称号判定ロジック
+│       │   │   ├── tier-ranking.ts    # ティアランキング
+│       │   │   ├── ec-adapters/       # ECサイトAPI
+│       │   │   └── integrations/      # 外部サービス連携
+│       │   └── sanity/        # Sanity連携
+│       └── public/            # 静的ファイル
+├── packages/
+│   └── schemas/               # Sanity スキーマ定義
+│       ├── product.ts
+│       ├── ingredient.ts
+│       ├── brand.ts
+│       └── index.ts
+├── scripts/                   # 運用スクリプト
+│   ├── sync-rakuten-products.mjs    # 楽天商品同期
+│   ├── sync-yahoo-products.mjs      # Yahoo商品同期
+│   ├── compare-prices.mjs           # 価格比較
+│   └── add-product-references.mjs   # 参考文献追加
+├── .mcp/                      # Model Context Protocol設定
+│   ├── supabase-schema.sql
+│   ├── README.md
+│   └── example-queries.md
+├── docs/                      # ドキュメント
+├── .github/workflows/         # CI/CD
+└── CLAUDE.md                  # 詳細ガイド（このファイルの元）
+```
+
+## よく使うコマンド
+
+### 開発
+```bash
+npm run dev          # 開発サーバー起動 (http://localhost:3000)
+npm run build        # プロダクションビルド
+npm run start        # プロダクションサーバー起動
+```
+
+### コード品質
+```bash
+npm run lint         # ESLintチェック
+npm run format       # Prettierフォーマット
+npm run typecheck    # TypeScript型チェック
+npm run test         # テスト実行
+```
+
+### EC商品同期
+```bash
+# 楽天商品同期
+npm run sync:rakuten
+
+# Yahoo商品同期
+npm run sync:yahoo
+
+# 価格比較
+npm run compare:prices
+```
+
+### Sanity
+```bash
+npx sanity dev       # Sanityスタジオ起動 (http://localhost:3333)
+```
+
+## ECサイト連携状況
+
+### 実装済み
+- **楽天市場API**: ✅ 商品同期・価格取得
+- **Yahoo!ショッピングAPI**: ✅ 商品同期・価格取得
+
+### 準備中
+- **Amazon PA-API**: ⏳ アソシエイト認証期間中（2026年4月30日まで）
+  - Store ID: `suptia69-22`
+  - 目標: 180日以内に3件以上の売上達成
+- **iHerb**: ⏳ CJ Affiliate経由での連携予定（2026年1月〜）
+
+### データ取得頻度
+- 価格データ: 6時間キャッシュ（1日4回更新）
+- 在庫状況: 1時間キャッシュ
+- レビューデータ: 24時間キャッシュ
+- 自動同期: 毎日深夜3時（JST）GitHub Actions実行
+
+## MCP統合
+
+### Supabase MCP 🗄️
+**用途**: ユーザーデータ管理、価格履歴、アラート
+
+**主要テーブル**:
+- `user_profiles` - ユーザープロファイル
+- `price_alerts` - 価格アラート
+- `favorites` - お気に入り商品
+- `price_history` - 価格履歴
+- `diagnosis_results` - 診断結果
+- `product_views` - 商品閲覧履歴
+
+### Google Search Console MCP 📊
+**用途**: SEO分析、検索パフォーマンス監視
+
+**主な機能**:
+- 検索パフォーマンスデータ取得
+- ページ別パフォーマンス分析
+- 低CTRページの特定・改善提案
+- 新規コンテンツ発見（未カバーの検索クエリ）
+- Core Web Vitals監視
+
+**活用例**:
+```
+「過去30日間で表示回数が多いけどCTRが低いページを教えて」
+→ タイトル・ディスクリプション改善案を自動提案
+
+「まだ記事を書いていない成分で検索需要があるものは？」
+→ 新規成分記事の企画・優先順位付け
+```
+
+## データスキーマ
+
+### Product（商品）
+```typescript
+{
+  name: string;                 // 商品名
+  slug: { current: string };    // URL識別子
+  brand: Reference;             // ブランド参照
+  ingredients: {                // 成分情報
+    ingredient: Reference;
+    amount: number;
+    unit: string;
+  }[];
+  prices: {                     // 価格情報（複数ECサイト）
+    source: string;             // "rakuten" | "yahoo" | "amazon" | "iherb"
+    amount: number;
+    currency: "JPY";
+    url: string;                // アフィリエイトリンク
+    fetched_at: string;
+    in_stock: boolean;
+  }[];
+  safety_score: number;         // 安全性スコア（0-100）
+  evidence_level: string;       // "S" | "A" | "B" | "C" | "D"
+  tier_rank: string;            // "S" | "A" | "B" | "C" | "D"
+  daily_cost: number;           // 1日あたりのコスト
+  source: string;               // データ取得元
+  janCode?: string;             // JANコード
+  itemCode?: string;            // 商品コード（楽天・Yahoo）
+  affiliateUrl?: string;        // アフィリエイトURL
+}
+```
+
+### Ingredient（成分）
+```typescript
+{
+  name: string;                 // 日本語名
+  nameEn: string;               // 英語名
+  slug: { current: string };
+  category: string;             // カテゴリ
+  description: string;          // 詳細説明（500〜800文字）
+  evidenceLevel: string;        // エビデンスレベル
+  benefits: string[];           // 効果・効能（10〜15項目）
+  recommendedDosage: string;    // 推奨摂取量（500〜800文字）
+  foodSources: string[];        // 食品源（10〜15項目）
+  sideEffects: string;          // 副作用（300〜500文字）
+  interactions: string[];       // 相互作用（5〜10項目）
+  faqs: {                       // よくある質問（5項目）
+    question: string;
+    answer: string;             // 500〜1000文字
+  }[];
+  references: {                 // 参考文献（5〜10項目）
+    title: string;
+    url: string;
+    source: string;
+  }[];
+}
+```
+
+## 記事作成ガイドライン
+
+### 言語
+**すべての記事は日本語で執筆**
+- UI文字列・記事コンテンツ：日本語
+- コード/識別子：英語
+- メタデータ：英語名（`nameEn`）と日本語名（`name`）の両方
+
+### 文字数要件
+- **合計文字数**: 3,000文字以上（SEO最適化）
+- **description**: 500〜800文字
+- **benefits**: 各項目100〜200文字、合計1,500〜2,500文字
+- **recommendedDosage**: 500〜800文字
+- **sideEffects**: 300〜500文字
+- **各FAQ回答**: 500〜1,000文字
+
+### 記事執筆の原則
+1. **科学的正確性** - 信頼できる参考文献を必ず引用（PubMed、厚生労働省など）
+2. **読みやすさ** - 専門用語に説明を加える、箇条書き活用
+3. **実用性** - 「いつ飲むべきか」「どの形態が良いか」など実践的な情報
+4. **安全性重視** - 副作用・禁忌を明確に記載
+5. **日本語執筆の徹底** - 英語の文章は一切使用しない
+
+### 品質改善（スマートフォン対応）
+- 不要な定型文の削除（「優れた供給源として知られています」など）
+- 段落の長さ: 100文字以内で自動改行
+- 妊娠・授乳への影響がある場合は必ず明記
+- 食品源はシンプルに食品名のみ記載
+
+## 環境変数
+
+```bash
+# Sanity
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your_api_token
+
+# 楽天API
+RAKUTEN_APPLICATION_ID=your_app_id
+RAKUTEN_AFFILIATE_ID=your_affiliate_id
+
+# Yahoo API
+YAHOO_CLIENT_ID=your_client_id
+YAHOO_CLIENT_SECRET=your_client_secret
+
+# Amazon (将来的)
+AMAZON_ACCESS_KEY_ID=your_access_key
+AMAZON_SECRET_ACCESS_KEY=your_secret_key
+AMAZON_ASSOCIATE_TAG=suptia69-22
+
+# Supabase
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Google Search Console
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_REFRESH_TOKEN=your_refresh_token
+```
+
+## トラブルシューティング
+
+### Sanityインポートエラー
+```bash
+# エラー: "Document validation failed"
+→ スキーマ定義を確認し、必須フィールドが全て含まれているか確認
+
+# エラー: "SANITY_API_TOKEN is not set"
+→ .env.localにSANITY_API_TOKENを追加
+```
+
+### ビルドエラー
+```bash
+# エラー: "Module not found"
+→ npm install を実行
+
+# エラー: "Type error"
+→ npm run typecheck で詳細を確認
+```
+
+### EC API連携エラー
+```bash
+# 楽天API Rate Limit
+→ 1秒あたり1リクエストまで。Exponential backoffで再試行
+
+# Yahoo API認証エラー
+→ CLIENT_IDとCLIENT_SECRETを再確認
+```
+
+## 禁止事項
+
+- ❌ 非公式APIや明示的に禁止されているスクレイピング
+- ❌ 医療効能の断定表現（例：「治る」「防ぐ」）
+- ❌ 個人情報の平文保存
+- ❌ 出典不明データの使用
+- ❌ 英語での記事執筆（コード以外）
+
+## フェーズ別ロードマップ
+
+### フェーズ1: データ基盤の完成 ✅ 完了
+- Sanityスキーマ確定・Next.js連携
+- 検索・フィルター実装
+- 商品一覧・詳細ページ
+
+### フェーズ1.5: 5つの称号システム ✅ 完了
+- 称号判定ロジック・フィルターUI
+- ECサイトフィルター
+- 商品カードバッジ表示
+
+### フェーズ2: 意思決定エンジン化 🔄 進行中
+- 実効コスト/日（mg換算価格）
+- 禁忌タグ別「危険成分アラート」
+- 診断エンジンβ
+- 商品比較ビューUI
+
+### フェーズ2.5: ECサイトAPI連携 🔄 進行中
+- 楽天・Yahoo API ✅ 実装済み
+- Amazon PA-API ⏳ 2026年1月予定
+- iHerb（CJ Affiliate） ⏳ 2026年1月予定
+
+### フェーズ3: 信頼性とSEO基盤 ⏳ 計画中
+- 薬機法OK/NG辞書のCMS統合
+- JSON-LD構造化データ
+- GA4 + Search Console連携
+- 成分ガイド間の内部リンク最適化
+
+### フェーズ4: マネタイズ & 継続利用 ⏳ 計画中
+- 価格アラート機能
+- マイページβ（お気に入り・診断履歴）
+- 有料会員特典
+- アフィリエイトトラッキング統合
+
+### フェーズ5: GPT連携・AIパートナー化 🔮 2026年〜
+- RAGベースのGPT連携
+- 自然言語クエリ → 検索フィルター変換
+- AI診断履歴の学習
+- Explainable Recommendation（根拠付き推薦）
+
+## 参考リンク
+
+- **リポジトリ**: https://github.com/Ryotaverse69/suptia-project
+- **ドキュメント**: `./docs/` ディレクトリ
+- **詳細ガイド**: [CLAUDE.md](CLAUDE.md)
+- **MCP活用ガイド**: [.mcp/README.md](.mcp/README.md)
+
+---
+
+**最終更新日**: 2025-11-05
+**バージョン**: 1.9.0
+**変更内容**: MCP統合、称号システム実装、EC API連携、商品詳細比較機能
+
+---
+
+## 長期的ビジョン
+
+**検索する場所 → 比較する場所 → 理解できる場所 → 対話で決められる場所**
+
+Suptiaは「**Trivago × PubMed × GPT**」を統合した、次世代型サプリ意思決定プラットフォームを目指します。

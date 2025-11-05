@@ -250,6 +250,64 @@ function calculateSafetyRanks(products) {
   return ranks;
 }
 
+// Tierランクの数値スコアを取得（総合評価計算用）
+function getTierScore(rank) {
+  const scores = {
+    "S+": 6,
+    S: 5,
+    A: 4,
+    B: 3,
+    C: 2,
+    D: 1,
+  };
+  return scores[rank] || 1;
+}
+
+// 5冠達成判定
+function isPerfectProduct(ratings) {
+  return (
+    ratings.priceRank === "S" &&
+    ratings.costEffectivenessRank === "S" &&
+    ratings.contentRank === "S" &&
+    ratings.evidenceRank === "S" &&
+    ratings.safetyRank === "S"
+  );
+}
+
+// 総合評価ランクを計算（重み付け平均方式 + 失格条件）
+function calculateOverallRank(ratings) {
+  // 失格条件: 安全性またはエビデンスがDランク
+  if (ratings.safetyRank === "D" || ratings.evidenceRank === "D") {
+    return "D";
+  }
+
+  // S+条件: すべての評価軸がSランク（5冠達成）
+  if (isPerfectProduct(ratings)) {
+    return "S+";
+  }
+
+  // 重み付け平均計算
+  const safetyScore = getTierScore(ratings.safetyRank);
+  const evidenceScore = getTierScore(ratings.evidenceRank);
+  const costEffScore = getTierScore(ratings.costEffectivenessRank);
+  const priceScore = getTierScore(ratings.priceRank);
+  const contentScore = getTierScore(ratings.contentRank);
+
+  const weightedScore =
+    safetyScore * 0.3 +
+    evidenceScore * 0.25 +
+    costEffScore * 0.25 +
+    priceScore * 0.1 +
+    contentScore * 0.1;
+
+  // スコアをランクに変換
+  if (weightedScore >= 4.5) return "S";
+  if (weightedScore >= 3.5) return "A";
+  if (weightedScore >= 2.5) return "B";
+  if (weightedScore >= 1.5) return "C";
+  return "D";
+}
+
 // 全商品のTierランク計算
 function calculateAllTierRankings(products) {
   const rankings = new Map();
@@ -263,13 +321,18 @@ function calculateAllTierRankings(products) {
   const safetyRanks = calculateSafetyRanks(products);
 
   products.forEach((product) => {
-    rankings.set(product._id, {
+    const tierRatings = {
       priceRank: priceRanks.get(product._id) || "D",
       costEffectivenessRank: costEffectivenessRanks.get(product._id) || "D",
       contentRank: contentRanks.get(product._id) || "D",
       evidenceRank: evidenceRanks.get(product._id) || "D",
       safetyRank: safetyRanks.get(product._id) || "D",
-    });
+    };
+
+    // 総合評価を計算
+    tierRatings.overallRank = calculateOverallRank(tierRatings);
+
+    rankings.set(product._id, tierRatings);
   });
 
   return rankings;
@@ -338,19 +401,16 @@ async function main() {
               contentRank: ranking.contentRank,
               evidenceRank: ranking.evidenceRank,
               safetyRank: ranking.safetyRank,
+              overallRank: ranking.overallRank,
             },
           })
           .commit();
 
-        const isPerfect =
-          ranking.priceRank === "S" &&
-          ranking.costEffectivenessRank === "S" &&
-          ranking.contentRank === "S" &&
-          ranking.evidenceRank === "S" &&
-          ranking.safetyRank === "S";
+        const isSPlus = ranking.overallRank === "S+";
+        const isPerfect = isPerfectProduct(ranking);
 
         console.log(
-          `${isPerfect ? "🏆" : "✅"} ${product.name}: 💰${ranking.priceRank} 💡${ranking.costEffectivenessRank} 📊${ranking.contentRank} 🔬${ranking.evidenceRank} 🛡️${ranking.safetyRank}`,
+          `${isSPlus ? "🌟" : isPerfect ? "🏆" : "✅"} ${product.name}: ⭐${ranking.overallRank} | 💰${ranking.priceRank} 💡${ranking.costEffectivenessRank} 📊${ranking.contentRank} 🔬${ranking.evidenceRank} 🛡️${ranking.safetyRank}`,
         );
 
         successCount++;
@@ -368,17 +428,35 @@ async function main() {
     console.log(`❌ 失敗: ${errorCount}件`);
     console.log(`📦 合計: ${products.length}件`);
 
-    // 5冠達成商品をカウント
-    const perfectProducts = Array.from(rankings.values()).filter(
-      (r) =>
-        r.priceRank === "S" &&
-        r.costEffectivenessRank === "S" &&
-        r.contentRank === "S" &&
-        r.evidenceRank === "S" &&
-        r.safetyRank === "S",
+    // S+（5冠達成）商品をカウント
+    const sPlusProducts = Array.from(rankings.values()).filter(
+      (r) => r.overallRank === "S+",
     );
 
-    console.log(`\n🏆 5冠達成商品: ${perfectProducts.length}件`);
+    // 総合評価別の集計
+    const overallRankCounts = {
+      "S+": 0,
+      S: 0,
+      A: 0,
+      B: 0,
+      C: 0,
+      D: 0,
+    };
+
+    Array.from(rankings.values()).forEach((r) => {
+      overallRankCounts[r.overallRank] =
+        (overallRankCounts[r.overallRank] || 0) + 1;
+    });
+
+    console.log("\n" + "=".repeat(60));
+    console.log("📊 総合評価の分布");
+    console.log("=".repeat(60));
+    console.log(`🌟 S+ランク（5冠達成）: ${overallRankCounts["S+"]}件`);
+    console.log(`⭐ Sランク: ${overallRankCounts["S"]}件`);
+    console.log(`⭐ Aランク: ${overallRankCounts["A"]}件`);
+    console.log(`⭐ Bランク: ${overallRankCounts["B"]}件`);
+    console.log(`⭐ Cランク: ${overallRankCounts["C"]}件`);
+    console.log(`⭐ Dランク: ${overallRankCounts["D"]}件`);
 
     console.log("\n✨ Tierランク付与完了！\n");
   } catch (error) {
