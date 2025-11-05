@@ -12,7 +12,6 @@ concurrency:
 
 env:
   NODE_VERSION: '20'
-  PNPM_VERSION: '8'
   # パフォーマンス最適化設定
   CI_CACHE_VERSION: 'v2'
   PARALLEL_JOBS: 4
@@ -43,33 +42,30 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'apps/web/package-lock.json'
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Generate optimized cache keys
         id: cache-keys
         run: |
           # より効率的なキャッシュキー生成
-          LOCKFILE_HASH=$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)
+          LOCKFILE_HASH=$(sha256sum package-lock.json | cut -d' ' -f1)
           PACKAGE_HASH=$(sha256sum package.json | cut -d' ' -f1)
           NODE_VERSION_HASH=$(echo "${{ env.NODE_VERSION }}" | sha256sum | cut -d' ' -f1 | head -c 8)
-          
-          CACHE_KEY="pnpm-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-${NODE_VERSION_HASH}-${LOCKFILE_HASH}"
+
+          CACHE_KEY="npm-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-${NODE_VERSION_HASH}-${LOCKFILE_HASH}"
           NODE_MODULES_KEY="node-modules-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-${LOCKFILE_HASH}-${PACKAGE_HASH}"
           BUILD_CACHE_KEY="nextjs-build-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-${{ github.sha }}"
-          
+
           echo "cache-key=${CACHE_KEY}" >> $GITHUB_OUTPUT
           echo "node-modules-key=${NODE_MODULES_KEY}" >> $GITHUB_OUTPUT
           echo "build-cache-key=${BUILD_CACHE_KEY}" >> $GITHUB_OUTPUT
 
-      - name: Cache pnpm store (optimized)
+      - name: Cache npm cache (optimized)
         uses: actions/cache@v4
         with:
-          path: ~/.local/share/pnpm/store
+          path: ~/.npm
           key: ${{ steps.cache-keys.outputs.cache-key }}
           restore-keys: |
-            pnpm-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-
-            pnpm-v1-${{ runner.os }}-
+            npm-${{ env.CI_CACHE_VERSION }}-${{ runner.os }}-
+            npm-v1-${{ runner.os }}-
 
       - name: Cache node_modules (optimized)
         id: cache-node-modules
@@ -87,14 +83,14 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           echo "📦 Installing dependencies..."
-          pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+          npm ci --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: Warm up TypeScript cache
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           echo "🔥 Warming up TypeScript cache..."
-          pnpm run typecheck --noEmit || true
+          npm run typecheck --if-present || true
 
   # 軽量セキュリティスキャン（並列実行）
   security-scan:
@@ -134,14 +130,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Restore caches
         uses: actions/cache@v4
         with:
           path: |
-            ~/.local/share/pnpm/store
+            ~/.npm
             apps/web/node_modules
             node_modules
           key: ${{ needs.setup.outputs.node-modules-key }}
@@ -153,18 +146,18 @@ jobs:
           echo "🔍 Running ${{ matrix.check }} check..."
           case "${{ matrix.check }}" in
             format)
-              pnpm run format:check
+              npm run format:check
               ;;
             lint)
               # ESLintキャッシュを有効化
-              pnpm run lint --cache --cache-location .eslintcache
+              npm run lint -- --cache --cache-location .eslintcache
               ;;
             typecheck)
               # 環境変数を最小限に設定してTypeScriptチェック
               NEXT_PUBLIC_BASE_URL=http://localhost:3000 \
               NEXT_PUBLIC_SANITY_PROJECT_ID=demo \
               NEXT_PUBLIC_SANITY_DATASET=production \
-              pnpm run typecheck --incremental
+              npm run typecheck
               ;;
           esac
 
@@ -183,14 +176,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Restore caches
         uses: actions/cache@v4
         with:
           path: |
-            ~/.local/share/pnpm/store
+            ~/.npm
             apps/web/node_modules
             node_modules
           key: ${{ needs.setup.outputs.node-modules-key }}
@@ -199,7 +189,7 @@ jobs:
         run: |
           echo "🧪 Running optimized tests..."
           # Vitestの並列実行とキャッシュを最適化
-          pnpm run test --reporter=basic --run --coverage=false
+          npm run test -- --reporter=basic --run --coverage=false
 
   # 最適化されたビルドジョブ
   build:
@@ -224,14 +214,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Restore dependency caches
         uses: actions/cache@v4
         with:
           path: |
-            ~/.local/share/pnpm/store
+            ~/.npm
             apps/web/node_modules
             node_modules
           key: ${{ needs.setup.outputs.node-modules-key }}
@@ -251,7 +238,7 @@ jobs:
           echo "🏗️ Building with optimizations..."
           # Next.jsビルド最適化
           export NEXT_BUILD_WORKERS=4
-          pnpm run build
+          npm run build
 
       - name: Cache build artifacts
         if: steps.build.outcome == 'success'
@@ -298,9 +285,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Restore dependency cache
         uses: actions/cache@v4
         with:
@@ -320,7 +304,7 @@ jobs:
       - name: Start application (background)
         run: |
           echo "🚀 Starting application in background..."
-          pnpm start &
+          npm start &
           echo $! > app.pid
 
       - name: Wait for application (optimized)
