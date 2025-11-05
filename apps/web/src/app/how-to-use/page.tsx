@@ -84,10 +84,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      エビデンスランクフィルター
+                      Tierランクフィルター
                     </h3>
                     <p className="text-primary-700">
-                      S~Dの科学的根拠レベルで絞り込み
+                      S+~Dの総合評価で絞り込み。ツヤツヤグラデーションボタンで直感的に選択
                     </p>
                   </div>
                 </div>
@@ -97,10 +97,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      安全性ランクフィルター
+                      購入先フィルター
                     </h3>
                     <p className="text-primary-700">
-                      S〜D（90点以上〜60点以上）の安全性ランクで絞り込み
+                      楽天・Yahoo・Amazon（準備中）から購入先を選んで絞り込み
                     </p>
                   </div>
                 </div>
@@ -119,12 +119,12 @@ export default function HowToUsePage() {
                     <span className="font-semibold text-primary-900">
                       ビタミンC 1000mg
                     </span>
-                    <span className="text-sm text-accent-mint font-medium">
-                      安全性 98%
+                    <span className="inline-flex items-center justify-center px-3 py-1 rounded text-xs font-bold bg-gradient-to-br from-purple-500/80 to-pink-500/60 text-white border border-white/60">
+                      S+
                     </span>
                   </div>
                   <p className="text-sm text-primary-700">
-                    高濃度ビタミンCサプリメント
+                    高濃度ビタミンCサプリメント・5冠達成
                   </p>
                 </div>
                 <div className="rounded-lg border border-primary-100 bg-gradient-to-r from-primary-50 to-white p-4">
@@ -132,8 +132,8 @@ export default function HowToUsePage() {
                     <span className="font-semibold text-primary-900">
                       リポソームビタミンC
                     </span>
-                    <span className="text-sm text-accent-mint font-medium">
-                      安全性 95%
+                    <span className="inline-flex items-center justify-center px-3 py-1 rounded text-xs font-bold bg-gradient-to-br from-blue-500/80 to-blue-600/60 text-white border border-white/60">
+                      A
                     </span>
                   </div>
                   <p className="text-sm text-primary-700">
@@ -194,7 +194,7 @@ export default function HowToUsePage() {
                 多角的に比較検討
               </h2>
               <p className="mb-6 text-lg text-primary-700">
-                価格、成分量、安全性、エビデンスレベルなど、複数の視点から製品を比較。データに基づいた賢い選択ができます。
+                Tierランク（S+〜D）で総合評価を確認。価格・コスパ・含有量・エビデンス・安全性の5軸で製品を比較。データに基づいた賢い選択ができます。
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -242,10 +242,10 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-900">
-                      エビデンスレベル確認
+                      Tierランク確認
                     </h3>
                     <p className="text-primary-700">
-                      各成分のエビデンスランク（S~D）を確認して、科学的根拠に基づいた選択
+                      5軸総合評価のTierランク（S+〜D）を確認。S+は全評価軸でSランクを獲得した「5冠達成」商品
                     </p>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function HowToUsePage() {
                       複数ECサイトから最安値検索
                     </h3>
                     <p className="text-primary-700">
-                      楽天市場、Yahoo!ショッピングの価格を自動比較（Amazon・iHerb準備中）
+                      楽天市場、Yahoo!ショッピングの価格を自動比較（Amazon対応準備中）
                     </p>
                   </div>
                 </div>

@@ -52,7 +52,6 @@ export function ProductsSection({ products }: ProductsSectionProps) {
   const [evidenceLevelFilter, setEvidenceLevelFilter] = useState<string | null>(
     null,
   );
-  const [safetyRankFilter, setSafetyRankFilter] = useState<string | null>(null);
   const [ecSiteFilter, setEcSiteFilter] = useState<string | null>(null);
 
   // フィルタリングとソート
@@ -80,21 +79,11 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       });
     }
 
-    // エビデンスランクフィルター（現在はダミーデータのためスキップ）
+    // Tierランクフィルター（選択したランクと完全一致）
     if (evidenceLevelFilter) {
-      // TODO: 実装予定
-      // filtered = filtered.filter((product) => product.evidenceLevel === evidenceLevelFilter);
-    }
-
-    // 安全性ランクフィルター
-    if (safetyRankFilter) {
-      filtered = filtered.filter((product) => {
-        if (safetyRankFilter === "90+") return product.safetyScore >= 90;
-        if (safetyRankFilter === "80+") return product.safetyScore >= 80;
-        if (safetyRankFilter === "70+") return product.safetyScore >= 70;
-        if (safetyRankFilter === "60+") return product.safetyScore >= 60;
-        return true;
-      });
+      filtered = filtered.filter(
+        (product) => product.tierRatings?.overallRank === evidenceLevelFilter,
+      );
     }
 
     // ECサイトフィルター
@@ -133,7 +122,6 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     searchQuery,
     priceRange,
     evidenceLevelFilter,
-    safetyRankFilter,
     ecSiteFilter,
   ]);
 
@@ -141,15 +129,12 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     searchQuery?: string;
     priceRange?: string | null;
     evidenceLevel?: string | null;
-    safetyRank?: string | null;
     ecSite?: string | null;
   }) => {
     if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
     if (filters.priceRange !== undefined) setPriceRange(filters.priceRange);
     if (filters.evidenceLevel !== undefined)
       setEvidenceLevelFilter(filters.evidenceLevel);
-    if (filters.safetyRank !== undefined)
-      setSafetyRankFilter(filters.safetyRank);
     if (filters.ecSite !== undefined) setEcSiteFilter(filters.ecSite);
   };
 
@@ -157,7 +142,6 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     setSearchQuery("");
     setPriceRange(null);
     setEvidenceLevelFilter(null);
-    setSafetyRankFilter(null);
     setEcSiteFilter(null);
   };
 
@@ -173,7 +157,6 @@ export function ProductsSection({ products }: ProductsSectionProps) {
               searchQuery,
               priceRange,
               evidenceLevel: evidenceLevelFilter,
-              safetyRank: safetyRankFilter,
               ecSite: ecSiteFilter,
             }}
           />

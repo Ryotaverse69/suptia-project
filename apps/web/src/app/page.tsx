@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { TierRank } from "@/lib/tier-colors";
+import { TierRatings } from "@/lib/tier-ranking";
 
 interface Product {
   _id: string;
@@ -39,8 +41,11 @@ interface Product {
       name: string;
       nameEn: string;
       category?: string;
+      popularityScore?: number;
+      viewCount?: number;
     };
   }>;
+  tierRatings?: TierRatings;
 }
 
 interface Ingredient {
@@ -81,6 +86,14 @@ async function getProducts(): Promise<Product[]> {
         nameEn,
         category
       }
+    },
+    tierRatings {
+      priceRank,
+      costEffectivenessRank,
+      contentRank,
+      evidenceRank,
+      safetyRank,
+      overallRank
     }
   }`;
 
@@ -191,8 +204,9 @@ function normalizeProductName(name: string): string {
 }
 
 // おすすめサプリを取得（横スクロールで10件表示）
-// おすすめスコア = (キャンペーン: 100点) + (割引率 × 2)
-// キャンペーン商品と割引率が高い商品を優先表示
+// おすすめスコア = Tierランクスコア (60%) + 成分人気度スコア (40%)
+// - Tierランクスコア: S+ = 100, S = 90, A = 80, B = 70, C = 60, D = 50
+// - 成分人気度: 含まれる成分の人気度スコアの平均
 async function getFeaturedProducts(): Promise<Product[]> {
   // 重複を考慮して多めに取得（50件）
   const query = `*[_type == "product" && availability == "in-stock"] {
@@ -212,28 +226,83 @@ async function getFeaturedProducts(): Promise<Product[]> {
       ingredient->{
         name,
         nameEn,
-        category
+        category,
+        popularityScore,
+        viewCount
       }
     },
-    // おすすめスコアを計算
-    "recommendationScore": select(
-      isCampaign == true && campaignEndDate > now() => 100 + coalesce(discountPercentage, 0) * 2,
-      isCampaign == true => 100 + coalesce(discountPercentage, 0) * 2,
-      coalesce(discountPercentage, 0) > 0 => coalesce(discountPercentage, 0) * 2,
-      0
-    )
-  } | order(recommendationScore desc, discountPercentage desc)[0..49]`;
+    tierRatings {
+      priceRank,
+      costEffectivenessRank,
+      contentRank,
+      evidenceRank,
+      safetyRank,
+      overallRank
+    }
+  }[0..99]`;
 
   try {
     const allProducts = await sanity.fetch(query);
     if (!allProducts || allProducts.length === 0) return [];
+
+    // Tierランクをスコアに変換する関数
+    const getTierScore = (rank?: string): number => {
+      const scores: Record<string, number> = {
+        "S+": 100,
+        S: 90,
+        A: 80,
+        B: 70,
+        C: 60,
+        D: 50,
+      };
+      return scores[rank || "D"] || 50;
+    };
+
+    // 成分の人気度スコアを計算する関数
+    const getIngredientPopularityScore = (product: Product): number => {
+      if (!product.ingredients || product.ingredients.length === 0) return 0;
+
+      const scores = product.ingredients
+        .map((ing) => {
+          const popularity = ing.ingredient?.popularityScore || 0;
+          const viewCount = ing.ingredient?.viewCount || 0;
+          // popularityScoreを優先、なければviewCountを10で割った値を使用
+          return popularity > 0 ? popularity : viewCount / 10;
+        })
+        .filter((score) => score > 0);
+
+      if (scores.length === 0) return 0;
+
+      // 平均スコアを計算
+      return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    };
+
+    // 各商品のおすすめスコアを計算
+    type ProductWithScore = Product & { _calculatedScore: number };
+    const productsWithScore: ProductWithScore[] = allProducts.map(
+      (product: Product) => {
+        const tierScore = getTierScore(product.tierRatings?.overallRank);
+        const ingredientScore = getIngredientPopularityScore(product);
+
+        // 総合スコア = Tierランクスコア (60%) + 成分人気度スコア (40%)
+        const recommendationScore = tierScore * 0.6 + ingredientScore * 0.4;
+
+        return {
+          ...product,
+          _calculatedScore: recommendationScore,
+        };
+      },
+    );
+
+    // スコアでソート
+    productsWithScore.sort((a, b) => b._calculatedScore - a._calculatedScore);
 
     // 2段階の重複チェック：slug、正規化された商品名
     const uniqueProducts: Product[] = [];
     const seenSlugs = new Set<string>();
     const seenNormalizedNames = new Set<string>();
 
-    for (const product of allProducts) {
+    for (const product of productsWithScore) {
       const slugCurrent = product.slug?.current;
       const normalizedName = normalizeProductName(product.name);
 
@@ -253,7 +322,9 @@ async function getFeaturedProducts(): Promise<Product[]> {
       seenNormalizedNames.add(normalizedName);
       uniqueProducts.push(product);
 
-      console.log(`[追加] ${product.name} → 正規化名: ${normalizedName}`);
+      console.log(
+        `[追加] ${product.name} (Tierスコア: ${getTierScore(product.tierRatings?.overallRank)}, 成分人気度: ${getIngredientPopularityScore(product).toFixed(1)}, 総合: ${product._calculatedScore.toFixed(1)})`,
+      );
 
       // 10件集まったら終了
       if (uniqueProducts.length >= 10) break;
@@ -444,7 +515,7 @@ export default async function Home() {
                       検索・発見
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
-                      目的や成分でサプリを検索
+                      Tierランク（S+〜D）で絞り込み検索
                     </p>
                   </div>
 
@@ -477,7 +548,7 @@ export default async function Home() {
                       比較・分析
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
-                      科学的根拠と価格を比較
+                      5軸評価で多角的に比較
                     </p>
                   </div>
 
@@ -508,7 +579,7 @@ export default async function Home() {
                       選択・購入
                     </h3>
                     <p className="text-xs text-primary-700 font-light leading-relaxed">
-                      エビデンス重視で選択
+                      最安値で安心して購入
                     </p>
                   </div>
 
@@ -576,8 +647,45 @@ export default async function Home() {
                               />
                             </div>
                           )}
+
+                          {/* Tierランクラベル（左上） */}
+                          {product.tierRatings &&
+                            product.tierRatings.overallRank && (
+                              <div className="absolute top-3 left-3 z-10">
+                                <div className="relative w-12 h-8">
+                                  <div
+                                    className={`absolute inset-0 flex items-center justify-center rounded font-black text-sm ${
+                                      {
+                                        "S+": "bg-gradient-to-br from-purple-500/80 via-pink-500/70 to-yellow-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-purple-800",
+                                        S: "bg-gradient-to-br from-purple-500/80 via-purple-500/70 to-purple-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-purple-800",
+                                        A: "bg-gradient-to-br from-blue-500/80 via-blue-500/70 to-blue-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-blue-800",
+                                        B: "bg-gradient-to-br from-green-500/80 via-green-500/70 to-green-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-green-800",
+                                        C: "bg-gradient-to-br from-yellow-500/80 via-yellow-500/70 to-yellow-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-yellow-800",
+                                        D: "bg-gradient-to-br from-gray-400/80 via-gray-400/70 to-gray-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg text-gray-800",
+                                      }[
+                                        product.tierRatings
+                                          .overallRank as TierRank
+                                      ]
+                                    }`}
+                                  >
+                                    <span
+                                      style={{
+                                        textShadow:
+                                          "0 2px 0 rgba(255,255,255,1), 0 3px 2px rgba(255,255,255,0.8), 0 4px 6px rgba(0,0,0,0.2), 0 6px 12px rgba(0,0,0,0.15), 0 0 30px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,0.4)",
+                                      }}
+                                    >
+                                      {product.tierRatings.overallRank}
+                                    </span>
+                                  </div>
+                                  {/* キラキラハイライト */}
+                                  <div className="absolute inset-0 rounded bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none"></div>
+                                  <div className="absolute inset-0 rounded bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer pointer-events-none"></div>
+                                </div>
+                              </div>
+                            )}
+
                           {/* キャンペーン・割引バッジ */}
-                          <div className="absolute top-2 left-2 flex flex-col gap-2">
+                          <div className="absolute top-2 right-2 flex flex-col gap-2">
                             {product.isCampaign && (
                               <div className="px-3 py-1 bg-red-500 rounded text-white text-xs font-bold shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
                                 🎉 キャンペーン中

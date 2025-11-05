@@ -4,7 +4,7 @@
  * 全商品のデータから相対的な順位を計算し、S~Dランクに分類
  */
 
-import { TierRank, scoreToTierRank } from "./tier-colors";
+import { TierRank, scoreToTierRank, getTierScore } from "./tier-colors";
 
 export interface ProductForTierEvaluation {
   _id: string;
@@ -24,6 +24,7 @@ export interface TierRatings {
   contentRank: TierRank;
   evidenceRank: TierRank;
   safetyRank: TierRank;
+  overallRank?: TierRank; // 総合評価（重み付け平均）
 }
 
 /**
@@ -49,15 +50,20 @@ export function calculateAllTierRankings(
   // 5. 安全性ランク（safetyScoreを変換）
   const safetyRanks = calculateSafetyRanks(products);
 
-  // 各商品にランクを統合
+  // 各商品にランクを統合し、総合評価も計算
   products.forEach((product) => {
-    rankings.set(product._id, {
+    const tierRatings: TierRatings = {
       priceRank: priceRanks.get(product._id) || "D",
       costEffectivenessRank: costEffectivenessRanks.get(product._id) || "D",
       contentRank: contentRanks.get(product._id) || "D",
       evidenceRank: evidenceRanks.get(product._id) || "D",
       safetyRank: safetyRanks.get(product._id) || "D",
-    });
+    };
+
+    // 総合評価を計算
+    tierRatings.overallRank = calculateOverallRank(tierRatings);
+
+    rankings.set(product._id, tierRatings);
   });
 
   return rankings;
@@ -78,6 +84,7 @@ export function calculateTierRankings(
       contentRank: "D",
       evidenceRank: "D",
       safetyRank: "D",
+      overallRank: "D",
     }
   );
 }
@@ -325,10 +332,58 @@ export function isPerfectProduct(ratings: TierRatings): boolean {
 }
 
 /**
+ * 総合評価ランクを計算（重み付け平均方式 + 失格条件）
+ *
+ * ロジック:
+ * 1. 安全性またはエビデンスがDランク → 即座に総合評価D
+ * 2. すべての評価軸がSランク → S+（5冠達成）
+ * 3. 上記以外 → 重み付け平均で計算
+ *    - 安全性: 30%
+ *    - エビデンス: 25%
+ *    - コスパ: 25%
+ *    - 価格: 10%
+ *    - 含有量: 10%
+ */
+export function calculateOverallRank(ratings: TierRatings): TierRank {
+  // 失格条件: 安全性またはエビデンスがDランク
+  if (ratings.safetyRank === "D" || ratings.evidenceRank === "D") {
+    return "D";
+  }
+
+  // S+条件: すべての評価軸がSランク（5冠達成）
+  if (isPerfectProduct(ratings)) {
+    return "S+";
+  }
+
+  // 重み付け平均計算
+  const safetyScore = getTierScore(ratings.safetyRank);
+  const evidenceScore = getTierScore(ratings.evidenceRank);
+  const costEffScore = getTierScore(ratings.costEffectivenessRank);
+  const priceScore = getTierScore(ratings.priceRank);
+  const contentScore = getTierScore(ratings.contentRank);
+
+  const weightedScore =
+    safetyScore * 0.3 +
+    evidenceScore * 0.25 +
+    costEffScore * 0.25 +
+    priceScore * 0.1 +
+    contentScore * 0.1;
+
+  // スコアをランクに変換（S+ = 6, S = 5, A = 4, B = 3, C = 2, D = 1）
+  // 重み付け平均の範囲: 1.0 ~ 5.0（S+は既に判定済みなので除外）
+  if (weightedScore >= 4.5) return "S";
+  if (weightedScore >= 3.5) return "A";
+  if (weightedScore >= 2.5) return "B";
+  if (weightedScore >= 1.5) return "C";
+  return "D";
+}
+
+/**
  * Tierランクの総合スコアを計算（S=5, A=4, B=3, C=2, D=1）
  */
 export function calculateOverallTierScore(ratings: TierRatings): number {
   const scoreMap: Record<TierRank, number> = {
+    "S+": 6,
     S: 5,
     A: 4,
     B: 3,

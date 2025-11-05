@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "./page";
 import { sanity } from "@/lib/sanity.client";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
 // Mock Next.js headers
 vi.mock("next/headers", () => ({
@@ -92,14 +93,14 @@ beforeEach(() => {
 describe("Home Page", () => {
   it("renders the main heading", async () => {
     const HomeComponent = await Home();
-    render(HomeComponent);
+    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
     const heading = screen.getByRole("heading", { level: 1 });
     expect(heading).toHaveTextContent("あなたに最適なサプリを見つけよう");
   });
 
   it("renders the recommended products section", async () => {
     const HomeComponent = await Home();
-    render(HomeComponent);
+    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
     const heading = screen.getByRole("heading", {
       name: "おすすめのサプリメント",
     });
@@ -108,7 +109,7 @@ describe("Home Page", () => {
 
   it("renders product cards when products are available", async () => {
     const HomeComponent = await Home();
-    render(HomeComponent);
+    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
 
     await waitFor(() => {
       expect(screen.getAllByText("Test Product")).not.toHaveLength(0);

@@ -10,8 +10,13 @@ import {
   calculateComprehensiveCost,
   getCostEfficiencyLabel,
 } from "@/lib/cost-calculator";
-import { TierBadgeRow, PerfectProductBanner } from "@/components/ui/TierBadge";
+import {
+  TierBadgeRow,
+  PerfectProductBanner,
+  OverallRankBadge,
+} from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
+import { TierRank } from "@/lib/tier-colors";
 
 interface ProductCardProps {
   product: {
@@ -89,6 +94,32 @@ export function ProductCard({ product }: ProductCardProps) {
   // 計算されたコストまたは手動で渡されたコストを使用
   const effectiveCostPerDay = calculatedCost?.costPerDay ?? manualCostPerDay;
 
+  // ランク別の色（ツヤツヤグラデーション付き）
+  const rankColors: Record<TierRank, string> = {
+    "S+": "bg-gradient-to-br from-purple-500/80 via-pink-500/70 to-yellow-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    S: "bg-gradient-to-br from-purple-500/80 via-purple-500/70 to-purple-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    A: "bg-gradient-to-br from-blue-500/80 via-blue-500/70 to-blue-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    B: "bg-gradient-to-br from-green-500/80 via-green-500/70 to-green-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    C: "bg-gradient-to-br from-yellow-500/80 via-yellow-500/70 to-yellow-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    D: "bg-gradient-to-br from-gray-400/80 via-gray-400/70 to-gray-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+  };
+
+  // ランク別のテキスト色（ツヤツヤ感のため濃く）
+  const rankTextColors: Record<TierRank, string> = {
+    "S+": "text-purple-800",
+    S: "text-purple-800",
+    A: "text-blue-800",
+    B: "text-green-800",
+    C: "text-yellow-800",
+    D: "text-gray-800",
+  };
+
+  // ガラス光沢シャドウ（ツヤツヤ感強化）
+  const glassTextShadow = {
+    textShadow:
+      "0 2px 0 rgba(255,255,255,1), 0 3px 2px rgba(255,255,255,0.8), 0 4px 6px rgba(0,0,0,0.2), 0 6px 12px rgba(0,0,0,0.15), 0 0 30px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,0.4)",
+  } as React.CSSProperties;
+
   return (
     <Link href={`/products/${slug.current}`}>
       <Card className="group cursor-pointer overflow-hidden h-full flex flex-col hover:scale-[1.02]">
@@ -124,11 +155,18 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Tierバッジ（5つ常に表示） */}
-          {!isPerfect && tierRatings && (
-            <div className="absolute top-4 left-4 right-4 z-10">
-              <div className="backdrop-blur-md bg-white/90 rounded-lg p-2 shadow-lg">
-                <TierBadgeRow ratings={tierRatings} size="sm" />
+          {/* Tierランクラベル（総合評価、左上に小さく表示） */}
+          {!isPerfect && tierRatings && tierRatings.overallRank && (
+            <div className="absolute top-3 left-3 z-10">
+              <div className="relative w-12 h-8">
+                <div
+                  className={`absolute inset-0 flex items-center justify-center rounded font-black text-sm ${rankColors[tierRatings.overallRank as TierRank]} ${rankTextColors[tierRatings.overallRank as TierRank]}`}
+                >
+                  <span style={glassTextShadow}>{tierRatings.overallRank}</span>
+                </div>
+                {/* キラキラハイライト（複数レイヤー） */}
+                <div className="absolute inset-0 rounded bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 rounded bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer pointer-events-none"></div>
               </div>
             </div>
           )}

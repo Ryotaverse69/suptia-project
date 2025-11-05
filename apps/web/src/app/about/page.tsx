@@ -80,10 +80,10 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-primary">S〜D</div>
-              <div className="text-primary-700">安全性ランク評価</div>
+              <div className="mb-2 text-4xl font-bold text-primary">S+〜D</div>
+              <div className="text-primary-700">Tierランク評価</div>
               <div className="text-sm text-primary-500 mt-1">
-                科学的根拠に基づく
+                5軸総合評価システム
               </div>
             </div>
           </div>
@@ -122,10 +122,10 @@ export default function AboutPage() {
                 <Shield size={28} />
               </div>
               <h3 className="mb-3 text-xl font-bold text-primary-900">
-                科学的根拠
+                5軸総合評価
               </h3>
               <p className="text-primary-700">
-                すべての情報は査読済み論文に基づいています。エビデンスランク（S~D）を明確に表示し、信頼できる選択をサポート。
+                価格・コスパ・含有量・エビデンス・安全性の5つの軸で評価。すべて揃えばS+ランク「5冠達成」。Tierランク（S+〜D）で一目で品質が分かります。
               </p>
             </div>
 
@@ -151,7 +151,7 @@ export default function AboutPage() {
                 安全性チェック
               </h3>
               <p className="text-primary-700">
-                第三者認証、製造プロセス、原材料の透明性を独自のスコアリングシステムで評価。安全性ランク（S〜D）で一目で判断できます。
+                第三者認証、製造プロセス、原材料の透明性を独自のスコアリングシステムで評価。安全性は5軸評価の1つとしてTierランクに反映されます。
               </p>
             </div>
 
@@ -164,7 +164,7 @@ export default function AboutPage() {
                 詳細フィルター
               </h3>
               <p className="text-primary-700">
-                価格帯、エビデンスランク、安全性ランク、商品名で簡単に絞り込み。あなたのニーズにぴったりの商品を素早く見つけられます。
+                商品名検索、Tierランク、価格帯、購入先（楽天・Yahoo・Amazon）で簡単に絞り込み。ツヤツヤグラデーションのボタンUIで直感的に操作できます。
               </p>
             </div>
 
@@ -341,7 +341,7 @@ export default function AboutPage() {
                 比較する
               </h3>
               <p className="text-primary-700">
-                価格、成分、安全性、レビューなど、多角的に製品を比較。データで納得して選択。
+                Tierランク（S+〜D）で品質を一目で判断。価格、成分量、コスパ、エビデンス、安全性の5軸で多角的に比較できます。
               </p>
             </div>
 

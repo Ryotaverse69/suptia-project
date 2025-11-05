@@ -470,6 +470,25 @@ export const product = defineType({
           },
           validation: (Rule) => Rule.required(),
         },
+        {
+          name: "overallRank",
+          title: "⭐ 総合評価ランク",
+          type: "string",
+          description:
+            "5つの評価軸から自動計算される総合評価（重み付け平均 + 失格条件）",
+          options: {
+            list: [
+              { title: "S+ランク（完璧な5冠達成）", value: "S+" },
+              { title: "Sランク（最高）", value: "S" },
+              { title: "Aランク（優秀）", value: "A" },
+              { title: "Bランク（良好）", value: "B" },
+              { title: "Cランク（普通）", value: "C" },
+              { title: "Dランク（要改善）", value: "D" },
+            ],
+          },
+          validation: (Rule) => Rule.required(),
+          readOnly: true, // 自動計算されるため編集不可
+        },
       ],
     }),
     defineField({

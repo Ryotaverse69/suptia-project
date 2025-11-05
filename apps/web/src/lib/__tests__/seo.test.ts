@@ -76,10 +76,10 @@ describe("SEO Utilities", () => {
     it("商品メタデータを生成する", () => {
       const metadata = generateProductMetadata(mockProduct);
 
-      // 新しいSEOロジック: priceJPYがある場合は最安値を表示
-      expect(metadata.title).toBe(
-        "ビタミンC 1000mg | 最安値¥2,980から比較 | サプティア",
-      );
+      // 新しいSEOロジック: priceJPYがある場合は最安値を表示（【日付】プレフィックス付き）
+      expect(metadata.title).toContain("ビタミンC 1000mg");
+      expect(metadata.title).toContain("最安値¥2,980");
+      expect(metadata.title).toContain("サプティア");
       expect(metadata.description).toBe("テスト商品の説明");
       expect(metadata.alternates?.canonical).toBe(
         "https://suptia.com/products/vitamin-c-1000",
@@ -90,9 +90,10 @@ describe("SEO Utilities", () => {
       const productWithoutDesc = { ...mockProduct, description: undefined };
       const metadata = generateProductMetadata(productWithoutDesc);
 
-      // 新しいSEOロジック: 最安値を強調した説明文を生成
-      expect(metadata.description).toContain("ビタミンC 1000mgを徹底比較！");
+      // 新しいSEOロジック: 最安値を強調した説明文を生成（「選ぶ前に必読！」フォーマット）
+      expect(metadata.description).toContain("ビタミンC 1000mg");
       expect(metadata.description).toContain("最安値¥2,980");
+      expect(metadata.description).toContain("テストブランド");
     });
 
     it("適切なキーワードが設定される", () => {
@@ -116,13 +117,14 @@ describe("SEO Utilities", () => {
 
       const metadata = generateProductMetadata(productWithMultiplePrices);
 
-      // タイトルに最安値を表示
-      expect(metadata.title).toContain("最安値¥1,880から比較");
+      // タイトルに最安値を表示（【日付】プレフィックス付き）
+      expect(metadata.title).toContain("ビタミンC 1000mg");
+      expect(metadata.title).toContain("最安値¥1,880");
 
       // 説明に最安値と節約額を表示
       expect(metadata.description).toContain("最安値¥1,880");
       expect(metadata.description).toContain("最大¥1,100お得"); // 2980 - 1880
-      expect(metadata.description).toContain("3サイトで価格比較");
+      expect(metadata.description).toContain("3サイト"); // 「3サイトの価格を3秒で比較」
     });
   });
 
