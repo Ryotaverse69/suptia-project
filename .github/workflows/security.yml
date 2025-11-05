@@ -123,8 +123,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm install --frozen-lockfile
-          cd apps/web && pnpm install --frozen-lockfile
+          npm ci
+          cd apps/web && npm ci
 
       - name: Run npm audit
         run: |
@@ -136,7 +136,7 @@ jobs:
           
           # ルートレベルの監査
           echo "## ルートプロジェクト" >> audit-report.md
-          pnpm audit --json > root-audit.json 2>/dev/null || true
+          npm audit --json > root-audit.json 2>/dev/null || true
           
           if [ -f "root-audit.json" ]; then
             CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' root-audit.json)
@@ -159,7 +159,7 @@ jobs:
           # Webアプリの監査
           echo "## Webアプリケーション" >> audit-report.md
           cd apps/web
-          pnpm audit --json > web-audit.json 2>/dev/null || true
+          npm audit --json > web-audit.json 2>/dev/null || true
           
           if [ -f "web-audit.json" ]; then
             CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' web-audit.json)
@@ -199,7 +199,7 @@ jobs:
           echo "" >> audit-report.md
           
           # 古いパッケージをチェック
-          pnpm outdated --format json > outdated.json 2>/dev/null || echo "[]" > outdated.json
+          npm outdated --format json > outdated.json 2>/dev/null || echo "[]" > outdated.json
           
           OUTDATED_COUNT=$(jq 'length' outdated.json)
           echo "更新可能なパッケージ数: $OUTDATED_COUNT" >> audit-report.md
@@ -249,8 +249,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm install --frozen-lockfile
-          cd apps/web && pnpm install --frozen-lockfile
+          npm ci
+          cd apps/web && npm ci
 
       - name: Install license checker
         run: npm install -g license-checker

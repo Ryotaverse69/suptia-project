@@ -41,20 +41,20 @@ jobs:
       - name: Generate cache keys
         id: cache-key
         run: |
-          echo "key=pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+          echo "key=npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}" >> $GITHUB_OUTPUT
 
       - name: Generate node_modules cache key
         id: node-modules-key
         run: |
-          echo "key=node-modules-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+          echo "key=node-modules-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}" >> $GITHUB_OUTPUT
 
-      - name: Cache pnpm store
+      - name: Cache npm cache
         uses: actions/cache@v4
         with:
-          path: ~/.local/share/pnpm/store
+          path: ~/.npm
           key: ${{ steps.cache-key.outputs.key }}
           restore-keys: |
-            pnpm-${{ runner.os }}-
+            npm-${{ runner.os }}-
 
       - name: Cache node_modules
         id: cache-node-modules
@@ -69,7 +69,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: npm ci --ignore-scripts
 
   # 品質チェック（並列実行）
   format:
@@ -100,7 +100,7 @@ jobs:
             node-modules-${{ runner.os }}-
 
       - name: Run format check
-        run: pnpm run format:check
+        run: npm run format:check
 
   lint:
     name: lint
@@ -130,7 +130,7 @@ jobs:
             node-modules-${{ runner.os }}-
 
       - name: Run lint
-        run: pnpm run lint
+        run: npm run lint
 
   test:
     name: test
@@ -160,7 +160,7 @@ jobs:
             node-modules-${{ runner.os }}-
 
       - name: Run tests
-        run: pnpm run test
+        run: npm run test
 
   typecheck:
     name: typecheck
@@ -194,7 +194,7 @@ jobs:
             node-modules-${{ runner.os }}-
 
       - name: Run typecheck
-        run: pnpm run typecheck
+        run: npm run typecheck
 
   build:
     name: build
@@ -228,7 +228,7 @@ jobs:
             node-modules-${{ runner.os }}-
 
       - name: Build application
-        run: pnpm run build
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -279,7 +279,7 @@ jobs:
 
       - name: Start application
         run: |
-          pnpm start &
+          npm start &
           APP_PID=$!
           echo "APP_PID=$APP_PID" >> $GITHUB_ENV
 
@@ -335,7 +335,7 @@ jobs:
 
       - name: Start application
         run: |
-          pnpm start &
+          npm start &
           APP_PID=$!
           echo "APP_PID=$APP_PID" >> $GITHUB_ENV
 
