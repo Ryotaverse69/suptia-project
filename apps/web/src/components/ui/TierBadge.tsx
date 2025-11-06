@@ -205,7 +205,7 @@ export function TierBadgeGrid({ ratings }: { ratings: TierRatings }) {
 
 /**
  * 総合評価バッジ（Overall Rank）
- * S+ランクの場合は特別なグラデーション + アニメーション効果
+ * TierRankStats（商品一覧ページ）と同じツヤツヤグラデーションデザイン
  */
 export function OverallRankBadge({
   rank,
@@ -217,29 +217,31 @@ export function OverallRankBadge({
   showLabel?: boolean;
 }) {
   const tierColor = getTierColor(rank);
-  const isSPlus = rank === "S+";
 
   const sizeClasses = {
-    sm: "px-2.5 py-1.5",
-    md: "px-4 py-2.5",
-    lg: "px-6 py-3",
+    sm: "w-16 h-12",
+    md: "w-24 h-16",
+    lg: "w-32 h-20",
   };
 
   const rankSizeClasses = {
-    sm: "text-xl",
-    md: "text-3xl",
-    lg: "text-4xl",
+    sm: "text-2xl",
+    md: "text-4xl",
+    lg: "text-5xl",
   };
 
-  // リキッドグラス風の背景スタイル（ツヤツヤグラデーション付き）
-  const glassStyle = {
-    sm: "backdrop-blur-md bg-gradient-to-br from-white/40 via-white/20 to-white/10 border border-white/40 shadow-lg",
-    md: "backdrop-blur-lg bg-gradient-to-br from-white/50 via-white/25 to-white/15 border-2 border-white/50 shadow-xl",
-    lg: "backdrop-blur-xl bg-gradient-to-br from-white/60 via-white/30 to-white/20 border-2 border-white/60 shadow-2xl",
+  // ランク別のツヤツヤグラデーション背景（TierRankStatsと同じ）
+  const rankColors: Record<TierRank, string> = {
+    "S+": "bg-gradient-to-br from-purple-500/80 via-pink-500/70 to-yellow-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    S: "bg-gradient-to-br from-purple-500/80 via-purple-500/70 to-purple-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    A: "bg-gradient-to-br from-blue-500/80 via-blue-500/70 to-blue-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    B: "bg-gradient-to-br from-green-500/80 via-green-500/70 to-green-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    C: "bg-gradient-to-br from-yellow-500/80 via-yellow-500/70 to-yellow-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+    D: "bg-gradient-to-br from-gray-400/80 via-gray-400/70 to-gray-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
   };
 
-  // ランク別の立体感のある色スタイル（ツヤツヤ感のため濃く）
-  const textColorClasses: Record<TierRank, string> = {
+  // ランク別のテキスト色
+  const rankTextColors: Record<TierRank, string> = {
     "S+": "text-purple-800",
     S: "text-purple-800",
     A: "text-blue-800",
@@ -248,38 +250,40 @@ export function OverallRankBadge({
     D: "text-gray-800",
   };
 
-  // ガラスのような光沢を出すtext-shadow（ツヤツヤ感強化）
-  const textShadowStyle = {
+  // ガラス光沢シャドウ（TierRankStatsと同じ）
+  const glassTextShadow = {
     textShadow:
       "0 2px 0 rgba(255,255,255,1), 0 3px 2px rgba(255,255,255,0.8), 0 4px 6px rgba(0,0,0,0.2), 0 6px 12px rgba(0,0,0,0.15), 0 0 30px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,0.4)",
   } as React.CSSProperties;
 
   return (
     <div
-      className={`inline-flex items-center justify-center rounded-lg ${glassStyle[size]} ${sizeClasses[size]} ${isSPlus ? "animate-pulse" : ""} transition-all hover:scale-105 hover:shadow-xl`}
+      className={`relative ${sizeClasses[size]} transition-all hover:scale-105`}
       title={`総合評価: ${tierColor.label}`}
     >
-      {showLabel && (
+      {/* メイン背景 */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center rounded ${rankColors[rank]}`}
+      >
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">
-            総合
-          </span>
+          {showLabel && (
+            <span className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">
+              総合
+            </span>
+          )}
           <span
-            className={`${rankSizeClasses[size]} font-black leading-none ${textColorClasses[rank]}`}
-            style={textShadowStyle}
+            className={`${rankSizeClasses[size]} font-black leading-none ${rankTextColors[rank]}`}
+            style={glassTextShadow}
           >
             {rank}
           </span>
         </div>
-      )}
-      {!showLabel && (
-        <span
-          className={`${rankSizeClasses[size]} font-black leading-none ${textColorClasses[rank]}`}
-          style={textShadowStyle}
-        >
-          {rank}
-        </span>
-      )}
+      </div>
+
+      {/* キラキラハイライト（複数レイヤー） */}
+      <div className="absolute inset-0 rounded bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 rounded bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer pointer-events-none"></div>
+      <div className="absolute top-0 left-0 right-0 h-1/2 rounded-t bg-gradient-to-b from-white/30 to-transparent pointer-events-none"></div>
     </div>
   );
 }
