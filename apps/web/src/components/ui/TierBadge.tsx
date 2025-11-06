@@ -153,36 +153,45 @@ export function TierBadgeGrid({ ratings }: { ratings: TierRatings }) {
   const overallRank = ratings.overallRank || "D";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* 5冠達成バナー */}
       {isPerfect && <PerfectProductBanner />}
 
-      {/* 総合評価 */}
-      <div className="flex flex-col items-center gap-4">
-        <h3 className="text-xl font-bold text-gray-800">総合評価</h3>
+      {/* 総合評価 - コンパクト＆高級感 */}
+      <div className="flex flex-col items-center gap-2.5">
+        <h3 className="text-lg font-bold bg-gradient-to-r from-purple-700 via-blue-700 to-purple-700 bg-clip-text text-transparent">
+          総合評価
+        </h3>
         <OverallRankBadge rank={overallRank} size="lg" showLabel={true} />
-        <p className="text-sm text-gray-600 text-center max-w-md">
-          5つの評価軸（価格・コスパ・含有量・エビデンス・安全性）を重み付け平均して算出した総合評価です。
+        <p className="text-xs text-gray-600 text-center max-w-md leading-relaxed">
+          5つの評価軸を重み付け平均した総合評価
         </p>
       </div>
 
-      {/* 5つの評価軸 */}
+      {/* 5つの評価軸 - コンパクト＆高級感 */}
       <div>
-        <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+        <h4 className="text-base font-semibold bg-gradient-to-r from-gray-700 to-gray-600 bg-clip-text text-transparent mb-3 text-center">
           評価軸別スコア
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
           {badges.map((badge) => {
             const tierColor = getTierColor(badge.rank as TierRank);
             return (
               <div
                 key={badge.label}
-                className={`flex flex-col items-center p-4 rounded-xl border-2 ${tierColor.className} transition-transform hover:scale-105`}
+                className={`group relative flex flex-col items-center p-3 rounded-lg border ${tierColor.className}
+                  transition-all duration-300 hover:scale-105 hover:shadow-xl
+                  before:absolute before:inset-0 before:rounded-lg before:opacity-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent
+                  hover:before:opacity-100 before:transition-opacity`}
               >
-                <div className="text-3xl mb-2">{badge.icon}</div>
-                <div className="text-sm font-semibold mb-1">{badge.label}</div>
-                <div className="text-3xl font-bold mb-2">{badge.rank}</div>
-                <div className="text-xs text-center opacity-75">
+                <div className="text-2xl mb-1.5 transition-transform group-hover:scale-110">
+                  {badge.icon}
+                </div>
+                <div className="text-xs font-semibold mb-1">{badge.label}</div>
+                <div className="text-2xl font-bold mb-1.5 drop-shadow-sm">
+                  {badge.rank}
+                </div>
+                <div className="text-[10px] text-center opacity-70 leading-tight">
                   {badge.description}
                 </div>
               </div>
@@ -280,12 +289,56 @@ export function OverallRankBadge({
  */
 export function PerfectProductBanner() {
   return (
-    <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-6 py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 animate-pulse">
-      <span className="text-2xl">🏆</span>
-      <span className="font-bold text-lg">
+    <div
+      className="relative overflow-hidden rounded-xl shadow-2xl px-6 py-3.5
+      bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400
+      flex items-center justify-center gap-3
+      before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent
+      before:animate-shimmer
+      animate-pulse-slow"
+    >
+      <span className="text-2xl drop-shadow-lg animate-bounce-slow">🏆</span>
+      <span className="font-bold text-base text-white drop-shadow-md tracking-wide">
         5冠達成！すべてSランクの最高品質
       </span>
-      <span className="text-2xl">🏆</span>
+      <span className="text-2xl drop-shadow-lg animate-bounce-slow">🏆</span>
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        @keyframes bounce-slow {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-4px);
+          }
+        }
+        @keyframes pulse-slow {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.95;
+          }
+        }
+        .animate-shimmer {
+          animation: shimmer 3s infinite;
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 2s infinite;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 3s infinite;
+        }
+      `}</style>
     </div>
   );
 }

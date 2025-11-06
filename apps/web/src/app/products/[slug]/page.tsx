@@ -820,7 +820,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         {/* Tier Rankings - 総合評価 */}
         {product.tierRatings && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <div
+            className="relative overflow-hidden rounded-2xl shadow-xl border border-purple-100 p-6 mb-8
+            bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30
+            before:absolute before:inset-0 before:bg-gradient-to-br before:from-purple-500/5 before:to-blue-500/5 before:-z-10"
+          >
             <TierBadgeGrid
               ratings={product.tierRatings as unknown as TierRatings}
             />
