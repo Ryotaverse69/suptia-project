@@ -228,6 +228,15 @@ export const ingredient = defineType({
 
     // 安全性
     defineField({
+      name: "safetyScore",
+      title: "安全性スコア",
+      type: "number",
+      description:
+        "安全性スコア（0-100点）：90点以上=Sランク、80-89点=Aランク、70-79点=Bランク、60-69点=Cランク、60点未満=Dランク",
+      validation: (Rule) => Rule.min(0).max(100).integer(),
+      group: "safety",
+    }),
+    defineField({
       name: "riskLevel",
       title: "総合リスクレベル",
       type: "string",

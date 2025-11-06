@@ -188,13 +188,13 @@ export function EvidenceSafetyDetail({
 
         {/* エビデンスレベルバッジ */}
         <div
-          className={`p-6 rounded-xl bg-gradient-to-r ${currentEvidenceInfo.color} mb-6`}
+          className={`p-4 rounded-xl bg-gradient-to-r ${currentEvidenceInfo.color} mb-4`}
         >
           <div className="text-white">
-            <p className="text-3xl font-bold mb-2">
+            <p className="text-xl font-bold mb-1">
               {evidenceLevel || "D"}ランク
             </p>
-            <p className="text-lg opacity-90">{currentEvidenceInfo.label}</p>
+            <p className="text-base opacity-90">{currentEvidenceInfo.label}</p>
           </div>
         </div>
 
@@ -343,11 +343,11 @@ export function EvidenceSafetyDetail({
 
         {/* 安全性レベルバッジ */}
         <div
-          className={`p-6 rounded-xl bg-gradient-to-r ${safetyLevel.color} mb-6`}
+          className={`p-4 rounded-xl bg-gradient-to-r ${safetyLevel.color} mb-4`}
         >
           <div className="text-white">
-            <p className="text-3xl font-bold mb-2">{safetyLevel.grade}ランク</p>
-            <p className="text-lg opacity-90">{safetyLevel.label}</p>
+            <p className="text-xl font-bold mb-1">{safetyLevel.grade}ランク</p>
+            <p className="text-base opacity-90">{safetyLevel.label}</p>
           </div>
         </div>
 

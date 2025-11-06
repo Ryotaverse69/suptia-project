@@ -12,6 +12,7 @@ import { ImageLightbox } from "@/components/ImageLightbox";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TierBadgeGrid, PerfectProductBanner } from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
+import { TierRank } from "@/lib/tier-colors";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -555,6 +556,30 @@ export default async function ProductDetailPage({ params }: PageProps) {
     });
   }
 
+  // リアルタイム計算したスコアでtierRatingsを上書き
+  function scoreToTierRank(score: number): TierRank {
+    if (score >= 90) return "S";
+    if (score >= 80) return "A";
+    if (score >= 70) return "B";
+    if (score >= 60) return "C";
+    return "D";
+  }
+
+  // リアルタイム計算結果でtierRatingsを更新
+  const updatedTierRatings = product.tierRatings
+    ? {
+        ...product.tierRatings,
+        // バッジベースのランクはデフォルトD、バッジ獲得時のみSに上書き
+        priceRank: "D" as TierRank,
+        costEffectivenessRank: "D" as TierRank,
+        contentRank: "D" as TierRank,
+        // スコアベースのランクはリアルタイム計算結果を使用（undefinedの場合は50をデフォルト）
+        evidenceRank: scoreToTierRank(finalScores.evidence ?? 50),
+        safetyRank: scoreToTierRank(finalScores.safety ?? 50),
+        overallRank: scoreToTierRank(finalScores.overall ?? 50),
+      }
+    : undefined;
+
   // 全商品を取得して称号を計算
   const allProducts = await getAllProducts();
 
@@ -663,6 +688,44 @@ export default async function ProductDetailPage({ params }: PageProps) {
     : [];
 
   console.log(`[バッジ結果] ${product.name}:`, badges);
+  console.log(
+    `[更新前tierRatings] ${product.name}:`,
+    JSON.stringify(updatedTierRatings, null, 2),
+  );
+
+  // 称号に基づいてランクを"S"に格上げ
+  if (updatedTierRatings) {
+    badges.forEach((badgeType) => {
+      console.log(`[バッジタイプ処理] ${badgeType}`);
+      if (badgeType === "lowest-price") {
+        updatedTierRatings.priceRank = "S";
+        console.log(`  → priceRank を S に更新`);
+      } else if (badgeType === "best-value") {
+        updatedTierRatings.costEffectivenessRank = "S";
+        console.log(`  → costEffectivenessRank を S に更新`);
+      } else if (badgeType === "highest-content") {
+        updatedTierRatings.contentRank = "S";
+        console.log(`  → contentRank を S に更新`);
+      } else if (badgeType === "evidence-s") {
+        updatedTierRatings.evidenceRank = "S";
+        console.log(`  → evidenceRank を S に更新`);
+      } else if (badgeType === "high-safety") {
+        updatedTierRatings.safetyRank = "S";
+        console.log(`  → safetyRank を S に更新`);
+      }
+    });
+
+    console.log(
+      `[更新後tierRatings] ${product.name}:`,
+      JSON.stringify(updatedTierRatings, null, 2),
+    );
+
+    // 5冠達成（すべてSランク）の場合は総合評価をS+に格上げ
+    if (isPerfectProduct(updatedTierRatings)) {
+      updatedTierRatings.overallRank = "S+" as TierRank;
+      console.log(`[5冠達成] overallRank を S+ に格上げ`);
+    }
+  }
 
   // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);
@@ -796,7 +859,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* Product Image */}
-        <div className="mb-8">
+        <div className="mb-8 flex justify-center">
           {product.externalImageUrl ||
           (product.images && product.images.length > 0) ? (
             <ImageLightbox
@@ -819,14 +882,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* Tier Rankings - 総合評価 */}
-        {product.tierRatings && (
+        {updatedTierRatings && (
           <div
             className="relative overflow-hidden rounded-2xl shadow-xl border border-purple-100 p-6 mb-8
             bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30
             before:absolute before:inset-0 before:bg-gradient-to-br before:from-purple-500/5 before:to-blue-500/5 before:-z-10"
           >
             <TierBadgeGrid
-              ratings={product.tierRatings as unknown as TierRatings}
+              ratings={updatedTierRatings as unknown as TierRatings}
             />
           </div>
         )}
@@ -838,7 +901,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* 2. Price Comparison - 最安値比較 */}
-        <PriceComparison priceData={mergedPriceData} className="mb-8" />
+        <PriceComparison
+          priceData={mergedPriceData}
+          priceRank={
+            updatedTierRatings?.priceRank as "S" | "A" | "B" | "C" | "D"
+          }
+          className="mb-8"
+        />
 
         {/* 3. Cost Effectiveness - コスパ比較 */}
         {mainIngredientAmount > 0 && similarProducts.length > 0 && (
@@ -854,6 +923,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
               servingsPerDay: product.servingsPerDay,
             }}
             similarProducts={similarProducts}
+            costEffectivenessRank={
+              updatedTierRatings?.costEffectivenessRank as
+                | "S"
+                | "A"
+                | "B"
+                | "C"
+                | "D"
+            }
             className="mb-8"
           />
         )}
@@ -871,6 +948,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
             }}
             similarProducts={similarProducts}
             ingredientName="主要成分"
+            contentRank={
+              updatedTierRatings?.contentRank as "S" | "A" | "B" | "C" | "D"
+            }
             className="mb-8"
           />
         )}

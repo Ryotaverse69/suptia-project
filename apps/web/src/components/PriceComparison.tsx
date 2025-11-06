@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
+import { TrendingDown, ExternalLink, AlertCircle } from "lucide-react";
 
 /**
  * 複数ECサイトの価格比較コンポーネント
@@ -30,11 +31,13 @@ interface PriceData {
 
 interface PriceComparisonProps {
   priceData?: PriceData[];
+  priceRank?: "S" | "A" | "B" | "C" | "D";
   className?: string;
 }
 
 export function PriceComparison({
   priceData,
+  priceRank,
   className = "",
 }: PriceComparisonProps) {
   const [showBulkPrices, setShowBulkPrices] = useState(true);
@@ -42,6 +45,62 @@ export function PriceComparison({
   if (!priceData || priceData.length === 0) {
     return null;
   }
+
+  // ランク情報の定義
+  const rankInfo: Record<
+    string,
+    {
+      color: string;
+      bgColor: string;
+      borderColor: string;
+      textColor: string;
+      label: string;
+      description: string;
+    }
+  > = {
+    S: {
+      color: "from-purple-500 to-purple-700",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
+      textColor: "text-purple-800",
+      label: "最安値",
+      description: "この商品は複数のECサイトで最安値です",
+    },
+    A: {
+      color: "from-blue-500 to-blue-700",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      textColor: "text-blue-800",
+      label: "優良価格",
+      description: "非常にお得な価格設定です",
+    },
+    B: {
+      color: "from-green-500 to-green-700",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
+      textColor: "text-green-800",
+      label: "標準価格",
+      description: "標準的な価格帯です",
+    },
+    C: {
+      color: "from-yellow-500 to-yellow-700",
+      bgColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
+      textColor: "text-yellow-800",
+      label: "やや高め",
+      description: "他の商品と比べてやや高めの価格です",
+    },
+    D: {
+      color: "from-red-500 to-red-700",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-200",
+      textColor: "text-red-800",
+      label: "高価格",
+      description: "比較的高価格帯の商品です",
+    },
+  };
+
+  const currentRankInfo = priceRank ? rankInfo[priceRank] : null;
 
   // 価格データを処理（数量・店舗名・単位価格を追加）
   const processedPrices = priceData.map((price) => {
@@ -160,11 +219,26 @@ export function PriceComparison({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 ${className}`}
+      className={`bg-white rounded-xl shadow-sm border border-primary-200 p-6 ${className}`}
     >
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">💰 価格比較（最安値順）</h2>
+      <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+        <TrendingDown size={24} />
+        価格比較（最安値順）
+      </h2>
 
+      {/* ランクバッジ */}
+      {currentRankInfo && (
+        <div
+          className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
+        >
+          <div className="text-white">
+            <p className="text-xl font-bold mb-1">{priceRank}ランク</p>
+            <p className="text-base opacity-90">{currentRankInfo.label}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mb-4">
         {/* セット商品表示トグル */}
         {bulkPrices.length > 0 && (
           <button
@@ -178,13 +252,25 @@ export function PriceComparison({
         )}
       </div>
 
-      <div className="mb-4 space-y-2">
-        <p className="text-sm text-gray-600">
+      {/* ランク説明 */}
+      {currentRankInfo && (
+        <div
+          className={`mb-4 p-4 rounded-lg ${currentRankInfo.bgColor} border ${currentRankInfo.borderColor}`}
+        >
+          <p className={`text-sm ${currentRankInfo.textColor}`}>
+            {currentRankInfo.description}
+          </p>
+        </div>
+      )}
+
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800">
           複数のECサイト・店舗から最安値を比較できます
         </p>
         {showBulkPrices && bulkPrices.length > 0 && (
-          <p className="text-sm text-blue-600">
-            💡 セット商品は単位価格（¥/個）で比較しています
+          <p className="text-sm text-blue-800 mt-2 flex items-start gap-2">
+            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+            セット商品は単位価格（¥/個）で比較しています
           </p>
         )}
       </div>
@@ -271,8 +357,9 @@ export function PriceComparison({
                 </div>
 
                 <div className="flex-shrink-0 ml-4">
-                  <span className="text-blue-600 font-medium text-sm">
-                    購入ページへ →
+                  <span className="text-blue-600 font-medium text-sm flex items-center gap-1">
+                    購入ページへ
+                    <ExternalLink size={16} />
                   </span>
                 </div>
               </div>
@@ -294,9 +381,10 @@ export function PriceComparison({
         })}
       </div>
 
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-        <p className="text-xs text-blue-800">
-          💡 価格は定期的に更新されますが、購入時に変動している場合があります。
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800 flex items-start gap-2">
+          <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+          価格は定期的に更新されますが、購入時に変動している場合があります。
         </p>
       </div>
     </div>

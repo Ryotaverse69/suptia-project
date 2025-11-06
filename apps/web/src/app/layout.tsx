@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     google: process.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION,
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
   openGraph: {
     type: "website",

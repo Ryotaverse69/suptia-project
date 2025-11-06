@@ -236,7 +236,7 @@ export function Footer() {
 
                 {/* Instagram */}
                 <Link
-                  href="https://instagram.com/suptia_jp"
+                  href="https://instagram.com/suptia_official"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 transition-all group"

@@ -26,14 +26,74 @@ interface CostEffectivenessDetailProps {
     servingsPerDay: number;
     servingsPerContainer: number;
   }>;
+  costEffectivenessRank?: "S" | "A" | "B" | "C" | "D";
   className?: string;
 }
 
 export function CostEffectivenessDetail({
   currentProduct,
   similarProducts = [],
+  costEffectivenessRank,
   className = "",
 }: CostEffectivenessDetailProps) {
+  // ランク情報の定義
+  const rankInfo: Record<
+    string,
+    {
+      color: string;
+      bgColor: string;
+      borderColor: string;
+      textColor: string;
+      label: string;
+      description: string;
+    }
+  > = {
+    S: {
+      color: "from-yellow-400 to-orange-500",
+      bgColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
+      textColor: "text-yellow-800",
+      label: "ベストバリュー",
+      description: "最もコストパフォーマンスに優れています",
+    },
+    A: {
+      color: "from-blue-500 to-blue-700",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      textColor: "text-blue-800",
+      label: "優良コスパ",
+      description: "非常に優れたコストパフォーマンスです",
+    },
+    B: {
+      color: "from-green-500 to-green-700",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
+      textColor: "text-green-800",
+      label: "標準コスパ",
+      description: "標準的なコストパフォーマンスです",
+    },
+    C: {
+      color: "from-yellow-500 to-yellow-700",
+      bgColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
+      textColor: "text-yellow-800",
+      label: "やや割高",
+      description: "コストパフォーマンスはやや低めです",
+    },
+    D: {
+      color: "from-red-500 to-red-700",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-200",
+      textColor: "text-red-800",
+      label: "割高",
+      description: "コストパフォーマンスは低めです",
+    },
+  };
+
+  const currentRankInfo = costEffectivenessRank
+    ? rankInfo[costEffectivenessRank]
+    : null;
+
   // コスパ計算関数
   const calculateCostPerMg = (product: typeof currentProduct) => {
     const totalIngredientMg =
@@ -77,17 +137,42 @@ export function CostEffectivenessDetail({
         コストパフォーマンス分析
       </h2>
 
-      {/* ベストバリューバッジ */}
-      {isBestValue && (
-        <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg">
-          <div className="flex items-center gap-2 text-yellow-800">
-            <Award size={24} />
-            <div>
-              <p className="font-bold text-lg">💡 ベストバリュー</p>
-              <p className="text-sm">
-                同じ成分を含む商品の中で、最もコストパフォーマンスが優れています！
-              </p>
+      {/* ランクバッジ */}
+      {currentRankInfo && (
+        <div
+          className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
+        >
+          <div className="text-white">
+            <p className="text-xl font-bold mb-1">
+              {costEffectivenessRank}ランク
+            </p>
+            <p className="text-base opacity-90">{currentRankInfo.label}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ランク説明 */}
+      {currentRankInfo && (
+        <div
+          className={`mb-6 p-4 rounded-lg ${currentRankInfo.bgColor} border ${currentRankInfo.borderColor}`}
+        >
+          <p className={`text-sm ${currentRankInfo.textColor}`}>
+            {currentRankInfo.description}
+          </p>
+        </div>
+      )}
+
+      {/* ベストバリューバッジ（旧バッジ - Sランクの場合に表示） */}
+      {isBestValue && costEffectivenessRank === "S" && (
+        <div className="mb-6 p-6 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400">
+          <div className="text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <Award size={28} />
+              <p className="text-2xl font-bold">ベストバリュー</p>
             </div>
+            <p className="text-lg opacity-90">
+              同じ成分を含む商品の中で、最もコストパフォーマンスが優れています
+            </p>
           </div>
         </div>
       )}
@@ -117,9 +202,9 @@ export function CostEffectivenessDetail({
       </div>
 
       {/* 詳細計算 */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">計算の詳細</h3>
-        <div className="space-y-2 text-sm text-gray-600">
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="text-sm font-semibold text-blue-900 mb-3">計算の詳細</h3>
+        <div className="space-y-2 text-sm text-blue-800">
           <div className="flex justify-between">
             <span>商品価格:</span>
             <span className="font-mono">
@@ -161,20 +246,15 @@ export function CostEffectivenessDetail({
 
       {/* 比較の結果（比較セクションの上に表示） */}
       {sortedByCostPerMg.length > 1 && (
-        <div className="mb-6 p-5 bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-400 rounded-xl shadow-md">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 text-3xl">📊</div>
-            <div>
-              <h3 className="text-lg font-bold text-blue-900 mb-2">
-                比較の結果
-              </h3>
-              <p className="text-base text-blue-800 leading-relaxed">
-                {isBestValue
-                  ? "この商品は最もコストパフォーマンスに優れています。同じ成分をより安く摂取できます。"
-                  : `最もコスパの良い商品と比較すると、1mgあたり¥${(currentCostPerMg - sortedByCostPerMg[0].costPerMg).toFixed(2)}高くなります。`}
-              </p>
-            </div>
-          </div>
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-base font-semibold text-blue-900 mb-2">
+            比較の結果
+          </h3>
+          <p className="text-sm text-blue-800 leading-relaxed">
+            {isBestValue
+              ? "この商品は最もコストパフォーマンスに優れています。同じ成分をより安く摂取できます。"
+              : `最もコスパの良い商品と比較すると、1mgあたり¥${(currentCostPerMg - sortedByCostPerMg[0].costPerMg).toFixed(2)}高くなります。`}
+          </p>
         </div>
       )}
 
@@ -223,8 +303,9 @@ export function CostEffectivenessDetail({
                               {product.isCurrent && " (この商品)"}
                             </div>
                             {index === 0 && (
-                              <span className="inline-block px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
-                                💡 最高コスパ
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold rounded-full">
+                                <Award size={12} />
+                                最高コスパ
                               </span>
                             )}
                           </div>

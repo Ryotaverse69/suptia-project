@@ -183,22 +183,16 @@ function calculateCostPerMg(product: ProductForBadgeEvaluation): number | null {
     return null;
   }
 
-  if (
-    !product.servingsPerContainer ||
-    !product.servingsPerDay ||
-    product.servingsPerContainer === 0 ||
-    product.servingsPerDay === 0
-  ) {
+  if (!product.servingsPerContainer || product.servingsPerContainer === 0) {
     return null;
   }
 
-  // 1日あたりの成分量
+  // 総成分量（mg）
   const totalIngredientMg =
     product.ingredientAmount * product.servingsPerContainer;
-  const dailyIngredientMg = totalIngredientMg / product.servingsPerDay;
 
   // 1mgあたりの価格
-  return product.priceJPY / dailyIngredientMg;
+  return product.priceJPY / totalIngredientMg;
 }
 
 /**

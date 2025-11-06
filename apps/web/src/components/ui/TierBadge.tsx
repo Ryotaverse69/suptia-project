@@ -293,19 +293,67 @@ export function OverallRankBadge({
  */
 export function PerfectProductBanner() {
   return (
-    <div
-      className="relative overflow-hidden rounded-xl shadow-2xl px-6 py-3.5
-      bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400
-      flex items-center justify-center gap-3
-      before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent
-      before:animate-shimmer
-      animate-pulse-slow"
-    >
-      <span className="text-2xl drop-shadow-lg animate-bounce-slow">🏆</span>
-      <span className="font-bold text-base text-white drop-shadow-md tracking-wide">
-        5冠達成！すべてSランクの最高品質
-      </span>
-      <span className="text-2xl drop-shadow-lg animate-bounce-slow">🏆</span>
+    <div className="relative overflow-hidden rounded-2xl px-8 py-4">
+      {/* 背景グロウエフェクト（複数レイヤー） */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-yellow-500 opacity-90 blur-md"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-400 to-yellow-400"></div>
+
+      {/* キラキラシマーエフェクト */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+
+      {/* グラデーショングロウ（左右） */}
+      <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-24 h-24 bg-purple-400 rounded-full blur-2xl opacity-60 animate-pulse"></div>
+      <div className="absolute -right-12 top-1/2 -translate-y-1/2 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-60 animate-pulse"></div>
+
+      {/* コンテンツ */}
+      <div className="relative flex items-center justify-center gap-4">
+        {/* 左側の星 */}
+        <div className="flex gap-1">
+          <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-bounce-slow">
+            ⭐
+          </span>
+          <span className="text-xl drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse">
+            ✨
+          </span>
+        </div>
+
+        {/* メインテキスト */}
+        <div className="flex flex-col items-center">
+          <div
+            className="font-black text-xl tracking-wider uppercase text-white"
+            style={{
+              textShadow: `
+                0 0 10px rgba(255,255,255,0.8),
+                0 0 20px rgba(255,215,0,0.6),
+                0 0 30px rgba(255,105,180,0.4),
+                0 2px 4px rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.2)
+              `,
+            }}
+          >
+            PERFECT 5 CROWN
+          </div>
+          <div className="text-xs font-semibold text-white/90 mt-0.5 tracking-wide drop-shadow-md">
+            全評価でSランク達成
+          </div>
+        </div>
+
+        {/* 右側の星 */}
+        <div className="flex gap-1">
+          <span className="text-xl drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse">
+            ✨
+          </span>
+          <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-bounce-slow">
+            ⭐
+          </span>
+        </div>
+      </div>
+
+      {/* トップハイライト */}
+      <div className="absolute top-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+
+      {/* ボトムリフレクション */}
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/10 to-transparent"></div>
     </div>
   );
 }

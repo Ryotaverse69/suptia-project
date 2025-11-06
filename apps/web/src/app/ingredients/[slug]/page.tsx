@@ -75,6 +75,7 @@ interface Ingredient {
   sideEffects?: string[];
   interactions?: string[];
   evidenceLevel: string;
+  safetyScore?: number; // 安全性スコア（0-100）
   scientificBackground: string;
   foodSources?: string[];
   coverImage?: {
@@ -172,6 +173,7 @@ async function getIngredient(slug: string): Promise<Ingredient | null> {
     sideEffects,
     interactions,
     evidenceLevel,
+    safetyScore,
     scientificBackground,
     foodSources,
     "coverImage": coverImage{
@@ -548,15 +550,104 @@ export default async function IngredientPage({ params }: Props) {
               />
             </div>
 
-            {/* エビデンスレベル */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-mint/10 border border-accent-mint/30 rounded-lg">
-              <ShieldCheck className="text-accent-mint" size={20} />
-              <span className="text-sm font-medium text-primary-900">
-                科学的根拠レベル：
-                <span className="text-accent-mint ml-1">
-                  {ingredient.evidenceLevel}
-                </span>
-              </span>
+            {/* エビデンスランク・安全性ランク */}
+            <div className="flex flex-wrap gap-4">
+              {/* エビデンスランク */}
+              {ingredient.evidenceLevel &&
+                (() => {
+                  const evidenceRankInfo: Record<
+                    string,
+                    { color: string; label: string }
+                  > = {
+                    S: {
+                      color: "from-purple-500 to-purple-700",
+                      label: "最高レベル",
+                    },
+                    A: {
+                      color: "from-blue-500 to-blue-700",
+                      label: "高い信頼性",
+                    },
+                    B: {
+                      color: "from-green-500 to-green-700",
+                      label: "中程度の信頼性",
+                    },
+                    C: {
+                      color: "from-yellow-500 to-yellow-700",
+                      label: "限定的",
+                    },
+                    D: {
+                      color: "from-red-500 to-red-700",
+                      label: "未検証",
+                    },
+                  };
+                  const info = evidenceRankInfo[ingredient.evidenceLevel];
+                  // evidenceLevelが無効な値の場合は何も表示しない
+                  if (!info) return null;
+                  return (
+                    <div
+                      className={`p-4 rounded-xl bg-gradient-to-r ${info.color}`}
+                    >
+                      <div className="text-white">
+                        <p className="text-sm opacity-90 mb-1">
+                          エビデンスランク
+                        </p>
+                        <p className="text-xl font-bold mb-1">
+                          {ingredient.evidenceLevel}ランク - {info.label}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+              {/* 安全性ランク（将来的にsafetyScoreが追加された場合に表示） */}
+              {ingredient.safetyScore !== undefined &&
+                (() => {
+                  const score = ingredient.safetyScore;
+                  const getSafetyRank = (score: number) => {
+                    if (score >= 90)
+                      return {
+                        grade: "S",
+                        label: "最高レベル",
+                        color: "from-purple-500 to-purple-700",
+                      };
+                    if (score >= 80)
+                      return {
+                        grade: "A",
+                        label: "高い安全性",
+                        color: "from-blue-500 to-blue-700",
+                      };
+                    if (score >= 70)
+                      return {
+                        grade: "B",
+                        label: "中程度の安全性",
+                        color: "from-green-500 to-green-700",
+                      };
+                    if (score >= 60)
+                      return {
+                        grade: "C",
+                        label: "注意が必要",
+                        color: "from-yellow-500 to-yellow-700",
+                      };
+                    return {
+                      grade: "D",
+                      label: "要注意",
+                      color: "from-red-500 to-red-700",
+                    };
+                  };
+                  const safetyInfo = getSafetyRank(score);
+                  return (
+                    <div
+                      className={`p-4 rounded-xl bg-gradient-to-r ${safetyInfo.color}`}
+                    >
+                      <div className="text-white">
+                        <p className="text-sm opacity-90 mb-1">安全性ランク</p>
+                        <p className="text-xl font-bold mb-1">
+                          {safetyInfo.grade}ランク - {safetyInfo.label}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
             </div>
           </header>
 
