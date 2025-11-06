@@ -87,6 +87,8 @@ module.exports = {
         "slide-down-slow": "slide-down 0.3s ease-out",
         "slide-up": "slide-up 0.3s ease-out",
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
+        shimmer: "shimmer 3s infinite",
+        "bounce-slow": "bounce-slow 2s infinite",
       },
       keyframes: {
         "gradient-shift": {
@@ -227,6 +229,22 @@ module.exports = {
           "50%": {
             opacity: "0.9",
             transform: "scale(1.05)",
+          },
+        },
+        shimmer: {
+          "0%": {
+            transform: "translateX(-100%)",
+          },
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
+        "bounce-slow": {
+          "0%, 100%": {
+            transform: "translateY(0)",
+          },
+          "50%": {
+            transform: "translateY(-4px)",
           },
         },
       },

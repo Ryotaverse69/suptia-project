@@ -302,43 +302,6 @@ export function PerfectProductBanner() {
         5冠達成！すべてSランクの最高品質
       </span>
       <span className="text-2xl drop-shadow-lg animate-bounce-slow">🏆</span>
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-        @keyframes bounce-slow {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-4px);
-          }
-        }
-        @keyframes pulse-slow {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.95;
-          }
-        }
-        .animate-shimmer {
-          animation: shimmer 3s infinite;
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 3s infinite;
-        }
-      `}</style>
     </div>
   );
 }
