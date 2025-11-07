@@ -557,26 +557,31 @@ export default async function IngredientPage({ params }: Props) {
                 (() => {
                   const evidenceRankInfo: Record<
                     string,
-                    { color: string; label: string }
+                    { className: string; label: string }
                   > = {
                     S: {
-                      color: "from-purple-500 to-purple-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-purple-600 to-purple-900",
                       label: "最高レベル",
                     },
                     A: {
-                      color: "from-blue-500 to-blue-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800",
                       label: "高い信頼性",
                     },
                     B: {
-                      color: "from-green-500 to-green-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-green-500 to-green-700",
                       label: "中程度の信頼性",
                     },
                     C: {
-                      color: "from-yellow-500 to-yellow-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-700",
                       label: "限定的",
                     },
                     D: {
-                      color: "from-red-500 to-red-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-red-500 to-red-700",
                       label: "未検証",
                     },
                   };
@@ -584,9 +589,7 @@ export default async function IngredientPage({ params }: Props) {
                   // evidenceLevelが無効な値の場合は何も表示しない
                   if (!info) return null;
                   return (
-                    <div
-                      className={`p-4 rounded-xl bg-gradient-to-r ${info.color}`}
-                    >
+                    <div className={info.className}>
                       <div className="text-white">
                         <p className="text-sm opacity-90 mb-1">
                           エビデンスランク
@@ -608,37 +611,40 @@ export default async function IngredientPage({ params }: Props) {
                       return {
                         grade: "S",
                         label: "最高レベル",
-                        color: "from-purple-500 to-purple-700",
+                        className:
+                          "p-4 rounded-xl bg-gradient-to-r from-purple-600 to-purple-900",
                       };
                     if (score >= 80)
                       return {
                         grade: "A",
                         label: "高い安全性",
-                        color: "from-blue-500 to-blue-700",
+                        className:
+                          "p-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800",
                       };
                     if (score >= 70)
                       return {
                         grade: "B",
                         label: "中程度の安全性",
-                        color: "from-green-500 to-green-700",
+                        className:
+                          "p-4 rounded-xl bg-gradient-to-r from-green-500 to-green-700",
                       };
                     if (score >= 60)
                       return {
                         grade: "C",
                         label: "注意が必要",
-                        color: "from-yellow-500 to-yellow-700",
+                        className:
+                          "p-4 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-700",
                       };
                     return {
                       grade: "D",
                       label: "要注意",
-                      color: "from-red-500 to-red-700",
+                      className:
+                        "p-4 rounded-xl bg-gradient-to-r from-red-500 to-red-700",
                     };
                   };
                   const safetyInfo = getSafetyRank(score);
                   return (
-                    <div
-                      className={`p-4 rounded-xl bg-gradient-to-r ${safetyInfo.color}`}
-                    >
+                    <div className={safetyInfo.className}>
                       <div className="text-white">
                         <p className="text-sm opacity-90 mb-1">安全性ランク</p>
                         <p className="text-xl font-bold mb-1">

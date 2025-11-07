@@ -336,7 +336,11 @@ async function getSimilarProducts(
       name,
       slug,
       'imageUrl': coalesce(images[0].asset->url, externalImageUrl),
-      'ingredientAmount': ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing,
+      'ingredientAmount': coalesce(
+        ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing,
+        ingredients[0].amountMgPerServing,
+        1000
+      ),
       servingsPerDay,
       priceJPY,
       servingsPerContainer
@@ -347,7 +351,12 @@ async function getSimilarProducts(
       mainIngredientId,
     });
 
-    return products || [];
+    // デフォルト値を持つ商品をフィルタリング（成分量が実際に設定されている商品のみ）
+    const validProducts = products.filter(
+      (p: any) => p.ingredientAmount && p.ingredientAmount > 0,
+    );
+
+    return validProducts || [];
   } catch (error) {
     console.error("Failed to fetch similar products:", error);
     return [];

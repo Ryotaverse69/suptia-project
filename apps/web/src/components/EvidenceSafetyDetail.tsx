@@ -65,7 +65,12 @@ export function EvidenceSafetyDetail({
       label: "エビデンスS - 最高レベル",
       description:
         "大規模なランダム化比較試験（RCT）やメタ解析により、高い効果が実証されています。",
-      color: "from-purple-500 to-purple-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-purple-600 to-purple-900 mb-4",
+      mediumBadgeClassName:
+        "inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-purple-900 text-white font-bold",
+      smallBadgeClassName:
+        "inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-purple-900 text-white text-xs font-bold",
       bgColor: "bg-purple-50",
       borderColor: "border-purple-300",
       textColor: "text-purple-900",
@@ -74,7 +79,12 @@ export function EvidenceSafetyDetail({
       label: "エビデンスA - 高い信頼性",
       description:
         "良質な研究により効果が確認されています。複数の研究で一貫した結果が得られています。",
-      color: "from-blue-500 to-blue-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 mb-4",
+      mediumBadgeClassName:
+        "inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold",
+      smallBadgeClassName:
+        "inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs font-bold",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-300",
       textColor: "text-blue-900",
@@ -83,7 +93,12 @@ export function EvidenceSafetyDetail({
       label: "エビデンスB - 中程度の信頼性",
       description:
         "限定的な研究または条件付きで効果が確認されています。さらなる研究が期待されます。",
-      color: "from-green-500 to-green-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-green-500 to-green-700 mb-4",
+      mediumBadgeClassName:
+        "inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-green-700 text-white font-bold",
+      smallBadgeClassName:
+        "inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-green-500 to-green-700 text-white text-xs font-bold",
       bgColor: "bg-green-50",
       borderColor: "border-green-300",
       textColor: "text-green-900",
@@ -92,7 +107,12 @@ export function EvidenceSafetyDetail({
       label: "エビデンスC - 限定的",
       description:
         "動物実験や小規模な試験レベルです。人間への効果は十分に実証されていません。",
-      color: "from-yellow-500 to-yellow-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-700 mb-4",
+      mediumBadgeClassName:
+        "inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-bold",
+      smallBadgeClassName:
+        "inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-700 text-white text-xs font-bold",
       bgColor: "bg-yellow-50",
       borderColor: "border-yellow-300",
       textColor: "text-yellow-900",
@@ -100,7 +120,12 @@ export function EvidenceSafetyDetail({
     D: {
       label: "エビデンスD - 未検証",
       description: "理論的根拠のみで、科学的研究による実証が不十分です。",
-      color: "from-red-500 to-red-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-red-500 to-red-700 mb-4",
+      mediumBadgeClassName:
+        "inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-red-500 to-red-700 text-white font-bold",
+      smallBadgeClassName:
+        "inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-red-500 to-red-700 text-white text-xs font-bold",
       bgColor: "bg-red-50",
       borderColor: "border-red-300",
       textColor: "text-red-900",
@@ -120,7 +145,8 @@ export function EvidenceSafetyDetail({
         label: "安全性S - 最高レベル",
         description:
           "非常に高い安全性が確認されています。重大な副作用の報告がなく、長期使用の実績があります。",
-        color: "from-purple-500 to-purple-700",
+        badgeClassName:
+          "p-4 rounded-xl bg-gradient-to-r from-purple-600 to-purple-900 mb-4",
         bgColor: "bg-purple-50",
         borderColor: "border-purple-300",
         textColor: "text-purple-900",
@@ -132,7 +158,8 @@ export function EvidenceSafetyDetail({
         label: "安全性A - 高い安全性",
         description:
           "高い安全性が確認されています。適切な使用下では問題ありません。",
-        color: "from-blue-500 to-blue-700",
+        badgeClassName:
+          "p-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 mb-4",
         bgColor: "bg-blue-50",
         borderColor: "border-blue-300",
         textColor: "text-blue-900",
@@ -144,7 +171,8 @@ export function EvidenceSafetyDetail({
         label: "安全性B - 中程度の安全性",
         description:
           "一般的に安全ですが、一部の方には注意が必要な場合があります。",
-        color: "from-green-500 to-green-700",
+        badgeClassName:
+          "p-4 rounded-xl bg-gradient-to-r from-green-500 to-green-700 mb-4",
         bgColor: "bg-green-50",
         borderColor: "border-green-300",
         textColor: "text-green-900",
@@ -155,7 +183,8 @@ export function EvidenceSafetyDetail({
         grade: "C",
         label: "安全性C - 注意が必要",
         description: "使用には注意が必要です。医師への相談を推奨します。",
-        color: "from-yellow-500 to-yellow-700",
+        badgeClassName:
+          "p-4 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-700 mb-4",
         bgColor: "bg-yellow-50",
         borderColor: "border-yellow-300",
         textColor: "text-yellow-900",
@@ -166,7 +195,8 @@ export function EvidenceSafetyDetail({
       label: "安全性D - 要注意",
       description:
         "安全性に懸念があります。使用前に必ず医師に相談してください。",
-      color: "from-red-500 to-red-700",
+      badgeClassName:
+        "p-4 rounded-xl bg-gradient-to-r from-red-500 to-red-700 mb-4",
       bgColor: "bg-red-50",
       borderColor: "border-red-300",
       textColor: "text-red-900",
@@ -187,9 +217,7 @@ export function EvidenceSafetyDetail({
         </h2>
 
         {/* エビデンスレベルバッジ */}
-        <div
-          className={`p-4 rounded-xl bg-gradient-to-r ${currentEvidenceInfo.color} mb-4`}
-        >
+        <div className={currentEvidenceInfo.badgeClassName}>
           <div className="text-white">
             <p className="text-xl font-bold mb-1">
               {evidenceLevel || "D"}ランク
@@ -252,9 +280,7 @@ export function EvidenceSafetyDetail({
                         <p className="font-semibold text-gray-800">
                           {detail.name}
                         </p>
-                        <span
-                          className={`inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r ${levelInfo.color} text-white text-xs font-bold`}
-                        >
+                        <span className={levelInfo.smallBadgeClassName}>
                           {detail.evidenceLevel}
                         </span>
                       </div>
@@ -317,7 +343,10 @@ export function EvidenceSafetyDetail({
                     {ingredientName}:
                   </span>
                   <span
-                    className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${evidenceLevelInfo[ingredientEvidenceLevel]?.color} text-white font-bold`}
+                    className={
+                      evidenceLevelInfo[ingredientEvidenceLevel]
+                        ?.mediumBadgeClassName
+                    }
                   >
                     {ingredientEvidenceLevel}
                   </span>
@@ -342,9 +371,7 @@ export function EvidenceSafetyDetail({
         </h2>
 
         {/* 安全性レベルバッジ */}
-        <div
-          className={`p-4 rounded-xl bg-gradient-to-r ${safetyLevel.color} mb-4`}
-        >
+        <div className={safetyLevel.badgeClassName}>
           <div className="text-white">
             <p className="text-xl font-bold mb-1">{safetyLevel.grade}ランク</p>
             <p className="text-base opacity-90">{safetyLevel.label}</p>

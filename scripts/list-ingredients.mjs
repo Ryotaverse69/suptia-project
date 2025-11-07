@@ -1,83 +1,69 @@
 #!/usr/bin/env node
 
-/**
- * 成分リスト取得スクリプト
- */
-
 import { createClient } from "@sanity/client";
-import { readFileSync } from "fs";
+import { config } from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+config({ path: join(__dirname, "../apps/web/.env.local") });
 
-// .env.localを手動でパース
-const envPath = join(__dirname, "../apps/web/.env.local");
-const envFile = readFileSync(envPath, "utf-8");
-const env = {};
-envFile.split("\n").forEach((line) => {
-  const match = line.match(/^([^=]+)=(.*)$/);
-  if (match) {
-    env[match[1].trim()] = match[2].trim();
-  }
-});
+const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "fny3jdcg";
+const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const SANITY_API_TOKEN = process.env.SANITY_API_TOKEN;
+
+if (!SANITY_API_TOKEN) {
+  console.error("❌ エラー: SANITY_API_TOKEN環境変数が設定されていません");
+  process.exit(1);
+}
 
 const client = createClient({
-  projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: "2025-07-01",
+  projectId: SANITY_PROJECT_ID,
+  dataset: SANITY_DATASET,
+  token: SANITY_API_TOKEN,
+  apiVersion: "2024-01-01",
   useCdn: false,
-  token: env.SANITY_API_TOKEN,
 });
 
 async function listIngredients() {
+  console.log('🔍 Sanityに登録されている成分一覧...\n');
+
   try {
     const ingredients = await client.fetch(
-      `*[_type == "ingredient"] | order(name asc) {
+      `*[_type == "ingredient"] | order(name asc){
         _id,
         name,
         nameEn,
-        "slug": slug.current,
         category,
         evidenceLevel,
-        relatedGoals,
-        contraindications
+        safetyScore
       }`
     );
 
-    console.log(`\n📋 成分一覧（${ingredients.length}件）\n`);
+    console.log(`📊 全${ingredients.length}件の成分が登録されています\n`);
 
     ingredients.forEach((ing, index) => {
       console.log(`${index + 1}. ${ing.name} (${ing.nameEn})`);
-      console.log(`   カテゴリ: ${ing.category || "未設定"}`);
-      console.log(`   エビデンス: ${ing.evidenceLevel || "未設定"}`);
-      console.log(
-        `   健康目標: ${ing.relatedGoals?.length || 0}個${ing.relatedGoals?.length > 0 ? ` (${ing.relatedGoals.join(", ")})` : ""}`
-      );
-      console.log(
-        `   禁忌タグ: ${ing.contraindications?.length || 0}個${ing.contraindications?.length > 0 ? ` (${ing.contraindications.join(", ")})` : ""}`
-      );
-      console.log(`   Slug: ${ing.slug}`);
-      console.log(`   ID: ${ing._id}\n`);
+      console.log(`   _id: ${ing._id}`);
+      console.log(`   カテゴリ: ${ing.category || '未設定'}`);
+      console.log(`   エビデンスレベル: ${ing.evidenceLevel || '未設定'}`);
+      console.log(`   安全性スコア: ${ing.safetyScore || '未設定'}`);
+      console.log('');
     });
 
-    // カテゴリ別集計
-    const categoryStats = ingredients.reduce((acc, ing) => {
-      const cat = ing.category || "未分類";
-      acc[cat] = (acc[cat] || 0) + 1;
-      return acc;
-    }, {});
-
-    console.log("\n📊 カテゴリ別統計:");
-    Object.entries(categoryStats)
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([category, count]) => {
-        console.log(`   ${category}: ${count}件`);
-      });
   } catch (error) {
-    console.error("❌ エラー:", error.message);
+    console.error('❌ エラーが発生しました:', error);
+    process.exit(1);
   }
 }
 
-listIngredients();
+listIngredients()
+  .then(() => {
+    console.log('\n✅ 完了');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('❌ エラーが発生しました:', error);
+    process.exit(1);
+  });
