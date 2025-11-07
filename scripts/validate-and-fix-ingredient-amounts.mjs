@@ -122,7 +122,27 @@ const INGREDIENT_VALIDATION_RULES = {
 };
 
 /**
- * 成分量を商品名から再抽出
+ * ブランド別の標準的な成分量（よく使われる量）
+ */
+const BRAND_STANDARD_AMOUNTS = {
+  "DHC": {
+    "ingredient-vitamin-d": 0.025, // 25μg (1000IU)
+    "ingredient-calcium": 300, // 300mg
+    "ingredient-vitamin-c": 1000, // 1000mg
+    "ingredient-vitamin-e": 100, // 100mg
+  },
+  "ネイチャーメイド": {
+    "ingredient-vitamin-d": 0.025, // 25μg
+    "ingredient-calcium": 200, // 200mg
+  },
+  "FANCL": {
+    "ingredient-vitamin-d": 0.03, // 30μg
+    "ingredient-calcium": 300, // 300mg
+  },
+};
+
+/**
+ * 成分量を商品名から再抽出（改善版）
  */
 function extractAmountFromProductName(productName, ingredientId) {
   const rule = INGREDIENT_VALIDATION_RULES[ingredientId];
@@ -130,41 +150,63 @@ function extractAmountFromProductName(productName, ingredientId) {
 
   const name = productName.toLowerCase();
 
-  // 成分別の抽出パターン
+  // より包括的な抽出パターン（「配合」「含有」「含む」などに対応）
   const patterns = {
     "ingredient-vitamin-d": [
-      { regex: /(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug)/i, converter: (v) => parseFloat(v) / 1000 },
-      { regex: /(\d+)\s*iu/i, converter: (v) => parseFloat(v) * 0.025 / 1000 },
+      // マイクログラム表記（配合/含有/含む などの後）
+      { regex: /(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug|マイクログラム)(?:配合|含有|含む|の|が)?/i, converter: (v) => parseFloat(v) / 1000 },
+      // IU表記
+      { regex: /(\d+(?:,\d+)?)\s*iu/i, converter: (v) => parseFloat(v.replace(/,/g, '')) * 0.025 / 1000 },
+      // 成分名の近くの数値
+      { regex: /(?:ビタミン|vitamin)\s*d[3]?\s*[：:・\s]+(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug)/i, converter: (v) => parseFloat(v) / 1000 },
     ],
     "ingredient-vitamin-c": [
-      { regex: /(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /(\d+(?:,\d+)?(?:\.\d+)?)\s*(?:mg|ミリグラム)(?:配合|含有|含む)?/i, converter: (v) => parseFloat(v.replace(/,/g, '')) },
+      { regex: /(?:ビタミン|vitamin)\s*c\s*[：:・\s]+(\d+(?:,\d+)?)\s*mg/i, converter: (v) => parseFloat(v.replace(/,/g, '')) },
     ],
     "ingredient-calcium": [
-      { regex: /カルシウム.*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /カルシウム[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /calcium[：:・\s]*(\d+)\s*mg/i, converter: (v) => parseFloat(v) },
     ],
     "ingredient-magnesium": [
-      { regex: /マグネシウム.*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /マグネシウム[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /magnesium[：:・\s]*(\d+)\s*mg/i, converter: (v) => parseFloat(v) },
     ],
     "ingredient-omega-3": [
-      { regex: /(?:dha|epa).*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /(?:dha|epa)[+&・]?(?:dha|epa)?[：:・\s]*(\d+(?:,\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v.replace(/,/g, '')) },
+      { regex: /(\d+(?:,\d+)?)\s*mg.*(?:dha|epa)/i, converter: (v) => parseFloat(v.replace(/,/g, '')) },
     ],
     "ingredient-zinc": [
-      { regex: /亜鉛.*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /亜鉛[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /zinc[：:・\s]*(\d+)\s*mg/i, converter: (v) => parseFloat(v) },
     ],
     "ingredient-folic-acid": [
-      { regex: /葉酸.*?(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug)/i, converter: (v) => parseFloat(v) / 1000 },
+      { regex: /葉酸[：:・\s]*(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug|マイクログラム)/i, converter: (v) => parseFloat(v) / 1000 },
+      { regex: /folic\s*acid[：:・\s]*(\d+)\s*(?:μg|mcg)/i, converter: (v) => parseFloat(v) / 1000 },
     ],
     "ingredient-iron": [
-      { regex: /鉄.*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /鉄[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /iron[：:・\s]*(\d+)\s*mg/i, converter: (v) => parseFloat(v) },
     ],
     "ingredient-lutein": [
-      { regex: /ルテイン.*?(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /ルテイン[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+      { regex: /lutein[：:・\s]*(\d+)\s*mg/i, converter: (v) => parseFloat(v) },
+    ],
+    "ingredient-vitamin-e": [
+      { regex: /(?:ビタミン|vitamin)\s*e[：:・\s]*(\d+(?:\.\d+)?)\s*(?:mg|ミリグラム)/i, converter: (v) => parseFloat(v) },
+    ],
+    "ingredient-vitamin-a": [
+      { regex: /(?:ビタミン|vitamin)\s*a[：:・\s]*(\d+(?:\.\d+)?)\s*(?:μg|mcg|ug)/i, converter: (v) => parseFloat(v) / 1000 },
     ],
   };
 
   const extractPatterns = patterns[ingredientId];
-  if (!extractPatterns) return null;
+  if (!extractPatterns) {
+    // パターンが未定義の場合、典型的な量を返す
+    return rule.typicalAmountMg;
+  }
 
+  // パターンマッチングを試行
   for (const { regex, converter } of extractPatterns) {
     const match = name.match(regex);
     if (match) {
@@ -176,7 +218,15 @@ function extractAmountFromProductName(productName, ingredientId) {
     }
   }
 
-  return null;
+  // ブランド別の標準量を試す
+  for (const [brandName, brandAmounts] of Object.entries(BRAND_STANDARD_AMOUNTS)) {
+    if (productName.includes(brandName) && brandAmounts[ingredientId]) {
+      return brandAmounts[ingredientId];
+    }
+  }
+
+  // それでも抽出できない場合、典型的な量を返す
+  return rule.typicalAmountMg;
 }
 
 /**
