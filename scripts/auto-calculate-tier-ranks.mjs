@@ -1,0 +1,329 @@
+#!/usr/bin/env node
+
+/**
+ * Tierランク自動計算・更新スクリプト
+ *
+ * 目的:
+ * 1. 実際のデータ（価格、成分量、コスパなど）からTierランクを自動計算
+ * 2. Sanityの各商品のtierRatingsフィールドを自動更新
+ * 3. 手動設定との不一致を解消
+ */
+
+import { createClient } from "@sanity/client";
+import { config } from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+config({ path: join(__dirname, "../apps/web/.env.local") });
+
+const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "fny3jdcg";
+const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const SANITY_API_TOKEN = process.env.SANITY_API_TOKEN;
+
+if (!SANITY_API_TOKEN) {
+  console.error("❌ エラー: SANITY_API_TOKEN環境変数が設定されていません");
+  process.exit(1);
+}
+
+const client = createClient({
+  projectId: SANITY_PROJECT_ID,
+  dataset: SANITY_DATASET,
+  token: SANITY_API_TOKEN,
+  apiVersion: "2024-01-01",
+  useCdn: false,
+});
+
+// コマンドライン引数
+const shouldFix = process.argv.includes("--fix");
+const isDryRun = !shouldFix;
+
+/**
+ * スコアをS/A/B/C/Dランクに変換
+ * @param {number} score 0-100のスコア
+ * @param {boolean} reverse trueの場合、低い方が良い（価格など）
+ * @returns {string} S/A/B/C/D
+ */
+function scoreToRank(score, reverse = false) {
+  const adjustedScore = reverse ? 100 - score : score;
+
+  if (adjustedScore >= 90) return "S";
+  if (adjustedScore >= 80) return "A";
+  if (adjustedScore >= 70) return "B";
+  if (adjustedScore >= 60) return "C";
+  return "D";
+}
+
+/**
+ * パーセンタイルを計算（値の配列内での順位）
+ * @param {number} value 評価する値
+ * @param {number[]} values 比較対象の値の配列
+ * @param {boolean} lowerIsBetter trueの場合、低い方が良い
+ * @returns {number} 0-100のパーセンタイル
+ */
+function calculatePercentile(value, values, lowerIsBetter = false) {
+  if (values.length === 0) return 50;
+
+  const sortedValues = [...values].sort((a, b) => a - b);
+  const index = sortedValues.findIndex(v => v >= value);
+
+  if (index === -1) {
+    return lowerIsBetter ? 0 : 100;
+  }
+
+  const percentile = (index / sortedValues.length) * 100;
+  return lowerIsBetter ? 100 - percentile : percentile;
+}
+
+/**
+ * Tierランクを自動計算
+ */
+async function calculateTierRanks() {
+  console.log(`🔍 Tierランクの自動計算を開始${isDryRun ? '（プレビューモード）' : ''}...\n`);
+
+  try {
+    // 全商品を取得
+    const products = await client.fetch(
+      `*[_type == "product" && availability == "in-stock"] | order(name asc){
+        _id,
+        name,
+        priceJPY,
+        servingsPerDay,
+        servingsPerContainer,
+        ingredients[]{
+          amountMgPerServing,
+          ingredient->{
+            _id,
+            name
+          }
+        },
+        scores,
+        tierRatings,
+        references,
+        warnings
+      }`
+    );
+
+    console.log(`📊 全${products.length}件の商品を分析\n`);
+
+    // 成分別にグループ化
+    const ingredientGroups = {};
+
+    for (const product of products) {
+      if (!product.ingredients || product.ingredients.length === 0) continue;
+
+      for (const ing of product.ingredients) {
+        if (!ing.ingredient || !ing.ingredient._id) continue;
+        if (!ing.amountMgPerServing || ing.amountMgPerServing <= 0) continue;
+
+        const ingredientId = ing.ingredient._id;
+
+        if (!ingredientGroups[ingredientId]) {
+          ingredientGroups[ingredientId] = {
+            name: ing.ingredient.name,
+            products: [],
+          };
+        }
+
+        const costPerDay = product.priceJPY / (product.servingsPerContainer / product.servingsPerDay);
+        const costPerMg = product.priceJPY / (ing.amountMgPerServing * product.servingsPerContainer);
+
+        ingredientGroups[ingredientId].products.push({
+          productId: product._id,
+          productName: product.name,
+          price: product.priceJPY,
+          costPerDay,
+          costPerMg,
+          amount: ing.amountMgPerServing,
+          safetyScore: product.scores?.safety || 50,
+          evidenceScore: product.scores?.evidence || 50,
+          referenceCount: product.references?.length || 0,
+          warningCount: product.warnings?.length || 0,
+          currentTierRatings: product.tierRatings,
+        });
+      }
+    }
+
+    // 各成分グループ内でランクを計算
+    const updates = [];
+
+    for (const [ingredientId, group] of Object.entries(ingredientGroups)) {
+      const { products: groupProducts } = group;
+
+      // 各指標の値の配列を抽出
+      const prices = groupProducts.map(p => p.price);
+      const costsPerMg = groupProducts.map(p => p.costPerMg);
+      const amounts = groupProducts.map(p => p.amount);
+      const safetyScores = groupProducts.map(p => p.safetyScore);
+      const evidenceScores = groupProducts.map(p => p.evidenceScore);
+
+      for (const productData of groupProducts) {
+        // 1. 価格ランク（安い方が良い）
+        const pricePercentile = calculatePercentile(productData.price, prices, true);
+        const priceRank = scoreToRank(pricePercentile);
+
+        // 2. コスパランク（コスト/mgが低い方が良い）
+        const costPerMgPercentile = calculatePercentile(productData.costPerMg, costsPerMg, true);
+        const costEffectivenessRank = scoreToRank(costPerMgPercentile);
+
+        // 3. 含有量ランク（多い方が良い）
+        const contentPercentile = calculatePercentile(productData.amount, amounts, false);
+        const contentRank = scoreToRank(contentPercentile);
+
+        // 4. エビデンスランク（evidenceScoreベース + 参考文献数ボーナス）
+        let evidencePercentile = calculatePercentile(productData.evidenceScore, evidenceScores, false);
+        // 参考文献が5件以上ある場合、+10点ボーナス
+        if (productData.referenceCount >= 5) {
+          evidencePercentile = Math.min(100, evidencePercentile + 10);
+        }
+        const evidenceRank = scoreToRank(evidencePercentile);
+
+        // 5. 安全性ランク（safetyScoreベース - 警告数ペナルティ）
+        let safetyPercentile = calculatePercentile(productData.safetyScore, safetyScores, false);
+        // 警告が3件以上ある場合、-10点ペナルティ
+        if (productData.warningCount >= 3) {
+          safetyPercentile = Math.max(0, safetyPercentile - 10);
+        }
+        const safetyRank = scoreToRank(safetyPercentile);
+
+        // 6. 総合評価ランク（5つのランクの平均）
+        const rankValues = { S: 100, A: 85, B: 75, C: 65, D: 50 };
+        const overallScore = (
+          rankValues[priceRank] +
+          rankValues[costEffectivenessRank] +
+          rankValues[contentRank] +
+          rankValues[evidenceRank] +
+          rankValues[safetyRank]
+        ) / 5;
+
+        // 5冠達成の場合はS+
+        const isFiveCrown =
+          priceRank === "S" &&
+          costEffectivenessRank === "S" &&
+          contentRank === "S" &&
+          evidenceRank === "S" &&
+          safetyRank === "S";
+
+        const overallRank = isFiveCrown ? "S+" : scoreToRank(overallScore);
+
+        const newTierRatings = {
+          priceRank,
+          costEffectivenessRank,
+          contentRank,
+          evidenceRank,
+          safetyRank,
+          overallRank,
+        };
+
+        // 変更があるかチェック
+        const hasChanges =
+          !productData.currentTierRatings ||
+          productData.currentTierRatings.priceRank !== priceRank ||
+          productData.currentTierRatings.costEffectivenessRank !== costEffectivenessRank ||
+          productData.currentTierRatings.contentRank !== contentRank ||
+          productData.currentTierRatings.evidenceRank !== evidenceRank ||
+          productData.currentTierRatings.safetyRank !== safetyRank ||
+          productData.currentTierRatings.overallRank !== overallRank;
+
+        if (hasChanges) {
+          updates.push({
+            productId: productData.productId,
+            productName: productData.productName,
+            ingredientName: group.name,
+            oldTierRatings: productData.currentTierRatings,
+            newTierRatings,
+            details: {
+              price: `¥${productData.price.toLocaleString()}`,
+              costPerMg: `¥${productData.costPerMg.toFixed(4)}/mg`,
+              amount: `${productData.amount.toFixed(2)}mg`,
+              safetyScore: productData.safetyScore,
+              evidenceScore: productData.evidenceScore,
+            },
+          });
+        }
+      }
+    }
+
+    // 結果表示
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('📈 Tierランク計算結果');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+    console.log(`🔄 更新が必要な商品: ${updates.length}件\n`);
+
+    if (updates.length > 0) {
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📋 更新内容（最初の30件）');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+      for (const [index, update] of updates.slice(0, 30).entries()) {
+        console.log(`${index + 1}. ${update.productName.substring(0, 60)}...`);
+        console.log(`   成分: ${update.ingredientName}`);
+        console.log(`   価格: ${update.details.price} | コスト/mg: ${update.details.costPerMg} | 含有量: ${update.details.amount}`);
+
+        if (update.oldTierRatings) {
+          console.log(`   現在: 💰${update.oldTierRatings.priceRank} 💡${update.oldTierRatings.costEffectivenessRank} 📊${update.oldTierRatings.contentRank} 🔬${update.oldTierRatings.evidenceRank} 🛡️${update.oldTierRatings.safetyRank} ⭐${update.oldTierRatings.overallRank}`);
+        } else {
+          console.log(`   現在: ランク未設定`);
+        }
+
+        console.log(`   更新: 💰${update.newTierRatings.priceRank} 💡${update.newTierRatings.costEffectivenessRank} 📊${update.newTierRatings.contentRank} 🔬${update.newTierRatings.evidenceRank} 🛡️${update.newTierRatings.safetyRank} ⭐${update.newTierRatings.overallRank}`);
+        console.log('');
+      }
+
+      if (updates.length > 30) {
+        console.log(`\n... 他${updates.length - 30}件\n`);
+      }
+    }
+
+    // 修正実行
+    if (shouldFix && updates.length > 0) {
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('🔧 Tierランクを更新中...');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const update of updates) {
+        try {
+          await client
+            .patch(update.productId)
+            .set({ tierRatings: update.newTierRatings })
+            .commit();
+
+          successCount++;
+          console.log(`✅ ${update.productName.substring(0, 60)}... - Tierランク更新`);
+        } catch (error) {
+          errorCount++;
+          console.error(`❌ ${update.productName.substring(0, 60)}... - エラー: ${error.message}`);
+        }
+      }
+
+      console.log(`\n更新完了: ${successCount}件成功、${errorCount}件失敗\n`);
+    } else if (isDryRun && updates.length > 0) {
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('💡 次のステップ');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+      console.log('実際に更新を適用するには、--fix オプションを付けて実行してください:');
+      console.log('  node scripts/auto-calculate-tier-ranks.mjs --fix\n');
+    } else if (updates.length === 0) {
+      console.log('✅ すべての商品のTierランクは最新の状態です！\n');
+    }
+
+  } catch (error) {
+    console.error('❌ エラーが発生しました:', error);
+    process.exit(1);
+  }
+}
+
+calculateTierRanks()
+  .then(() => {
+    console.log('✅ Tierランク計算完了\n');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('❌ エラーが発生しました:', error);
+    process.exit(1);
+  });

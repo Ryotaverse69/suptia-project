@@ -237,18 +237,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5つの称号バッジシステム */}
+      {/* ランク評価システム */}
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-24">
         <div className="mb-16 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-yellow-800">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-purple-800">
             <Award size={20} />
-            <span className="text-sm font-semibold">5つの称号システム</span>
+            <span className="text-sm font-semibold">ランク評価システム</span>
           </div>
           <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
-            各柱で最高評価を獲得した商品には称号を付与
+            各柱で最高評価を獲得した商品にはSランクを付与
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            一目で優れた商品が分かるバッジシステム
+            一目で優れた商品が分かるランクシステム
           </p>
         </div>
 
@@ -312,9 +312,9 @@ export default function AboutPage() {
             </div>
           ))}
 
-          {/* 5冠達成バッジ */}
+          {/* S+ランク（最高評価） */}
           <div className="md:col-span-2 lg:col-span-3">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-500 p-8 text-white shadow-xl">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-400 via-pink-400 to-pink-300 p-8 text-white shadow-xl">
               <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
               <div className="relative flex items-center gap-6">
                 <div className="flex-shrink-0 rounded-full bg-white/20 p-6 backdrop-blur-sm">
@@ -322,10 +322,10 @@ export default function AboutPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="mb-3 text-3xl font-bold">
-                    🌟 完璧なサプリメント
+                    ⭐ S+ランク（最高評価）
                   </h3>
                   <p className="text-xl leading-relaxed">
-                    5つすべての称号を獲得した商品は「完璧なサプリメント」として特別に強調表示されます。
+                    5つすべてのランクを獲得した商品は「S+ランク」として特別に強調表示されます。
                     <br />
                     <span className="font-bold">
                       価格・成分量・コスパ・エビデンス・安全性のすべてにおいて最高レベル

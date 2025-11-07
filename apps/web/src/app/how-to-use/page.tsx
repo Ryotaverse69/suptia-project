@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title:
     "サプティアの使い方｜初心者でも簡単3ステップで最適なサプリメントを見つける方法",
   description:
-    "サプティアの使い方を初心者にも分かりやすく解説。検索→比較→購入の3ステップで、科学的根拠に基づいた最適なサプリメントを見つけられます。フィルター機能や称号システムの活用方法も詳しく説明します。",
+    "サプティアの使い方を初心者にも分かりやすく解説。検索→比較→購入の3ステップで、科学的根拠に基づいた最適なサプリメントを見つけられます。フィルター機能やランクシステムの活用方法も詳しく説明します。",
   openGraph: {
     title: "サプティアの使い方｜簡単3ステップガイド",
     description:
@@ -94,7 +94,7 @@ export default function HowToUsePage() {
               icon: Filter,
               title: "比較する",
               description:
-                "フィルターや称号で絞り込み、最適な商品を見つけます。",
+                "フィルターやランクで絞り込み、最適な商品を見つけます。",
               color: "from-purple-400 to-purple-600",
             },
             {
@@ -257,7 +257,7 @@ export default function HowToUsePage() {
               比較する
             </h2>
             <p className="text-lg text-gray-600">
-              強力なフィルター機能と称号システムで、最適な商品を絞り込めます。
+              強力なフィルター機能とランクシステムで、最適な商品を絞り込めます。
             </p>
           </div>
 
@@ -277,7 +277,7 @@ export default function HowToUsePage() {
                 },
                 {
                   icon: Award,
-                  title: "称号",
+                  title: "ランク",
                   description: "優れた商品だけを表示",
                   example: "例: ベストバリューのみ",
                 },
@@ -328,14 +328,14 @@ export default function HowToUsePage() {
             </div>
           </div>
 
-          {/* 称号システム */}
+          {/* ランクシステム */}
           <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 p-8 shadow-sm">
             <h3 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900">
               <Award size={24} className="text-amber-600" />
-              称号システムの活用
+              ランクシステムの活用
             </h3>
             <p className="mb-8 text-lg text-gray-700">
-              5つの称号バッジで、優れた商品が一目で分かります。
+              5つのランクで、優れた商品が一目で分かります。
             </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {[
@@ -363,10 +363,10 @@ export default function HowToUsePage() {
                 <AlertCircle size={20} className="mt-1 text-amber-600" />
                 <div>
                   <p className="font-semibold text-gray-900">
-                    💡 称号フィルターの使い方
+                    💡 ランクフィルターの使い方
                   </p>
                   <p className="mt-2 text-sm text-gray-600">
-                    「称号」フィルターで特定の称号を持つ商品だけを表示できます。例えば「ベストバリュー」だけにチェックを入れると、コスパが最も優れた商品だけが表示されます。
+                    「ランク」フィルターで特定のランクを持つ商品だけを表示できます。例えば「ベストバリュー」だけにチェックを入れると、コスパが最も優れた商品だけが表示されます。
                   </p>
                 </div>
               </div>
