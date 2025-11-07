@@ -245,7 +245,7 @@ export default function AboutPage() {
             <span className="text-sm font-semibold">ランク評価システム</span>
           </div>
           <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
-            各柱で最高評価を獲得した商品にはSランクを付与
+            各項目をS・A・B・C・Dで評価してランクを付与
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
             一目で優れた商品が分かるランクシステム
@@ -255,19 +255,19 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {[
             {
-              badge: "💰 最安値",
+              badge: "💰 価格S",
               condition: "複数ECサイトの中で最も安い価格",
               meaning: "この商品が最も安く買える",
-              color: "from-green-400 to-green-600",
+              color: "from-purple-400 to-purple-600",
             },
             {
-              badge: "📊 最高含有量",
+              badge: "📊 含有量S",
               condition: "その成分の含有量が最も多い",
               meaning: "成分量で最も優れている",
-              color: "from-blue-400 to-blue-600",
+              color: "from-purple-400 to-purple-600",
             },
             {
-              badge: "💡 ベストバリュー",
+              badge: "💡 コスパS",
               condition: "コスパ（成分量あたり価格）が最も優れている",
               meaning: "最もお得な選択肢",
               color: "from-purple-400 to-purple-600",
@@ -276,13 +276,13 @@ export default function AboutPage() {
               badge: "🔬 エビデンスS",
               condition: "エビデンスレベルがSランク",
               meaning: "最高レベルの科学的根拠",
-              color: "from-indigo-400 to-indigo-600",
+              color: "from-purple-400 to-purple-600",
             },
             {
-              badge: "🛡️ 高安全性",
+              badge: "🛡️ 安全性S",
               condition: "安全性スコア90点以上",
               meaning: "安心して摂取できる",
-              color: "from-rose-400 to-rose-600",
+              color: "from-purple-400 to-purple-600",
             },
           ].map((badge, index) => (
             <div

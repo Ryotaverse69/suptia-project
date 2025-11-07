@@ -279,7 +279,7 @@ export default function HowToUsePage() {
                   icon: Award,
                   title: "ランク",
                   description: "優れた商品だけを表示",
-                  example: "例: ベストバリューのみ",
+                  example: "例: コスパSのみ",
                 },
                 {
                   icon: BarChart3,
@@ -339,18 +339,38 @@ export default function HowToUsePage() {
             </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {[
-                { badge: "💰 最安値", color: "green" },
-                { badge: "📊 最高含有量", color: "blue" },
-                { badge: "💡 ベストバリュー", color: "purple" },
-                { badge: "🔬 エビデンスS", color: "indigo" },
-                { badge: "🛡️ 高安全性", color: "rose" },
+                {
+                  badge: "💰 価格S",
+                  bgColor: "bg-purple-100",
+                  textColor: "text-purple-800",
+                },
+                {
+                  badge: "📊 含有量S",
+                  bgColor: "bg-purple-100",
+                  textColor: "text-purple-800",
+                },
+                {
+                  badge: "💡 コスパS",
+                  bgColor: "bg-purple-100",
+                  textColor: "text-purple-800",
+                },
+                {
+                  badge: "🔬 エビデンスS",
+                  bgColor: "bg-purple-100",
+                  textColor: "text-purple-800",
+                },
+                {
+                  badge: "🛡️ 安全性S",
+                  bgColor: "bg-purple-100",
+                  textColor: "text-purple-800",
+                },
               ].map((badge, index) => (
                 <div
                   key={index}
                   className="rounded-xl bg-white p-4 text-center shadow-sm transition-all hover:scale-105 hover:shadow-md"
                 >
                   <div
-                    className={`mb-2 inline-flex items-center gap-1 rounded-lg bg-${badge.color}-100 px-3 py-1 text-sm font-bold text-${badge.color}-800`}
+                    className={`mb-2 inline-flex items-center gap-1 rounded-lg ${badge.bgColor} px-3 py-1 text-sm font-bold ${badge.textColor}`}
                   >
                     <Award size={16} />
                     {badge.badge}
@@ -366,7 +386,7 @@ export default function HowToUsePage() {
                     💡 ランクフィルターの使い方
                   </p>
                   <p className="mt-2 text-sm text-gray-600">
-                    「ランク」フィルターで特定のランクを持つ商品だけを表示できます。例えば「ベストバリュー」だけにチェックを入れると、コスパが最も優れた商品だけが表示されます。
+                    「ランク」フィルターで特定のランクを持つ商品だけを表示できます。例えば「コスパS」だけにチェックを入れると、コスパが最も優れた商品だけが表示されます。
                   </p>
                 </div>
               </div>
