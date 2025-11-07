@@ -166,15 +166,33 @@ export function IngredientComparison({
             比較の結果
           </h3>
           <p className="text-sm text-blue-800 leading-relaxed">
-            この商品は{sortedProducts.length}商品中
-            <strong className="mx-1">
-              第{sortedProducts.findIndex((p) => p.isCurrent) + 1}位
-            </strong>
-            の含有量です。
-            {sortedProducts[0].isCurrent && (
-              <span className="ml-1 text-green-700 font-semibold">
-                最も多くの{ingredientName}を含んでいます！
-              </span>
+            {contentRank ? (
+              // contentRankが指定されている場合は、全体評価を表示
+              <>
+                この商品の含有量は全体で
+                <strong className="mx-1">{contentRank}ランク</strong>
+                です。{currentRankInfo && currentRankInfo.description}
+                {sortedProducts.length > 1 && (
+                  <span className="ml-1 text-gray-700">
+                    （表示中の類似商品{sortedProducts.length}件では第
+                    {sortedProducts.findIndex((p) => p.isCurrent) + 1}位）
+                  </span>
+                )}
+              </>
+            ) : (
+              // contentRankがない場合は、ローカル比較のみ
+              <>
+                この商品は{sortedProducts.length}商品中
+                <strong className="mx-1">
+                  第{sortedProducts.findIndex((p) => p.isCurrent) + 1}位
+                </strong>
+                の含有量です。
+                {sortedProducts[0].isCurrent && (
+                  <span className="ml-1 text-green-700 font-semibold">
+                    最も多くの{ingredientName}を含んでいます！
+                  </span>
+                )}
+              </>
             )}
           </p>
         </div>

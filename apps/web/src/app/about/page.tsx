@@ -325,10 +325,10 @@ export default function AboutPage() {
                     ⭐ S+ランク（最高評価）
                   </h3>
                   <p className="text-xl leading-relaxed">
-                    5つすべてのランクを獲得した商品は「S+ランク」として特別に強調表示されます。
+                    全評価でSランクを達成した商品は「S+ランク」として特別に強調表示されます。
                     <br />
                     <span className="font-bold">
-                      価格・成分量・コスパ・エビデンス・安全性のすべてにおいて最高レベル
+                      価格・コスパ・含有量・エビデンス・安全性のすべてにおいて最高レベル
                     </span>
                     であることを意味します。
                   </p>
