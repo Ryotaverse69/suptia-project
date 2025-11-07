@@ -1,448 +1,549 @@
-"use client";
-
+import { Metadata } from "next";
+import Link from "next/link";
 import {
   Search,
   Filter,
-  BarChart3,
-  ShoppingCart,
-  CheckCircle2,
+  MousePointerClick,
+  DollarSign,
+  Award,
   ArrowRight,
+  CheckCircle2,
   Sparkles,
-  Star,
+  BarChart3,
   Shield,
+  Microscope,
+  AlertCircle,
+  TrendingUp,
+  ChevronRight,
+  Info,
 } from "lucide-react";
-import Link from "next/link";
+
+export const metadata: Metadata = {
+  title:
+    "サプティアの使い方｜初心者でも簡単3ステップで最適なサプリメントを見つける方法",
+  description:
+    "サプティアの使い方を初心者にも分かりやすく解説。検索→比較→購入の3ステップで、科学的根拠に基づいた最適なサプリメントを見つけられます。フィルター機能や称号システムの活用方法も詳しく説明します。",
+  openGraph: {
+    title: "サプティアの使い方｜簡単3ステップガイド",
+    description:
+      "初めての方でも簡単にサプリメントを比較・選択できるステップバイステップガイドです。",
+    type: "website",
+  },
+};
 
 export default function HowToUsePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-primary-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 px-6">
-        {/* Static gradient background (same as hero search) */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
-          }}
-        ></div>
-        <div className="relative mx-auto max-w-6xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
-            <Sparkles size={16} />
-            <span>3ステップでかんたん</span>
+    <div className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-primary-50">
+      {/* ヒーローセクション */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
+        <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-12 lg:py-32">
+          <div className="text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+              <Sparkles size={20} className="text-yellow-300" />
+              <span className="text-sm font-semibold">初心者でも簡単</span>
+            </div>
+            <h1 className="mb-6 text-4xl font-bold leading-tight lg:text-6xl">
+              サプティアの使い方
+            </h1>
+            <p className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-primary-100 lg:text-xl">
+              たった3ステップで、あなたにぴったりのサプリメントが見つかります。
+              <br className="hidden sm:block" />
+              科学的根拠・価格・安全性を比較して、納得の選択を。
+            </p>
+            <Link
+              href="/products"
+              className="group inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-primary-700 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            >
+              今すぐ商品を探す
+              <ArrowRight
+                size={20}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </Link>
           </div>
-          <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-            サプティアの使い方
-          </h1>
-          <p className="mx-auto mb-8 max-w-3xl text-xl text-primary-100">
-            検索から購入まで、たった3ステップ。
-            <br />
-            最適なサプリメントを、科学的根拠に基づいて見つけることができます。
+        </div>
+      </section>
+
+      {/* 3ステップの概要 */}
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-24">
+        <div className="mb-16 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-2 text-primary-800">
+            <Info size={20} />
+            <span className="text-sm font-semibold">かんたん3ステップ</span>
+          </div>
+          <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+            サプリメントを見つけるまでの流れ
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
+            初めての方でも迷わず使える、シンプルなステップです。
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 font-semibold text-primary transition-all hover:scale-105 hover:shadow-xl"
-          >
-            今すぐ検索してみる
-            <ArrowRight size={20} />
-          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {[
+            {
+              step: "STEP 1",
+              icon: Search,
+              title: "検索する",
+              description: "成分名や目的から、欲しいサプリメントを検索します。",
+              color: "from-blue-400 to-blue-600",
+            },
+            {
+              step: "STEP 2",
+              icon: Filter,
+              title: "比較する",
+              description:
+                "フィルターや称号で絞り込み、最適な商品を見つけます。",
+              color: "from-purple-400 to-purple-600",
+            },
+            {
+              step: "STEP 3",
+              icon: MousePointerClick,
+              title: "購入する",
+              description: "最安値のECサイトを確認して、そのまま購入ページへ。",
+              color: "from-green-400 to-green-600",
+            },
+          ].map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div key={index} className="relative">
+                {index < 2 && (
+                  <div className="absolute left-full top-1/2 z-0 hidden h-0.5 w-full -translate-y-1/2 bg-gradient-to-r from-gray-300 to-transparent md:block" />
+                )}
+                <div className="relative z-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+                  <div className="mb-4 flex items-center gap-4">
+                    <div
+                      className={`flex-shrink-0 rounded-xl bg-gradient-to-br ${step.color} p-3 text-white shadow-md`}
+                    >
+                      <Icon size={28} />
+                    </div>
+                    <span className="text-sm font-bold text-gray-500">
+                      {step.step}
+                    </span>
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold text-gray-900">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600">{step.description}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Main Steps */}
-      <section className="py-20 px-6">
-        <div className="mx-auto max-w-6xl space-y-24">
-          {/* Step 1 */}
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-600 text-2xl font-bold text-white">
-                1
-              </div>
-              <h2 className="mb-4 text-3xl font-bold text-primary-900">
-                目的に合わせて検索
-              </h2>
-              <p className="mb-6 text-lg text-primary-700">
-                健康目標や気になる成分名を入力するだけで、あなたにぴったりのサプリメントを検索できます。
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-mint text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      キーワード検索
-                    </h3>
-                    <p className="text-primary-700">
-                      「ビタミンC」「免疫力」「美肌」など、自由に検索。商品名検索窓で更に絞り込みも可能
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-mint text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      Tierランクフィルター
-                    </h3>
-                    <p className="text-primary-700">
-                      S+~Dの総合評価で絞り込み。ツヤツヤグラデーションボタンで直感的に選択
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-mint text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      購入先フィルター
-                    </h3>
-                    <p className="text-primary-700">
-                      楽天・Yahoo・Amazon（準備中）から購入先を選んで絞り込み
-                    </p>
-                  </div>
-                </div>
-              </div>
+      {/* STEP 1: 検索する */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-24">
+          <div className="mb-12">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-blue-800">
+              <Search size={20} />
+              <span className="text-sm font-semibold">STEP 1</span>
             </div>
-            <div className="rounded-2xl border border-primary-200 bg-white p-8 shadow-xl">
-              <div className="mb-4 flex items-center gap-3 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3">
-                <Search size={20} className="text-primary-600" />
-                <span className="text-primary-700">
-                  例: ビタミンC 美肌 免疫力
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div className="rounded-lg border border-primary-100 bg-gradient-to-r from-primary-50 to-white p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="font-semibold text-primary-900">
-                      ビタミンC 1000mg
-                    </span>
-                    <span className="inline-flex items-center justify-center px-3 py-1 rounded text-xs font-bold bg-gradient-to-br from-purple-500/80 to-pink-500/60 text-white border border-white/60">
-                      S+
-                    </span>
-                  </div>
-                  <p className="text-sm text-primary-700">
-                    高濃度ビタミンCサプリメント・5冠達成
-                  </p>
-                </div>
-                <div className="rounded-lg border border-primary-100 bg-gradient-to-r from-primary-50 to-white p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="font-semibold text-primary-900">
-                      リポソームビタミンC
-                    </span>
-                    <span className="inline-flex items-center justify-center px-3 py-1 rounded text-xs font-bold bg-gradient-to-br from-blue-500/80 to-blue-600/60 text-white border border-white/60">
-                      A
-                    </span>
-                  </div>
-                  <p className="text-sm text-primary-700">
-                    吸収率の高いビタミンC
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="order-2 lg:order-1 rounded-2xl border border-primary-200 bg-white p-8 shadow-xl">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <span className="font-semibold text-primary-900">価格</span>
-                  <span className="text-primary-700">¥1,200 〜 ¥3,800</span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <span className="font-semibold text-primary-900">
-                    ビタミンC含有量
-                  </span>
-                  <span className="text-primary-700">500mg 〜 1000mg</span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <span className="font-semibold text-primary-900">
-                    1日あたりコスト
-                  </span>
-                  <span className="text-primary-700">¥40 〜 ¥127</span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <span className="font-semibold text-primary-900">
-                    安全性スコア
-                  </span>
-                  <span className="text-accent-mint font-semibold">
-                    85% 〜 98%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <span className="font-semibold text-primary-900">
-                    ユーザー評価
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Star
-                      size={16}
-                      className="fill-yellow-400 text-yellow-400"
-                    />
-                    <span className="text-primary-700">4.2 〜 4.8</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-mint to-accent-mint/80 text-2xl font-bold text-white">
-                2
-              </div>
-              <h2 className="mb-4 text-3xl font-bold text-primary-900">
-                多角的に比較検討
-              </h2>
-              <p className="mb-6 text-lg text-primary-700">
-                Tierランク（S+〜D）で総合評価を確認。価格・コスパ・含有量・エビデンス・安全性の5軸で製品を比較。データに基づいた賢い選択ができます。
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      価格・コスト比較
-                    </h3>
-                    <p className="text-primary-700">
-                      楽天市場・Yahoo!ショッピングから最安値を自動検索（Amazon準備中）
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      成分量・配合比較
-                    </h3>
-                    <p className="text-primary-700">
-                      有効成分の含有量を一目で比較
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      安全性・品質評価
-                    </h3>
-                    <p className="text-primary-700">
-                      第三者認証、製造プロセスを独自評価
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      Tierランク確認
-                    </h3>
-                    <p className="text-primary-700">
-                      5軸総合評価のTierランク（S+〜D）を確認。S+は全評価軸でSランクを獲得した「5冠達成」商品
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-purple to-accent-purple/80 text-2xl font-bold text-white">
-                3
-              </div>
-              <h2 className="mb-4 text-3xl font-bold text-primary-900">
-                最安値で購入
-              </h2>
-              <p className="mb-6 text-lg text-primary-700">
-                比較検討した製品を、最もお得な価格で購入できるECサイトへ直接リンク。安心してお買い物ができます。
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-purple text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      複数ECサイトから最安値検索
-                    </h3>
-                    <p className="text-primary-700">
-                      楽天市場、Yahoo!ショッピングの価格を自動比較（Amazon対応準備中）
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-purple text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      送料・ポイントも考慮
-                    </h3>
-                    <p className="text-primary-700">
-                      実質価格で最もお得な購入先を提案
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent-purple text-white">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary-900">
-                      定期購入・まとめ買い情報
-                    </h3>
-                    <p className="text-primary-700">
-                      さらにお得になる購入方法も紹介
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-primary-200 bg-white p-8 shadow-xl">
-              <h3 className="mb-4 text-xl font-bold text-primary-900">
-                最安値の購入先
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-lg border border-accent-mint bg-accent-mint/10 p-4">
-                  <div>
-                    <div className="font-semibold text-primary-900">
-                      楽天市場
-                    </div>
-                    <div className="text-sm text-primary-700">ポイント10倍</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-accent-mint">
-                      ¥1,380
-                    </div>
-                    <div className="text-xs text-accent-mint font-medium">
-                      最安値
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50 p-4">
-                  <div>
-                    <div className="font-semibold text-primary-900">
-                      Yahoo!ショッピング
-                    </div>
-                    <div className="text-sm text-primary-700">
-                      PayPayポイント
-                    </div>
-                  </div>
-                  <div className="text-lg font-bold text-primary-700">
-                    ¥1,420
-                  </div>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-primary-100 bg-primary-50/50 p-4 opacity-60">
-                  <div>
-                    <div className="font-semibold text-primary-900">
-                      Amazon（準備中）
-                    </div>
-                    <div className="text-sm text-primary-700">近日対応予定</div>
-                  </div>
-                  <div className="text-lg font-bold text-primary-700">-</div>
-                </div>
-              </div>
-              <button className="mt-6 w-full rounded-lg bg-gradient-to-r from-primary to-primary-600 px-6 py-3 font-semibold text-white transition-all hover:scale-105 hover:shadow-lg">
-                楽天市場で購入する
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Additional Features */}
-      <section className="bg-white py-20 px-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-primary-900">
-              さらに便利な機能
+            <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+              検索する
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-primary-700">
-              サプティアならではの、賢いサプリメント選びをサポートする機能
+            <p className="text-lg text-gray-600">
+              2つの方法で、あなたが探しているサプリメントを見つけられます。
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-white to-primary-50 p-8">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            {/* 成分名で検索 */}
+            <div className="rounded-2xl border-2 border-blue-200 bg-blue-50 p-8">
+              <h3 className="mb-4 flex items-center gap-2 text-2xl font-bold text-blue-900">
+                <Search size={24} />
+                方法1: 成分名で検索
+              </h3>
+              <p className="mb-6 text-blue-800">
+                「ビタミンC」「マグネシウム」など、欲しい成分名を入力するだけ。
+              </p>
+              <div className="mb-4 rounded-xl bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-3 text-gray-400">
+                  <Search size={20} />
+                  <span className="text-gray-600">ビタミンC</span>
+                  <span className="ml-auto text-sm text-gray-500">
+                    Enter で検索
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 size={20} className="mt-1 text-blue-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      日本語・英語の両方に対応
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      「ビタミンC」でも「Vitamin C」でもOK
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 size={20} className="mt-1 text-blue-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      部分一致で検索
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      「ビタミン」だけでも検索できます
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* カテゴリから探す */}
+            <div className="rounded-2xl border-2 border-purple-200 bg-purple-50 p-8">
+              <h3 className="mb-4 flex items-center gap-2 text-2xl font-bold text-purple-900">
                 <Filter size={24} />
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-primary-900">
-                詳細フィルター
+                方法2: カテゴリから探す
               </h3>
-              <p className="text-primary-700">
-                アレルゲン、ヴィーガン対応、グルテンフリーなど、あなたのニーズに合わせた絞り込みが可能
+              <p className="mb-6 text-purple-800">
+                「ビタミン」「ミネラル」など、カテゴリから選べます。
               </p>
-            </div>
-
-            <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-white to-primary-50 p-8">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent-mint text-white">
-                <Shield size={24} />
+              <div className="mb-4 space-y-2">
+                {["ビタミン", "ミネラル", "アミノ酸", "ハーブ"].map(
+                  (category) => (
+                    <div
+                      key={category}
+                      className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm transition-all hover:shadow-md"
+                    >
+                      <ChevronRight size={20} className="text-purple-600" />
+                      <span className="font-semibold text-gray-900">
+                        {category}
+                      </span>
+                    </div>
+                  ),
+                )}
               </div>
-              <h3 className="mb-3 text-xl font-bold text-primary-900">
-                安全性チェック
-              </h3>
-              <p className="text-primary-700">
-                第三者認証、製造基準、原材料の透明性を独自のスコアリングシステムで評価
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-white to-primary-50 p-8">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent-purple text-white">
-                <BarChart3 size={24} />
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 size={20} className="mt-1 text-purple-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">目的別に表示</p>
+                    <p className="text-sm text-gray-600">
+                      「美肌」「疲労回復」など目的から選べます
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 size={20} className="mt-1 text-purple-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      成分ガイドも充実
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      各成分の詳しい説明も読めます
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h3 className="mb-3 text-xl font-bold text-primary-900">
-                成分ガイド
-              </h3>
-              <p className="text-primary-700">
-                各成分の効果、推奨摂取量、科学的根拠を分かりやすく解説。正しい知識でサプリを選べる
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-20 px-6">
-        {/* Static gradient background (same as hero search) */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
-          }}
-        ></div>
-        <div className="relative mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-4xl font-bold text-white">
-            さあ、サプティアを使ってみよう
-          </h2>
-          <p className="mb-8 text-xl text-primary-100">
-            69以上の厳選サプリメントから、あなたにぴったりの1つを見つけましょう。毎週新商品追加中。
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 font-semibold text-primary transition-all hover:scale-105 hover:shadow-xl"
-            >
-              無料で検索を始める
-              <ArrowRight size={20} />
-            </Link>
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 rounded-lg border-2 border-white bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
-              サプティアについて
-            </Link>
+      {/* STEP 2: 比較する */}
+      <section className="bg-gray-50">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-24">
+          <div className="mb-12">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-purple-800">
+              <Filter size={20} />
+              <span className="text-sm font-semibold">STEP 2</span>
+            </div>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+              比較する
+            </h2>
+            <p className="text-lg text-gray-600">
+              強力なフィルター機能と称号システムで、最適な商品を絞り込めます。
+            </p>
           </div>
+
+          {/* フィルター機能 */}
+          <div className="mb-12 rounded-2xl bg-white p-8 shadow-sm">
+            <h3 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900">
+              <Filter size={24} className="text-purple-600" />
+              フィルター機能
+            </h3>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  icon: DollarSign,
+                  title: "価格帯",
+                  description: "予算に合わせて絞り込み",
+                  example: "例: 1,000円〜3,000円",
+                },
+                {
+                  icon: Award,
+                  title: "称号",
+                  description: "優れた商品だけを表示",
+                  example: "例: ベストバリューのみ",
+                },
+                {
+                  icon: BarChart3,
+                  title: "ECサイト",
+                  description: "楽天・Amazon・Yahoo!",
+                  example: "例: 楽天で購入可能",
+                },
+                {
+                  icon: Shield,
+                  title: "安全性スコア",
+                  description: "90点以上のみ表示",
+                  example: "例: 高安全性商品のみ",
+                },
+                {
+                  icon: Microscope,
+                  title: "エビデンスレベル",
+                  description: "科学的根拠の信頼性",
+                  example: "例: S〜Aランクのみ",
+                },
+                {
+                  icon: TrendingUp,
+                  title: "並び替え",
+                  description: "価格順・評価順など",
+                  example: "例: コスパが良い順",
+                },
+              ].map((filter, index) => {
+                const Icon = filter.icon;
+                return (
+                  <div
+                    key={index}
+                    className="rounded-xl border border-gray-200 p-6 transition-all hover:border-purple-300 hover:shadow-md"
+                  >
+                    <div className="mb-3 inline-flex items-center justify-center rounded-lg bg-purple-100 p-2 text-purple-600">
+                      <Icon size={24} />
+                    </div>
+                    <h4 className="mb-2 text-lg font-bold text-gray-900">
+                      {filter.title}
+                    </h4>
+                    <p className="mb-2 text-sm text-gray-600">
+                      {filter.description}
+                    </p>
+                    <p className="text-xs text-gray-500">{filter.example}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 称号システム */}
+          <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 p-8 shadow-sm">
+            <h3 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900">
+              <Award size={24} className="text-amber-600" />
+              称号システムの活用
+            </h3>
+            <p className="mb-8 text-lg text-gray-700">
+              5つの称号バッジで、優れた商品が一目で分かります。
+            </p>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                { badge: "💰 最安値", color: "green" },
+                { badge: "📊 最高含有量", color: "blue" },
+                { badge: "💡 ベストバリュー", color: "purple" },
+                { badge: "🔬 エビデンスS", color: "indigo" },
+                { badge: "🛡️ 高安全性", color: "rose" },
+              ].map((badge, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl bg-white p-4 text-center shadow-sm transition-all hover:scale-105 hover:shadow-md"
+                >
+                  <div
+                    className={`mb-2 inline-flex items-center gap-1 rounded-lg bg-${badge.color}-100 px-3 py-1 text-sm font-bold text-${badge.color}-800`}
+                  >
+                    <Award size={16} />
+                    {badge.badge}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 rounded-xl bg-white p-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle size={20} className="mt-1 text-amber-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    💡 称号フィルターの使い方
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    「称号」フィルターで特定の称号を持つ商品だけを表示できます。例えば「ベストバリュー」だけにチェックを入れると、コスパが最も優れた商品だけが表示されます。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STEP 3: 購入する */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-24">
+          <div className="mb-12">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-800">
+              <MousePointerClick size={20} />
+              <span className="text-sm font-semibold">STEP 3</span>
+            </div>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+              購入する
+            </h2>
+            <p className="text-lg text-gray-600">
+              商品詳細ページで、複数ECサイトの価格を比較して購入できます。
+            </p>
+          </div>
+
+          <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-8 lg:p-12">
+            <h3 className="mb-6 text-2xl font-bold text-green-900">
+              価格比較機能で最安値を瞬時に確認
+            </h3>
+            <div className="mb-8 rounded-xl bg-white p-6 shadow-md">
+              <h4 className="mb-4 text-xl font-bold text-gray-900">
+                DHC ビタミンC 60日分
+              </h4>
+              <div className="space-y-3">
+                {[
+                  { site: "楽天市場", price: "¥398", badge: "🏆 最安値" },
+                  { site: "Yahoo!", price: "¥420", badge: null },
+                  { site: "Amazon", price: "¥450", badge: null },
+                  { site: "iHerb", price: "¥480", badge: null },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-green-400 hover:shadow-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-gray-900">
+                        {item.site}
+                      </span>
+                      {item.badge && (
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xl font-bold text-gray-900">
+                        {item.price}
+                      </span>
+                      <button className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-primary-700">
+                        購入ページへ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 size={20} className="mt-1 text-green-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    最安値が一目で分かる
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    複数ECサイトを比較して、最もお得なサイトを強調表示
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 size={20} className="mt-1 text-green-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    ワンクリックで購入ページへ
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    「購入ページへ」ボタンで、そのまま各ECサイトに移動できます
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 size={20} className="mt-1 text-green-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">価格は毎日更新</p>
+                  <p className="text-sm text-gray-600">
+                    常に最新の価格情報を表示しています
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* よくある質問 */}
+      <section className="bg-gray-50">
+        <div className="mx-auto max-w-4xl px-6 py-16 lg:px-12 lg:py-24">
+          <div className="mb-12 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-2 text-primary-800">
+              <AlertCircle size={20} />
+              <span className="text-sm font-semibold">よくある質問</span>
+            </div>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+              FAQ
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "利用料金はかかりますか？",
+                a: "いいえ、サプティアは完全無料でご利用いただけます。商品の比較・検索・価格確認まで、すべての機能を無料で使えます。",
+              },
+              {
+                q: "どのECサイトに対応していますか？",
+                a: "現在、楽天市場・Yahoo!ショッピングに対応しています。Amazonは2026年1月以降に対応予定です。",
+              },
+              {
+                q: "価格情報の更新頻度は？",
+                a: "価格情報は毎日自動的に更新されています。常に最新の価格を表示するよう努めています。",
+              },
+              {
+                q: "エビデンスレベルはどのように評価されていますか？",
+                a: "大規模RCT、メタ解析、査読付き論文などの科学的研究に基づいて、S/A/B/C/Dの5段階で評価しています。詳細は各成分ガイドページをご覧ください。",
+              },
+              {
+                q: "安全性スコアの算出方法は？",
+                a: "副作用の数、相互作用の数、エビデンスレベル、添加物の安全性などを総合的に評価し、0-100点のスコアで表示しています。",
+              },
+            ].map((faq, index) => (
+              <details
+                key={index}
+                className="group rounded-xl border border-gray-200 bg-white transition-all hover:border-primary-300"
+              >
+                <summary className="flex cursor-pointer items-center justify-between p-6 font-semibold text-gray-900 transition-all hover:bg-gray-50">
+                  <span>Q. {faq.q}</span>
+                  <ChevronRight
+                    size={20}
+                    className="transition-transform group-open:rotate-90"
+                  />
+                </summary>
+                <div className="border-t border-gray-100 p-6 text-gray-600">
+                  <p>{faq.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTAセクション */}
+      <section className="bg-gradient-to-br from-primary-600 to-primary-900 text-white">
+        <div className="mx-auto max-w-4xl px-6 py-16 text-center lg:px-12 lg:py-24">
+          <h2 className="mb-6 text-3xl font-bold lg:text-4xl">
+            さあ、サプティアを使ってみましょう
+          </h2>
+          <p className="mb-8 text-lg text-primary-100 lg:text-xl">
+            3ステップで、あなたにぴったりのサプリメントが見つかります。
+          </p>
+          <Link
+            href="/products"
+            className="group inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-primary-700 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+          >
+            商品を探す
+            <ArrowRight
+              size={20}
+              className="transition-transform group-hover:translate-x-1"
+            />
+          </Link>
         </div>
       </section>
     </div>
