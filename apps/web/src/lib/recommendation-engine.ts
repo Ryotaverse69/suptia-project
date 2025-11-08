@@ -646,8 +646,27 @@ export function recommendProducts(
     recommendProduct(product, userProfile),
   );
 
+  // フィルタリング条件:
+  // 1. 成分データがない商品を除外
+  // 2. ユーザーの健康目標に一致する成分がない商品を除外（目標設定時のみ）
+  const filtered = recommendations.filter((rec) => {
+    // 成分データがない商品は除外
+    if (rec.product.ingredients.length === 0) {
+      return false;
+    }
+
+    // ユーザーが健康目標を設定している場合、一致する成分がない商品は除外
+    if (userProfile.goals && userProfile.goals.length > 0) {
+      if (rec.scores.effectivenessDetails.matchedGoals.length === 0) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   // 総合スコアでソート
-  const sorted = recommendations.sort(
+  const sorted = filtered.sort(
     (a, b) => b.scores.overallScore - a.scores.overallScore,
   );
 

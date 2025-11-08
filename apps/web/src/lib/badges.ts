@@ -68,6 +68,7 @@ export interface ProductForBadgeEvaluation {
   servingsPerContainer?: number;
   servingsPerDay?: number;
   ingredientAmount?: number; // 主要成分の含有量（mg）
+  ingredientId?: string; // 主要成分のID（ingredient-vitamin-dなど）
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyScore?: number;
   priceData?: Array<{
@@ -133,28 +134,79 @@ function isLowestPrice(
 
 /**
  * 含有量S判定（最高含有量）
+ * 1日あたりの成分量で比較（同じ成分を含む商品同士）
  */
 function isHighestContent(
   product: ProductForBadgeEvaluation,
   allProducts: ProductForBadgeEvaluation[],
 ): boolean {
-  if (!product.ingredientAmount) return false;
+  console.log("[含有量S判定] product:", {
+    _id: product._id,
+    ingredientId: product.ingredientId,
+    ingredientAmount: product.ingredientAmount,
+    servingsPerDay: product.servingsPerDay,
+  });
+
+  if (
+    !product.ingredientAmount ||
+    !product.servingsPerDay ||
+    !product.ingredientId
+  ) {
+    console.log("[含有量S判定] 必須データ不足でfalse");
+    return false;
+  }
+
+  // 1日あたりの成分量を計算
+  const productDailyAmount = product.ingredientAmount * product.servingsPerDay;
+  console.log("[含有量S判定] 1日あたりの成分量:", productDailyAmount);
 
   // 同じ成分を含む商品の中で最高含有量か判定
-  const productsWithIngredient = allProducts.filter(
-    (p) => p.ingredientAmount && p.ingredientAmount > 0,
+  const productsWithSameIngredient = allProducts.filter(
+    (p) =>
+      p.ingredientId === product.ingredientId &&
+      p.ingredientAmount &&
+      p.ingredientAmount > 0 &&
+      p.servingsPerDay &&
+      p.servingsPerDay > 0,
   );
 
-  if (productsWithIngredient.length === 0) return false;
-
-  const maxAmount = Math.max(
-    ...productsWithIngredient.map((p) => p.ingredientAmount || 0),
+  console.log(
+    "[含有量S判定] 同じ成分の商品数:",
+    productsWithSameIngredient.length,
   );
-  return product.ingredientAmount === maxAmount;
+
+  if (productsWithSameIngredient.length === 0) return false;
+
+  const dailyAmounts = productsWithSameIngredient.map((p) => ({
+    id: p._id,
+    amount: (p.ingredientAmount || 0) * (p.servingsPerDay || 1),
+  }));
+
+  const maxDailyAmount = Math.max(...dailyAmounts.map((d) => d.amount));
+
+  console.log(
+    "[含有量S判定] 最大1日量:",
+    maxDailyAmount,
+    "vs 現在の商品:",
+    productDailyAmount,
+  );
+  console.log(
+    "[含有量S判定] 差分:",
+    Math.abs(productDailyAmount - maxDailyAmount),
+  );
+  console.log("[含有量S判定] 全商品の1日量:", dailyAmounts.slice(0, 5)); // 最初の5件のみ表示
+
+  // 浮動小数点の精度問題に対応するため、許容誤差を使用
+  const tolerance = 0.001; // 0.001mg未満の差は同一とみなす
+  const result = Math.abs(productDailyAmount - maxDailyAmount) < tolerance;
+  console.log("[含有量S判定] 結果:", result);
+
+  return result;
 }
 
 /**
  * コスパS判定（ベストバリュー）
+ * 同じ成分を含む商品同士で比較
  */
 function isBestValue(
   product: ProductForBadgeEvaluation,
@@ -162,17 +214,55 @@ function isBestValue(
 ): boolean {
   // コスパ = 価格 / 成分量
   const productCostPerMg = calculateCostPerMg(product);
-  if (productCostPerMg === null) return false;
+  console.log(
+    "[コスパS判定] productCostPerMg:",
+    productCostPerMg,
+    "ingredientId:",
+    product.ingredientId,
+  );
 
-  // 全商品の中で最もコスパが良いか判定
-  const costPerMgValues = allProducts
-    .map((p) => calculateCostPerMg(p))
-    .filter((v) => v !== null) as number[];
+  if (productCostPerMg === null || !product.ingredientId) {
+    console.log("[コスパS判定] コスト計算失敗またはingredientId不足でfalse");
+    return false;
+  }
+
+  // 同じ成分を含む商品の中で最もコスパが良いか判定
+  const productsWithSameIngredient = allProducts.filter(
+    (p) => p.ingredientId === product.ingredientId,
+  );
+
+  const costPerMgData = productsWithSameIngredient
+    .map((p) => ({
+      id: p._id,
+      cost: calculateCostPerMg(p),
+    }))
+    .filter((d) => d.cost !== null);
+
+  const costPerMgValues = costPerMgData.map((d) => d.cost) as number[];
+
+  console.log(
+    "[コスパS判定] 同じ成分の商品数:",
+    productsWithSameIngredient.length,
+  );
+  console.log("[コスパS判定] コスト計算できた商品数:", costPerMgValues.length);
 
   if (costPerMgValues.length === 0) return false;
 
   const minCostPerMg = Math.min(...costPerMgValues);
-  return Math.abs(productCostPerMg - minCostPerMg) < 0.01; // 誤差許容
+  console.log(
+    "[コスパS判定] 最小コスト:",
+    minCostPerMg,
+    "vs 現在の商品:",
+    productCostPerMg,
+  );
+  console.log("[コスパS判定] 差分:", Math.abs(productCostPerMg - minCostPerMg));
+  console.log("[コスパS判定] 全商品のコスト:", costPerMgData.slice(0, 5)); // 最初の5件のみ表示
+
+  const tolerance = 0.01; // 0.01円/mg未満の差は同一とみなす
+  const result = Math.abs(productCostPerMg - minCostPerMg) < tolerance;
+  console.log("[コスパS判定] 結果:", result);
+
+  return result;
 }
 
 /**

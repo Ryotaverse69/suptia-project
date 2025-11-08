@@ -341,28 +341,23 @@ export default function HowToUsePage() {
               {[
                 {
                   badge: "💰 価格S",
-                  bgColor: "bg-purple-100",
-                  textColor: "text-purple-800",
+                  color: "from-purple-400 to-purple-600",
                 },
                 {
                   badge: "📊 含有量S",
-                  bgColor: "bg-purple-100",
-                  textColor: "text-purple-800",
+                  color: "from-purple-400 to-purple-600",
                 },
                 {
                   badge: "💡 コスパS",
-                  bgColor: "bg-purple-100",
-                  textColor: "text-purple-800",
+                  color: "from-purple-400 to-purple-600",
                 },
                 {
                   badge: "🔬 エビデンスS",
-                  bgColor: "bg-purple-100",
-                  textColor: "text-purple-800",
+                  color: "from-purple-400 to-purple-600",
                 },
                 {
                   badge: "🛡️ 安全性S",
-                  bgColor: "bg-purple-100",
-                  textColor: "text-purple-800",
+                  color: "from-purple-400 to-purple-600",
                 },
               ].map((badge, index) => (
                 <div
@@ -370,7 +365,7 @@ export default function HowToUsePage() {
                   className="rounded-xl bg-white p-4 text-center shadow-sm transition-all hover:scale-105 hover:shadow-md"
                 >
                   <div
-                    className={`mb-2 inline-flex items-center gap-1 rounded-lg ${badge.bgColor} px-3 py-1 text-sm font-bold ${badge.textColor}`}
+                    className={`mb-2 inline-flex items-center gap-1 rounded-lg bg-gradient-to-r ${badge.color} px-3 py-1 text-sm font-bold text-white shadow-md`}
                   >
                     <Award size={16} />
                     {badge.badge}

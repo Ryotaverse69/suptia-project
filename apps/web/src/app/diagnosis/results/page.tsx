@@ -83,45 +83,8 @@ export default async function DiagnosisResultsPage({
   // Sanityから商品データを取得
   const products = await fetchProductsForDiagnosis();
 
-  // デバッグログ
-  console.log("🔍 診断デバッグ情報:");
-  console.log(`  取得商品数: ${products.length}件`);
-  console.log(`  ユーザープロファイル:`, userProfile);
-
-  // relatedGoalsを持つ商品をカウント
-  const productsWithGoals = products.filter((p) =>
-    p.ingredients.some(
-      (ing) => ing.relatedGoals && ing.relatedGoals.length > 0,
-    ),
-  );
-  console.log(`  relatedGoals設定済み商品: ${productsWithGoals.length}件`);
-
-  // サンプル商品の成分を表示
-  if (products.length > 0) {
-    const sample = products[0];
-    console.log(`  サンプル商品: ${sample.name}`);
-    console.log(`  成分数: ${sample.ingredients.length}`);
-    if (sample.ingredients.length > 0) {
-      const firstIng = sample.ingredients[0];
-      console.log(`  最初の成分:`, {
-        name: firstIng.name,
-        relatedGoals: firstIng.relatedGoals,
-        evidenceLevel: firstIng.evidenceLevel,
-      });
-    }
-  }
-
   // 推薦結果を計算
   const recommendations = recommendProducts(products, userProfile);
-
-  console.log(`  推薦結果: ${recommendations.length}件`);
-  if (recommendations.length > 0) {
-    console.log(`  トップ商品:`, {
-      name: recommendations[0].product.name,
-      overallScore: recommendations[0].scores.overallScore,
-      rank: recommendations[0].rank,
-    });
-  }
 
   const topThree = recommendations.slice(0, 3);
   const otherRecommendations = recommendations.slice(3, 10); // トップ3以外の7件（合計10件）

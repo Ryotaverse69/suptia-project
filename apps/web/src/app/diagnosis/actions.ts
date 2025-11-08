@@ -50,16 +50,18 @@ export async function fetchProductsForDiagnosis(): Promise<
       priceJPY: product.priceJPY,
       servingsPerDay: product.servingsPerDay,
       servingsPerContainer: product.servingsPerContainer,
-      ingredients: product.ingredients.map((ing: any) => ({
-        name: ing.ingredient.name,
-        slug: ing.ingredient.slug,
-        category: ing.ingredient.category,
-        evidenceLevel: mapEvidenceLevel(ing.ingredient.evidenceLevel),
-        relatedGoals: ing.ingredient.relatedGoals || [],
-        contraindications: (ing.ingredient.contraindications ||
-          []) as ContraindicationTag[],
-        amountMgPerServing: ing.amountMgPerServing,
-      })) as IngredientForDiagnosis[],
+      ingredients: product.ingredients
+        .filter((ing: any) => ing.ingredient != null) // null参照を除外
+        .map((ing: any) => ({
+          name: ing.ingredient.name,
+          slug: ing.ingredient.slug,
+          category: ing.ingredient.category,
+          evidenceLevel: mapEvidenceLevel(ing.ingredient.evidenceLevel),
+          relatedGoals: ing.ingredient.relatedGoals || [],
+          contraindications: (ing.ingredient.contraindications ||
+            []) as ContraindicationTag[],
+          amountMgPerServing: ing.amountMgPerServing,
+        })) as IngredientForDiagnosis[],
     }));
   } catch (error) {
     console.error("Error fetching products from Sanity:", error);
@@ -69,16 +71,29 @@ export async function fetchProductsForDiagnosis(): Promise<
 }
 
 /**
- * Sanityのエビデンスレベル（日本語）を英語形式に変換
+ * Sanityのエビデンスレベルを診断エンジン用の形式に変換
+ * Sanityのエビデンスレベル: "S", "A", "B", "C", "D"
+ * 診断エンジンのEvidenceLevel: "S", "A", "B", "C", "D", "高", "中", "低"
  */
 function mapEvidenceLevel(level: string | undefined): EvidenceLevel {
   switch (level) {
+    case "S":
+      return "S"; // S = 100点
+    case "A":
+      return "A"; // A = 85点
+    case "B":
+      return "B"; // B = 70点
+    case "C":
+      return "C"; // C = 50点
+    case "D":
+      return "D"; // D = 30点
+    // 旧形式（日本語）のサポート（後方互換性のため）
     case "高":
-      return "A";
+      return "高"; // 高 = 85点
     case "中":
-      return "B";
+      return "中"; // 中 = 70点
     case "低":
-      return "C";
+      return "低"; // 低 = 30点
     default:
       return "C"; // デフォルトは低
   }
