@@ -25,7 +25,12 @@ describe("recommendation-engine", () => {
           slug: "vitamin-c",
           category: "ビタミン",
           evidenceLevel: "A",
-          relatedGoals: ["immune-boost", "skin-health", "anti-aging"],
+          relatedGoals: [
+            "immune-boost",
+            "skin-health",
+            "anti-aging",
+            "general-wellness",
+          ],
           contraindications: [],
           amountMgPerServing: 1000,
         },
@@ -44,7 +49,12 @@ describe("recommendation-engine", () => {
           slug: "omega-3",
           category: "脂肪酸",
           evidenceLevel: "S",
-          relatedGoals: ["heart-health", "brain-function", "anti-aging"],
+          relatedGoals: [
+            "heart-health",
+            "brain-function",
+            "anti-aging",
+            "general-wellness",
+          ],
           contraindications: ["anticoagulant-use", "surgery", "bleeding-risk"],
           amountMgPerServing: 1000,
         },
@@ -63,7 +73,12 @@ describe("recommendation-engine", () => {
           slug: "magnesium",
           category: "ミネラル",
           evidenceLevel: "B",
-          relatedGoals: ["sleep-quality", "muscle-growth", "stress-relief"],
+          relatedGoals: [
+            "sleep-quality",
+            "muscle-growth",
+            "stress-relief",
+            "general-wellness",
+          ],
           contraindications: ["kidney-disease"],
           amountMgPerServing: 400,
         },
@@ -82,7 +97,7 @@ describe("recommendation-engine", () => {
           slug: "ginkgo-biloba",
           category: "ハーブ",
           evidenceLevel: "B",
-          relatedGoals: ["brain-function"],
+          relatedGoals: ["brain-function", "general-wellness"],
           contraindications: [
             "pregnant",
             "breastfeeding",
@@ -335,7 +350,7 @@ describe("recommendation-engine", () => {
   describe("recommendProducts", () => {
     it("複数商品が総合スコア順にランキングされる", () => {
       const userProfile: UserDiagnosisProfile = {
-        goals: ["immune-boost"],
+        goals: ["general-wellness"], // 全商品が対象になる目標
         healthConditions: [],
         budgetPerDay: 100,
         priority: "balanced",
@@ -368,7 +383,12 @@ describe("recommendation-engine", () => {
       // イチョウ葉エキス（妊娠中禁忌）は下位になるはず
       const ginkgoProduct = results.find((r) => r.product.id === "prod-4");
       expect(ginkgoProduct).toBeDefined();
-      expect(ginkgoProduct!.rank).toBeGreaterThan(2); // 少なくとも3位以下
+      // brain-functionに一致する商品は2つ（prod-2とprod-4）のみなので、
+      // 安全性重視の場合、禁忌のあるprod-4は最下位（2位）になる
+      expect(ginkgoProduct!.rank).toBe(results.length); // 最下位
+      expect(ginkgoProduct!.scores.safetyScore).toBeLessThan(
+        results[0].scores.safetyScore,
+      ); // 安全性スコアが低い
     });
 
     it("目標に合致しない商品は下位にランキングされる", () => {
