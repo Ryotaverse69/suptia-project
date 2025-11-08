@@ -1,0 +1,28 @@
+[
+  {
+    "productId": "product-rakuten-herbal-i-10000685",
+    "productName": "＼ブランド累計170万袋突破／2800IU 高濃度ビタミンD3 CROWN 1日1粒 60日分 ビタミンD ビタミンK カルシウム 高濃度 日光 サプリメント Vitamin D3 健康 国内製造 小粒タイプ 漢方生薬研究所",
+    "slug": "170-2800iu-d3-crown-1-1-60-d-k-vitamin-d3",
+    "duplicateIngredients": [
+      {
+        "ingredientId": "ingredient-vitamin-d",
+        "ingredientName": "ビタミンD",
+        "count": 3,
+        "amounts": [
+          {
+            "_key": "ingredient-1762615779776-0",
+            "amount": 0.07
+          },
+          {
+            "_key": "ingredient-1762615779776-1",
+            "amount": 0.07
+          },
+          {
+            "_key": "ingredient-1762615779776-2",
+            "amount": 0.07
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,1554 @@
+{
+  "checkedAt": "2025-11-08T15:48:10.701Z",
+  "totalProducts": 319,
+  "summary": {
+    "noIssues": 195,
+    "noIngredients": 36,
+    "unregisteredMainIngredient": 88,
+    "suspiciousAmounts": 0
+  },
+  "issues": {
+    "noIngredients": [
+      {
+        "name": "DHC フォースコリー 20日分(80粒*6袋セット)【DHCサプリメント　ダイエット】",
+        "slug": "dhc-20-80-6-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11130403",
+        "price": 9253
+      },
+      {
+        "name": "DHC マカ 20日分(60粒*3コセット)【DHCサプリメント　スタミナ】",
+        "slug": "dhc-20-60-3-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10678058",
+        "price": 3362
+      },
+      {
+        "name": "DHC 極らくらく 20日分(120粒*6袋セット)【DHCサプリメント　アクティブ】",
+        "slug": "dhc-20-120-6-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11130455",
+        "price": 6540
+      },
+      {
+        "name": "FANCL 60代からのサプリメント 女性 30日分 30袋 女性 美容サプリ ファンケル 全全国送料無料・ネコポス発送・ポスト投函　賞味期限2027.05以降",
+        "slug": "fancl-60-30-30-2027-05",
+        "rakutenUrl": "https://item.rakuten.co.jp/manro-store:10000238",
+        "price": 4350
+      },
+      {
+        "name": "FANCL 60代からのサプリメント 女性 90日分 ビタミン サプリメント ブルーベリー 女性 美容サプリ ファンケル 全国送料無料・ネコポス発送 賞味期限2027.05以降",
+        "slug": "fancl-60-90-2027-05",
+        "rakutenUrl": "https://item.rakuten.co.jp/manro-store:10000013",
+        "price": 12400
+      },
+      {
+        "name": "FANCL ファンケル 50代からのサプリメント 女性用　90日分 ビタミン ミネラル ブルーベリー サプリ 女性 健康サプリ 全国送料無料・ネコポス発送 賞味期限2027.04以降",
+        "slug": "fancl-50-90-2027-04",
+        "rakutenUrl": "https://item.rakuten.co.jp/manro-store:10000012",
+        "price": 11700
+      },
+      {
+        "name": "◆大塚製薬ネイチャーメイドスーパーマルチビタミン&ミネラル 120粒",
+        "slug": "120",
+        "rakutenUrl": "https://item.rakuten.co.jp/sundrug:10017784",
+        "price": 2035
+      },
+      {
+        "name": "★追加割引クーポン★【5日～6日TIME SALE特価】★限定ギフト付き★＼6,600円⇒4,620円／【VITALBEAUTIE公式】スーパー レチノール 60包(30包x2) 【 バイタルビューティー 】 飲むレチノール 粉末 顆粒 パウダー ビタミン サプリ 健康 ハリ 敏感肌 ツヤ キメ 輝き",
+        "slug": "5-6-time-sale-6-600-4-620-vitalbeautie-60-30-x2",
+        "rakutenUrl": "https://item.rakuten.co.jp/amorepacific:10003028",
+        "price": 4620
+      },
+      {
+        "name": "【10/27終了★タイムセールで1,298円】有胞子性乳酸菌ソフトカプセル《約6ヶ月分》■ネコポス送料無料サプリ/乳酸菌サプリ/送料無料【seedcoms_DEAL2】/D0818",
+        "slug": "10-27-1-298-6-seedcoms-deal2-d0818",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004076",
+        "price": 3000
+      },
+      {
+        "name": "【10/27終了★タイムセールで298円】まいにち酵素　1ヶ月分 野草 果実 海藻 キノコ 豆類を使用約1ヶ月分 送料無料 酵素サプリ",
+        "slug": "10-27-298-1-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007435",
+        "price": 1248
+      },
+      {
+        "name": "【11/4開始★タイムセールで298円】ブルーベリー 約1ヶ月分　サプリ サプリメント ブルーベリー ビルベリー メグスリノキ アイブライト ビタミン ポリフェノール アントシニアン タンニン",
+        "slug": "11-4-298-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007340",
+        "price": 298
+      },
+      {
+        "name": "【50%OFF】 3ヶ月セット(90日) ダイエット ダイエットサプリ エラグ酸 3mg お腹の脂肪を減らす 体重 体脂肪 ダイエット サプリ 中性脂肪 内臓脂肪 減らす 下げる ウエスト周囲径 減少サポート BMI値 改善 カルニチン 体脂ガードEX 90日分 送料無料 機能性表示食品",
+        "slug": "50-off-3-90-3mg-bmi-ex-90",
+        "rakutenUrl": "https://item.rakuten.co.jp/duen1102:10000122",
+        "price": 1000
+      },
+      {
+        "name": "【P10倍11月11日01:59まで】イチョウ葉 健康ハーブ 90粒入(約1ヶ月分) サントリー公式 ビタミンC ビタミンE サプリメント サプリ",
+        "slug": "p10-11-11-01-59-90-1-c-e",
+        "rakutenUrl": "https://item.rakuten.co.jp/suntorywellness:10000028",
+        "price": 6179
+      },
+      {
+        "name": "【ふるさと納税】 【レビューキャンペーン】 DHC サプリメント マルチビタミン 30日分 12袋 (360日分) セット サプリ 栄養機能食品 11種類のビタミン 抗酸化 栄養 食事で不足 ビタミン摂取 健康食品 [sf014-016]",
+        "slug": "dhc-30-12-360-11-sf014-016",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222101-fuji:10000643",
+        "price": 17000
+      },
+      {
+        "name": "【ふるさと納税】 【レビューキャンペーン】 DHC 血糖値 ダブル対策 30日分 4ヶ月分 セット 機能性表示食品 サプリメント 桑の葉由来イミノシュガー 食後 空腹時 バナバ葉由来コロソリン酸 サラシアエキス末 タブレット 富士市 [sf014-002]",
+        "slug": "dhc-30-4-sf014-002",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222101-fuji:10001049",
+        "price": 20000
+      },
+      {
+        "name": "【ふるさと納税】 定期便 FANCL 大人のカロリミット 30日分 × 3袋 6ヶ月 お届け ファンケル 三島市 静岡県",
+        "slug": "fancl-30-3-6",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222062-mishima:10000453",
+        "price": 68000
+      },
+      {
+        "name": "【ふるさと納税】サプリ DHC 速攻 ブルーベリー 30日分×6個 セット サプリメント ビルベリー アントシアニン 健康 美容 加工食品 健康食品 静岡 静岡県 袋井 袋井市",
+        "slug": "dhc-30-6",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222160-fukuroi:10000264",
+        "price": 29000
+      },
+      {
+        "name": "【ふるさと納税】サプリ DHC 速攻 ブルーベリー V-MAX 30日分×2個 セット サプリメント アントシアニン 健康 美容 静岡",
+        "slug": "dhc-v-max-30-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222160-fukuroi:10000198",
+        "price": 15000
+      },
+      {
+        "name": "【先着 200円,120円OFFクーポン★11月21日9:59まで】【10/31に発送予定※早まる場合有】エクエル パウチ 120粒 × 3袋【正規販売店】大塚製薬 3個セット [大塚製薬 エクエル パウチ 120 3個 3個セット エクオール サプリ S-エクオール 送料無料 正規品] 日本郵便",
+        "slug": "200-120-off-11-21-9-59-10-31-120-3-3-120-3-3-s",
+        "rakutenUrl": "https://item.rakuten.co.jp/shimin2:10000782",
+        "price": 11199
+      },
+      {
+        "name": "【半額SALE中】コレウス フォルスコリ ダイエットサプリ（約1ヶ月分） 話題の\"イヌリン\"配合！ 送料無料 ダイエット サプリ 植物性 イヌリン デキストリン 食物繊維 フォルスコリ ダイエットサプリ フォルスコリン オーガランド ポイント消化 ポイント消費 送料無料",
+        "slug": "sale-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10215797",
+        "price": 800
+      },
+      {
+        "name": "【大特価SALE】【テレビで話題】 酪酸菌（約6ヶ月分） サプリオリゴ糖 乳酸菌 ビフィズス菌 との相性◎ 善玉菌 酪酸 フローラ ダイエット サプリメント 食物繊維 エイジングケア 健康 送料無料 健菌 ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "sale-6",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10268038",
+        "price": 2380
+      },
+      {
+        "name": "【山田養蜂場】プロポリス300 詰替用(500球) プロポリス サプリメント サプリ カプセル 活力 元気 若々しく 健康食品 健康 人気 おすすめ 50代 60代 70代 80代 ギフト プレゼント 送料無料 お歳暮",
+        "slug": "300-500-50-60-70-80",
+        "rakutenUrl": "https://item.rakuten.co.jp/yamada3838:10000779",
+        "price": 37800
+      },
+      {
+        "name": "アミノバイタルアクティブファイン BCAA アミノ酸(60本入)【アミノバイタル(AMINO VITAL)】[BCAA bcaa アミノ酸 サプリメント]",
+        "slug": "bcaa-60-amino-vital-bcaa-bcaa",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10907803",
+        "price": 4854
+      },
+      {
+        "name": "クーポン ポイント5倍 おまけ付き ペット 乳酸菌 セレクトバランス 善玉菌のチカラ 犬用 顆粒 300g 粉 ペット 犬 イヌ 子犬 成犬 老犬 安心 乳酸菌食品 ビフィズス菌 フェカリス菌 有胞子菌 腸内環境 腸内 改善 乳酸菌ゴールド サプリメント リニューアル",
+        "slug": "5-300g",
+        "rakutenUrl": "https://item.rakuten.co.jp/vetschoice:10000237",
+        "price": 3850
+      },
+      {
+        "name": "サトウQ10(90粒入*5箱セット)【佐藤製薬サプリメント】",
+        "slug": "q10-90-5",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10976713",
+        "price": 12201
+      },
+      {
+        "name": "セサミンカプセル お試し（約1ヶ月分）サプリ サプリメント 一粒にセサミン10mg配合 ゴマ・胡麻 セサミン 食事で不足 胡麻油 黒胡麻 ごま油 グリセリン ダイエット 美容 健康 送料無料 ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "1-10mg",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10126627",
+        "price": 1000
+      },
+      {
+        "name": "セサミンカプセル（約6ヶ月分）送料無料 サプリ サプリメント 一粒にセサミン10mg配合 ゴマ 胡麻 セサミン 胡麻油 黒胡麻 ごま油 ダイエット 美容 健康 大容量 【半年分】 ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "6-10mg",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10127380",
+        "price": 5200
+      },
+      {
+        "name": "ファンケル FANCL 40代からのサプリメント　女性用　90日分 ビタミン ミネラル 乳酸菌 女性 健康サプリ 全国送料無料・ネコポス発送・ポスト投函 賞味期限2027.05以降",
+        "slug": "fancl-40-90-2027-05",
+        "rakutenUrl": "https://item.rakuten.co.jp/manro-store:10000011",
+        "price": 10250
+      },
+      {
+        "name": "ファンケル FANCL 50代からのサプリメント　男性用　90日 サプリメント 健康食品 ビタミン ミネラル 乳酸菌 ブルーベリー 全国送料無料・ネコポス発送 賞味期限2027.01",
+        "slug": "fancl-50-90-2027-01",
+        "rakutenUrl": "https://item.rakuten.co.jp/manro-store:10000016",
+        "price": 11500
+      },
+      {
+        "name": "プレミアムカロリミット＜機能性表示食品＞【ファンケル 公式】 [FANCL ダイエット サポート サプリメント キトサン カロリー サプリ 健康食品 桑の葉 くわのは サポニン 女性 男性 血中中性脂肪 40代 ヘルスケア 健康サプリ キトサンサプリ 糖 吸収 抑える]",
+        "slug": "fancl-40",
+        "rakutenUrl": "https://item.rakuten.co.jp/fancl-shop:10010207",
+        "price": 4941
+      },
+      {
+        "name": "マヌカハニー UMF10+ 250g [2個セット - MGO261+] はちみつ非加熱 100％純粋 生マヌカ ハニーマザー オーガニック manuka マヌカはちみつ 生はちみつ ハチミツ 蜂蜜 ；",
+        "slug": "umf10-250g-2-mgo261-100-manuka",
+        "rakutenUrl": "https://item.rakuten.co.jp/honeymother:10000192",
+        "price": 9960
+      },
+      {
+        "name": "マヌカハニー UMF10+ 250g [MGO261+] はちみつ品質証明書 残留農薬不検出 証明書付モノフローラル はちみつ 非加熱 100％ 純粋 はちみつコンテスト最高賞受賞 ；",
+        "slug": "umf10-250g-mgo261-100",
+        "rakutenUrl": "https://item.rakuten.co.jp/honeymother:10000005",
+        "price": 4980
+      },
+      {
+        "name": "メモリービフィズス 記憶対策サプリ 約180日分(6袋) ビフィズス菌 サプリ 【森永乳業公式】 記憶力 善玉菌 脳 認知 サプリメント 集中力 物忘れ ビフィズス菌末 エイジングケア ヨーグルト 乳酸菌 維持 認知機能 カプセル 女性 男性 50代 健康サプリメント morinaga mcc1274",
+        "slug": "180-6-50-morinaga-mcc1274",
+        "rakutenUrl": "https://item.rakuten.co.jp/morinagamilk:10000214",
+        "price": 31428
+      },
+      {
+        "name": "大人のカロリミット＜機能性表示食品＞【ファンケル 公式】 [FANCL ダイエット サポート サプリメント キトサン カロリー サプリ 健康食品 桑の葉 くわのは サポニン 女性 男性 血中中性脂肪 40代 ヘルスケア 健康サプリ キトサンサプリ 糖 吸収 抑える]",
+        "slug": "fancl-40",
+        "rakutenUrl": "https://item.rakuten.co.jp/fancl-shop:10000726",
+        "price": 2520
+      },
+      {
+        "name": "送料無料 1個あたり2,175円 オリヒロ 深海鮫エキスカプセル 徳用 360粒 60日分 2個 orihiro サプリ サプリメント 肝油100％ 肝油 サメ肝油 スクワレン 深海鮫 深海鮫肝油 深海",
+        "slug": "1-2-175-360-60-2-orihiro-100",
+        "rakutenUrl": "https://item.rakuten.co.jp/orihiro:10000617",
+        "price": 4350
+      },
+      {
+        "name": "＼最大34%OFF+ギフト／【VITALBEAUTIE公式】 NEW メタグリーン シリーズ (選べる単品 or セット)【 バイタルビューティー 】スリムアップ スリム ヘルシー 健康 食後 ボディ管理 健康管理 サプリ メント ヴィーガン インナービューティー 韓国 アモーレパシフィック",
+        "slug": "34-off-vitalbeautie-new-or",
+        "rakutenUrl": "https://item.rakuten.co.jp/amorepacific:10002635",
+        "price": 2208
+      }
+    ],
+    "unregisteredMainIngredient": [
+      {
+        "name": "AFC カルシウム+マグネシウム 30日分 3袋セット【1世帯様4セットまで】 カルシウム マグネシウム サプリ サプリメント ポリカン",
+        "slug": "afc-30-3-1-4",
+        "rakutenUrl": "https://item.rakuten.co.jp/afc:10032769",
+        "price": 3888,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHA&EPA＋セサミンEX オメガ脂肪酸 120粒＋240粒(約3ヶ月分) サントリー公式 DHA EPA オリザプラス セサミン トコトリエノール ビタミンD ビタミンE サプリメント オメガ3 サプリ",
+        "slug": "dha-epa-ex-120-240-3-dha-epa-d-e-3",
+        "rakutenUrl": "https://item.rakuten.co.jp/suntorywellness:10000666",
+        "price": 19899,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC 20日分 大豆イソフラボン エクオール(20粒*6袋セット)【DHCサプリメント　美容】",
+        "slug": "dhc-20-20-6-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11130438",
+        "price": 15076,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC 60日カルシウム／マグ(180粒)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-60-180-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10509319",
+        "price": 813,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC カルシウム+CBP 90日分(360粒入)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-cbp-90-360-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11067775",
+        "price": 1143,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC ビタミンD 60日分(60粒*3袋セット)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-d-60-60-3-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/kenkocom:11985850",
+        "price": 1447,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC ビタミンD 90日分(90粒入*3袋セット)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-d-90-90-3-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11140052",
+        "price": 1993,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC ビタミンD 90日分(90粒入×2セット)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-d-90-90-2-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11275550",
+        "price": 1356,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC ルテイン光対策 60日分(60粒*6袋セット)【DHCサプリメント　クリア】",
+        "slug": "dhc-60-60-6-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11130362",
+        "price": 11777,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC 亜鉛 60日分(60粒*9袋セット)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-60-60-9-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10992281",
+        "price": 4071,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC 天然ビタミンE(大豆) 60日分(60粒*9コセット)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-e-60-60-9-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10819927",
+        "price": 6408,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "DHC 葉酸 60日分(60粒)【DHCサプリメント　ベ−シック】",
+        "slug": "dhc-60-60-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10595714",
+        "price": 426,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "[1日から使える最大400円OFFクーポンあり] エクエル パウチ 120粒入り 大塚製薬 エクオール [ 正規品 送料無料 ] 4粒で S-エクオール 10mg 120粒 エクオール 大豆イソフラボン サプリ / EQUELLE エクエル大塚製薬 エクオル 最安値 挑戦中 [メール便]",
+        "slug": "1-400-off-120-4-s-10mg-120-equelle",
+        "rakutenUrl": "https://item.rakuten.co.jp/pycno:10006922",
+        "price": 3847,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "[健康食品]スカルプD サプリメント 亜鉛EX pu10 メール便送料無料（2個まで）",
+        "slug": "d-ex-pu10-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/angfa:10000155",
+        "price": 1200,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "※初回限定 30％OFF※ ルテイン サプリ めぐみのルテイン30 30日分 AFC 【機能性表示食品】 【1世帯様3個まで】 ゼアキサンチン GABA ルテイン サプリメント",
+        "slug": "30-off-30-30-afc-1-3-gaba",
+        "rakutenUrl": "https://item.rakuten.co.jp/afc:10033635",
+        "price": 2916,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【 栄養機能食品 】 ビタミンD （約6ヶ月分）送料無料 サプリ サプリメント 若々しく 5.00μg配合 脂溶性 中鎖脂肪酸油 骨の形成を助ける カルシウム 吸収 【半年分】 ビタミンd不足 _JB_JH ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "d-6-5-00-g-d-jb-jh",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10267999",
+        "price": 2200,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【10/28開始★タイムセールで298円】極プラセンタ 約1ヶ月分 送料無料 プラセンタサプリ サプリメント ヘム鉄 豚プラセンタ 馬プラセンタ 核酸 フェルラ酸 ビタミン フィッシュコラーゲン 潤い スキンケア 乾燥 美容",
+        "slug": "10-28-298-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007030",
+        "price": 298,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/1限定！抽選で最大100%ポイントバック】amritara（アムリターラ） フェム リズム 60粒【ネコポス送料無料】 亜鉛 大豆由来 エクシオール イソフラボン 乳酸菌 サプリ サプリメント フェムケア",
+        "slug": "11-1-100-amritara-60",
+        "rakutenUrl": "https://item.rakuten.co.jp/aimere:10022675",
+        "price": 6156,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/3終了★タイムセールで1,798円】マカ 約6ヶ月分 サプリ 亜鉛 鉄 必須アミノ酸 男性 女性 妊活 エネルギー ビタミン ミネラル 健康 サプリメント男性【seedcoms_DEAL2】【seedcoms_DEAL5】/D0818",
+        "slug": "11-3-1-798-6-seedcoms-deal2-seedcoms-deal5-d0818",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004045",
+        "price": 1798,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/3終了★タイムセールで2,398円】国産すっぽん黒酢 約12ヶ月分 サプリ すっぽん スッポン 美容 黒酢 ダイエット 健康 コラーゲン アミノ酸 リノール酸 リノレン酸 オレイン酸 大豆プペチド",
+        "slug": "11-3-2-398-12",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004400",
+        "price": 2398,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/3終了★タイムセールで298円】カルシウム＆マグネシウム《約1ヶ月分》ビタミンD サプリ サプリメント 健康 子供 ドロマイト ビタミン",
+        "slug": "11-3-298-1-d",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004699",
+        "price": 298,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/3終了★タイムセールで398円】ぷるぷるすっぽんコラーゲン《約1ヶ月分》エラスチン入り 美容 サプリ コラーゲン すっぽん エラスチン ヒアルロン酸 サプリメント ダイエット 中の方にも",
+        "slug": "11-3-398-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007320",
+        "price": 398,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【11/3終了★タイムセールで698円】肝臓エキス入りオルニチンカプセル★3ヶ月■送料無料■サプリメント/サプリ 健康 肝臓エキス オルニチン しじみエキス ビタミン アミノ酸 メチオニン アルギニン シスチン 鉄 カルシウム カリウム ミネラル",
+        "slug": "11-3-698-3",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10003650",
+        "price": 698,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【3個セット】ファンケル (FANCL) 40代からのサプリメント女性用 45〜90日分 年代 サプリ Q10/DHC/ミネラル/アスタキサンチン/コラーゲン マルチビタミン サプリ 健康食品 ヘルスケア 記憶力 gaba サプリ 総合ビタミン剤 免疫力アップサプリ えんきん サプリ 女性 人気 40代",
+        "slug": "3-fancl-40-45-90-q10-dhc-gaba-40",
+        "rakutenUrl": "https://item.rakuten.co.jp/jinfu:10000269",
+        "price": 10790,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【3個セット】ファンケル FANCL 40代 からのサプリメント男性用45〜90日分（30袋×3） 年代 サプリメント ビタミンc ビタミンb ミネラル コエンザイムQ10 ナットウキナーゼ GABA マカ 男性 ギャバ 40代 ルテイン カルシウム ビタミンe まか ヒハツ ルティン 亜鉛",
+        "slug": "3-fancl-40-45-90-30-3-c-b-q10-gaba-40-e",
+        "rakutenUrl": "https://item.rakuten.co.jp/jinfu:10000271",
+        "price": 10690,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【50%OFF】 3ヶ月分 葉酸 480μg 鉄分 20mg カルシウム 200mg 11種類 ビタミンミネラル サプリメント 270粒 90日分 国内製造 送料無料",
+        "slug": "50-off-3-480-g-20mg-200mg-11-270-90",
+        "rakutenUrl": "https://item.rakuten.co.jp/duen1102:10000140",
+        "price": 1380,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【50%OFF】 ルテイン 100mg ゼアキサンチン 5mg 高濃度 フリー体 サプリ ビルベリー サプリメント 30日分 送料無料 国内製造 GMP認定工場",
+        "slug": "50-off-100mg-5mg-30-gmp",
+        "rakutenUrl": "https://item.rakuten.co.jp/duen1102:10000013",
+        "price": 2000,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【8000円以上1000円OFF】ソーン ピコリン酸亜鉛 ジンク ピコリネート 15mg サプリメント 60粒 カプセル Thorne Zinc Picolinate Capsules 健康維持 生活習慣 スキンケア 目の健康 健康サプリメント 栄養補助食品 海外 アメリカ",
+        "slug": "8000-1000-off-15mg-60-thorne-zinc-picolinate-capsules",
+        "rakutenUrl": "https://item.rakuten.co.jp/harmony:10057487",
+        "price": 2629,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】Doctor's Best マグネシウム 高吸収 【 iHerb アイハーブ 公式 】 ドクターズベスト リジン酸 グリシン酸 リジン グリシン キレートマグネシウム キレート化 アルビオン ミネラル サプリ タブレット 100mg 240粒",
+        "slug": "point20-11-1-0-00-23-59-doctor-s-best-iherb-100mg-240",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10009962",
+        "price": 3282,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】Life Extension クエン酸マグネシウム 【 iHerb アイハーブ 公式 】 ライフエクステンション マグネシウム ミネラル サプリ サプリメント 植物性 植物性カプセル ベジカプセル 100mg 100粒",
+        "slug": "point20-11-1-0-00-23-59-life-extension-iherb-100mg-100",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000231",
+        "price": 1683,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods クエン酸マグネシウム 【 iHerb アイハーブ 公式 】 ナウフーズ マグネシウム サプリメント サプリ 健康食品 栄養補助食品 植物性 ベジタリアン ヴィーガン 植物性カプセル ベジカプセル 240粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-iherb-240",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10008902",
+        "price": 3803,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミン D3 & K2 【 iHerb アイハーブ 公式 】 ナウフーズ サプリメント サプリ ビタミンサプリ ビタミンD コレカルシフェロール ビタミン ビタミンK メナキノン-4 ベジカプセル 45mcg 1,000IU 120粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-k2-iherb-d-k-4-45mcg-1-000iu-120",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000219",
+        "price": 1499,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンB-50 【 iHerb アイハーブ 公式 】 ナウフーズ ビタミンB群 サプリ サプリメント ビタミン ビタミンサプリ ビタミンB複合体 B1 B2 B3 ナイアシン ビオチン 葉酸 植物性 ベジカプセル 100粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-b-50-iherb-b-b-b1-b2-b3-100",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000200",
+        "price": 1900,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンD3 【 iHerb アイハーブ 公式 】 ナウフーズ D3 サプリメント サプリ ビタミン ビタミンD 健康食品 栄養補助食品 ソフトジェル 125mcg 5,000IU 240粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-iherb-d3-d-125mcg-5-000iu-240",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000208",
+        "price": 1971,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンD3 【 iHerb アイハーブ 公式 】 ナウフーズ D3 サプリメント サプリ ビタミン ビタミンD 健康食品 栄養補助食品 ソフトジェル 250mcg 10,000IU 120粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-iherb-d3-d-250mcg-10-000iu-120",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10003315",
+        "price": 1456,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンD3 【 iHerb アイハーブ 公式 】 ナウフーズ D3 サプリメント サプリ ビタミン ビタミンD 健康食品 栄養補助食品 ソフトジェル 25mcg 1,000IU 180粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-iherb-d3-d-25mcg-1-000iu-180",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000243",
+        "price": 898,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンD3 【 iHerb アイハーブ 公式 】 ナウフーズ D3 サプリメント サプリ ビタミン ビタミンD 健康食品 栄養補助食品 ソフトジェル 25mcg 1,000IU 360粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-iherb-d3-d-25mcg-1-000iu-360",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000311",
+        "price": 1700,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods ビタミンD3 【 iHerb アイハーブ 公式 】 ナウフーズ D3 ビタミン サプリメント サプリ ビタミンD 健康食品 栄養補助食品 ソフトジェル 50mcg 2,000IU 240粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-iherb-d3-d-50mcg-2-000iu-240",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10002151",
+        "price": 1456,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods メガ D3 & MK7 【 iHerb アイハーブ 公式 】 ナウフーズ ビタミンD ビタミンK メナキノン K2 メナQ7 サプリメント サプリ ビタミンサプリ カプセル 120粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-d3-mk7-iherb-d-k-k2-q7-120",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10001002",
+        "price": 4604,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】NOW Foods メチル葉酸 【 iHerb アイハーブ 公式 】 ナウフーズ 葉酸 メチル ビタミン類 ビタミンB群 ビタミンB サプリメント サプリ ビタミンサプリ 植物性 タブレット 1,000mcg 90粒",
+        "slug": "point20-11-1-0-00-23-59-now-foods-iherb-b-b-1-000mcg-90",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10001012",
+        "price": 2200,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【POINT20倍★11/1 0:00〜23:59限定】Sports Research ビタミンK2 + D3 【 iHerb アイハーブ 公式 】 スポーツリサーチ サプリメント サプリ ビタミン ビタミンサプリ ビタミンD ビタミンK メナQ7 植物性 ソフトジェル 100mcg 125mcg 60粒",
+        "slug": "point20-11-1-0-00-23-59-sports-research-k2-d3-iherb-d-k-q7-100mcg-125mcg-60",
+        "rakutenUrl": "https://item.rakuten.co.jp/iherb-official:10000316",
+        "price": 5039,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【お得な3個セット】亜鉛（グルコン酸亜鉛由来） 50mg 250粒 ベジタリアン仕様 ナウフーズ サプリメント ビタミン ミネラル カルシウム マグネシウム 亜鉛 ジンク 【Now Foods Zinc 50 mg (250 Tablets)】",
+        "slug": "3-50mg-250-now-foods-zinc-50-mg-250-tablets",
+        "rakutenUrl": "https://item.rakuten.co.jp/vitatra:10002556",
+        "price": 3740,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【お得な大容量】ヘム鉄 & ビタミン（約6ヶ月分） 送料無料 鉄 鉄分 サプリメント ミネラル おすすめ 鉄分補給 ダイエット 鉄分不足 食事で不足 ヘルスケア 大容量 半年分 ヘルスケア 気になるお悩みに 亜鉛との相性抜群 オーガランド ポイント消化 送料無 ポイント消費",
+        "slug": "6",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10184211",
+        "price": 3800,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【ふるさと納税】DHC ブルーベリー エキス 30日分 ×6個 セット サプリ サプリメント ブルーベリーエキス ビルベリー アントシアニン ルテイン マリーゴールド カロテノイド ビタミン パソコン スマホ 30日 健康 健康食品 静岡 静岡県 袋井市",
+        "slug": "dhc-30-6-30",
+        "rakutenUrl": "https://item.rakuten.co.jp/f222160-fukuroi:10000684",
+        "price": 19000,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【ふるさと納税】【選べる内容量】サプリ 亜鉛 30日分 6個セット(180日分)・10個セット(300日分)・12個セット(360日分) ｜ DHC サプリメント 健康食品 健康 美容 30日 男性 女性 バイタリティアップ 健康維持 味覚 栄養機能食品 dhc 栃木 鹿沼市",
+        "slug": "30-6-180-10-300-12-360-dhc-30-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/f092053-kanuma:10000240",
+        "price": 6000,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【公式】Dear-Natura セサミン50 30粒 2個セット 通販限定 黒ゴマ セサミン ビタミンE 抗酸化 ディアナチュラ 栄養機能食品 セサミンリッチ黒ゴマ 黒セサミン ゴマ 黒ごま ゴマセサミン サプリメント 国内製造 アサヒ",
+        "slug": "dear-natura-50-30-2-e",
+        "rakutenUrl": "https://item.rakuten.co.jp/asahicalpis-w:10000118",
+        "price": 6912,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内8000円以上1000円OFF】Lオプティジンク(メチオニン 高吸収タイプ亜鉛) 30mg 100粒 NOW Foods (ナウフーズ) 単品 セット L-OptiZinc 30mg 100cp 銅 特許成分 L型 ミネラル mineral 健康サプリメント 栄養補助食品 海外 アメリカ",
+        "slug": "8000-1000-off-l-30mg-100-now-foods-l-optizinc-30mg-100cp-l-mineral",
+        "rakutenUrl": "https://item.rakuten.co.jp/harmony:10028795",
+        "price": 1181,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内8000円以上1000円OFF】[2個セット] グリシン酸亜鉛 30mg 120粒 NOW Foods (ナウフーズ) Zinc Glycinate - 120 Softgels 2bottles set ソフトジェル 健康サプリメント 栄養補助食品 海外 アメリカ ジンク",
+        "slug": "8000-1000-off-2-30mg-120-now-foods-zinc-glycinate-120-softgels-2bottles-set",
+        "rakutenUrl": "https://item.rakuten.co.jp/harmony:10033271",
+        "price": 3485,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内8000円以上1000円OFF】[健康を維持したい方に]NOW Foods カルマグ DK 180粒 カプセル ナウフーズ Cal-Mag DK 180caps Cal-Mag DK 180caps 健康サプリメント 栄養補助食品 海外 アメリカ ビタミンD3 K2 コレカルシフェロール",
+        "slug": "8000-1000-off-now-foods-dk-180-cal-mag-dk-180caps-cal-mag-dk-180caps-d3-k2",
+        "rakutenUrl": "https://item.rakuten.co.jp/harmony:10029478",
+        "price": 2575,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内8000円以上1000円OFF】ナウフーズ クエン酸マグネシウム 200mg 250粒 タブレット NOW Foods Magnesium Citrate 200mg Tablets ミネラル ボーンヘルス 健骨サポート 体づくり",
+        "slug": "8000-1000-off-200mg-250-now-foods-magnesium-citrate-200mg-tablets",
+        "rakutenUrl": "https://item.rakuten.co.jp/harmony:10042092",
+        "price": 3969,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】【DHC直販】 送料無料 男性・女性のお悩みにアプローチ マカ 徳用90日分 | dhc サプリメント サプリ ミネラル 亜鉛 冬虫夏草 アミノ酸 ディーエイチシー 美容 メンズサプリ マカサプリ 栄養補助食品 健康食品 栄養サプリメント 男性 元気 スタミナ",
+        "slug": "p-18-dhc-90-dhc",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop:10002761",
+        "price": 4860,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】【DHC直販】サプリ【メール便OK】 カルシウム＋CBP 徳用90日分 | ビタミン サプリメント 女性 子供 男性 子供用サプリメント カルシュウム ビタミンd3 チュアブル 栄養 健康食品 健康",
+        "slug": "p-18-dhc-ok-cbp-90-d3",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop-2:10000162",
+        "price": 1274,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】【DHC直販】吸収力の高いコエンザイムQ10包接体 コエンザイムQ10 包接体 90日分【サプリ】 | サプリメント ビタミンc 女性 男性 DHC コエンザイム エイジングケア coq10 美容 サプリ 健康食品 CoQ10 エネルギー エイジング 健康 Q10 Q10サプリ",
+        "slug": "p-18-dhc-q10-q10-90-c-dhc-coq10-coq10-q10-q10",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop:10000068",
+        "price": 2314,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】【DHC直販サプリメント】持続型葉酸 30日分 | dhc サプリメント ビタミン 女性 タイムリリース 持続型 葉酸 食事で不足 妊婦 妊活 ビタミンb 産後 妊娠 授乳中 妊娠中 サプリ ママ ミネラル マタニティ 葉酸サプリ 貧血 ビタミン剤 妊活サプリ 授乳",
+        "slug": "p-18-dhc-30-dhc-b",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop:10010893",
+        "price": 388,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】【メール便OK】【DHC直販】醗酵黒セサミン プレミアム30日分 サプリメント dhc DHC 黒セサミン | サプリ イミダペプチド イミダゾールペプチド コエンザイムQ10 イミダゾールジペプチド セサミン 美容",
+        "slug": "p-18-ok-dhc-30-dhc-dhc-q10",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop-2:10000216",
+        "price": 2970,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【店内P最大18倍以上開催】醗酵黒セサミン プレミアム30日分【DHC直販】 | サプリメント サプリ 健康食品 コエンザイムq10 セサミン コエンザイム Q10 イミダゾールペプチド イミダゾール 黒セサミン DHC 1ヶ月分 メンズサプリ 美容サプリ マカ 元気 黒ごま スタミナ well",
+        "slug": "p-18-30-dhc-q10-q10-dhc-1-well",
+        "rakutenUrl": "https://item.rakuten.co.jp/dhcshop:10008734",
+        "price": 2970,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "【送料無料】AFC プレミアムルテイン25《30日×6袋セット》ルテインGOLD (ルテイン ゴールド)（エーエフシー サプリメント）",
+        "slug": "afc-25-30-6-gold",
+        "rakutenUrl": "https://item.rakuten.co.jp/aiaigenki:10006516",
+        "price": 21600,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "お徳用バーゲン 【メール便送料無料】 マグネシウム サプリメント (約1年分・1800粒） 栄養機能食品 マグネシウム サプリ ミネラル類 マグネシウム配合 ダイエット magnesium supplement diet 売れ筋 ギフト 楽天 ハロウィン",
+        "slug": "1-1800-magnesium-supplement-diet",
+        "rakutenUrl": "https://item.rakuten.co.jp/1fukuya:10018915",
+        "price": 11680,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "アスタリフト サプリメント ホワイトシールド 約30日分 60粒 [機能性表示食品]【FUJIFILM 公式】| サプリ アスタキサンチン 紫外線 紫外線対策 UVケア ケア uv リコピン コラーゲン ビタミンC ビタミンE 飲む 肌 乾燥 富士フイルム ASTALIFT",
+        "slug": "30-60-fujifilm-uv-uv-c-e-astalift",
+        "rakutenUrl": "https://item.rakuten.co.jp/fujifilm-h:10000171",
+        "price": 4320,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "カラダがヨロコブ亜鉛2個セット(60カプセル×2個)【ニューサイエンス正規代理店】Zn【酵母由来ミネラル】ニューサイエンス亜鉛 ニューサイエンス カラダガヨロコブ 亜鉛 ジンク サプリ ミネラル (60カプセル×2個)",
+        "slug": "2-60-2-zn-60-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/karada-b:10000290",
+        "price": 8316,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "カルシウムMg 約60日分(240粒入(約60日分)*2コセット)【小林製薬の栄養補助食品】",
+        "slug": "mg-60-240-60-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10874185",
+        "price": 1050,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "カルシウム＆マグネシウム 約12ヶ月分 【seedcoms_D】12DE【DEAL3206】【DEAL3204 サプリ サプリメント 健康 ドロマイト 子供 ビタミン【LINE】【seedcoms_DEAL2】/D0818",
+        "slug": "12-seedcoms-d-12de-deal3206-deal3204-line-seedcoms-deal2-d0818",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004309",
+        "price": 5700,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "カルシウム（約6ヶ月分）送料無料 サプリ サプリメント カルシウム 配合。 子供 こどもにも ホタテ 貝殻 カルシウム 偏食 ミネラル ナトリウム カリウム マグネシウム 鉄 亜鉛 健康 オーガランド 大容量 【半年分】_JH ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "6-jh",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10138777",
+        "price": 2400,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "グルコサミン コンドロイチン コラーゲン（約3ヶ月分）送料無料 サプリ サプリメント 魚 フィッシュ コラーゲン 2型コラーゲン グルコサミン コンドロイチン コラーゲン ヒアルロン酸 デキストリン 健康 オーガランド",
+        "slug": "3-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10126714",
+        "price": 1900,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ザバス ホエイプロテイン100 マルチビタミン＆ミネラル ミルクショコラ風味(900g)【ザバス(SAVAS)】[インフォームドプロテイン認証]",
+        "slug": "100-900g-savas",
+        "rakutenUrl": "https://item.rakuten.co.jp/kenkocom:12047454",
+        "price": 3669,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "セサミンEX 90粒(約1ヶ月分)×2個セット サントリー公式 オリザプラス セサミン トコトリエノール ビタミンE サプリ サプリメント",
+        "slug": "ex-90-1-2-e",
+        "rakutenUrl": "https://item.rakuten.co.jp/suntorywellness:10000161",
+        "price": 10912,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ディアナチュラスタイル 葉酸×鉄・カルシウム(120粒*5袋セット)【Dear-Natura(ディアナチュラ)】",
+        "slug": "120-5-dear-natura",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:11121700",
+        "price": 3714,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ニューサイエンス ヘンププロテイン 粉末タイプ 454g 麻の実 プロテインシード オーガニック サプリメント",
+        "slug": "454g",
+        "rakutenUrl": "https://item.rakuten.co.jp/keiesuty:10000025",
+        "price": 3672,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "バルクスポーツ リキッドビタミンD3 60カプセル 約30〜60回分 ギフト",
+        "slug": "d3-60-30-60",
+        "rakutenUrl": "https://item.rakuten.co.jp/bulksports:10000246",
+        "price": 2350,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ビタミンD カルシウム入り 360粒 約12ヶ月分 30マイクログラム配合 ビタミン ビタミンD3 カルシウム サプリ サプリメント",
+        "slug": "d-360-12-30-d3",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007456",
+        "price": 5700,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ビタミンD 葉酸＋鉄 120粒（60日分）｜オリヒロ",
+        "slug": "d-120-60",
+        "rakutenUrl": "https://item.rakuten.co.jp/juujiya:10000567",
+        "price": 536,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ピジョン 葉酸カルシウムプラス(60粒入*4袋セット)【ピジョンサプリメント】",
+        "slug": "60-4",
+        "rakutenUrl": "https://item.rakuten.co.jp/netbaby:10039473",
+        "price": 4413,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "ファンケル Mama Lula 葉酸＆鉄プラス(120粒入)【ファンケル】[葉酸　鉄分　乳酸菌　カルシウム　妊娠　ママルラ]",
+        "slug": "mama-lula-120",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10981412",
+        "price": 1499,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "マルチミネラルビタミン ｜ 180粒 ニューサイエンス サプリ サプリメント オーガニック村 マルチビタミン マルチミネラル オーガニック 天然 マグネシウム カルシウム 亜鉛 ビタミンC 健康食品 健康 無添加 ビタミン剤 葉酸 総合ビタミン あす楽 子供 子ども 正規品 効果",
+        "slug": "180-c",
+        "rakutenUrl": "https://item.rakuten.co.jp/org-store:10000162",
+        "price": 9504,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "亜鉛 約60日分 毎日元気でありたい方に(120粒入り×2セット)【小林製薬の栄養補助食品】",
+        "slug": "60-120-2",
+        "rakutenUrl": "https://item.rakuten.co.jp/rakuten24:10677935",
+        "price": 2411,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "亜鉛 ＜栄養機能食品＞【ファンケル 公式】[FANCL サプリ サプリメント ビタミン ビタミンb 女性 ミネラル ビタミンb2 健康 男性 エイジングケア 健康食品 ヘルスケア 亜鉛不足 栄養補給 栄養補助 亜鉛サプリ]",
+        "slug": "fancl-b-b2",
+        "rakutenUrl": "https://item.rakuten.co.jp/fancl-shop:10009023",
+        "price": 864,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "亜鉛（約6ヶ月分）おすすめ 安心 サプリ 必須 サプリメント 男性 女性 1粒 ミネラル 亜鉛サプリ 元気 エイジングケア 送料無料 オーガランド 低価格 高評価【半年分】",
+        "slug": "6-1",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10127584",
+        "price": 1860,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "初回オススメ！健康ビタミンお試しサプリセット　ビタミンC&ビタミンE(各1ヶ月分)【deal1105】【dealreiwa12】【seedcoms_DEAL2】/D0818",
+        "slug": "c-e-1-deal1105-dealreiwa12-seedcoms-deal2-d0818",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10007248",
+        "price": 800,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸 配合サプリ AFC mitete 葉酸サプリ 90日分 (30日分 3個セット)【袋タイプ】サプリ サプリメント 送料無料",
+        "slug": "afc-mitete-90-30-3",
+        "rakutenUrl": "https://item.rakuten.co.jp/afc:10033092",
+        "price": 4860,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸カルシウムプラス　6か月分（360粒） | 妊娠 妊娠中 妊婦 マタニティ マタニティー 妊活 レディース 葉酸 葉酸サプリ サプリ サプリメント 栄養補助食品 鉄 鉄分 カルシウム 出産準備 健康 葉酸サプリメント 錠剤 ビタミン 亜鉛",
+        "slug": "6-360",
+        "rakutenUrl": "https://item.rakuten.co.jp/pigeon-shop:10001903",
+        "price": 7306,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸サプリ Mama Lula ママルラ 葉酸 &amp; 鉄プラス 栄養機能食品 30日分 葉酸 サプリメント 妊娠中 鉄分 女性 ファンケル FANCL 公式",
+        "slug": "mama-lula-amp-30-fancl",
+        "rakutenUrl": null,
+        "price": 4274,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸サプリ momの葉酸 （約6ヶ月分） 匂いを抑えた カプセルタイプ 飲みやすい 葉酸サプリ 送料無料 鉄分 妊婦 カルシウム サプリメント モノグルタミン酸 授乳 ママ パパ 妊娠 赤ちゃん ビタミン 鉄 放射能分析結果済 ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "mom-6",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10268184",
+        "price": 9900,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸サプリ 【ランキング1位獲得】 葉酸サプリ 約3ヶ月分 葉酸 鉄 産後 においを抑えた カプセルタイプ 飲みやすい 鉄分 葉酸 送料無料 葉酸 妊婦 サプリメント ママ パパ 妊娠中 赤ちゃん ビタミン 放射能分析結果済 ポイント消化 送料無 ポイント消費 送料無料",
+        "slug": "1-3",
+        "rakutenUrl": "https://item.rakuten.co.jp/oga:10268185",
+        "price": 4980,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸＆ヘム鉄　 カルシウム ビタミン 入り《約6ヶ月分》ネコポス送料無料【サプリメント】サプリ/葉酸サプリ　サプリ サプリメント ナイアシン 【seedcoms_DEAL2】/D0818",
+        "slug": "6-seedcoms-deal2-d0818",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004172",
+        "price": 3276,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "葉酸＆ヘム鉄　カルシウムビタミン入り《約12ヶ月分》■ネコポス送料無料 ■代引・日時指定不可 サプリ/葉酸サプリ/ヘム鉄サプリ 送料無料",
+        "slug": "12",
+        "rakutenUrl": "https://item.rakuten.co.jp/seedcoms:10004325",
+        "price": 6452,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "［23％OFF］葉酸 配合サプリ AFC mitete 葉酸サプリ 30日分 6個セット【袋タイプ】 サプリ サプリメント 送料無料",
+        "slug": "23-off-afc-mitete-30-6",
+        "rakutenUrl": "https://item.rakuten.co.jp/afc:10002440",
+        "price": 8424,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "＼ノーベル賞受賞のオートファジー／ 葉酸サプリ 妊活サプリ 【サズカルONE】 葉酸 妊活 サプリメント 無添加 天然 サプリ オートファジー 赤ちゃん ママ サポート 天然葉酸 鉄 ビタミン ミネラル アミノ酸 イシクラゲ 葉酸サプリ 30日分 60粒",
+        "slug": "one-30-60",
+        "rakutenUrl": "https://item.rakuten.co.jp/sazukaru-baby:10000000",
+        "price": 6440,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      },
+      {
+        "name": "＼レビュー高評価4.45／美粉屋 こなゆきコラーゲン100000mg コラーゲンパウダー1000円ポッキリ 送料無料食品屋が本当に美容を考えた一番搾り低分子コラーゲンペプチド| 国産100％ 粉末 サプリ コラーゲンドリンク プロテイン お買い物マラソン",
+        "slug": "4-45-100000mg-1000-100",
+        "rakutenUrl": "https://item.rakuten.co.jp/kyunan:10001288",
+        "price": 777,
+        "mainIngredient": "未登録",
+        "mainIngredientAmount": "不明",
+        "issues": [
+          {
+            "type": "主要成分未登録",
+            "detail": "最も配合量が多い成分がSanityに未登録です",
+            "estimatedAmount": "不明"
+          }
+        ]
+      }
+    ],
+    "suspiciousAmounts": [],
+    "multipleIssues": []
+  }
+}
