@@ -49,7 +49,7 @@ export function CostEffectivenessDetail({
     }
   > = {
     S: {
-      color: "from-yellow-400 to-orange-500",
+      color: "from-amber-400 via-yellow-300 to-amber-400",
       bgColor: "bg-yellow-50",
       borderColor: "border-yellow-200",
       textColor: "text-yellow-800",
@@ -159,21 +159,6 @@ export function CostEffectivenessDetail({
           <p className={`text-sm ${currentRankInfo.textColor}`}>
             {currentRankInfo.description}
           </p>
-        </div>
-      )}
-
-      {/* ベストバリューバッジ（旧バッジ - Sランクの場合に表示） */}
-      {isBestValue && costEffectivenessRank === "S" && (
-        <div className="mb-6 p-6 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400">
-          <div className="text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Award size={28} />
-              <p className="text-2xl font-bold">ベストバリュー</p>
-            </div>
-            <p className="text-lg opacity-90">
-              同じ成分を含む商品の中で、最もコストパフォーマンスが優れています
-            </p>
-          </div>
         </div>
       )}
 
