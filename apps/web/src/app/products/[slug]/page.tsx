@@ -971,6 +971,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           safetyScore={finalScores.safety}
           thirdPartyTested={product.thirdPartyTested || false}
           warnings={product.warnings || []}
+          references={product.references || []}
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
           safetyDetails={safetyDetails}

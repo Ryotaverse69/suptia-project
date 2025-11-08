@@ -32,6 +32,13 @@ interface EvidenceSafetyDetailProps {
   safetyScore?: number;
   thirdPartyTested?: boolean;
   warnings?: (string | { message: string; severity?: string; type?: string })[];
+  references?: Array<{
+    title?: string;
+    url?: string;
+    source?: string;
+    description?: string;
+    type?: string;
+  }>;
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
@@ -51,6 +58,7 @@ export function EvidenceSafetyDetail({
   safetyScore = 0,
   thirdPartyTested = false,
   warnings = [],
+  references = [],
   ingredientName,
   ingredientEvidenceLevel,
   safetyDetails = [],
@@ -701,6 +709,57 @@ export function EvidenceSafetyDetail({
             </li>
           </ul>
         </div>
+
+        {/* 参考文献セクション */}
+        {references && references.length > 0 && (
+          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+            <h4 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
+              <Microscope size={20} />
+              参考文献
+            </h4>
+            <div className="space-y-3">
+              {references.map((ref, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-white border border-blue-100 rounded-lg hover:border-blue-300 transition-colors"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex-shrink-0 text-blue-600 font-semibold">
+                      [{index + 1}]
+                    </span>
+                    <div className="flex-1">
+                      {ref.title && (
+                        <h5 className="font-semibold text-gray-900 mb-1">
+                          {ref.title}
+                        </h5>
+                      )}
+                      {ref.description && (
+                        <p className="text-sm text-gray-600 mb-2">
+                          {ref.description}
+                        </p>
+                      )}
+                      {ref.url && (
+                        <a
+                          href={ref.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
+                        >
+                          {ref.url}
+                        </a>
+                      )}
+                      {ref.source && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          出典: {ref.source}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
