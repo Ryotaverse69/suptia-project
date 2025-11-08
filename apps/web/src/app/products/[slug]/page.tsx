@@ -267,7 +267,14 @@ async function getAllProducts(): Promise<Product[]> {
     servingsPerContainer,
     servingsPerDay,
     scores,
-    ingredients,
+    ingredients[]{
+      amountMgPerServing,
+      ingredient->{
+        _id,
+        name,
+        evidenceLevel
+      }
+    },
     priceData
   }`;
 
@@ -477,8 +484,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
   let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
   let safetyDetails: IngredientSafetyDetail[] = [];
   let evidenceDetails: IngredientEvidenceDetail[] = [];
+  let hasUnregisteredMainIngredient = false;
 
-  // 商品に成分データがあり、全ての成分にingredient情報がある場合は配合率ベースで計算
+  // 主要成分を特定（最も配合量が多い成分）
+  const mainIngredient = product.ingredients?.reduce(
+    (max, current) => {
+      if (
+        !max ||
+        (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
+      ) {
+        return current;
+      }
+      return max;
+    },
+    null as (typeof product.ingredients)[0] | null,
+  );
+
+  // 主要成分が登録されているかチェック
+  const hasRegisteredMainIngredient =
+    mainIngredient && mainIngredient.ingredient;
+
+  if (!hasRegisteredMainIngredient) {
+    // 主要成分が未登録の場合
+    hasUnregisteredMainIngredient = true;
+  }
+
+  // 商品に成分データがあり、全ての成分にingredient情報がある場合
   const hasValidIngredients =
     product.ingredients &&
     product.ingredients.length > 0 &&
@@ -486,32 +517,34 @@ export default async function ProductDetailPage({ params }: PageProps) {
       (ing) => ing.ingredient && ing.amountMgPerServing > 0,
     );
 
-  if (hasValidIngredients) {
+  if (hasValidIngredients && hasRegisteredMainIngredient) {
     // 配合率ベースのスコア計算
     const ingredientsWithAmount = product.ingredients!.map((ing) => ({
       ingredient: ing.ingredient!,
       amountMg: ing.amountMgPerServing,
     }));
 
-    const evidenceScore = calculateEvidenceScoreByRatio(ingredientsWithAmount);
+    // エビデンススコアは主要成分のみで判定
+    const mainIngredientData = ingredientsWithAmount.find(
+      (item) => item.ingredient._id === mainIngredient!.ingredient!._id,
+    )!;
+    const mainEvidenceLevel =
+      mainIngredientData.ingredient.evidenceLevel || "D";
+    const evidenceScore = evidenceLevelToScore(mainEvidenceLevel);
+
+    // 安全性は全成分を見て判定（現状維持）
     const safetyResult = calculateSafetyScoreByRatio(ingredientsWithAmount);
 
-    // エビデンス詳細を生成
-    const totalAmount = ingredientsWithAmount.reduce(
-      (sum, item) => sum + item.amountMg,
-      0,
-    );
-    evidenceDetails = ingredientsWithAmount.map((item) => {
-      const ratio = item.amountMg / totalAmount;
-      const evidenceLevel = item.ingredient.evidenceLevel || ("D" as const);
-      return {
-        name: item.ingredient.name,
-        evidenceLevel: evidenceLevel as "S" | "A" | "B" | "C" | "D",
-        evidenceScore: evidenceLevelToScore(evidenceLevel),
-        amountMg: item.amountMg,
-        ratio: ratio,
-      };
-    });
+    // エビデンス詳細を生成（主要成分のみ）
+    evidenceDetails = [
+      {
+        name: mainIngredientData.ingredient.name,
+        evidenceLevel: mainEvidenceLevel as "S" | "A" | "B" | "C" | "D",
+        evidenceScore: evidenceScore,
+        amountMg: mainIngredientData.amountMg,
+        ratio: 1.0, // 主要成分のみを表示するため100%
+      },
+    ];
 
     finalScores = {
       evidence: evidenceScore,
@@ -520,27 +553,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
     };
     safetyDetails = safetyResult.details;
 
-    console.log(`[配合率ベーススコア計算] ${product.name}:`, {
-      成分数: ingredientsWithAmount.length,
-      配合量合計: ingredientsWithAmount.reduce(
-        (sum, item) => sum + item.amountMg,
-        0,
-      ),
-      配合率: ingredientsWithAmount.map((item, index, arr) => ({
-        成分: item.ingredient.name,
-        配合量: item.amountMg,
-        配合率:
-          Math.round(
-            (item.amountMg / arr.reduce((sum, i) => sum + i.amountMg, 0)) *
-              1000,
-          ) / 10,
-      })),
+    console.log(`[主要成分ベーススコア計算] ${product.name}:`, {
+      全成分数: ingredientsWithAmount.length,
+      主要成分: mainIngredientData.ingredient.name,
+      主要成分配合量: mainIngredientData.amountMg,
+      主要成分エビデンスレベル: mainEvidenceLevel,
       evidenceScore,
       safetyScore: safetyResult.score,
       overall: finalScores.overall,
-      evidenceDetails: evidenceDetails.length,
     });
-    console.log(`[エビデンス詳細] evidenceDetails:`, evidenceDetails);
+    console.log(
+      `[エビデンス詳細（主要成分のみ）] evidenceDetails:`,
+      evidenceDetails,
+    );
   } else if (
     !product.scores ||
     !product.scores.evidence ||
@@ -650,12 +675,27 @@ export default async function ProductDetailPage({ params }: PageProps) {
         `[レベル決定] ${p.name}: evidenceLevel=${calculatedEvidenceLevel}`,
       );
 
+      // 配合量が最も多い成分を主要成分とする
+      const mainIngredient = p.ingredients?.reduce(
+        (max, current) => {
+          if (
+            !max ||
+            (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
+          ) {
+            return current;
+          }
+          return max;
+        },
+        null as (typeof p.ingredients)[0] | null,
+      );
+
       return {
         _id: p._id,
         priceJPY: p.priceJPY,
         servingsPerContainer: p.servingsPerContainer,
         servingsPerDay: p.servingsPerDay,
-        ingredientAmount: p.ingredients?.[0]?.amountMgPerServing,
+        ingredientAmount: mainIngredient?.amountMgPerServing,
+        ingredientId: mainIngredient?.ingredient?._id,
         evidenceLevel: calculatedEvidenceLevel,
         safetyScore,
         priceData: p.priceData,
@@ -739,8 +779,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);
 
-  // 主要成分データを準備
-  const mainIngredient = product.ingredients?.[0];
+  // 主要成分データを準備（line 490で定義済み）
   const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
   const mainIngredientInfo = mainIngredient?.ingredient;
   const ingredientName = mainIngredientInfo?.name;
@@ -971,13 +1010,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
           safetyScore={finalScores.safety}
           thirdPartyTested={product.thirdPartyTested || false}
           warnings={product.warnings || []}
-          references={product.references || []}
+          referenceCount={product.references?.length || 0}
+          evidenceRank={
+            product.tierRatings?.evidenceRank as
+              | "S"
+              | "A"
+              | "B"
+              | "C"
+              | "D"
+              | undefined
+          }
+          safetyRank={
+            product.tierRatings?.safetyRank as
+              | "S"
+              | "A"
+              | "B"
+              | "C"
+              | "D"
+              | undefined
+          }
           ingredientName={ingredientName}
           ingredientEvidenceLevel={ingredientEvidenceLevel}
           safetyDetails={safetyDetails}
           evidenceDetails={evidenceDetails}
           allIngredients={product.allIngredients}
           allergyInfo={allergyInfo}
+          hasUnregisteredMainIngredient={hasUnregisteredMainIngredient}
           className="mb-8"
         />
 

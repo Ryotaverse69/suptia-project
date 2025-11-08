@@ -32,13 +32,9 @@ interface EvidenceSafetyDetailProps {
   safetyScore?: number;
   thirdPartyTested?: boolean;
   warnings?: (string | { message: string; severity?: string; type?: string })[];
-  references?: Array<{
-    title?: string;
-    url?: string;
-    source?: string;
-    description?: string;
-    type?: string;
-  }>;
+  referenceCount?: number; // 参考文献数
+  evidenceRank?: "S" | "A" | "B" | "C" | "D"; // エビデンスTierランク
+  safetyRank?: "S" | "A" | "B" | "C" | "D"; // 安全性Tierランク
   ingredientName?: string;
   ingredientEvidenceLevel?: "S" | "A" | "B" | "C" | "D";
   safetyDetails?: IngredientSafetyDetail[];
@@ -49,6 +45,7 @@ interface EvidenceSafetyDetailProps {
     label: string;
     ingredientName: string;
   }>;
+  hasUnregisteredMainIngredient?: boolean; // 主要成分が未登録かどうか
   className?: string;
 }
 
@@ -58,13 +55,16 @@ export function EvidenceSafetyDetail({
   safetyScore = 0,
   thirdPartyTested = false,
   warnings = [],
-  references = [],
+  referenceCount = 0,
+  evidenceRank,
+  safetyRank,
   ingredientName,
   ingredientEvidenceLevel,
   safetyDetails = [],
   evidenceDetails = [],
   allIngredients,
   allergyInfo = [],
+  hasUnregisteredMainIngredient = false,
   className = "",
 }: EvidenceSafetyDetailProps) {
   // エビデンスレベルの説明
@@ -243,24 +243,57 @@ export function EvidenceSafetyDetail({
           </p>
         </div>
 
-        {/* エビデンススコア */}
-        {evidenceScore > 0 && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">
-                エビデンススコア
-              </span>
-              <span className="text-2xl font-bold text-primary">
-                {evidenceScore}点
-              </span>
-            </div>
-            <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-primary to-primary-700 transition-all duration-500"
-                style={{ width: `${evidenceScore}%` }}
-              />
-            </div>
+        {/* エビデンスランク評価の根拠 */}
+        {hasUnregisteredMainIngredient ? (
+          <div className="mt-6 p-4 bg-gray-100 border border-gray-300 rounded-lg">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <AlertTriangle size={16} className="text-gray-600" />
+              エビデンス評価について
+            </h3>
+            <p className="text-sm text-gray-600">
+              <strong>未登録成分のため測定不能</strong>
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              この商品の主要成分は当システムに登録されていないため、エビデンスランクを評価できません。
+            </p>
           </div>
+        ) : (
+          evidenceRank && (
+            <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <h3 className="text-sm font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <Microscope size={16} />
+                エビデンスランク {evidenceRank} の評価根拠
+              </h3>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="p-2 bg-white rounded border border-purple-100">
+                  <div className="text-gray-600 text-xs mb-1">基本スコア</div>
+                  <div className="font-bold text-purple-700">
+                    {evidenceScore}点
+                  </div>
+                  <div className="text-gray-500 text-[10px] mt-1 leading-tight">
+                    主要成分のエビデンスレベル
+                  </div>
+                </div>
+                <div className="p-2 bg-white rounded border border-purple-100">
+                  <div className="text-gray-600 text-xs mb-1">参考文献数</div>
+                  <div className="font-bold text-purple-700">
+                    {referenceCount}件
+                  </div>
+                  <div className="text-gray-500 text-[10px] mt-1 leading-tight">
+                    科学的根拠の充実度
+                  </div>
+                </div>
+              </div>
+              {referenceCount >= 5 && (
+                <div className="mt-2 p-2 bg-green-50 rounded border border-green-200 text-xs text-green-700">
+                  ✓ 参考文献5件以上でボーナス加点（+10点）
+                </div>
+              )}
+              <div className="mt-2 text-xs text-gray-500">
+                ※ 主要成分のエビデンスレベルで評価
+              </div>
+            </div>
+          )
         )}
 
         {/* 成分別エビデンス詳細 */}
@@ -268,7 +301,7 @@ export function EvidenceSafetyDetail({
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
               <Microscope size={16} className="text-blue-600" />
-              成分別エビデンス評価の詳細（配合率ベース）
+              主要成分のエビデンス評価
             </h3>
             <div className="space-y-3">
               {evidenceDetails.map((detail, index) => {
@@ -332,7 +365,7 @@ export function EvidenceSafetyDetail({
             </div>
             <p className="text-xs text-gray-500 mt-3">
               ※
-              総合エビデンススコアは、各成分のエビデンススコアを配合率で重み付けして算出しています。
+              エビデンススコアは、配合量が最も多い主要成分のエビデンスレベルに基づいて算出しています。
             </p>
           </div>
         )}
@@ -388,12 +421,48 @@ export function EvidenceSafetyDetail({
 
         {/* 説明 */}
         <div
-          className={`p-4 rounded-lg ${safetyLevel.bgColor} border ${safetyLevel.borderColor} mb-6`}
+          className={`p-4 rounded-lg ${safetyLevel.bgColor} border ${safetyLevel.borderColor}`}
         >
           <p className={`text-sm ${safetyLevel.textColor}`}>
             {safetyLevel.description}
           </p>
         </div>
+
+        {/* 安全性ランク評価の根拠 */}
+        {safetyRank && (
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h3 className="text-sm font-semibold text-green-900 mb-3 flex items-center gap-2">
+              <Shield size={16} />
+              安全性ランク {safetyRank} の評価根拠
+            </h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="p-2 bg-white rounded border border-green-100">
+                <div className="text-gray-600 text-xs mb-1">基本スコア</div>
+                <div className="font-bold text-green-700">{safetyScore}点</div>
+                <div className="text-gray-500 text-[10px] mt-1 leading-tight">
+                  成分の配合量に基づく加重平均
+                </div>
+              </div>
+              <div className="p-2 bg-white rounded border border-green-100">
+                <div className="text-gray-600 text-xs mb-1">警告数</div>
+                <div className="font-bold text-green-700">
+                  {warnings.length}件
+                </div>
+                <div className="text-gray-500 text-[10px] mt-1 leading-tight">
+                  副作用・相互作用の注意点
+                </div>
+              </div>
+            </div>
+            {warnings.length >= 3 && (
+              <div className="mt-2 p-2 bg-orange-50 rounded border border-orange-200 text-xs text-orange-700">
+                ⚠ 警告3件以上でペナルティ減点（-10点）
+              </div>
+            )}
+            <div className="mt-2 text-xs text-gray-500">
+              ※ 同成分の他商品と比較したパーセンタイル評価で算出
+            </div>
+          </div>
+        )}
 
         {/* 成分別安全性詳細 */}
         {safetyDetails.length > 0 && (
@@ -678,86 +747,6 @@ export function EvidenceSafetyDetail({
                 </>
               );
             })()}
-          </div>
-        )}
-
-        {/* 安全性の詳細説明 */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">
-            安全性スコアの評価基準
-          </h4>
-          <ul className="space-y-1 text-xs text-gray-600">
-            <li className="flex items-start gap-2">
-              <span>•</span>
-              <span>第三者機関による品質検査の有無</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>•</span>
-              <span>副作用や相互作用の報告</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>•</span>
-              <span>推奨摂取量に対する安全マージン</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>•</span>
-              <span>原材料の品質と由来の透明性</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span>•</span>
-              <span>製造工程の管理体制（GMP認証など）</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* 参考文献セクション */}
-        {references && references.length > 0 && (
-          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
-              <Microscope size={20} />
-              参考文献
-            </h4>
-            <div className="space-y-3">
-              {references.map((ref, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-white border border-blue-100 rounded-lg hover:border-blue-300 transition-colors"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 text-blue-600 font-semibold">
-                      [{index + 1}]
-                    </span>
-                    <div className="flex-1">
-                      {ref.title && (
-                        <h5 className="font-semibold text-gray-900 mb-1">
-                          {ref.title}
-                        </h5>
-                      )}
-                      {ref.description && (
-                        <p className="text-sm text-gray-600 mb-2">
-                          {ref.description}
-                        </p>
-                      )}
-                      {ref.url && (
-                        <a
-                          href={ref.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
-                        >
-                          {ref.url}
-                        </a>
-                      )}
-                      {ref.source && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          出典: {ref.source}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
       </div>
