@@ -486,9 +486,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
   let evidenceDetails: IngredientEvidenceDetail[] = [];
   let hasUnregisteredMainIngredient = false;
 
-  // 主要成分を特定（配列の最初の成分）
-  // 成分の配列順は通常、重要度順に並んでおり、商品名の記載順とも一致する
-  const mainIngredient = product.ingredients?.[0] || null;
+  // 主要成分を特定（配合量が最も多い成分）
+  const mainIngredient = product.ingredients?.reduce(
+    (max, current) => {
+      if (
+        !max ||
+        (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
+      ) {
+        return current;
+      }
+      return max;
+    },
+    null as (typeof product.ingredients)[0] | null,
+  );
 
   // 主要成分が登録されているかチェック
   const hasRegisteredMainIngredient =
