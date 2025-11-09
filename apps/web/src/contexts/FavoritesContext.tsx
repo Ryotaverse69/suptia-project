@@ -24,7 +24,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        console.log("[Favorites] Loaded from localStorage:", parsed);
         setFavorites(parsed);
       } catch (error) {
         console.error("Failed to parse favorites from localStorage:", error);
@@ -36,42 +35,28 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   // お気に入りが変更されたらローカルストレージに保存
   useEffect(() => {
     if (isLoaded) {
-      console.log("[Favorites] Saving to localStorage:", favorites);
       localStorage.setItem("suptia-favorites", JSON.stringify(favorites));
     }
   }, [favorites, isLoaded]);
 
   const addFavorite = (productId: string) => {
-    console.log("[Favorites] Adding favorite:", productId);
     setFavorites((prev) => {
       if (prev.includes(productId)) {
-        console.log("[Favorites] Already in favorites");
         return prev;
       }
-      const newFavorites = [...prev, productId];
-      console.log("[Favorites] New favorites array:", newFavorites);
-      return newFavorites;
+      return [...prev, productId];
     });
   };
 
   const removeFavorite = (productId: string) => {
-    console.log("[Favorites] Removing favorite:", productId);
-    setFavorites((prev) => {
-      const filtered = prev.filter((id) => id !== productId);
-      console.log("[Favorites] After removal:", filtered);
-      return filtered;
-    });
+    setFavorites((prev) => prev.filter((id) => id !== productId));
   };
 
   const isFavorite = (productId: string) => {
-    const result = favorites.includes(productId);
-    console.log(`[Favorites] isFavorite(${productId}):`, result);
-    return result;
+    return favorites.includes(productId);
   };
 
   const toggleFavorite = (productId: string) => {
-    console.log("[Favorites] Toggle favorite:", productId);
-    console.log("[Favorites] Current favorites:", favorites);
     if (isFavorite(productId)) {
       removeFavorite(productId);
     } else {
