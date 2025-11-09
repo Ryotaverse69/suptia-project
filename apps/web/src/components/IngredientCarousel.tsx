@@ -45,8 +45,10 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
   );
 
   useEffect(() => {
-    // Shuffle ingredients on client side
-    const shuffled = [...ingredients].sort(() => Math.random() - 0.5);
+    // Shuffle ingredients on client side, filter out those without valid slug
+    const shuffled = [...ingredients]
+      .filter((ing) => ing.slug?.current)
+      .sort(() => Math.random() - 0.5);
     setShuffledIngredients(shuffled);
   }, [ingredients]);
 

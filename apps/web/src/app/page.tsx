@@ -124,7 +124,7 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getIngredients(): Promise<Ingredient[]> {
-  const query = `*[_type == "ingredient"]{
+  const query = `*[_type == "ingredient" && defined(slug.current)]{
     name,
     nameEn,
     category,
