@@ -35,7 +35,11 @@ export default function FavoritesPage() {
 
   useEffect(() => {
     const fetchFavoriteProducts = async () => {
+      console.log("[FavoritesPage] Favorites from context:", favorites);
+      console.log("[FavoritesPage] Favorites count:", favorites.length);
+
       if (favorites.length === 0) {
+        console.log("[FavoritesPage] No favorites to fetch");
         setProducts([]);
         setLoading(false);
         return;
@@ -63,10 +67,16 @@ export default function FavoritesPage() {
           }
         `;
 
+        console.log("[FavoritesPage] Fetching products with IDs:", favorites);
         const result = await sanity.fetch<Product[]>(query, { ids: favorites });
+        console.log("[FavoritesPage] Fetched products count:", result.length);
+        console.log("[FavoritesPage] Fetched products:", result);
         setProducts(result);
       } catch (error) {
-        console.error("お気に入り商品の取得に失敗しました:", error);
+        console.error(
+          "[FavoritesPage] お気に入り商品の取得に失敗しました:",
+          error,
+        );
       } finally {
         setLoading(false);
       }

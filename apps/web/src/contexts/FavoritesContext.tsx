@@ -18,43 +18,60 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // セッションストレージから初期データを読み込む（サイトから離れたら消える）
+  // ローカルストレージから初期データを読み込む（ブラウザを閉じても保持）
   useEffect(() => {
-    const stored = sessionStorage.getItem("suptia-favorites");
+    const stored = localStorage.getItem("suptia-favorites");
     if (stored) {
       try {
-        setFavorites(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        console.log("[Favorites] Loaded from localStorage:", parsed);
+        setFavorites(parsed);
       } catch (error) {
-        console.error("Failed to parse favorites from sessionStorage:", error);
+        console.error("Failed to parse favorites from localStorage:", error);
       }
     }
     setIsLoaded(true);
   }, []);
 
-  // お気に入りが変更されたらセッションストレージに保存
-  // 将来的にログイン機能実装時にローカルストレージ or サーバー保存に変更予定
+  // お気に入りが変更されたらローカルストレージに保存
   useEffect(() => {
     if (isLoaded) {
-      sessionStorage.setItem("suptia-favorites", JSON.stringify(favorites));
+      console.log("[Favorites] Saving to localStorage:", favorites);
+      localStorage.setItem("suptia-favorites", JSON.stringify(favorites));
     }
   }, [favorites, isLoaded]);
 
   const addFavorite = (productId: string) => {
+    console.log("[Favorites] Adding favorite:", productId);
     setFavorites((prev) => {
-      if (prev.includes(productId)) return prev;
-      return [...prev, productId];
+      if (prev.includes(productId)) {
+        console.log("[Favorites] Already in favorites");
+        return prev;
+      }
+      const newFavorites = [...prev, productId];
+      console.log("[Favorites] New favorites array:", newFavorites);
+      return newFavorites;
     });
   };
 
   const removeFavorite = (productId: string) => {
-    setFavorites((prev) => prev.filter((id) => id !== productId));
+    console.log("[Favorites] Removing favorite:", productId);
+    setFavorites((prev) => {
+      const filtered = prev.filter((id) => id !== productId);
+      console.log("[Favorites] After removal:", filtered);
+      return filtered;
+    });
   };
 
   const isFavorite = (productId: string) => {
-    return favorites.includes(productId);
+    const result = favorites.includes(productId);
+    console.log(`[Favorites] isFavorite(${productId}):`, result);
+    return result;
   };
 
   const toggleFavorite = (productId: string) => {
+    console.log("[Favorites] Toggle favorite:", productId);
+    console.log("[Favorites] Current favorites:", favorites);
     if (isFavorite(productId)) {
       removeFavorite(productId);
     } else {
