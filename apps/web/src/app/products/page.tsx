@@ -13,6 +13,9 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
 
+// ISR: 10分ごとにページを再検証
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   title: "サプリメント商品一覧｜価格比較・成分量・コスパで選ぶ - サプティア",
   description:
