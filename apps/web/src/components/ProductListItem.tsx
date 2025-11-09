@@ -11,7 +11,7 @@ interface ProductListItemProps {
   product: {
     _id: string;
     name: string;
-    priceJPY: number;
+    priceJPY?: number | null; // nullを許容
     slug?: {
       current: string;
     } | null;
@@ -20,11 +20,11 @@ interface ProductListItemProps {
     ingredients?: Array<{
       amountMgPerServing: number;
     }>;
-    effectiveCostPerDay?: number;
-    rating?: number;
-    reviewCount?: number;
+    effectiveCostPerDay?: number | null; // nullを許容
+    rating?: number | null; // nullを許容
+    reviewCount?: number | null; // nullを許容
     isBestValue?: boolean;
-    safetyScore?: number;
+    safetyScore?: number | null; // nullを許容
     imageUrl?: string;
     externalImageUrl?: string;
   };
@@ -40,13 +40,19 @@ export function ProductListItem({ product }: ProductListItemProps) {
     servingsPerContainer,
     ingredients,
     effectiveCostPerDay: manualCostPerDay,
-    rating = 4.5,
-    reviewCount = 127,
+    rating,
+    reviewCount,
     isBestValue = false,
-    safetyScore = 95,
+    safetyScore,
     imageUrl,
     externalImageUrl,
   } = product;
+
+  // nullセーフなデフォルト値
+  const safeRating = rating ?? 4.5;
+  const safeReviewCount = reviewCount ?? 127;
+  const safeSafetyScore = safetyScore ?? 95;
+  const safePriceJPY = priceJPY ?? 0;
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(_id);
@@ -62,13 +68,14 @@ export function ProductListItem({ product }: ProductListItemProps) {
   // 実効コストを自動計算（データが揃っている場合）
   let calculatedCost;
   if (
+    safePriceJPY > 0 &&
     servingsPerDay &&
     servingsPerContainer &&
     ingredients &&
     ingredients.length > 0
   ) {
     calculatedCost = calculateComprehensiveCost({
-      priceJPY,
+      priceJPY: safePriceJPY,
       servingsPerDay,
       servingsPerContainer,
       ingredients,
@@ -125,7 +132,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
                 </div>
               )}
 
-              {safetyScore >= 90 && (
+              {safeSafetyScore >= 90 && (
                 <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
                   <Badge
                     variant="success"
@@ -175,8 +182,8 @@ export function ProductListItem({ product }: ProductListItemProps) {
                 {/* 星評価バッジ */}
                 <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                   <span className="text-orange-500 text-sm sm:text-base md:text-lg">
-                    {"★".repeat(Math.floor(rating))}
-                    {"☆".repeat(5 - Math.floor(rating))}
+                    {"★".repeat(Math.floor(safeRating))}
+                    {"☆".repeat(5 - Math.floor(safeRating))}
                   </span>
                   <span className="text-xs sm:text-sm text-primary-600">
                     ホテル
@@ -210,12 +217,12 @@ export function ProductListItem({ product }: ProductListItemProps) {
               {/* 評価スコア */}
               <div className="flex items-center gap-2 sm:gap-3">
                 <div
-                  className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded font-bold text-xs sm:text-sm ${getScoreColor(rating)}`}
+                  className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded font-bold text-xs sm:text-sm ${getScoreColor(safeRating)}`}
                 >
-                  {rating.toFixed(1)}
+                  {safeRating.toFixed(1)}
                 </div>
                 <span className="text-xs sm:text-sm text-primary-700">
-                  満足 ({reviewCount.toLocaleString()}件)
+                  満足 ({safeReviewCount.toLocaleString()}件)
                 </span>
               </div>
             </Link>
@@ -226,14 +233,16 @@ export function ProductListItem({ product }: ProductListItemProps) {
             {/* 価格表示 */}
             <div className="text-left md:text-right mb-0 md:mb-3 lg:mb-4 space-y-2 sm:space-y-2.5 lg:space-y-3">
               {/* 商品価格 */}
-              <div>
-                <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">
-                  商品価格
+              {safePriceJPY > 0 && (
+                <div>
+                  <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">
+                    商品価格
+                  </div>
+                  <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+                    {formatCostJPY(safePriceJPY)}
+                  </div>
                 </div>
-                <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
-                  {formatCostJPY(priceJPY)}
-                </div>
-              </div>
+              )}
 
               {/* 1日あたり価格 */}
               {effectiveCostPerDay && (
