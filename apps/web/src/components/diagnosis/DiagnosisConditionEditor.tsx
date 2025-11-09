@@ -11,6 +11,7 @@ interface DiagnosisConditionEditorProps {
   initialBudget?: number;
   initialConditions: ContraindicationTag[];
   initialPriority: UserPriority;
+  isDetailedDiagnosis?: boolean; // 詳細診断の場合true
 }
 
 const HEALTH_GOAL_OPTIONS: { id: HealthGoal; label: string }[] = [
@@ -54,6 +55,7 @@ export function DiagnosisConditionEditor({
   initialBudget = 500,
   initialConditions,
   initialPriority,
+  isDetailedDiagnosis = false,
 }: DiagnosisConditionEditorProps) {
   const router = useRouter();
   const [editingGoals, setEditingGoals] = useState(false);
@@ -75,12 +77,22 @@ export function DiagnosisConditionEditor({
     setEditingPriority(false);
 
     // 新しいURLパラメータを構築
-    const searchParams = new URLSearchParams();
-    searchParams.append("goals", goals.join(","));
-    searchParams.append("budget", String(budget));
-    searchParams.append("priority", priority);
-    if (conditions.length > 0) {
-      searchParams.append("conditions", conditions.join(","));
+    const searchParams = new URLSearchParams(window.location.search);
+
+    // 詳細診断の場合、既存のパラメータを保持（budget以外）
+    if (isDetailedDiagnosis) {
+      // 予算のみ更新
+      searchParams.set("budget", String(budget));
+    } else {
+      // かんたん診断の場合、全てのパラメータを更新
+      searchParams.set("goals", goals.join(","));
+      searchParams.set("budget", String(budget));
+      searchParams.set("priority", priority);
+      if (conditions.length > 0) {
+        searchParams.set("conditions", conditions.join(","));
+      } else {
+        searchParams.delete("conditions");
+      }
     }
 
     // ページを再読み込みして新しい推薦結果を取得
@@ -115,12 +127,14 @@ export function DiagnosisConditionEditor({
             <div className="text-base font-semibold text-gray-700">
               健康目標
             </div>
-            <button
-              onClick={() => setEditingGoals(!editingGoals)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              {editingGoals ? "完了" : "編集"}
-            </button>
+            {!isDetailedDiagnosis && (
+              <button
+                onClick={() => setEditingGoals(!editingGoals)}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {editingGoals ? "完了" : "編集"}
+              </button>
+            )}
           </div>
           {editingGoals ? (
             <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
@@ -164,12 +178,14 @@ export function DiagnosisConditionEditor({
             <div className="text-base font-semibold text-gray-700">
               健康状態・懸念
             </div>
-            <button
-              onClick={() => setEditingConditions(!editingConditions)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              {editingConditions ? "完了" : "編集"}
-            </button>
+            {!isDetailedDiagnosis && (
+              <button
+                onClick={() => setEditingConditions(!editingConditions)}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {editingConditions ? "完了" : "編集"}
+              </button>
+            )}
           </div>
           {editingConditions ? (
             <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
@@ -286,12 +302,14 @@ export function DiagnosisConditionEditor({
             <div className="text-base font-semibold text-gray-700">
               優先事項
             </div>
-            <button
-              onClick={() => setEditingPriority(!editingPriority)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              {editingPriority ? "完了" : "編集"}
-            </button>
+            {!isDetailedDiagnosis && (
+              <button
+                onClick={() => setEditingPriority(!editingPriority)}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {editingPriority ? "完了" : "編集"}
+              </button>
+            )}
           </div>
           {editingPriority ? (
             <select

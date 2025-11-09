@@ -327,6 +327,164 @@ const QUESTIONS: QuestionWithIcon[] = [
       { value: "none", label: "該当なし", icon: Check },
     ],
   },
+  {
+    id: "lifestyle",
+    type: "single",
+    text: "あなたの生活リズムについて教えてください。",
+    options: [
+      {
+        value: "morning",
+        label: "朝型（早寝早起き）",
+        icon: Activity,
+        gradient: "from-yellow-400 to-orange-600",
+      },
+      {
+        value: "evening",
+        label: "夜型（遅寝遅起き）",
+        icon: Activity,
+        gradient: "from-purple-400 to-indigo-600",
+      },
+      {
+        value: "irregular",
+        label: "不規則",
+        icon: AlertCircle,
+        gradient: "from-gray-400 to-gray-600",
+      },
+    ],
+  },
+  {
+    id: "alcoholConsumption",
+    type: "single",
+    text: "飲酒習慣について教えてください。",
+    options: [
+      {
+        value: "none",
+        label: "飲まない",
+        icon: Shield,
+        gradient: "from-green-400 to-emerald-600",
+      },
+      {
+        value: "occasional",
+        label: "たまに飲む（週1〜2回）",
+        icon: Activity,
+        gradient: "from-blue-400 to-cyan-600",
+      },
+      {
+        value: "moderate",
+        label: "適度に飲む（週3〜5回）",
+        icon: Activity,
+        gradient: "from-yellow-400 to-orange-600",
+      },
+      {
+        value: "frequent",
+        label: "ほぼ毎日飲む",
+        icon: AlertCircle,
+        gradient: "from-red-400 to-pink-600",
+      },
+    ],
+  },
+  {
+    id: "mainConcern",
+    type: "single",
+    text: "現在、最も気になっていることは何ですか？",
+    options: [
+      {
+        value: "fatigue",
+        label: "疲れやすい・だるさ",
+        icon: Zap,
+        gradient: "from-orange-400 to-red-600",
+      },
+      {
+        value: "sleep",
+        label: "睡眠の質が悪い",
+        icon: Activity,
+        gradient: "from-purple-400 to-indigo-600",
+      },
+      {
+        value: "immunity",
+        label: "風邪をひきやすい",
+        icon: Shield,
+        gradient: "from-green-400 to-emerald-600",
+      },
+      {
+        value: "appearance",
+        label: "肌荒れ・美容面",
+        icon: Sparkles,
+        gradient: "from-pink-400 to-rose-600",
+      },
+      {
+        value: "weight",
+        label: "体重管理",
+        icon: Target,
+        gradient: "from-blue-400 to-cyan-600",
+      },
+      {
+        value: "concentration",
+        label: "集中力・記憶力の低下",
+        icon: Brain,
+        gradient: "from-purple-400 to-pink-600",
+      },
+    ],
+  },
+  {
+    id: "currentSupplements",
+    type: "multiple",
+    text: "現在使用しているサプリメントはありますか？（複数選択可）",
+    options: [
+      { value: "multivitamin", label: "マルチビタミン", icon: Award },
+      { value: "vitamin-c", label: "ビタミンC", icon: Sparkles },
+      { value: "vitamin-d", label: "ビタミンD", icon: Activity },
+      { value: "omega-3", label: "オメガ3（DHA/EPA）", icon: Heart },
+      { value: "protein", label: "プロテイン", icon: Zap },
+      { value: "probiotics", label: "プロバイオティクス", icon: Shield },
+      { value: "other", label: "その他", icon: Target },
+      { value: "none", label: "使用していない", icon: Check },
+    ],
+  },
+  {
+    id: "secondaryGoals",
+    type: "multiple",
+    text: "主な目標以外に、興味のある健康目標はありますか？（複数選択可）",
+    options: [
+      {
+        value: "immune-boost",
+        label: "免疫力強化",
+        icon: Shield,
+        gradient: "from-green-400 to-emerald-600",
+      },
+      {
+        value: "energy-recovery",
+        label: "疲労回復",
+        icon: Zap,
+        gradient: "from-yellow-400 to-orange-600",
+      },
+      {
+        value: "skin-health",
+        label: "美肌・肌の健康",
+        icon: Sparkles,
+        gradient: "from-pink-400 to-rose-600",
+      },
+      {
+        value: "bone-health",
+        label: "骨の健康",
+        icon: Activity,
+        gradient: "from-blue-400 to-cyan-600",
+      },
+      {
+        value: "heart-health",
+        label: "心臓の健康",
+        icon: Heart,
+        gradient: "from-red-400 to-pink-600",
+      },
+      {
+        value: "brain-function",
+        label: "脳機能・集中力",
+        icon: Brain,
+        gradient: "from-purple-400 to-indigo-600",
+      },
+      { value: "none", label: "特になし", icon: Check },
+    ],
+  },
 ];
 
 // タイピングアニメーションフック
@@ -338,11 +496,14 @@ function useTypingEffect(text: string, speed: number = 30) {
     setDisplayedText("");
     setIsTyping(true);
     let index = 0;
+    // 日本語対応：文字列を配列に変換してサロゲートペアや結合文字を正しく処理
+    const chars = [...text];
 
     const interval = setInterval(() => {
-      if (index < text.length) {
-        setDisplayedText((prev) => prev + text[index]);
+      if (index < chars.length) {
         index++;
+        // prevを使わず、直接slice+joinで文字列を構築
+        setDisplayedText(chars.slice(0, index).join(""));
       } else {
         setIsTyping(false);
         clearInterval(interval);
@@ -532,19 +693,83 @@ export function ChatDiagnosisForm() {
       setTimeout(() => {
         const params = new URLSearchParams();
 
-        // ウェルカム質問から健康目標を取得
+        // 診断タイプ
+        params.append("type", "detailed");
+
+        // 主な健康目標
         const goal = newAnswers.welcome;
         if (goal) {
           params.append("goals", goal);
         }
 
-        // 予算
-        const budget = newAnswers.budget || 500;
-        params.append("budget", String(budget));
+        // 副次的な健康目標
+        const secondaryGoals = newAnswers.secondaryGoals || [];
+        const filteredSecondaryGoals = Array.isArray(secondaryGoals)
+          ? secondaryGoals.filter((g: string) => g !== "none")
+          : [];
+        if (filteredSecondaryGoals.length > 0) {
+          params.append("secondaryGoals", filteredSecondaryGoals.join(","));
+        }
 
-        // 優先度
-        const priority = newAnswers.priority || "balanced";
-        params.append("priority", priority);
+        // 年齢層
+        if (newAnswers.ageGroup) {
+          params.append("ageGroup", newAnswers.ageGroup);
+        }
+
+        // 生活リズム
+        if (newAnswers.lifestyle) {
+          params.append("lifestyle", newAnswers.lifestyle);
+        }
+
+        // 運動習慣
+        if (newAnswers.exerciseFrequency) {
+          params.append("exerciseFrequency", newAnswers.exerciseFrequency);
+        }
+
+        // ストレスレベル
+        if (newAnswers.stressLevel) {
+          params.append("stressLevel", newAnswers.stressLevel);
+        }
+
+        // 睡眠の質
+        if (newAnswers.sleepQuality) {
+          params.append("sleepQuality", newAnswers.sleepQuality);
+        }
+
+        // 食事の質
+        if (newAnswers.dietQuality) {
+          params.append("dietQuality", newAnswers.dietQuality);
+        }
+
+        // 飲酒習慣
+        if (newAnswers.alcoholConsumption) {
+          params.append("alcoholConsumption", newAnswers.alcoholConsumption);
+        }
+
+        // 主な悩み
+        if (newAnswers.mainConcern) {
+          params.append("mainConcern", newAnswers.mainConcern);
+        }
+
+        // サプリ使用経験
+        if (newAnswers.supplementExperience) {
+          params.append(
+            "supplementExperience",
+            newAnswers.supplementExperience,
+          );
+        }
+
+        // 現在使用中のサプリ
+        const currentSupplements = newAnswers.currentSupplements || [];
+        const filteredCurrentSupplements = Array.isArray(currentSupplements)
+          ? currentSupplements.filter((s: string) => s !== "none")
+          : [];
+        if (filteredCurrentSupplements.length > 0) {
+          params.append(
+            "currentSupplements",
+            filteredCurrentSupplements.join(","),
+          );
+        }
 
         // 健康状態
         const conditions = newAnswers.healthConditions || [];
@@ -554,6 +779,14 @@ export function ChatDiagnosisForm() {
         if (filteredConditions.length > 0) {
           params.append("conditions", filteredConditions.join(","));
         }
+
+        // 優先度
+        const priority = newAnswers.priority || "balanced";
+        params.append("priority", priority);
+
+        // 予算
+        const budget = newAnswers.budget || 500;
+        params.append("budget", String(budget));
 
         router.push("/diagnosis/results?" + params.toString());
       }, 2000);
@@ -614,39 +847,39 @@ export function ChatDiagnosisForm() {
           <div className="border-t border-purple-200 bg-white/90 backdrop-blur-sm p-4 sm:p-6">
             <div className="space-y-4">
               {currentQuestion.type === "single" && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {currentQuestion.options?.map((option) => {
                     const Icon = option.icon;
                     return (
                       <button
                         key={option.value}
                         onClick={() => handleSingleSelect(option.value)}
-                        className="group relative overflow-hidden w-full p-4 rounded-xl border-2 border-gray-200 hover:border-transparent text-left transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg bg-white flex items-center gap-3"
+                        className="group relative overflow-hidden w-full p-2.5 sm:p-3 rounded-lg border-2 border-gray-200 hover:border-transparent text-left transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md bg-white flex items-center gap-2.5"
                       >
                         <div
                           className={`absolute inset-0 bg-gradient-to-r ${option.gradient || "from-purple-400 to-pink-600"} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                         />
 
-                        <div className="relative z-10 flex items-center gap-3 w-full">
+                        <div className="relative z-10 flex items-center gap-2.5 w-full">
                           {Icon && (
                             <div
-                              className={`flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br ${option.gradient || "from-purple-400 to-pink-600"} flex items-center justify-center group-hover:bg-white/20 transition-all`}
+                              className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br ${option.gradient || "from-purple-400 to-pink-600"} flex items-center justify-center group-hover:bg-white/20 transition-all`}
                             >
                               <Icon
                                 className="text-white"
-                                size={20}
+                                size={16}
                                 strokeWidth={2.5}
                               />
                             </div>
                           )}
 
-                          <span className="flex-1 font-medium text-gray-900 group-hover:text-white transition-colors">
+                          <span className="flex-1 text-sm font-medium text-gray-900 group-hover:text-white transition-colors">
                             {option.label}
                           </span>
 
                           <Check
                             className="flex-shrink-0 text-transparent group-hover:text-white transition-colors"
-                            size={20}
+                            size={16}
                           />
                         </div>
                       </button>
@@ -656,8 +889,8 @@ export function ChatDiagnosisForm() {
               )}
 
               {currentQuestion.type === "multiple" && (
-                <div className="space-y-3">
-                  <div className="space-y-2">
+                <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {currentQuestion.options?.map((option) => {
                       const Icon = option.icon;
                       const isSelected = selectedOptions.includes(option.value);
@@ -665,7 +898,7 @@ export function ChatDiagnosisForm() {
                         <button
                           key={option.value}
                           onClick={() => handleMultipleSelect(option.value)}
-                          className={`w-full p-3 rounded-xl border-2 text-left font-medium transition-all duration-300 flex items-center gap-3 ${
+                          className={`w-full p-2 sm:p-2.5 rounded-lg border-2 text-left font-medium transition-all duration-300 flex items-center gap-2 ${
                             isSelected
                               ? "border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 shadow-md"
                               : "border-gray-200 hover:border-purple-300 bg-white"
@@ -673,7 +906,7 @@ export function ChatDiagnosisForm() {
                         >
                           {Icon && (
                             <div
-                              className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                              className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
                                 isSelected
                                   ? "bg-gradient-to-br from-purple-500 to-pink-500"
                                   : "bg-gray-100"
@@ -681,26 +914,26 @@ export function ChatDiagnosisForm() {
                             >
                               <Icon
                                 className={`${isSelected ? "text-white" : "text-gray-600"}`}
-                                size={18}
+                                size={14}
                               />
                             </div>
                           )}
 
                           <span
-                            className={`flex-1 text-sm ${isSelected ? "text-purple-700 font-semibold" : "text-gray-700"}`}
+                            className={`flex-1 text-xs sm:text-sm ${isSelected ? "text-purple-700 font-semibold" : "text-gray-700"}`}
                           >
                             {option.label}
                           </span>
 
                           <div
-                            className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                            className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                               isSelected
                                 ? "border-purple-500 bg-purple-500"
                                 : "border-gray-300"
                             }`}
                           >
                             {isSelected && (
-                              <Check size={12} className="text-white" />
+                              <Check size={10} className="text-white" />
                             )}
                           </div>
                         </button>

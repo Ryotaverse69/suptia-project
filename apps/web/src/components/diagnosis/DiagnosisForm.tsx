@@ -128,7 +128,7 @@ export function DiagnosisForm() {
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [budgetPerDay, setBudgetPerDay] = useState<number>(500);
   const [healthConditions, setHealthConditions] = useState<string[]>([]);
-  const [priority, setPriority] = useState<string>("balanced");
+  const [priority, setPriority] = useState<string>(""); // デフォルト値を空に変更
 
   // URLパラメータから初期値を読み込む
   useEffect(() => {
@@ -171,9 +171,8 @@ export function DiagnosisForm() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  // 診断結果ページへ遷移する関数
+  const navigateToResults = (selectedPriority: string) => {
     if (selectedGoals.length === 0) {
       alert("少なくとも1つの健康目標を選択してください");
       return;
@@ -182,7 +181,8 @@ export function DiagnosisForm() {
     const searchParams = new URLSearchParams();
     searchParams.append("goals", selectedGoals.join(","));
     searchParams.append("budget", String(budgetPerDay));
-    searchParams.append("priority", priority);
+    searchParams.append("priority", selectedPriority);
+    searchParams.append("type", "simple"); // 診断タイプを追加
 
     const conditions = healthConditions.filter((c) => c !== "none");
     if (conditions.length > 0) {
@@ -192,11 +192,25 @@ export function DiagnosisForm() {
     router.push("/diagnosis/results?" + searchParams.toString());
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    navigateToResults(priority);
+  };
+
+  // 優先事項を選択したら自動的に結果画面へ遷移
+  const handlePrioritySelect = (priorityId: string) => {
+    setPriority(priorityId);
+    // 少し遅延させてから遷移（選択の視覚的フィードバックのため）
+    setTimeout(() => {
+      navigateToResults(priorityId);
+    }, 300);
+  };
+
   const canProceed = (step: number) => {
     if (step === 1) return selectedGoals.length > 0;
     if (step === 2) return true;
     if (step === 3) return true;
-    if (step === 4) return true;
+    if (step === 4) return priority !== ""; // 優先事項が選択されているかチェック
     return false;
   };
 
@@ -480,10 +494,10 @@ export function DiagnosisForm() {
                     <button
                       key={priorityOption.id}
                       type="button"
-                      onClick={() => setPriority(priorityOption.id)}
+                      onClick={() => handlePrioritySelect(priorityOption.id)}
                       className={`
                         w-full p-6 rounded-xl border-4 flex items-center gap-4 transition-all duration-300
-                        hover:scale-[1.02] hover:shadow-xl
+                        hover:scale-[1.02] hover:shadow-xl cursor-pointer
                         ${
                           isSelected
                             ? "border-blue-500 bg-gradient-to-r from-blue-50 to-cyan-50 shadow-2xl scale-[1.02] ring-4 ring-blue-200"
@@ -552,10 +566,10 @@ export function DiagnosisForm() {
             ) : (
               <button
                 type="submit"
-                disabled={selectedGoals.length === 0}
+                disabled={!canProceed(currentStep)}
                 className={`
                   flex-1 py-4 rounded-xl font-bold text-white transition-all duration-200 flex items-center justify-center gap-2
-                  ${selectedGoals.length > 0 ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl animate-pulse" : "bg-gray-300 cursor-not-allowed"}
+                  ${canProceed(currentStep) ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl animate-pulse" : "bg-gray-300 cursor-not-allowed"}
                 `}
               >
                 <Sparkles size={20} />

@@ -510,12 +510,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // 商品に成分データがあり、全ての成分にingredient情報がある場合
+  // amountMgPerServing >= 0 を許容（0は配合量未入力を意味する）
   const hasValidIngredients =
     product.ingredients &&
     product.ingredients.length > 0 &&
-    product.ingredients.every(
-      (ing) => ing.ingredient && ing.amountMgPerServing > 0,
-    );
+    product.ingredients.every((ing) => ing.ingredient);
 
   if (hasValidIngredients && hasRegisteredMainIngredient) {
     // 配合率ベースのスコア計算
@@ -630,12 +629,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
         safetyScore = p.scores.safety;
       } else {
         // 成分データがある場合は配合率ベースで計算
+        // amountMgPerServing >= 0 を許容（0は配合量未入力を意味する）
         const hasValidIngredients =
           p.ingredients &&
           p.ingredients.length > 0 &&
-          p.ingredients.every(
-            (ing: any) => ing.ingredient && ing.amountMgPerServing > 0,
-          );
+          p.ingredients.every((ing: any) => ing.ingredient);
 
         if (hasValidIngredients) {
           const ingredientsWithAmount = p.ingredients!.map((ing: any) => ({

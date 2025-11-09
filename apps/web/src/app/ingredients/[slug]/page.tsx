@@ -10,6 +10,8 @@ import { IngredientContent } from "@/components/IngredientContent";
 import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
 import { IngredientSummary } from "@/components/IngredientWarnings";
 import { IngredientViewTracker } from "@/components/IngredientViewTracker";
+import { TableOfContents } from "@/components/TableOfContents";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { formatTextWithParagraphs, formatList } from "@/lib/text-formatter";
 import {
   generateBreadcrumbStructuredData,
@@ -486,6 +488,32 @@ export default async function IngredientPage({ params }: Props) {
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
 
+  // 目次の項目を生成
+  const tocItems = [
+    { id: "overview", title: `${ingredient.name}とは` },
+    ...(Array.isArray(ingredient.benefits) && ingredient.benefits.length > 0
+      ? [{ id: "benefits", title: "主な効果・効能" }]
+      : []),
+    { id: "dosage", title: "推奨摂取量" },
+    { id: "scientific-background", title: "科学的背景・エビデンス" },
+    ...(Array.isArray(ingredient.foodSources) &&
+    ingredient.foodSources.length > 0
+      ? [{ id: "food-sources", title: "豊富に含まれる食品" }]
+      : []),
+    ...(ingredient.sideEffects
+      ? [{ id: "side-effects", title: "副作用・注意点" }]
+      : []),
+    ...(ingredient.interactions
+      ? [{ id: "interactions", title: "相互作用" }]
+      : []),
+    ...(Array.isArray(ingredient.faqs) && ingredient.faqs.length > 0
+      ? [{ id: "faqs", title: "よくある質問" }]
+      : []),
+    ...(Array.isArray(ingredient.references) && ingredient.references.length > 0
+      ? [{ id: "references", title: "参考文献" }]
+      : []),
+  ];
+
   return (
     <>
       {/* JSON-LD Structured Data: Article */}
@@ -665,7 +693,7 @@ export default async function IngredientPage({ params }: Props) {
             {/* 左カラム：主要コンテンツ */}
             <div className="lg:col-span-2 space-y-10">
               {/* 概要 */}
-              <section>
+              <section id="overview">
                 <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <BookOpen className="text-primary" size={24} />
                   {ingredient.name}とは
@@ -680,7 +708,7 @@ export default async function IngredientPage({ params }: Props) {
               {/* 主な効果・効能 */}
               {Array.isArray(ingredient.benefits) &&
                 ingredient.benefits.length > 0 && (
-                  <section>
+                  <section id="benefits">
                     <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                       <TrendingUp className="text-primary" size={24} />
                       主な効果・効能
@@ -697,7 +725,7 @@ export default async function IngredientPage({ params }: Props) {
                 )}
 
               {/* 推奨摂取量 */}
-              <section>
+              <section id="dosage">
                 <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <Scale className="text-primary" size={24} />
                   推奨摂取量
@@ -715,7 +743,7 @@ export default async function IngredientPage({ params }: Props) {
               </section>
 
               {/* 科学的背景 */}
-              <section>
+              <section id="scientific-background">
                 <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                   <ShieldCheck className="text-primary" size={24} />
                   科学的背景・エビデンス
@@ -735,7 +763,7 @@ export default async function IngredientPage({ params }: Props) {
               {/* 食品源 */}
               {Array.isArray(ingredient.foodSources) &&
                 ingredient.foodSources.length > 0 && (
-                  <section>
+                  <section id="food-sources">
                     <h2 className="text-2xl font-bold text-primary-900 mb-6 ingredient-section-title">
                       豊富に含まれる食品
                     </h2>
@@ -773,7 +801,7 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* 副作用・注意点 */}
               {ingredient.sideEffects && (
-                <section>
+                <section id="side-effects">
                   <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2 ingredient-section-title">
                     <AlertCircle className="text-accent-orange" size={24} />
                     副作用・注意点
@@ -802,7 +830,7 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* 相互作用 */}
               {ingredient.interactions && (
-                <section>
+                <section id="interactions">
                   <h2 className="text-2xl font-bold text-primary-900 mb-6">
                     他の成分・医薬品との相互作用
                   </h2>
@@ -830,7 +858,7 @@ export default async function IngredientPage({ params }: Props) {
 
               {/* FAQ */}
               {Array.isArray(ingredient.faqs) && ingredient.faqs.length > 0 && (
-                <section>
+                <section id="faqs">
                   <h2 className="text-2xl font-bold text-primary-900 mb-6">
                     よくある質問
                   </h2>
@@ -862,7 +890,7 @@ export default async function IngredientPage({ params }: Props) {
               {/* 参考文献 */}
               {Array.isArray(ingredient.references) &&
                 ingredient.references.length > 0 && (
-                  <section>
+                  <section id="references">
                     <h2 className="text-2xl font-bold text-primary-900 mb-4">
                       参考文献
                     </h2>
@@ -894,8 +922,11 @@ export default async function IngredientPage({ params }: Props) {
 
             {/* 右カラム：サイドバー */}
             <aside className="space-y-6">
+              {/* 目次 */}
+              <TableOfContents items={tocItems} />
+
               {/* 関連成分 */}
-              <div className="bg-white border border-primary-200 rounded-lg p-6 sticky top-20">
+              <div className="bg-white border border-primary-200 rounded-lg p-6 sticky top-[28rem]">
                 {Array.isArray(ingredient.relatedIngredients) &&
                   ingredient.relatedIngredients.length > 0 && (
                     <>
@@ -959,6 +990,9 @@ export default async function IngredientPage({ params }: Props) {
           products={relatedProductsWithMockData}
           ingredientName={ingredient.name}
         />
+
+        {/* トップに戻るボタン */}
+        <ScrollToTopButton />
       </div>
     </>
   );

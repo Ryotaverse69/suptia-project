@@ -2,6 +2,7 @@ import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ShareButtons } from "@/components/diagnosis/ShareButtons";
 import { DiagnosisConditionEditor } from "@/components/diagnosis/DiagnosisConditionEditor";
+import { RecommendedIngredients } from "@/components/diagnosis/RecommendedIngredients";
 import { headers } from "next/headers";
 import {
   recommendProducts,
@@ -11,6 +12,10 @@ import {
   HEALTH_GOAL_LABELS,
   USER_PRIORITY_LABELS,
 } from "@/lib/recommendation-engine";
+import {
+  recommendProductsDetailed,
+  type DetailedDiagnosisProfile,
+} from "@/lib/detailed-recommendation-engine";
 import type { ContraindicationTag } from "@/lib/safety-checker";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -60,31 +65,100 @@ export default async function DiagnosisResultsPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   // URLパラメータから診断情報を取得
+  const diagnosisType = searchParams.type as string | undefined; // "simple" or "detailed"
   const goalsParam = searchParams.goals as string | undefined;
   const conditionsParam = searchParams.conditions as string | undefined;
   const budgetStr = searchParams.budget as string | undefined;
   const priorityParam = searchParams.priority as string | undefined;
 
+  // 詳細診断の追加パラメータ
+  const secondaryGoalsParam = searchParams.secondaryGoals as string | undefined;
+  const ageGroup = searchParams.ageGroup as string | undefined;
+  const lifestyle = searchParams.lifestyle as string | undefined;
+  const exerciseFrequency = searchParams.exerciseFrequency as
+    | string
+    | undefined;
+  const stressLevel = searchParams.stressLevel as string | undefined;
+  const sleepQuality = searchParams.sleepQuality as string | undefined;
+  const dietQuality = searchParams.dietQuality as string | undefined;
+  const alcoholConsumption = searchParams.alcoholConsumption as
+    | string
+    | undefined;
+  const mainConcern = searchParams.mainConcern as string | undefined;
+  const supplementExperience = searchParams.supplementExperience as
+    | string
+    | undefined;
+  const currentSupplementsParam = searchParams.currentSupplements as
+    | string
+    | undefined;
+
   // ユーザープロファイル（サーバーコンポーネントなのでメモ化不要）
   const goals = (goalsParam?.split(",").filter(Boolean) as HealthGoal[]) || [];
+  const secondaryGoals =
+    (secondaryGoalsParam?.split(",").filter(Boolean) as HealthGoal[]) || [];
   const conditions =
     (conditionsParam?.split(",").filter(Boolean) as ContraindicationTag[]) ||
     [];
+  const currentSupplements =
+    currentSupplementsParam?.split(",").filter(Boolean) || [];
   const budget = budgetStr ? parseFloat(budgetStr) : undefined;
   const priority = (priorityParam || "balanced") as UserPriority;
 
-  const userProfile: UserDiagnosisProfile = {
-    goals,
-    healthConditions: conditions,
-    budgetPerDay: budget,
-    priority,
-  };
+  const isDetailedDiagnosis = diagnosisType === "detailed";
 
   // Sanityから商品データを取得
   const products = await fetchProductsForDiagnosis();
 
-  // 推薦結果を計算
-  const recommendations = recommendProducts(products, userProfile);
+  // デバッグ: 取得した商品数をログ出力
+  console.log("🔍 診断結果ページ - デバッグ情報:", {
+    診断タイプ: isDetailedDiagnosis ? "詳細診断" : "かんたん診断",
+    取得した商品数: products.length,
+    ユーザー目標: goals,
+    副次的な目標: secondaryGoals,
+    ユーザー予算: budget,
+    ユーザー優先度: priority,
+    健康状態: conditions,
+    年齢層: ageGroup,
+    ストレスレベル: stressLevel,
+  });
+
+  // 推薦結果を計算（診断タイプに応じて使い分け）
+  const recommendations = isDetailedDiagnosis
+    ? recommendProductsDetailed(products, {
+        goals,
+        healthConditions: conditions,
+        budgetPerDay: budget,
+        priority,
+        secondaryGoals,
+        ageGroup: ageGroup as any,
+        lifestyle: lifestyle as any,
+        exerciseFrequency: exerciseFrequency as any,
+        stressLevel: stressLevel as any,
+        sleepQuality: sleepQuality as any,
+        dietQuality: dietQuality as any,
+        alcoholConsumption: alcoholConsumption as any,
+        mainConcern: mainConcern as any,
+        supplementExperience: supplementExperience as any,
+        currentSupplements,
+      } as DetailedDiagnosisProfile)
+    : recommendProducts(products, {
+        goals,
+        healthConditions: conditions,
+        budgetPerDay: budget,
+        priority,
+      });
+
+  // デバッグ: 推薦結果数をログ出力
+  console.log("📊 推薦結果:", {
+    推薦商品数: recommendations.length,
+    トップ3:
+      recommendations.length > 0
+        ? recommendations.slice(0, 3).map((r) => ({
+            商品名: r.product.name,
+            総合スコア: r.scores.overallScore,
+          }))
+        : "なし",
+  });
 
   const topThree = recommendations.slice(0, 3);
   const otherRecommendations = recommendations.slice(3, 10); // トップ3以外の7件（合計10件）
@@ -143,7 +217,15 @@ export default async function DiagnosisResultsPage({
               initialBudget={budget}
               initialConditions={conditions}
               initialPriority={priority}
+              isDetailedDiagnosis={isDetailedDiagnosis}
             />
+
+            {/* 推奨成分セクション */}
+            {goals.length > 0 && (
+              <div className="mt-6">
+                <RecommendedIngredients goals={goals} />
+              </div>
+            )}
           </div>
 
           {/* 結果が0件の場合 */}
