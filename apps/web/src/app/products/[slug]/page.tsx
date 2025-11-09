@@ -140,7 +140,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       alt
     },
     externalImageUrl,
-    priceData,
+    "priceData": prices,
     priceHistory,
     urls,
     janCode,
