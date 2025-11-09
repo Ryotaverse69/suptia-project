@@ -69,6 +69,9 @@ export function ProductCard({ product }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(_id);
 
+  // デバッグログ: ProductCardの初期化
+  console.log("[ProductCard] Rendering product:", { _id, name, favorite });
+
   // 5冠達成判定（すべてSランク）
   const isPerfect = tierRatings ? isPerfectProduct(tierRatings) : false;
 
@@ -167,9 +170,19 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* お気に入りボタン */}
           <button
             onClick={(e) => {
+              console.log("[ProductCard] Favorite button clicked!", {
+                _id,
+                name,
+                currentFavorite: favorite,
+              });
               e.preventDefault();
               e.stopPropagation();
+              console.log(
+                "[ProductCard] Calling toggleFavorite with _id:",
+                _id,
+              );
               toggleFavorite(_id);
+              console.log("[ProductCard] toggleFavorite called");
             }}
             className={`absolute bottom-3 right-3 z-10 p-2 rounded-full backdrop-blur-xl transition-all duration-300 ${
               favorite

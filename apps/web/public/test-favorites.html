@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お気に入り機能テスト</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        #log {
+            background: #f5f5f5;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #ccc;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 お気に入り機能テスト</h1>
+
+    <div>
+        <h2>localStorageテスト</h2>
+        <button onclick="testLocalStorage()">localStorageアクセステスト</button>
+        <button onclick="clearLocalStorage()">localStorageクリア</button>
+    </div>
+
+    <div>
+        <h2>お気に入り追加/削除テスト</h2>
+        <button onclick="addFavorite('test-product-1')">商品1を追加</button>
+        <button onclick="addFavorite('test-product-2')">商品2を追加</button>
+        <button onclick="addFavorite('test-product-3')">商品3を追加</button>
+        <button onclick="removeFavorite('test-product-1')">商品1を削除</button>
+        <button onclick="showFavorites()">お気に入り一覧表示</button>
+    </div>
+
+    <div>
+        <h2>実際のSanity商品IDでテスト</h2>
+        <button onclick="addFavorite('ZkomLehjbvlyB7lUsQDFye')">ファンケルを追加</button>
+        <button onclick="addFavorite('ZkomLehjbvlyB7lUsQDoSI')">極セレクトを追加</button>
+        <button onclick="addFavorite('pOpoqaGNdorP1t4hBFnTdN')">ネイチャーメイドを追加</button>
+    </div>
+
+    <div id="log">
+        <h3>ログ</h3>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'suptia-favorites';
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.style.borderColor = type === 'success' ? 'green' : type === 'error' ? 'red' : '#ccc';
+            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[Test] ${message}`);
+        }
+
+        function testLocalStorage() {
+            try {
+                // 書き込みテスト
+                localStorage.setItem('test-key', 'test-value');
+                log('✅ localStorage書き込み成功', 'success');
+
+                // 読み込みテスト
+                const value = localStorage.getItem('test-key');
+                if (value === 'test-value') {
+                    log('✅ localStorage読み込み成功: ' + value, 'success');
+                } else {
+                    log('❌ localStorage読み込み失敗', 'error');
+                }
+
+                // 削除テスト
+                localStorage.removeItem('test-key');
+                log('✅ localStorage削除成功', 'success');
+            } catch (error) {
+                log('❌ localStorageエラー: ' + error.message, 'error');
+            }
+        }
+
+        function getFavorites() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (!stored) {
+                    return [];
+                }
+                return JSON.parse(stored);
+            } catch (error) {
+                log('❌ お気に入り取得エラー: ' + error.message, 'error');
+                return [];
+            }
+        }
+
+        function saveFavorites(favorites) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+                log('💾 お気に入り保存成功: ' + favorites.length + '件', 'success');
+            } catch (error) {
+                log('❌ お気に入り保存エラー: ' + error.message, 'error');
+            }
+        }
+
+        function addFavorite(productId) {
+            const favorites = getFavorites();
+            if (favorites.includes(productId)) {
+                log('ℹ️ すでにお気に入りに追加済み: ' + productId);
+                return;
+            }
+            favorites.push(productId);
+            saveFavorites(favorites);
+            log('➕ お気に入りに追加: ' + productId, 'success');
+            showFavorites();
+        }
+
+        function removeFavorite(productId) {
+            const favorites = getFavorites();
+            const filtered = favorites.filter(id => id !== productId);
+            saveFavorites(filtered);
+            log('➖ お気に入りから削除: ' + productId, 'success');
+            showFavorites();
+        }
+
+        function showFavorites() {
+            const favorites = getFavorites();
+            log('📋 現在のお気に入り (' + favorites.length + '件): ' + JSON.stringify(favorites));
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+            log('🗑️ お気に入りをクリアしました', 'success');
+            showFavorites();
+        }
+
+        // 初期状態表示
+        window.onload = function() {
+            log('🚀 テストページ起動');
+            showFavorites();
+        };
+    </script>
+</body>
+</html>
