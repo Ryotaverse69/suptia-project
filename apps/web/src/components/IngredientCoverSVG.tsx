@@ -297,7 +297,7 @@ export function IngredientCoverSVG({
       <rect
         x="50"
         y="50"
-        width="auto"
+        width="200"
         height="50"
         rx="25"
         fill="white"
