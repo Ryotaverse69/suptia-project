@@ -61,6 +61,12 @@ interface Product {
   slug: {
     current: string;
   };
+  priceData?: Array<{
+    source: string;
+    amount: number;
+    currency: string;
+    url: string;
+  }>;
   ingredients?: Array<{
     amountMgPerServing: number;
     ingredient?: {
@@ -83,6 +89,12 @@ async function getAllProducts(): Promise<Product[]> {
     externalImageUrl,
     source,
     slug,
+    priceData[]{
+      source,
+      amount,
+      currency,
+      url
+    },
     ingredients[]{
       amountMgPerServing,
       ingredient->{

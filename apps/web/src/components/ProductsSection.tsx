@@ -14,6 +14,12 @@ interface Product {
   slug: {
     current: string;
   };
+  priceData?: Array<{
+    source: string;
+    amount: number;
+    currency: string;
+    url: string;
+  }>;
   effectiveCostPerDay: number;
   rating: number;
   reviewCount: number;
@@ -88,7 +94,19 @@ export function ProductsSection({ products }: ProductsSectionProps) {
 
     // ECサイトフィルター
     if (ecSiteFilter) {
-      filtered = filtered.filter((product) => product.source === ecSiteFilter);
+      filtered = filtered.filter((product) => {
+        // メインのsourceがマッチする場合
+        if (product.source === ecSiteFilter) {
+          return true;
+        }
+        // または、priceData配列に指定されたECサイトが含まれる場合
+        if (product.priceData && product.priceData.length > 0) {
+          return product.priceData.some(
+            (price) => price.source === ecSiteFilter,
+          );
+        }
+        return false;
+      });
     }
 
     // ソート

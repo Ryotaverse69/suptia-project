@@ -217,7 +217,8 @@ export class YahooAdapter implements ECAdapter {
       currency: "JPY",
       url: item.url,
       affiliateUrl,
-      imageUrl: item.image?.medium || item.image?.small,
+      // 高解像度優先: large → medium → small
+      imageUrl: item.image?.large || item.image?.medium || item.image?.small,
       brand: brandName, // 商品名から抽出したブランド名（発売元）
       shopName: item.store?.name || "", // Yahoo!ショッピング内の店舗名（販売元）※APIが情報を提供しないため通常は空
       rating: item.review?.rate,
