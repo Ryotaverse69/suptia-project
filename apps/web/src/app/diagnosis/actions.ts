@@ -15,7 +15,8 @@ export async function fetchProductsForDiagnosis(): Promise<
   ProductForDiagnosis[]
 > {
   // GROQ query: 商品と関連する成分を取得
-  const query = `*[_type == "product" && availability == "in-stock"] {
+  // availabilityが未設定の商品も含める（後方互換性のため）
+  const query = `*[_type == "product" && (!defined(availability) || availability == "in-stock")] {
     _id,
     name,
     "slug": slug.current,
