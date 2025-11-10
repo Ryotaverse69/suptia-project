@@ -261,129 +261,137 @@ export default async function IngredientsPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          {ingredients.map((ingredient) => (
-                            <Link
-                              key={ingredient.slug.current}
-                              href={`/ingredients/${ingredient.slug.current}`}
-                              className="group bg-white border border-primary-200 rounded-lg p-6 hover:border-primary hover:shadow-lg transition-all"
-                            >
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex-1">
-                                  <h4 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
-                                    {ingredient.name}
-                                  </h4>
-                                  <p className="text-sm text-primary-600">
-                                    {ingredient.nameEn}
-                                  </p>
+                          {ingredients
+                            .filter(
+                              (ingredient) =>
+                                ingredient.slug && ingredient.slug.current,
+                            )
+                            .map((ingredient) => (
+                              <Link
+                                key={ingredient.slug.current}
+                                href={`/ingredients/${ingredient.slug.current}`}
+                                className="group bg-white border border-primary-200 rounded-lg p-6 hover:border-primary hover:shadow-lg transition-all"
+                              >
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex-1">
+                                    <h4 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
+                                      {ingredient.name}
+                                    </h4>
+                                    <p className="text-sm text-primary-600">
+                                      {ingredient.nameEn}
+                                    </p>
+                                  </div>
+                                  <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                                 </div>
-                                <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
-                              </div>
 
-                              <p className="text-sm text-primary-700 line-clamp-2 mb-4">
-                                {ingredient.description}
-                              </p>
+                                <p className="text-sm text-primary-700 line-clamp-2 mb-4">
+                                  {ingredient.description}
+                                </p>
 
-                              {/* ランクバッジ */}
-                              <div className="flex flex-wrap gap-2">
-                                {/* エビデンスランクバッジ */}
-                                {ingredient.evidenceLevel &&
-                                  (() => {
-                                    const evidenceRankInfo: Record<
-                                      string,
-                                      { color: string; label: string }
-                                    > = {
-                                      S: {
-                                        color: "from-purple-500 to-purple-700",
-                                        label: "S",
-                                      },
-                                      A: {
-                                        color: "from-blue-500 to-blue-700",
-                                        label: "A",
-                                      },
-                                      B: {
-                                        color: "from-green-500 to-green-700",
-                                        label: "B",
-                                      },
-                                      C: {
-                                        color: "from-yellow-500 to-yellow-700",
-                                        label: "C",
-                                      },
-                                      D: {
-                                        color: "from-red-500 to-red-700",
-                                        label: "D",
-                                      },
-                                    };
-                                    const info =
-                                      evidenceRankInfo[
-                                        ingredient.evidenceLevel
-                                      ];
-                                    // evidenceLevelが無効な値の場合は何も表示しない
-                                    if (!info) return null;
-                                    return (
-                                      <div
-                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${info.color}`}
-                                      >
-                                        <Shield
-                                          className="text-white"
-                                          size={12}
-                                        />
-                                        <span className="text-xs font-semibold text-white">
-                                          エビデンス{info.label}ランク
-                                        </span>
-                                      </div>
-                                    );
-                                  })()}
-
-                                {/* 安全性ランクバッジ */}
-                                {ingredient.safetyScore !== undefined &&
-                                  (() => {
-                                    const score = ingredient.safetyScore;
-                                    const getSafetyRank = (score: number) => {
-                                      if (score >= 90)
-                                        return {
-                                          grade: "S",
+                                {/* ランクバッジ */}
+                                <div className="flex flex-wrap gap-2">
+                                  {/* エビデンスランクバッジ */}
+                                  {ingredient.evidenceLevel &&
+                                    (() => {
+                                      const evidenceRankInfo: Record<
+                                        string,
+                                        { color: string; label: string }
+                                      > = {
+                                        S: {
                                           color:
                                             "from-purple-500 to-purple-700",
-                                        };
-                                      if (score >= 80)
-                                        return {
-                                          grade: "A",
+                                          label: "S",
+                                        },
+                                        A: {
                                           color: "from-blue-500 to-blue-700",
-                                        };
-                                      if (score >= 70)
-                                        return {
-                                          grade: "B",
+                                          label: "A",
+                                        },
+                                        B: {
                                           color: "from-green-500 to-green-700",
-                                        };
-                                      if (score >= 60)
-                                        return {
-                                          grade: "C",
+                                          label: "B",
+                                        },
+                                        C: {
                                           color:
                                             "from-yellow-500 to-yellow-700",
-                                        };
-                                      return {
-                                        grade: "D",
-                                        color: "from-red-500 to-red-700",
+                                          label: "C",
+                                        },
+                                        D: {
+                                          color: "from-red-500 to-red-700",
+                                          label: "D",
+                                        },
                                       };
-                                    };
-                                    const safetyInfo = getSafetyRank(score);
-                                    return (
-                                      <div
-                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${safetyInfo.color}`}
-                                      >
-                                        <Shield
-                                          className="text-white"
-                                          size={12}
-                                        />
-                                        <span className="text-xs font-semibold text-white">
-                                          安全性{safetyInfo.grade}ランク
-                                        </span>
-                                      </div>
-                                    );
-                                  })()}
-                              </div>
-                            </Link>
-                          ))}
+                                      const info =
+                                        evidenceRankInfo[
+                                          ingredient.evidenceLevel
+                                        ];
+                                      // evidenceLevelが無効な値の場合は何も表示しない
+                                      if (!info) return null;
+                                      return (
+                                        <div
+                                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${info.color}`}
+                                        >
+                                          <Shield
+                                            className="text-white"
+                                            size={12}
+                                          />
+                                          <span className="text-xs font-semibold text-white">
+                                            エビデンス{info.label}ランク
+                                          </span>
+                                        </div>
+                                      );
+                                    })()}
+
+                                  {/* 安全性ランクバッジ */}
+                                  {ingredient.safetyScore !== undefined &&
+                                    (() => {
+                                      const score = ingredient.safetyScore;
+                                      const getSafetyRank = (score: number) => {
+                                        if (score >= 90)
+                                          return {
+                                            grade: "S",
+                                            color:
+                                              "from-purple-500 to-purple-700",
+                                          };
+                                        if (score >= 80)
+                                          return {
+                                            grade: "A",
+                                            color: "from-blue-500 to-blue-700",
+                                          };
+                                        if (score >= 70)
+                                          return {
+                                            grade: "B",
+                                            color:
+                                              "from-green-500 to-green-700",
+                                          };
+                                        if (score >= 60)
+                                          return {
+                                            grade: "C",
+                                            color:
+                                              "from-yellow-500 to-yellow-700",
+                                          };
+                                        return {
+                                          grade: "D",
+                                          color: "from-red-500 to-red-700",
+                                        };
+                                      };
+                                      const safetyInfo = getSafetyRank(score);
+                                      return (
+                                        <div
+                                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${safetyInfo.color}`}
+                                        >
+                                          <Shield
+                                            className="text-white"
+                                            size={12}
+                                          />
+                                          <span className="text-xs font-semibold text-white">
+                                            安全性{safetyInfo.grade}ランク
+                                          </span>
+                                        </div>
+                                      );
+                                    })()}
+                                </div>
+                              </Link>
+                            ))}
                         </div>
                       </section>
                     ),
