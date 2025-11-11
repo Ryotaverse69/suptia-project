@@ -56,6 +56,106 @@ function scoreToRank(score, reverse = false) {
 }
 
 /**
+ * evidenceLevelをスコアに変換
+ * @param {string} level S/A/B/C/D
+ * @returns {number} 0-100のスコア
+ */
+function evidenceLevelToScore(level) {
+  switch (level) {
+    case "S": return 95;
+    case "A": return 85;
+    case "B": return 75;
+    case "C": return 65;
+    case "D": return 55;
+    default: return 50; // レベルが設定されていない場合
+  }
+}
+
+/**
+ * safetyLevelをスコアに変換
+ * @param {string} level S/A/B/C/D
+ * @returns {number} 0-100のスコア
+ */
+function safetyLevelToScore(level) {
+  switch (level) {
+    case "S": return 100;
+    case "A": return 90;
+    case "B": return 80;
+    case "C": return 70;
+    case "D": return 60;
+    default: return 75; // レベルが設定されていない場合
+  }
+}
+
+/**
+ * 商品のエビデンススコア・安全性スコアを計算
+ * @param {Array} ingredients 成分配列
+ * @param {number} servingsPerDay 1日あたりの摂取回数
+ * @returns {Object} {evidenceScore, safetyScore, overall}
+ */
+function calculateProductScores(ingredients, servingsPerDay) {
+  if (!ingredients || ingredients.length === 0) {
+    return {
+      evidenceScore: 50,
+      safetyScore: 75,
+      overall: 63,
+    };
+  }
+
+  // 全成分の1日あたりの総量を計算
+  let totalDailyAmount = 0;
+  const ingredientScores = [];
+
+  for (const ing of ingredients) {
+    if (!ing.ingredient || !ing.amountMgPerServing || ing.amountMgPerServing <= 0) {
+      continue;
+    }
+
+    const dailyAmount = ing.amountMgPerServing * (servingsPerDay || 1);
+    totalDailyAmount += dailyAmount;
+
+    const evidenceScore = evidenceLevelToScore(ing.ingredient.evidenceLevel);
+    const safetyScore = safetyLevelToScore(ing.ingredient.safetyLevel);
+
+    ingredientScores.push({
+      name: ing.ingredient.name,
+      dailyAmount,
+      evidenceScore,
+      safetyScore,
+    });
+  }
+
+  if (totalDailyAmount === 0 || ingredientScores.length === 0) {
+    return {
+      evidenceScore: 50,
+      safetyScore: 75,
+      overall: 63,
+    };
+  }
+
+  // 配合量に基づく加重平均を計算
+  let weightedEvidenceScore = 0;
+  let weightedSafetyScore = 0;
+
+  for (const ing of ingredientScores) {
+    const weight = ing.dailyAmount / totalDailyAmount;
+    weightedEvidenceScore += ing.evidenceScore * weight;
+    weightedSafetyScore += ing.safetyScore * weight;
+  }
+
+  // 小数点第2位で四捨五入
+  const evidenceScore = Math.round(weightedEvidenceScore * 100) / 100;
+  const safetyScore = Math.round(weightedSafetyScore * 100) / 100;
+  const overall = Math.round((evidenceScore + safetyScore) / 2);
+
+  return {
+    evidenceScore,
+    safetyScore,
+    overall,
+  };
+}
+
+/**
  * パーセンタイルを計算（値の配列内での順位）
  * @param {number} value 評価する値
  * @param {number[]} values 比較対象の値の配列
@@ -96,7 +196,9 @@ async function calculateTierRanks() {
           amountMgPerServing,
           ingredient->{
             _id,
-            name
+            name,
+            evidenceLevel,
+            safetyLevel
           }
         },
         scores,
@@ -144,6 +246,9 @@ async function calculateTierRanks() {
         continue;
       }
 
+      // スコアを計算（全成分を考慮）
+      const calculatedScores = calculateProductScores(product.ingredients, product.servingsPerDay);
+
       ingredientGroups[ingredientId].products.push({
         productId: product._id,
         productName: product.name,
@@ -152,11 +257,15 @@ async function calculateTierRanks() {
         costPerDay,
         costPerMg,
         amount: ing.amountMgPerServing,
-        safetyScore: product.scores?.safety || 50,
-        evidenceScore: product.scores?.evidence || 50,
+        safetyScore: calculatedScores.safetyScore,
+        evidenceScore: calculatedScores.evidenceScore,
+        overallScore: calculatedScores.overall,
         referenceCount: product.references?.length || 0,
         warningCount: product.warnings?.length || 0,
         currentTierRatings: product.tierRatings,
+        currentScores: product.scores, // 現在のスコアを保持
+        // スコア計算結果を保持（後でSanityに保存）
+        calculatedScores,
       });
     }
 
@@ -278,7 +387,7 @@ async function calculateTierRanks() {
           overallRank,
         };
 
-        // 変更があるかチェック
+        // 変更があるかチェック（ランクの変更 OR スコアが未設定/デフォルト値）
         const hasChanges =
           !productData.currentTierRatings ||
           productData.currentTierRatings.priceRank !== priceRank ||
@@ -286,7 +395,13 @@ async function calculateTierRanks() {
           productData.currentTierRatings.contentRank !== contentRank ||
           productData.currentTierRatings.evidenceRank !== evidenceRank ||
           productData.currentTierRatings.safetyRank !== safetyRank ||
-          productData.currentTierRatings.overallRank !== overallRank;
+          productData.currentTierRatings.overallRank !== overallRank ||
+          // スコアが未設定またはデフォルト値の場合も更新
+          !productData.currentScores ||
+          !productData.currentScores.evidence ||
+          !productData.currentScores.safety ||
+          productData.currentScores.evidence === 50 ||
+          productData.currentScores.safety === 50;
 
         if (hasChanges) {
           updates.push({
@@ -295,6 +410,7 @@ async function calculateTierRanks() {
             ingredientName: group.name,
             oldTierRatings: productData.currentTierRatings,
             newTierRatings,
+            calculatedScores: productData.calculatedScores, // 計算したスコアを保存
             details: {
               price: `¥${productData.price.toLocaleString()}`,
               costPerMg: `¥${productData.costPerMg.toFixed(4)}/mg`,
@@ -350,13 +466,21 @@ async function calculateTierRanks() {
 
       for (const update of updates) {
         try {
+          // tierRatingsとscoresを両方更新
           await client
             .patch(update.productId)
-            .set({ tierRatings: update.newTierRatings })
+            .set({
+              tierRatings: update.newTierRatings,
+              scores: {
+                evidence: update.calculatedScores.evidenceScore,
+                safety: update.calculatedScores.safetyScore,
+                overall: update.calculatedScores.overall,
+              },
+            })
             .commit();
 
           successCount++;
-          console.log(`✅ ${update.productName.substring(0, 60)}... - Tierランク更新`);
+          console.log(`✅ ${update.productName.substring(0, 60)}... - Tierランク & スコア更新`);
         } catch (error) {
           errorCount++;
           console.error(`❌ ${update.productName.substring(0, 60)}... - エラー: ${error.message}`);
