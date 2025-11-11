@@ -1,0 +1,144 @@
+name: 商品ランク整合性チェック
+
+on:
+  # 毎日深夜2時（JST）に自動実行
+  schedule:
+    - cron: "0 17 * * *" # UTC 17:00 = JST 02:00
+
+  # 手動実行も可能
+  workflow_dispatch:
+
+  # PRまたはpush時にも実行
+  push:
+    branches:
+      - master
+    paths:
+      - "apps/web/src/app/products/**"
+      - "scripts/auto-calculate-tier-ranks.mjs"
+      - "apps/web/src/lib/badges*.ts"
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "apps/web/src/app/products/**"
+      - "scripts/auto-calculate-tier-ranks.mjs"
+      - "apps/web/src/lib/badges*.ts"
+
+jobs:
+  validate-ranks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.jsセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 依存関係インストール
+        run: npm ci
+
+      - name: Sanity商品ランク検証スクリプト実行
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: node scripts/validate-all-products-ranks.mjs
+
+      - name: ランク整合性テスト実行
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+        working-directory: apps/web
+        run: npm test -- product-rank-consistency.test.ts
+
+      - name: 検証レポートをアップロード
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: /tmp/product-validation-report.json
+          retention-days: 30
+
+      - name: Slack通知（失敗時）
+        if: failure()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "⚠️ 商品ランク整合性チェックが失敗しました",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*商品ランク整合性チェック失敗*\n\n• ワークフロー: ${{ github.workflow }}\n• ブランチ: ${{ github.ref_name }}\n• コミット: <${{ github.event.head_commit.url }}|${{ github.sha }}>\n• 実行者: ${{ github.actor }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "詳細を確認"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  # オプション: Sanityデータベースの再計算を自動実行
+  recalculate-ranks:
+    runs-on: ubuntu-latest
+    # 毎週日曜日の深夜3時（JST）に自動実行
+    if: github.event.schedule == '0 18 * * 0'
+    timeout-minutes: 30
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.jsセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 依存関係インストール
+        run: npm ci
+
+      - name: 全商品のランクを再計算
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: node scripts/auto-calculate-tier-ranks.mjs --fix
+
+      - name: Slack通知（成功時）
+        if: success()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "✅ 全商品のランク再計算が完了しました",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*全商品ランク再計算完了*\n\n定期実行により、全商品のランクが最新データに基づいて再計算されました。"
+                  }
+                }
+              ]
+            }
