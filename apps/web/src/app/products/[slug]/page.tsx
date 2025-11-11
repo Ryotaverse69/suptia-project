@@ -711,11 +711,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   console.log(`[バッジ結果] ${product.name}:`, badges);
   console.log(
-    `[更新前tierRatings] ${product.name}:`,
+    `[tierRatings（Sanityパーセンタイルベース）] ${product.name}:`,
     JSON.stringify(updatedTierRatings, null, 2),
   );
 
-  // 称号に基づいてランクを"S"に格上げ
+  // ⚠️ 重要な変更: バッジによるランク格上げを無効化
+  // 理由: Sanityのパーセンタイルベース（相対評価）とバッジの絶対値ベース判定が矛盾するため
+  // バッジは「絶対的な1位」を示す称号として別途表示し、ランクは相対評価で統一
+  //
+  // 例: DHC ビタミンC
+  // - 含有量: 2000mg（絶対値1位） → バッジ授与 ✓
+  // - 含有量ランク: D（パーセンタイル5.63%、5位/71） → Sanityランクを尊重
+  //
+  // 以下のコードをコメントアウト（2025-11-11）
+  /*
   if (updatedTierRatings) {
     badges.forEach((badgeType) => {
       console.log(`[バッジタイプ処理] ${badgeType}`);
@@ -748,6 +757,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
       console.log(`[5冠達成] overallRank を S+ に格上げ`);
     }
   }
+  */
+
+  console.log(
+    `[最終tierRatings] Sanityのパーセンタイルベースランクをそのまま使用`,
+  );
 
   // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);

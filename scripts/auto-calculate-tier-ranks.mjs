@@ -88,6 +88,7 @@ async function calculateTierRanks() {
       `*[_type == "product" && availability == "in-stock"] | order(name asc){
         _id,
         name,
+        slug,
         priceJPY,
         servingsPerDay,
         servingsPerContainer,
@@ -113,40 +114,81 @@ async function calculateTierRanks() {
     for (const product of products) {
       if (!product.ingredients || product.ingredients.length === 0) continue;
 
-      for (const ing of product.ingredients) {
-        if (!ing.ingredient || !ing.ingredient._id) continue;
-        if (!ing.amountMgPerServing || ing.amountMgPerServing <= 0) continue;
+      // ⚠️ 重要: 主成分（配列の最初の要素）のみでランク付け
+      // 複数成分を含む商品が重複して処理され、最後の成分でランクが上書きされるのを防ぐ
+      const primaryIngredient = product.ingredients[0];
+      if (!primaryIngredient.ingredient || !primaryIngredient.ingredient._id) continue;
+      if (!primaryIngredient.amountMgPerServing || primaryIngredient.amountMgPerServing <= 0) continue;
 
-        const ingredientId = ing.ingredient._id;
+      const ing = primaryIngredient;
+      const ingredientId = ing.ingredient._id;
 
-        if (!ingredientGroups[ingredientId]) {
-          ingredientGroups[ingredientId] = {
-            name: ing.ingredient.name,
-            products: [],
-          };
-        }
-
-        const costPerDay = product.priceJPY / (product.servingsPerContainer / product.servingsPerDay);
-        const costPerMg = product.priceJPY / (ing.amountMgPerServing * product.servingsPerContainer);
-
-        ingredientGroups[ingredientId].products.push({
-          productId: product._id,
-          productName: product.name,
-          price: product.priceJPY,
-          costPerDay,
-          costPerMg,
-          amount: ing.amountMgPerServing,
-          safetyScore: product.scores?.safety || 50,
-          evidenceScore: product.scores?.evidence || 50,
-          referenceCount: product.references?.length || 0,
-          warningCount: product.warnings?.length || 0,
-          currentTierRatings: product.tierRatings,
-        });
+      if (!ingredientGroups[ingredientId]) {
+        ingredientGroups[ingredientId] = {
+          name: ing.ingredient.name,
+          products: [],
+        };
       }
+
+      // 必須データのバリデーション
+      if (!product.priceJPY || product.priceJPY <= 0) continue;
+      if (!product.servingsPerContainer || product.servingsPerContainer <= 0) continue;
+      if (!product.servingsPerDay || product.servingsPerDay <= 0) continue;
+
+      const costPerDay = product.priceJPY / (product.servingsPerContainer / product.servingsPerDay);
+      const costPerMg = product.priceJPY / (ing.amountMgPerServing * product.servingsPerContainer);
+
+      // NaNやInfinityをチェック
+      if (!isFinite(costPerDay) || !isFinite(costPerMg)) {
+        console.log(`⚠️  スキップ: ${product.name.substring(0, 60)}... (不正な計算結果)`);
+        continue;
+      }
+
+      ingredientGroups[ingredientId].products.push({
+        productId: product._id,
+        productName: product.name,
+        slug: product.slug?.current,
+        price: product.priceJPY,
+        costPerDay,
+        costPerMg,
+        amount: ing.amountMgPerServing,
+        safetyScore: product.scores?.safety || 50,
+        evidenceScore: product.scores?.evidence || 50,
+        referenceCount: product.references?.length || 0,
+        warningCount: product.warnings?.length || 0,
+        currentTierRatings: product.tierRatings,
+      });
     }
 
     // 各成分グループ内でランクを計算
     const updates = [];
+
+    console.log(`\n📊 成分グループ数: ${Object.keys(ingredientGroups).length}件`);
+    for (const [ingredientId, group] of Object.entries(ingredientGroups)) {
+      console.log(`   ${group.name}: ${group.products.length}件`);
+      if (ingredientId === "ingredient-vitamin-c") {
+        console.log(`      🔍 ビタミンCグループを処理開始`);
+        console.log(`      🔍 DHC商品を検索...`);
+        const dhcProducts = group.products.filter(p => p.slug === "p-18-dhc-c-90-c-b2-dhc-c-b2-90-vc-well");
+        console.log(`      🔍 DHC商品が見つかった数: ${dhcProducts.length}`);
+        if (dhcProducts.length > 0) {
+          console.log(`      🔍 DHC商品の詳細:`);
+          dhcProducts.forEach(p => {
+            console.log(`         slug: ${p.slug}`);
+            console.log(`         price: ¥${p.price}`);
+            console.log(`         costPerMg: ¥${p.costPerMg?.toFixed(4)}/mg`);
+            console.log(`         amount: ${p.amount}mg`);
+          });
+        } else {
+          console.log(`      ⚠️  DHC商品が見つかりませんでした！`);
+          console.log(`      利用可能なslugの例（最初の3件）:`);
+          group.products.slice(0, 3).forEach(p => {
+            console.log(`         - ${p.slug}`);
+          });
+        }
+      }
+    }
+    console.log();
 
     for (const [ingredientId, group] of Object.entries(ingredientGroups)) {
       const { products: groupProducts } = group;
@@ -159,6 +201,9 @@ async function calculateTierRanks() {
       const evidenceScores = groupProducts.map(p => p.evidenceScore);
 
       for (const productData of groupProducts) {
+        // デバッグ: 該当商品の場合、詳細ログを出力
+        const isTargetProduct = productData.slug === "p-18-dhc-c-90-c-b2-dhc-c-b2-90-vc-well";
+
         // 1. 価格ランク（安い方が良い）
         const pricePercentile = calculatePercentile(productData.price, prices, true);
         const priceRank = scoreToRank(pricePercentile);
@@ -167,9 +212,26 @@ async function calculateTierRanks() {
         const costPerMgPercentile = calculatePercentile(productData.costPerMg, costsPerMg, true);
         const costEffectivenessRank = scoreToRank(costPerMgPercentile);
 
+        if (isTargetProduct) {
+          console.log(`\n🔍 [デバッグ] ${productData.productName.substring(0, 60)}...`);
+          console.log(`   コスパ: ¥${productData.costPerMg?.toFixed(4)}/mg`);
+          console.log(`   costsPerMg配列の要素数: ${costsPerMg.length}件`);
+          console.log(`   costsPerMg配列の最小値: ¥${Math.min(...costsPerMg).toFixed(4)}/mg`);
+          console.log(`   コスパパーセンタイル: ${costPerMgPercentile.toFixed(2)}%`);
+          console.log(`   コスパランク: ${costEffectivenessRank}`);
+        }
+
         // 3. 含有量ランク（多い方が良い）
         const contentPercentile = calculatePercentile(productData.amount, amounts, false);
         const contentRank = scoreToRank(contentPercentile);
+
+        if (isTargetProduct) {
+          console.log(`   含有量: ${productData.amount}mg/回`);
+          console.log(`   amounts配列の要素数: ${amounts.length}件`);
+          console.log(`   amounts配列の最大値: ${Math.max(...amounts)}mg/回`);
+          console.log(`   含有量パーセンタイル: ${contentPercentile.toFixed(2)}%`);
+          console.log(`   含有量ランク: ${contentRank}\n`);
+        }
 
         // 4. エビデンスランク（evidenceScoreベース + 参考文献数ボーナス）
         let evidencePercentile = calculatePercentile(productData.evidenceScore, evidenceScores, false);
