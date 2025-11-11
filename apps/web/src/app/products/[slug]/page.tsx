@@ -107,14 +107,7 @@ interface Product {
     url?: string;
     source?: string;
   }>;
-  tierRatings?: {
-    priceRank: string;
-    costEffectivenessRank: string;
-    contentRank: string;
-    evidenceRank: string;
-    safetyRank: string;
-    overallRank?: string;
-  };
+  tierRatings?: TierRatings;
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -589,28 +582,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     });
   }
 
-  // リアルタイム計算したスコアでtierRatingsを上書き
-  function scoreToTierRank(score: number): TierRank {
-    if (score >= 90) return "S";
-    if (score >= 80) return "A";
-    if (score >= 70) return "B";
-    if (score >= 60) return "C";
-    return "D";
-  }
-
-  // リアルタイム計算結果でtierRatingsを更新
+  // SanityのパーセンタイルベースtierRatingsをそのまま使用
+  // 称号（badges）による格上げのみ適用
   const updatedTierRatings = product.tierRatings
-    ? {
-        ...product.tierRatings,
-        // バッジベースのランクはデフォルトD、バッジ獲得時のみSに上書き
-        priceRank: "D" as TierRank,
-        costEffectivenessRank: "D" as TierRank,
-        contentRank: "D" as TierRank,
-        // スコアベースのランクはリアルタイム計算結果を使用（undefinedの場合は50をデフォルト）
-        evidenceRank: scoreToTierRank(finalScores.evidence ?? 50),
-        safetyRank: scoreToTierRank(finalScores.safety ?? 50),
-        overallRank: scoreToTierRank(finalScores.overall ?? 50),
-      }
+    ? { ...product.tierRatings }
     : undefined;
 
   // 全商品を取得して称号を計算
@@ -1010,7 +985,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           warnings={product.warnings || []}
           referenceCount={product.references?.length || 0}
           evidenceRank={
-            product.tierRatings?.evidenceRank as
+            updatedTierRatings?.evidenceRank as
               | "S"
               | "A"
               | "B"
@@ -1019,7 +994,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               | undefined
           }
           safetyRank={
-            product.tierRatings?.safetyRank as
+            updatedTierRatings?.safetyRank as
               | "S"
               | "A"
               | "B"
