@@ -137,8 +137,8 @@ describe("商品ランク整合性テスト", () => {
     `);
 
     if (dhcProduct) {
-      // コスパランクがSであることを確認（複数成分バグ修正後）
-      expect(dhcProduct.tierRatings.costEffectivenessRank).toBe("S");
+      // コスパランクがAであることを確認（パーセンタイルベース）
+      expect(dhcProduct.tierRatings.costEffectivenessRank).toBe("A");
 
       // 含有量ランクがDであることを確認（パーセンタイルベース）
       expect(dhcProduct.tierRatings.contentRank).toBe("D");

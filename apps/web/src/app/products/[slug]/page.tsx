@@ -473,8 +473,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // アレルギー情報を抽出
   const allergyInfo = extractAllergyInfo(product.ingredients, allIngredients);
 
-  // スコアの自動計算
-  let finalScores = product.scores || { evidence: 50, safety: 50, overall: 50 };
+  // Sanityに保存されているスコアを優先的に使用
+  // スコアがない場合のみフロントエンドで計算
+  const hasSanityScores = product.scores?.evidence && product.scores?.safety;
+  let finalScores: { evidence: number; safety: number; overall: number } =
+    hasSanityScores && product.scores?.evidence && product.scores?.safety
+      ? {
+          evidence: product.scores.evidence,
+          safety: product.scores.safety,
+          overall: product.scores.overall ?? 50,
+        }
+      : { evidence: 50, safety: 50, overall: 50 };
   let safetyDetails: IngredientSafetyDetail[] = [];
   let evidenceDetails: IngredientEvidenceDetail[] = [];
   let hasUnregisteredMainIngredient = false;
@@ -509,7 +518,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     product.ingredients.length > 0 &&
     product.ingredients.every((ing) => ing.ingredient);
 
-  if (hasValidIngredients && hasRegisteredMainIngredient) {
+  // Sanityにスコアがない場合のみ、フロントエンドで計算
+  if (!hasSanityScores && hasValidIngredients && hasRegisteredMainIngredient) {
     // 配合率ベースのスコア計算
     const ingredientsWithAmount = product.ingredients!.map((ing) => ({
       ingredient: ing.ingredient!,
@@ -558,12 +568,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
       `[エビデンス詳細（主要成分のみ）] evidenceDetails:`,
       evidenceDetails,
     );
-  } else if (
-    !product.scores ||
-    !product.scores.evidence ||
-    !product.scores.safety
-  ) {
-    // 成分データがない、または不完全な場合は商品名から推測（フォールバック）
+  } else if (!hasSanityScores) {
+    // Sanityにスコアがなく、成分データもない場合は商品名から推測（フォールバック）
     const autoScores = calculateAutoScores(product.name, allIngredients);
     finalScores = {
       evidence: autoScores.evidenceScore,
