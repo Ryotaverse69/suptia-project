@@ -49,10 +49,10 @@ export function CostEffectivenessDetail({
     }
   > = {
     S: {
-      color: "from-amber-400 via-yellow-300 to-amber-400",
-      bgColor: "bg-yellow-50",
-      borderColor: "border-yellow-200",
-      textColor: "text-yellow-800",
+      color: "from-purple-600 to-purple-800",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
+      textColor: "text-purple-800",
       label: "ベストバリュー",
       description: "最もコストパフォーマンスに優れています",
     },
