@@ -79,7 +79,13 @@
     "skills:install": "cd .claude/skills && npm install",
     "skills:help": "echo 'Available Skills: validate, import, optimize, price, dev, compliance, pipeline'",
     "scores:update": "node scripts/update-scores.mjs",
-    "scores:auto": "node scripts/update-scores.mjs"
+    "scores:auto": "node scripts/update-scores.mjs",
+    "scores:sync": "node scripts/sync-product-scores.mjs",
+    "scores:sync:dry": "node scripts/sync-product-scores.mjs --dry-run",
+    "scores:sync:force": "node scripts/sync-product-scores.mjs --force",
+    "prices:update": "node scripts/update-product-prices.mjs",
+    "prices:rakuten": "node scripts/update-product-prices.mjs --source=rakuten",
+    "prices:yahoo": "node scripts/update-product-prices.mjs --source=yahoo"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

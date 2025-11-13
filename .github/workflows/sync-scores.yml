@@ -1,0 +1,55 @@
+name: Sync Product Scores
+
+# 毎日深夜3時（JST）に自動実行 + 手動トリガー
+on:
+  schedule:
+    - cron: "0 18 * * *" # UTC 18:00 = JST 03:00（翌日）
+  workflow_dispatch: # 手動実行を許可
+
+jobs:
+  sync-scores:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > apps/web/.env.local << EOF
+          NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}
+          EOF
+
+      - name: Sync product scores to Sanity
+        run: node scripts/sync-product-scores.mjs --force
+        env:
+          NODE_ENV: production
+
+      - name: Send notification on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ Product Score Sync Failed',
+              body: `商品スコア同期が失敗しました。\n\nWorkflow: ${context.workflow}\nRun: ${context.runId}`,
+              labels: ['bug', 'automated']
+            })
+
+      - name: Log sync stats
+        if: success()
+        run: echo "✅ Product scores synced successfully"

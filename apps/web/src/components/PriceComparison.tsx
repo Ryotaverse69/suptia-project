@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
-import { TrendingDown, ExternalLink, AlertCircle } from "lucide-react";
+import {
+  TrendingDown,
+  ExternalLink,
+  AlertCircle,
+  ShoppingCart,
+} from "lucide-react";
 
 /**
  * 複数ECサイトの価格比較コンポーネント
@@ -42,9 +47,8 @@ export function PriceComparison({
 }: PriceComparisonProps) {
   const [showBulkPrices, setShowBulkPrices] = useState(true);
 
-  if (!priceData || priceData.length === 0) {
-    return null;
-  }
+  // データがない場合でもセクションを表示
+  const hasData = priceData && priceData.length > 0;
 
   // ランク情報の定義
   const rankInfo: Record<
@@ -101,6 +105,28 @@ export function PriceComparison({
   };
 
   const currentRankInfo = priceRank ? rankInfo[priceRank] : null;
+
+  // データがない場合は早期リターン
+  if (!hasData) {
+    return (
+      <div
+        className={`bg-white border border-primary-200 rounded-xl shadow-sm p-6 ${className}`}
+      >
+        <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
+          <ShoppingCart size={24} />
+          価格比較
+        </h2>
+
+        <div className="p-8 text-center bg-gray-50 rounded-lg">
+          <p className="text-gray-600">
+            現在、価格比較データは準備中です。
+            <br />
+            複数のECサイトの価格を比較できるよう準備を進めています。
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // 価格データを処理（数量・店舗名・単位価格を追加）
   const processedPrices = priceData.map((price) => {

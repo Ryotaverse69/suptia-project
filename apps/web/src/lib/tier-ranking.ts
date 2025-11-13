@@ -15,6 +15,7 @@ export interface ProductForTierEvaluation {
     amountMgPerServing: number;
   }>;
   safetyScore?: number;
+  evidenceScore?: number;
   evidenceLevel?: "S" | "A" | "B" | "C" | "D";
 }
 
@@ -224,7 +225,7 @@ function calculateContentRanks(
 }
 
 /**
- * エビデンスランク（既存データを流用）
+ * エビデンスランク（evidenceLevelまたはevidenceScoreから計算）
  */
 function calculateEvidenceRanks(
   products: ProductForTierEvaluation[],
@@ -232,7 +233,14 @@ function calculateEvidenceRanks(
   const ranks = new Map<string, TierRank>();
 
   products.forEach((product) => {
-    ranks.set(product._id, product.evidenceLevel || "D");
+    // evidenceLevelが設定されていればそれを使用、なければevidenceScoreから計算
+    if (product.evidenceLevel) {
+      ranks.set(product._id, product.evidenceLevel);
+    } else if (product.evidenceScore !== undefined) {
+      ranks.set(product._id, scoreToTierRank(product.evidenceScore));
+    } else {
+      ranks.set(product._id, "D");
+    }
   });
 
   return ranks;

@@ -12,7 +12,7 @@ import { ImageLightbox } from "@/components/ImageLightbox";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TierBadgeGrid, PerfectProductBanner } from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
-import { TierRank } from "@/lib/tier-colors";
+import { TierRank, scoreToTierRank } from "@/lib/tier-colors";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -133,14 +133,18 @@ async function getProduct(slug: string): Promise<Product | null> {
       alt
     },
     externalImageUrl,
-    "priceData": prices,
+    priceData,
     priceHistory,
     urls,
     janCode,
     itemCode,
     affiliateUrl,
     source,
-    scores,
+    scores {
+      evidence,
+      safety,
+      overall
+    },
     ingredients[]{
       amountMgPerServing,
       ingredient->{
@@ -259,7 +263,11 @@ async function getAllProducts(): Promise<Product[]> {
     priceJPY,
     servingsPerContainer,
     servingsPerDay,
-    scores,
+    scores {
+      evidence,
+      safety,
+      overall
+    },
     ingredients[]{
       amountMgPerServing,
       ingredient->{
@@ -593,6 +601,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const updatedTierRatings = product.tierRatings
     ? { ...product.tierRatings }
     : undefined;
+
+  // エビデンスランクと安全性ランクは常にスコアから再計算（絶対評価）
+  if (updatedTierRatings && finalScores.evidence) {
+    const evidenceRank = scoreToTierRank(finalScores.evidence);
+    updatedTierRatings.evidenceRank = evidenceRank;
+    console.log(
+      `[エビデンスランク再計算] evidenceScore ${finalScores.evidence}点 → ${evidenceRank}ランク`,
+    );
+  }
+
+  if (updatedTierRatings && finalScores.safety) {
+    const safetyRank = scoreToTierRank(finalScores.safety);
+    updatedTierRatings.safetyRank = safetyRank;
+    console.log(
+      `[安全性ランク再計算] safetyScore ${finalScores.safety}点 → ${safetyRank}ランク`,
+    );
+  }
 
   // 全商品を取得して称号を計算
   const allProducts = await getAllProducts();
@@ -1063,6 +1088,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     </>
   );
 }
+
+// ISR設定: 1時間ごとにページを再生成
+export const revalidate = 3600; // 3600秒 = 1時間
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps) {
