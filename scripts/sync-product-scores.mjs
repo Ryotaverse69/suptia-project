@@ -65,14 +65,19 @@ function scoreToRank(score) {
 }
 
 /**
- * エビデンスレベルからスコアに変換
+ * エビデンスレベルからスコアに変換（統一仕様準拠）
+ * S = 90点（大規模RCT・メタ解析で確立）
+ * A = 80点（良質な査読研究で再現性あり）
+ * B = 70点（小規模RCT・観察研究）
+ * C = 60点（動物・in vitroレベル）
+ * D = 50点（理論・未検証）
  */
 function evidenceLevelToScore(level) {
   const mapping = {
-    S: 95,
-    A: 85,
-    B: 75,
-    C: 65,
+    S: 90,
+    A: 80,
+    B: 70,
+    C: 60,
     D: 50,
   };
   return mapping[level] || 50;
