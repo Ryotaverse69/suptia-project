@@ -1046,51 +1046,97 @@ export default async function ProductDetailPage({ params }: PageProps) {
         />
 
         {/* 3. Cost Effectiveness - コスパ比較 */}
-        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
-          <CostEffectivenessDetail
-            currentProduct={{
-              name: product.name,
-              slug: product.slug,
-              imageUrl:
-                product.images?.[0]?.asset?.url || product.externalImageUrl,
-              priceJPY: product.priceJPY,
-              ingredientAmount: mainIngredientAmount,
-              servingsPerContainer: product.servingsPerContainer,
-              servingsPerDay: product.servingsPerDay,
-              ingredients: ingredientsForCostDetail,
-            }}
-            similarProducts={similarProducts}
-            costEffectivenessRank={
-              updatedTierRatings?.costEffectivenessRank as
-                | "S"
-                | "A"
-                | "B"
-                | "C"
-                | "D"
-            }
-            totalProductsInCategory={totalProductsInCategory}
-            className="mb-8"
-          />
+        {similarProducts.length > 0 && (
+          <>
+            {mainIngredientAmount > 0 ? (
+              <CostEffectivenessDetail
+                currentProduct={{
+                  name: product.name,
+                  slug: product.slug,
+                  imageUrl:
+                    product.images?.[0]?.asset?.url || product.externalImageUrl,
+                  priceJPY: product.priceJPY,
+                  ingredientAmount: mainIngredientAmount,
+                  servingsPerContainer: product.servingsPerContainer,
+                  servingsPerDay: product.servingsPerDay,
+                  ingredients: ingredientsForCostDetail,
+                }}
+                similarProducts={similarProducts}
+                costEffectivenessRank={
+                  updatedTierRatings?.costEffectivenessRank as
+                    | "S"
+                    | "A"
+                    | "B"
+                    | "C"
+                    | "D"
+                }
+                totalProductsInCategory={totalProductsInCategory}
+                className="mb-8"
+              />
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">📊</div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-yellow-900 mb-2">
+                      コスパ比較データ準備中
+                    </h3>
+                    <p className="text-sm text-yellow-800 leading-relaxed mb-3">
+                      この商品の成分量データは現在準備中です。 価格情報は「💰
+                      最安値比較」セクションでご確認いただけます。
+                    </p>
+                    <p className="text-xs text-yellow-700">
+                      💡 ヒント:
+                      商品データは随時更新されています。しばらくしてから再度ご確認ください。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* 4. Ingredient Comparison - 含有量比較 */}
-        {mainIngredientAmount > 0 && similarProducts.length > 0 && (
-          <IngredientComparison
-            currentProduct={{
-              name: product.name,
-              slug: product.slug,
-              imageUrl:
-                product.images?.[0]?.asset?.url || product.externalImageUrl,
-              ingredientAmount: mainIngredientAmount,
-              servingsPerDay: product.servingsPerDay,
-            }}
-            similarProducts={similarProducts}
-            ingredientName="主要成分"
-            contentRank={
-              updatedTierRatings?.contentRank as "S" | "A" | "B" | "C" | "D"
-            }
-            className="mb-8"
-          />
+        {similarProducts.length > 0 && (
+          <>
+            {mainIngredientAmount > 0 ? (
+              <IngredientComparison
+                currentProduct={{
+                  name: product.name,
+                  slug: product.slug,
+                  imageUrl:
+                    product.images?.[0]?.asset?.url || product.externalImageUrl,
+                  ingredientAmount: mainIngredientAmount,
+                  servingsPerDay: product.servingsPerDay,
+                }}
+                similarProducts={similarProducts}
+                ingredientName="主要成分"
+                contentRank={
+                  updatedTierRatings?.contentRank as "S" | "A" | "B" | "C" | "D"
+                }
+                className="mb-8"
+              />
+            ) : (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">📏</div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                      成分量比較データ準備中
+                    </h3>
+                    <p className="text-sm text-blue-800 leading-relaxed mb-3">
+                      この商品の詳細な成分量データは現在準備中です。
+                      同じ成分を含む他の商品との比較は、データ更新後にご利用いただけます。
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      💡 ヒント:
+                      エビデンスと安全性のスコアは、成分名ベースで評価されています。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* 5-6. Evidence & Safety - エビデンスと安全性 */}

@@ -1,0 +1,251 @@
+/**
+ * 商品名から成分量（mg）を自動抽出するユーティリティ
+ *
+ * 対応パターン:
+ * - "マグネシウム 300mg 60粒" → 300mg
+ * - "ビタミンC 1000 タブレット" → 1000mg
+ * - "亜鉛サプリ 30mg配合" → 30mg
+ * - "DHA EPA 500mg×90日分" → 500mg
+ * - "葉酸 400μg" → 0.4mg
+ * - "セレン 50mcg" → 0.05mg
+ *
+ * @module extract-ingredient-amount
+ */
+
+/**
+ * 成分名と対応する一般的な配合量（mg）のマッピング
+ * フォールバック用: 商品名から数値を抽出できない場合のデフォルト値
+ */
+const INGREDIENT_DEFAULT_AMOUNTS: Record<string, number> = {
+  // ビタミン
+  ビタミンA: 0.77, // 770μg = 0.77mg
+  ビタミンD: 0.025, // 25μg = 0.025mg
+  ビタミンE: 6.3,
+  ビタミンK: 0.15, // 150μg = 0.15mg
+  ビタミンB1: 1.2,
+  ビタミンB2: 1.4,
+  ビタミンB6: 1.4,
+  ビタミンB12: 0.0024, // 2.4μg = 0.0024mg
+  ビタミンC: 1000,
+  葉酸: 0.4, // 400μg = 0.4mg
+  ナイアシン: 13,
+  パントテン酸: 4.8,
+  ビオチン: 0.05, // 50μg = 0.05mg
+
+  // ミネラル
+  カルシウム: 650,
+  マグネシウム: 320,
+  鉄: 6.5,
+  亜鉛: 10,
+  銅: 0.9,
+  セレン: 0.03, // 30μg = 0.03mg
+  クロム: 0.01, // 10μg = 0.01mg
+  モリブデン: 0.025, // 25μg = 0.025mg
+  ヨウ素: 0.13, // 130μg = 0.13mg
+
+  // オメガ3脂肪酸
+  EPA: 500,
+  DHA: 500,
+  オメガ3: 1000,
+  "α-リノレン酸": 1000,
+
+  // アミノ酸
+  グルタミン: 5000,
+  アルギニン: 3000,
+  BCAA: 5000,
+  ロイシン: 2000,
+
+  // その他
+  コエンザイムQ10: 100,
+  ルテイン: 20,
+  アスタキサンチン: 12,
+  リコピン: 15,
+  クルクミン: 100,
+  レスベラトロール: 100,
+};
+
+/**
+ * 単位変換係数（すべてmgに正規化）
+ */
+const UNIT_CONVERSIONS: Record<string, number> = {
+  g: 1000, // 1g = 1000mg
+  mg: 1, // 基準単位
+  mcg: 0.001, // 1mcg = 0.001mg
+  μg: 0.001, // 1μg = 0.001mg
+  ug: 0.001, // 1ug = 0.001mg（μの代替表記）
+};
+
+/**
+ * 商品名から成分量（mg単位）を抽出
+ *
+ * @param productName - 商品名
+ * @param ingredientName - 成分名（オプション、より精度の高い抽出のため）
+ * @returns 抽出された成分量（mg）、抽出できない場合は0
+ */
+export function extractIngredientAmount(
+  productName: string,
+  ingredientName?: string,
+): number {
+  if (!productName) return 0;
+
+  // 商品名を正規化（全角→半角、スペース統一）
+  const normalizedName = productName
+    .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)) // 全角数字→半角
+    .replace(/[　]/g, " ") // 全角スペース→半角
+    .toLowerCase();
+
+  // パターン1: 数値 + 単位（mg/g/mcg/μg）
+  // 例: "300mg", "1000 mg", "400μg", "50mcg"
+  const unitPatterns = [
+    /(\d+(?:\.\d+)?)\s*(mg|g|mcg|μg|ug)/gi,
+    /(\d+(?:\.\d+)?)\s*ミリグラム/gi,
+    /(\d+(?:\.\d+)?)\s*マイクログラム/gi,
+  ];
+
+  const extractedAmounts: number[] = [];
+
+  for (const pattern of unitPatterns) {
+    let match;
+    while ((match = pattern.exec(normalizedName)) !== null) {
+      const value = parseFloat(match[1]);
+      const unit = match[2]?.toLowerCase() || "mg";
+
+      // 単位をmgに変換
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      extractedAmounts.push(amountInMg);
+    }
+  }
+
+  // パターン2: 成分名の直後の数値（単位なし）
+  // 例: "ビタミンC 1000", "DHA 500"
+  if (ingredientName) {
+    const ingredientPattern = new RegExp(
+      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?`,
+      "i",
+    );
+    const ingredientMatch = normalizedName.match(ingredientPattern);
+    if (ingredientMatch) {
+      const value = parseFloat(ingredientMatch[1].replace(/,/g, ""));
+      if (!isNaN(value) && value > 0 && value < 100000) {
+        // 異常値を除外
+        extractedAmounts.push(value);
+      }
+    }
+  }
+
+  // パターン3: 単位なしの数値（mg想定）
+  // 例: "配合量 300", "含有量 1000"
+  const amountKeywords = [
+    "配合量",
+    "含有量",
+    "成分量",
+    "配合",
+    "含有",
+    "配合成分",
+  ];
+  for (const keyword of amountKeywords) {
+    const keywordPattern = new RegExp(
+      `${keyword}[\\s　]*[:\\:：]?[\\s　]*([\\d,]+(?:\\.\\d+)?)`,
+      "i",
+    );
+    const keywordMatch = normalizedName.match(keywordPattern);
+    if (keywordMatch) {
+      const value = parseFloat(keywordMatch[1].replace(/,/g, ""));
+      if (!isNaN(value) && value > 0 && value < 100000) {
+        extractedAmounts.push(value);
+      }
+    }
+  }
+
+  // 抽出された値から最も妥当なものを選択
+  if (extractedAmounts.length > 0) {
+    // 異常値を除外（0.001mg未満、または100g以上）
+    const validAmounts = extractedAmounts.filter(
+      (amount) => amount >= 0.001 && amount <= 100000,
+    );
+
+    if (validAmounts.length > 0) {
+      // 複数の値がある場合は、中央値を採用（外れ値を除外）
+      validAmounts.sort((a, b) => a - b);
+      const medianIndex = Math.floor(validAmounts.length / 2);
+      return validAmounts[medianIndex];
+    }
+  }
+
+  // 抽出できなかった場合は0を返す（デフォルト値は使用しない）
+  // デフォルト値は別途管理する方針
+  return 0;
+}
+
+/**
+ * 成分名からデフォルト配合量を取得
+ *
+ * @param ingredientName - 成分名
+ * @returns デフォルト配合量（mg）、該当する成分がない場合は0
+ */
+export function getDefaultIngredientAmount(ingredientName: string): number {
+  if (!ingredientName) return 0;
+
+  // 部分一致で検索（例: "ビタミンC（アスコルビン酸）" → "ビタミンC"）
+  for (const [key, value] of Object.entries(INGREDIENT_DEFAULT_AMOUNTS)) {
+    if (ingredientName.includes(key)) {
+      return value;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * 正規表現の特殊文字をエスケープ
+ */
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * 抽出結果の詳細情報を含む型
+ */
+export interface IngredientAmountExtractionResult {
+  /** 抽出された成分量（mg） */
+  amount: number;
+  /** 抽出方法 */
+  method: "extracted" | "default" | "none";
+  /** 信頼度（0-1） */
+  confidence: number;
+  /** 抽出元の文字列（デバッグ用） */
+  source?: string;
+}
+
+/**
+ * 商品名から成分量を抽出（詳細情報付き）
+ *
+ * @param productName - 商品名
+ * @param ingredientName - 成分名（オプション）
+ * @returns 抽出結果の詳細情報
+ */
+export function extractIngredientAmountDetailed(
+  productName: string,
+  ingredientName?: string,
+): IngredientAmountExtractionResult {
+  const extractedAmount = extractIngredientAmount(productName, ingredientName);
+
+  if (extractedAmount > 0) {
+    return {
+      amount: extractedAmount,
+      method: "extracted",
+      confidence: 0.8, // 正規表現による抽出の信頼度
+      source: productName,
+    };
+  }
+
+  // デフォルト値を使用しない方針に変更
+  return {
+    amount: 0,
+    method: "none",
+    confidence: 0,
+    source: productName,
+  };
+}
