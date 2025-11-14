@@ -212,6 +212,66 @@ class YahooAdapter {
       },
     };
   }
+
+  /**
+   * 商品名からセット数量を検出（高度化版）
+   *
+   * @param {string} productName 商品名
+   * @returns {number} セット数量（単品の場合は1）
+   */
+  extractQuantity(productName) {
+    // パターン1: "90粒×3袋", "120錠×2本" (複雑セット表記)
+    const complexSetPattern = /\d+[粒錠カプセル]+[×*xX](\d+)[個袋本缶箱パック]/;
+    const complexMatch = productName.match(complexSetPattern);
+    if (complexMatch) {
+      return parseInt(complexMatch[1], 10);
+    }
+
+    // パターン2: "120粒/2袋" (スラッシュ区切り)
+    const slashPattern = /\d+[粒錠カプセル]+\/(\d+)[個袋本缶箱パック]/;
+    const slashMatch = productName.match(slashPattern);
+    if (slashMatch) {
+      return parseInt(slashMatch[1], 10);
+    }
+
+    // パターン3: "30日分×3箱", "3ヶ月分×2袋" (期間ベースセット)
+    const durationSetPattern = /\d+[ヶ日週月]+分[×*xX](\d+)[個袋本缶箱パック]/;
+    const durationMatch = productName.match(durationSetPattern);
+    if (durationMatch) {
+      return parseInt(durationMatch[1], 10);
+    }
+
+    // パターン4: "まとめ買い3個", "お得な5個セット" (まとめ買い表記)
+    const bulkPattern = /(?:まとめ買い|お得な|大容量)(\d+)[個袋本缶箱パック]/;
+    const bulkMatch = productName.match(bulkPattern);
+    if (bulkMatch) {
+      return parseInt(bulkMatch[1], 10);
+    }
+
+    // パターン5: "3個セット", "3袋セット", "3本セット" (基本セット表記)
+    const setPattern = /(\d+)(個|袋|本|缶|箱|パック)セット/;
+    const setMatch = productName.match(setPattern);
+    if (setMatch) {
+      return parseInt(setMatch[1], 10);
+    }
+
+    // パターン6: "×3袋", "*3袋", "x3袋" (倍率表記)
+    const multiplyPattern = /[×*xX](\d+)(個|袋|本|缶|箱|パック)/;
+    const multiplyMatch = productName.match(multiplyPattern);
+    if (multiplyMatch) {
+      return parseInt(multiplyMatch[1], 10);
+    }
+
+    // パターン7: "(3袋)", "【3袋】" (括弧表記)
+    const bracketPattern = /[（(【](\d+)(個|袋|本|缶|箱|パック)[）)】]/;
+    const bracketMatch = productName.match(bracketPattern);
+    if (bracketMatch) {
+      return parseInt(bracketMatch[1], 10);
+    }
+
+    // デフォルト: 単品として扱う
+    return 1;
+  }
 }
 
 // Sanity操作
@@ -340,15 +400,33 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       const productId = existing?._id || `product-yahoo-${product.id.replace(/[^a-z0-9]+/g, '-')}`;
 
       // 価格データ
+      // セット数量検出（商品名から自動判定）
+      const quantity = this.extractQuantity(product.name);
+      const unitPrice = quantity > 1 ? Math.round(product.price / quantity) : product.price;
+
+      // 送料とポイント還元率（Yahoo!のデフォルト値）
+      const shippingFee = product.price >= 3980 ? 0 : 500; // ¥3,980以上で送料無料
+      const pointRate = 0.03; // PayPayボーナス 3%と仮定
+
+      // 在庫状況
+      const stockStatus = product.inStock ? 'in_stock' : 'out_of_stock';
+
       const priceData = {
         source: 'yahoo',
         storeName: product.shopName, // Yahoo!ショッピング内の店舗名（販売元）
         shopName: product.shopName, // 後方互換性のため保持
+        productName: product.name, // 商品名（セット数量検出用）
+        itemCode: product.identifiers.yahooCode, // 商品コード
         amount: product.price,
         currency: 'JPY',
         url: product.affiliateUrl || product.url,
         fetchedAt: new Date().toISOString(),
         confidence: 1.0,
+        quantity: quantity, // セット数量
+        unitPrice: unitPrice, // 単位価格
+        shippingFee: shippingFee, // 送料
+        pointRate: pointRate, // ポイント還元率
+        stockStatus: stockStatus, // 在庫状況
       };
 
       const sanityProduct = {
