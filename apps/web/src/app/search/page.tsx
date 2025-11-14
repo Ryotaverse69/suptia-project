@@ -91,9 +91,12 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   }
 
   const searchTerm = query.trim();
-  const ingredientQuery = `*[_type == "ingredient" && (
-    name match "*${searchTerm}*" ||
-    nameEn match "*${searchTerm}*"
+
+  // 特殊文字を含む可能性があるため、複数の検索パターンを試す
+  // 1. 完全一致検索（優先度高）
+  let ingredientQuery = `*[_type == "ingredient" && (
+    name == "${searchTerm}" ||
+    nameEn == "${searchTerm}"
   )][0]{
     _id,
     name,
@@ -104,7 +107,32 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   }`;
 
   try {
-    const ingredient = await sanity.fetch<Ingredient>(ingredientQuery);
+    let ingredient = await sanity.fetch<Ingredient>(ingredientQuery);
+
+    // 完全一致が見つからない場合、部分一致を試す
+    if (!ingredient) {
+      // 括弧を除去した検索も試みる（例: "ビタミンC（アスコルビン酸）" → "ビタミンC"）
+      const normalizedTerm = searchTerm
+        .replace(/[（）()]/g, "") // 括弧を除去
+        .trim();
+
+      ingredientQuery = `*[_type == "ingredient" && (
+        name match "*${normalizedTerm}*" ||
+        nameEn match "*${normalizedTerm}*" ||
+        name match "*${searchTerm}*" ||
+        nameEn match "*${searchTerm}*"
+      )][0]{
+        _id,
+        name,
+        nameEn,
+        slug,
+        category,
+        description
+      }`;
+
+      ingredient = await sanity.fetch<Ingredient>(ingredientQuery);
+    }
+
     return ingredient || null;
   } catch (error) {
     console.error("Ingredient search error:", error);
@@ -157,9 +185,15 @@ async function searchProducts(query: string): Promise<Product[]> {
   }
 
   const searchTerm = query.trim();
+
+  // 括弧を除去した正規化版も準備
+  const normalizedTerm = searchTerm.replace(/[（）()]/g, "").trim();
+
   const productsQuery = `*[_type == "product" && (
     name match "*${searchTerm}*" ||
-    brand->name match "*${searchTerm}*"
+    brand->name match "*${searchTerm}*" ||
+    name match "*${normalizedTerm}*" ||
+    brand->name match "*${normalizedTerm}*"
   )] | order(priceJPY asc) {
     _id,
     name,
