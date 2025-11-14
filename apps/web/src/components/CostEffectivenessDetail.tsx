@@ -218,6 +218,43 @@ export function CostEffectivenessDetail({
         </div>
       </div>
 
+      {/* マルチビタミンの比較方法説明（成分数>3の場合のみ表示） */}
+      {isMultiIngredient && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Tooltip
+              content={
+                <div className="text-xs leading-relaxed">
+                  <p className="font-semibold mb-1">
+                    🔬 マルチビタミンの評価方法
+                  </p>
+                  <p className="mb-2">
+                    <span className="font-semibold">主要成分トップ5方式:</span>{" "}
+                    mg量が多い上位5成分のみで評価
+                  </p>
+                  <p>
+                    微量成分（ビオチン、セレンなど）を除外し、実質的な価値を正確に反映します。
+                  </p>
+                </div>
+              }
+              icon
+            />
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-yellow-900 mb-1">
+                🔬 マルチビタミンの比較方法
+              </h3>
+              <p className="text-xs text-yellow-800 leading-relaxed">
+                この商品は{currentProduct.ingredients?.length || 0}
+                種類の成分を含むマルチビタミンです。 コスパ評価は
+                <span className="font-semibold">主要成分トップ5</span>
+                （mg量が多い順）の合計を基準に計算しています。
+                微量成分は除外することで、実質的な価値を正確に反映しています。
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ランクバッジ */}
       {currentRankInfo && (
         <div

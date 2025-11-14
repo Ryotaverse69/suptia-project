@@ -40,6 +40,69 @@ const shouldFix = process.argv.includes("--fix");
 const isDryRun = !shouldFix;
 
 /**
+ * マルチビタミン判定
+ *
+ * 成分数が3より多い場合、マルチビタミンとみなす
+ *
+ * @param {Array} ingredients - 商品の成分配列
+ * @returns {boolean} マルチビタミンかどうか
+ */
+function isMultiVitamin(ingredients) {
+  return ingredients && ingredients.length > 3;
+}
+
+/**
+ * 主要成分トップ5を取得
+ *
+ * mg量が多い順にソートして上位5件を返す
+ *
+ * @param {Array} ingredients - 成分配列
+ * @returns {Array} トップ5成分
+ */
+function getTop5MajorIngredients(ingredients) {
+  if (!ingredients || ingredients.length === 0) return [];
+
+  // mg量でソート（降順）
+  const sorted = [...ingredients].sort(
+    (a, b) => b.amountMgPerServing - a.amountMgPerServing
+  );
+
+  // トップ5を返す（5件未満の場合は全件）
+  return sorted.slice(0, 5);
+}
+
+/**
+ * マルチビタミン用のcost/mg計算
+ *
+ * 主要成分トップ5（mg量が多い順）のみを使ってコスト効率を計算
+ * 微量成分を除外することで、実質的な価値を正確に反映
+ *
+ * @param {number} price - 商品価格
+ * @param {Array} ingredients - 成分配列
+ * @param {number} servingsPerContainer - 1容器あたりの回数
+ * @returns {number} 1mgあたりのコスト（円）
+ */
+function calculateCostPerMgForMultiVitamin(price, ingredients, servingsPerContainer) {
+  // 主要成分トップ5を取得
+  const top5Ingredients = getTop5MajorIngredients(ingredients);
+
+  // トップ5の合計mg（1回分）
+  const top5MgPerServing = top5Ingredients.reduce(
+    (sum, ingredient) => sum + ingredient.amountMgPerServing,
+    0
+  );
+
+  // 全容器の主要成分合計mg
+  const totalTop5Mg = top5MgPerServing * servingsPerContainer;
+
+  if (totalTop5Mg === 0) {
+    return 0;
+  }
+
+  return price / totalTop5Mg;
+}
+
+/**
  * スコアをS/A/B/C/Dランクに変換
  * @param {number} score 0-100のスコア
  * @param {boolean} reverse trueの場合、低い方が良い（価格など）
@@ -256,7 +319,20 @@ async function calculateTierRanks() {
       if (!product.servingsPerDay || product.servingsPerDay <= 0) continue;
 
       const costPerDay = product.priceJPY / (product.servingsPerContainer / product.servingsPerDay);
-      const costPerMg = product.priceJPY / (ing.amountMgPerServing * product.servingsPerContainer);
+
+      // マルチビタミン判定：成分数 > 3 の場合はトップ5方式
+      let costPerMg;
+      if (isMultiVitamin(product.ingredients)) {
+        // マルチビタミン：主要成分トップ5のみで計算
+        costPerMg = calculateCostPerMgForMultiVitamin(
+          product.priceJPY,
+          product.ingredients,
+          product.servingsPerContainer
+        );
+      } else {
+        // 単一成分系：従来通りの計算
+        costPerMg = product.priceJPY / (ing.amountMgPerServing * product.servingsPerContainer);
+      }
 
       // NaNやInfinityをチェック
       if (!isFinite(costPerDay) || !isFinite(costPerMg)) {
