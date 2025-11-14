@@ -162,15 +162,25 @@ export const product = defineType({
               type: "number",
               validation: (Rule) => Rule.required().min(0),
             },
+            {
+              name: "isPrimary",
+              title: "主成分フラグ",
+              type: "boolean",
+              description:
+                "主成分として扱うかどうか。コスパ計算や商品タイトルで優先表示されます",
+              initialValue: false,
+            },
           ],
           preview: {
             select: {
               ingredientName: "ingredient.name",
               amount: "amountMgPerServing",
+              isPrimary: "isPrimary",
             },
-            prepare({ ingredientName, amount }) {
+            prepare({ ingredientName, amount, isPrimary }) {
+              const primaryLabel = isPrimary ? " [主成分]" : "";
               return {
-                title: ingredientName || "成分未選択",
+                title: `${ingredientName || "成分未選択"}${primaryLabel}`,
                 subtitle: `${amount}mg`,
               };
             },

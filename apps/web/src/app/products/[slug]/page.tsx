@@ -99,6 +99,7 @@ interface Product {
   };
   ingredients?: Array<{
     amountMgPerServing: number;
+    isPrimary?: boolean; // 主成分フラグ
     ingredient?: {
       _id: string;
       name: string;
@@ -155,6 +156,7 @@ async function getProduct(slug: string): Promise<Product | null> {
     },
     ingredients[]{
       amountMgPerServing,
+      isPrimary,
       ingredient->{
         _id,
         name,
@@ -299,6 +301,55 @@ async function getAllProducts(): Promise<Product[]> {
 /**
  * 類似商品を取得（同じ主要成分を含む商品）
  */
+/**
+ * 同じ成分を含む商品の総数を取得
+ */
+async function getTotalProductsInCategory(productId: string): Promise<number> {
+  try {
+    // 1. 現在の商品の主要成分を取得
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{
+      ingredients[]{
+        ingredient->{
+          _id
+        }
+      }
+    }`;
+
+    const currentProduct = await sanityServer.fetch(currentProductQuery, {
+      productId,
+    });
+
+    if (
+      !currentProduct?.ingredients ||
+      currentProduct.ingredients.length === 0
+    ) {
+      return 0;
+    }
+
+    // 主要成分（最初の成分）のIDを取得
+    const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+
+    if (!mainIngredientId) {
+      return 0;
+    }
+
+    // 2. 同じ主要成分を含む商品の総数を取得
+    const countQuery = `count(*[_type == "product"
+      && availability == "in-stock"
+      && $mainIngredientId in ingredients[].ingredient._ref
+    ])`;
+
+    const total = await sanityServer.fetch(countQuery, {
+      mainIngredientId,
+    });
+
+    return total || 0;
+  } catch (error) {
+    console.error("Failed to count products in category:", error);
+    return 0;
+  }
+}
+
 async function getSimilarProducts(
   productId: string,
   limit: number = 5,
@@ -805,11 +856,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);
 
+  // 同じ成分カテゴリの全商品数を取得
+  const totalProductsInCategory = await getTotalProductsInCategory(product._id);
+
   // 主要成分データを準備（line 490で定義済み）
   const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
   const mainIngredientInfo = mainIngredient?.ingredient;
   const ingredientName = mainIngredientInfo?.name;
   const ingredientEvidenceLevel = mainIngredientInfo?.evidenceLevel;
+
+  // CostEffectivenessDetail用のingredients配列を準備
+  const ingredientsForCostDetail =
+    product.ingredients?.map((ing) => ({
+      name: ing.ingredient?.name || "不明な成分",
+      amountMgPerServing: ing.amountMgPerServing,
+      isPrimary: ing.isPrimary || false,
+    })) || [];
 
   // エビデンスレベルを判定（自動計算されたスコアを使用）
   const evidenceScore = finalScores.evidence ?? 50;
@@ -995,6 +1057,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               ingredientAmount: mainIngredientAmount,
               servingsPerContainer: product.servingsPerContainer,
               servingsPerDay: product.servingsPerDay,
+              ingredients: ingredientsForCostDetail,
             }}
             similarProducts={similarProducts}
             costEffectivenessRank={
@@ -1005,6 +1068,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 | "C"
                 | "D"
             }
+            totalProductsInCategory={totalProductsInCategory}
             className="mb-8"
           />
         )}
