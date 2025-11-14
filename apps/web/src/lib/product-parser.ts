@@ -3,25 +3,62 @@
  */
 
 /**
- * 商品名からセット数量を検出
- * 例: "3個セット" → 3, "18個セット" → 18, "単品" → 1
+ * 商品名からセット数量を検出（高度化版）
+ * 例: "3個セット" → 3, "90粒×3袋" → 3, "120粒/2袋" → 2
+ *
+ * 対応パターン:
+ * - 基本: "3個セット", "3袋セット"
+ * - 複雑: "90粒×3袋", "120錠×2本"
+ * - スラッシュ: "120粒/2袋"
+ * - 期間セット: "30日分×3箱", "3ヶ月分×2袋"
+ * - まとめ買い: "まとめ買い5個", "お得な3個セット"
+ * - 倍率: "×3袋", "*3袋"
+ * - 括弧: "(3袋)", "【3袋】"
  */
 export function extractQuantity(productName: string): number {
-  // パターン1: "3個セット", "3袋セット", "3本セット"
+  // パターン1: "90粒×3袋", "120錠×2本" (複雑セット表記)
+  const complexSetPattern = /\d+[粒錠カプセル]+[×*xX](\d+)[個袋本缶箱パック]/;
+  const complexMatch = productName.match(complexSetPattern);
+  if (complexMatch) {
+    return parseInt(complexMatch[1], 10);
+  }
+
+  // パターン2: "120粒/2袋" (スラッシュ区切り)
+  const slashPattern = /\d+[粒錠カプセル]+\/(\d+)[個袋本缶箱パック]/;
+  const slashMatch = productName.match(slashPattern);
+  if (slashMatch) {
+    return parseInt(slashMatch[1], 10);
+  }
+
+  // パターン3: "30日分×3箱", "3ヶ月分×2袋" (期間ベースセット)
+  const durationSetPattern = /\d+[ヶ日週月]+分[×*xX](\d+)[個袋本缶箱パック]/;
+  const durationMatch = productName.match(durationSetPattern);
+  if (durationMatch) {
+    return parseInt(durationMatch[1], 10);
+  }
+
+  // パターン4: "まとめ買い3個", "お得な5個セット" (まとめ買い表記)
+  const bulkPattern = /(?:まとめ買い|お得な|大容量)(\d+)[個袋本缶箱パック]/;
+  const bulkMatch = productName.match(bulkPattern);
+  if (bulkMatch) {
+    return parseInt(bulkMatch[1], 10);
+  }
+
+  // パターン5: "3個セット", "3袋セット", "3本セット" (基本セット表記)
   const setPattern = /(\d+)(個|袋|本|缶|箱|パック)セット/;
   const setMatch = productName.match(setPattern);
   if (setMatch) {
     return parseInt(setMatch[1], 10);
   }
 
-  // パターン2: "×3袋", "*3袋", "x3袋"
+  // パターン6: "×3袋", "*3袋", "x3袋" (倍率表記)
   const multiplyPattern = /[×*xX](\d+)(個|袋|本|缶|箱|パック)/;
   const multiplyMatch = productName.match(multiplyPattern);
   if (multiplyMatch) {
     return parseInt(multiplyMatch[1], 10);
   }
 
-  // パターン3: "(3袋)", "【3袋】"
+  // パターン7: "(3袋)", "【3袋】" (括弧表記)
   const bracketPattern = /[（(【](\d+)(個|袋|本|缶|箱|パック)[）)】]/;
   const bracketMatch = productName.match(bracketPattern);
   if (bracketMatch) {

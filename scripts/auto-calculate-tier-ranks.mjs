@@ -156,23 +156,41 @@ function calculateProductScores(ingredients, servingsPerDay) {
 }
 
 /**
- * パーセンタイルを計算（値の配列内での順位）
+ * パーセンタイルを計算（外れ値に強いTrimmed Percentile）
  * @param {number} value 評価する値
  * @param {number[]} values 比較対象の値の配列
  * @param {boolean} lowerIsBetter trueの場合、低い方が良い
+ * @param {number} trimPercent 除外する割合（%）デフォルト5%
  * @returns {number} 0-100のパーセンタイル
+ *
+ * 外れ値対策（Trimmed Percentile）:
+ * - データ数が10件以上の場合、上下5%（デフォルト）を除外
+ * - 超高額商品・異常値の影響を排除してランク判定を適正化
+ * - 例: [¥500, ¥800, ¥1000, ¥1200, ¥50000] → 上下除外後 [¥800, ¥1000, ¥1200]
  */
-function calculatePercentile(value, values, lowerIsBetter = false) {
+function calculatePercentile(value, values, lowerIsBetter = false, trimPercent = 5) {
   if (values.length === 0) return 50;
 
   const sortedValues = [...values].sort((a, b) => a - b);
-  const index = sortedValues.findIndex(v => v >= value);
+
+  // 外れ値除外（データ数が10件以上の場合のみ）
+  let trimmedValues = sortedValues;
+  if (sortedValues.length >= 10) {
+    const trimCount = Math.floor(sortedValues.length * (trimPercent / 100));
+    if (trimCount > 0) {
+      trimmedValues = sortedValues.slice(trimCount, sortedValues.length - trimCount);
+    }
+  }
+
+  // 除外後のデータ内でインデックスを検索
+  const index = trimmedValues.findIndex(v => v >= value);
 
   if (index === -1) {
+    // 除外範囲外の値の場合
     return lowerIsBetter ? 0 : 100;
   }
 
-  const percentile = (index / sortedValues.length) * 100;
+  const percentile = (index / trimmedValues.length) * 100;
   return lowerIsBetter ? 100 - percentile : percentile;
 }
 

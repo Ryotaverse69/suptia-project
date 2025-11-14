@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
 import {
+  calculateEffectivePrice,
+  getDefaultShippingFee,
+  getDefaultPointRate,
+} from "@/lib/effective-price";
+import {
   TrendingDown,
   ExternalLink,
   AlertCircle,
@@ -32,6 +37,14 @@ interface PriceData {
   confidence?: number;
   quantity?: number; // セット数量
   unitPrice?: number; // 単位価格
+  // 実質価格関連（改善1）
+  shippingFee?: number; // 送料
+  pointRate?: number; // ポイント還元率（0.01 = 1%）
+  isFreeShipping?: boolean; // 送料無料フラグ
+  effectivePrice?: number; // 実質価格（計算後）
+  pointAmount?: number; // ポイント還元額（計算後）
+  // 在庫状況（改善7）
+  stockStatus?: "in_stock" | "low_stock" | "out_of_stock" | "unknown";
 }
 
 interface PriceComparisonProps {
@@ -128,7 +141,7 @@ export function PriceComparison({
     );
   }
 
-  // 価格データを処理（数量・店舗名・単位価格を追加）
+  // 価格データを処理（数量・店舗名・単位価格・実質価格を追加）
   const processedPrices = priceData.map((price) => {
     // Sanityから取得したデータがあればそれを優先、なければparseする
     const productName = price.productName || "";
@@ -144,6 +157,16 @@ export function PriceComparison({
     const finalUnitPrice = price.unitPrice || parsed.unitPrice;
     const isBulk = finalQuantity > 1;
 
+    // 実質価格を計算（送料・ポイント込み）
+    const shippingFee =
+      price.shippingFee ?? getDefaultShippingFee(price.source, price.amount);
+    const pointRate = price.pointRate ?? getDefaultPointRate(price.source);
+    const effectivePriceResult = calculateEffectivePrice(
+      price.amount,
+      shippingFee,
+      pointRate,
+    );
+
     return {
       ...price,
       quantity: finalQuantity,
@@ -151,6 +174,12 @@ export function PriceComparison({
       // Sanityのデータを優先（正しい店舗名が既に設定されているため）
       storeName: price.storeName || price.shopName || parsed.storeName,
       isBulk: isBulk,
+      // 実質価格データ
+      shippingFee,
+      pointRate,
+      isFreeShipping: shippingFee === 0,
+      effectivePrice: effectivePriceResult.effectivePrice,
+      pointAmount: effectivePriceResult.pointAmount,
     };
   });
 
@@ -318,9 +347,11 @@ export function PriceComparison({
               className={`
                 block p-4 rounded-lg border-2 transition-all hover:shadow-md
                 ${
-                  isLowest
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-200 hover:border-gray-300"
+                  price.stockStatus === "out_of_stock"
+                    ? "opacity-50 pointer-events-none border-gray-300 bg-gray-100"
+                    : isLowest
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-gray-300"
                 }
               `}
             >
@@ -345,12 +376,64 @@ export function PriceComparison({
                         {quantity}個セット
                       </span>
                     )}
+                    {/* 在庫状況バッジ */}
+                    {price.stockStatus === "out_of_stock" && (
+                      <span className="px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                        在庫切れ
+                      </span>
+                    )}
+                    {price.stockStatus === "low_stock" && (
+                      <span className="px-2 py-1 text-xs font-semibold text-orange-700 bg-orange-100 rounded-full">
+                        残りわずか
+                      </span>
+                    )}
                   </div>
 
                   {/* 店舗名表示 */}
                   {price.storeName && (
                     <div className="mb-1 text-sm font-medium text-gray-700">
                       {price.storeName}
+                    </div>
+                  )}
+
+                  {/* 実質価格内訳（送料・ポイント） */}
+                  {(price.shippingFee > 0 || price.pointAmount > 0) && (
+                    <div className="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">商品価格</span>
+                          <span className="font-medium">
+                            ¥{price.amount.toLocaleString()}
+                          </span>
+                        </div>
+                        {price.shippingFee > 0 && (
+                          <div className="flex justify-between text-orange-700">
+                            <span>送料</span>
+                            <span>+¥{price.shippingFee.toLocaleString()}</span>
+                          </div>
+                        )}
+                        {price.isFreeShipping && (
+                          <div className="flex justify-between text-green-700">
+                            <span>送料</span>
+                            <span className="font-semibold">無料</span>
+                          </div>
+                        )}
+                        {price.pointAmount > 0 && (
+                          <div className="flex justify-between text-blue-700">
+                            <span>
+                              ポイント還元（{(price.pointRate * 100).toFixed(0)}
+                              %）
+                            </span>
+                            <span>-¥{price.pointAmount.toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between pt-1 border-t border-gray-300">
+                          <span className="font-bold">実質価格</span>
+                          <span className="font-bold text-primary-700">
+                            ¥{price.effectivePrice.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   )}
 
