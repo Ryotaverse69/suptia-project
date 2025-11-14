@@ -6,6 +6,13 @@
 import { Calculator, TrendingDown, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Tooltip } from "./ui/Tooltip";
+
+interface Ingredient {
+  name: string;
+  amountMgPerServing: number;
+  isPrimary?: boolean; // 主成分フラグ
+}
 
 interface CostEffectivenessDetailProps {
   currentProduct: {
@@ -13,9 +20,10 @@ interface CostEffectivenessDetailProps {
     slug?: { current: string };
     imageUrl?: string;
     priceJPY: number;
-    ingredientAmount: number; // mg
+    ingredientAmount: number; // mg（主成分のみ、後方互換性のため残す）
     servingsPerDay: number;
     servingsPerContainer: number;
+    ingredients?: Ingredient[]; // 全成分情報（複合サプリ対応）
   };
   similarProducts?: Array<{
     name: string;
@@ -25,8 +33,10 @@ interface CostEffectivenessDetailProps {
     ingredientAmount: number;
     servingsPerDay: number;
     servingsPerContainer: number;
+    ingredients?: Ingredient[];
   }>;
   costEffectivenessRank?: "S" | "A" | "B" | "C" | "D";
+  totalProductsInCategory?: number; // 同一成分カテゴリの商品総数
   className?: string;
 }
 
@@ -34,6 +44,7 @@ export function CostEffectivenessDetail({
   currentProduct,
   similarProducts = [],
   costEffectivenessRank,
+  totalProductsInCategory = 0,
   className = "",
 }: CostEffectivenessDetailProps) {
   // ランク情報の定義
@@ -94,10 +105,44 @@ export function CostEffectivenessDetail({
     ? rankInfo[costEffectivenessRank]
     : null;
 
+  // 複合サプリかどうかを判定
+  const isMultiIngredient =
+    currentProduct.ingredients && currentProduct.ingredients.length > 1;
+
+  // 主成分を取得（isPrimary=trueまたは最初の成分）
+  const primaryIngredient = isMultiIngredient
+    ? currentProduct.ingredients?.find((ing) => ing.isPrimary) ||
+      currentProduct.ingredients?.[0]
+    : null;
+
+  // 全成分の合計mg
+  const totalAllIngredientsMg = isMultiIngredient
+    ? currentProduct.ingredients?.reduce(
+        (sum, ing) => sum + ing.amountMgPerServing,
+        0,
+      ) || currentProduct.ingredientAmount
+    : currentProduct.ingredientAmount;
+
   // コスパ計算関数
-  const calculateCostPerMg = (product: typeof currentProduct) => {
-    const totalIngredientMg =
-      product.ingredientAmount * product.servingsPerContainer;
+  const calculateCostPerMg = (
+    product: typeof currentProduct,
+    useAllIngredients = false,
+  ) => {
+    let totalIngredientMg: number;
+
+    if (useAllIngredients && product.ingredients) {
+      // 全成分の合計mg
+      const allIngredientsMg = product.ingredients.reduce(
+        (sum, ing) => sum + ing.amountMgPerServing,
+        0,
+      );
+      totalIngredientMg = allIngredientsMg * product.servingsPerContainer;
+    } else {
+      // 主成分のみ（従来通り）
+      totalIngredientMg =
+        product.ingredientAmount * product.servingsPerContainer;
+    }
+
     return product.priceJPY / totalIngredientMg;
   };
 
@@ -108,6 +153,9 @@ export function CostEffectivenessDetail({
 
   // 現在の商品のコスパ
   const currentCostPerMg = calculateCostPerMg(currentProduct);
+  const currentCostPerMgAllIngredients = isMultiIngredient
+    ? calculateCostPerMg(currentProduct, true)
+    : currentCostPerMg;
   const currentCostPerDay = calculateCostPerDay(currentProduct);
   const currentDailyIngredient =
     currentProduct.ingredientAmount * currentProduct.servingsPerDay;
@@ -137,16 +185,71 @@ export function CostEffectivenessDetail({
         コストパフォーマンス分析
       </h2>
 
+      {/* コスパランクの説明セクション */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-start gap-2">
+          <Tooltip
+            content={
+              <div className="text-xs leading-relaxed">
+                <p className="font-semibold mb-1">
+                  💰 価格ランク vs 💡 コスパランク
+                </p>
+                <p className="mb-2">
+                  <span className="font-semibold">価格ランク:</span>{" "}
+                  支払う金額の安さを評価
+                </p>
+                <p>
+                  <span className="font-semibold">コスパランク:</span>{" "}
+                  1mgあたりの価格で成分効率を評価
+                </p>
+              </div>
+            }
+            icon
+          />
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-blue-900 mb-1">
+              コスパランクとは？
+            </h3>
+            <p className="text-xs text-blue-800 leading-relaxed">
+              成分量（mg）あたりの価格効率を、同じ成分を含む他商品と相対比較した評価です。
+              価格が安くても成分量が少なければコスパは低くなります。
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ランクバッジ */}
       {currentRankInfo && (
         <div
           className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
         >
-          <div className="text-white">
-            <p className="text-xl font-bold mb-1">
-              {costEffectivenessRank}ランク
-            </p>
-            <p className="text-base opacity-90">{currentRankInfo.label}</p>
+          <div className="text-white flex items-center justify-between">
+            <div>
+              <p className="text-xl font-bold mb-1">
+                {costEffectivenessRank}ランク
+              </p>
+              <p className="text-base opacity-90">{currentRankInfo.label}</p>
+            </div>
+            <Tooltip
+              content={
+                <div className="text-xs leading-relaxed">
+                  <p className="font-semibold mb-1">ランク判定について</p>
+                  {totalProductsInCategory > 0 ? (
+                    <p>
+                      同じ成分を含む{totalProductsInCategory}
+                      商品中の相対評価です。
+                      新商品の追加でランクが変動することがあります。
+                    </p>
+                  ) : (
+                    <p>
+                      同じ成分を含む商品の中での相対評価です。
+                      商品数の変化でランクが変動することがあります。
+                    </p>
+                  )}
+                </div>
+              }
+              icon
+            />
           </div>
         </div>
       )}
@@ -165,7 +268,26 @@ export function CostEffectivenessDetail({
       {/* 主要指標 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-xs text-blue-700 mb-1">1mgあたりの価格</p>
+          <div className="flex items-center gap-1 mb-1">
+            <p className="text-xs text-blue-700">
+              1mgあたりの価格
+              {isMultiIngredient && (
+                <span className="text-[10px]">（主成分）</span>
+              )}
+            </p>
+            {isMultiIngredient && (
+              <Tooltip
+                content={
+                  <div className="text-xs">
+                    主成分（
+                    {primaryIngredient?.name || "最初の成分"}
+                    ）のコストです
+                  </div>
+                }
+                icon
+              />
+            )}
+          </div>
           <p className="text-2xl font-bold text-blue-900">
             ¥{currentCostPerMg.toFixed(2)}
           </p>
@@ -185,6 +307,79 @@ export function CostEffectivenessDetail({
           </p>
         </div>
       </div>
+
+      {/* 複合サプリの場合の追加情報 */}
+      {isMultiIngredient && currentProduct.ingredients && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+          <h3 className="text-sm font-semibold text-purple-900 mb-3 flex items-center gap-1">
+            複合サプリメントの詳細
+            <Tooltip
+              content={
+                <div className="text-xs leading-relaxed">
+                  <p>
+                    この商品は複数の成分を含んでいます。
+                    主成分と全成分でコストを分けて表示しています。
+                  </p>
+                </div>
+              }
+              icon
+            />
+          </h3>
+
+          {/* 成分リスト */}
+          <div className="mb-3 space-y-1">
+            {currentProduct.ingredients.map((ing, index) => (
+              <div
+                key={index}
+                className="text-xs text-purple-800 flex justify-between"
+              >
+                <span>
+                  {ing.name}
+                  {ing.isPrimary && (
+                    <span className="ml-1 px-1.5 py-0.5 bg-purple-200 text-purple-900 rounded text-[10px] font-semibold">
+                      主成分
+                    </span>
+                  )}
+                </span>
+                <span className="font-mono">
+                  {ing.amountMgPerServing}mg / 回
+                </span>
+              </div>
+            ))}
+            <div className="border-t border-purple-300 pt-1 mt-1 flex justify-between font-semibold text-sm text-purple-900">
+              <span>合計</span>
+              <span className="font-mono">{totalAllIngredientsMg}mg / 回</span>
+            </div>
+          </div>
+
+          {/* コスト比較 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-white border border-purple-300 rounded">
+              <p className="text-[10px] text-purple-700 mb-1">
+                主成分あたりのコスト
+              </p>
+              <p className="text-lg font-bold text-purple-900">
+                ¥{currentCostPerMg.toFixed(2)}/mg
+              </p>
+              <p className="text-[10px] text-purple-600 mt-0.5">
+                {primaryIngredient?.name}のコスト
+              </p>
+            </div>
+
+            <div className="p-3 bg-white border border-pink-300 rounded">
+              <p className="text-[10px] text-pink-700 mb-1">
+                全成分合計あたりのコスト
+              </p>
+              <p className="text-lg font-bold text-pink-900">
+                ¥{currentCostPerMgAllIngredients.toFixed(2)}/mg
+              </p>
+              <p className="text-[10px] text-pink-600 mt-0.5">
+                {currentProduct.ingredients.length}成分の合計コスト
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 詳細計算 */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">

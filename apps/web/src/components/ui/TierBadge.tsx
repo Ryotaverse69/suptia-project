@@ -6,8 +6,11 @@
  * + 総合評価（Overall Rank）の表示機能を追加
  */
 
+"use client";
+
 import { TierRank, getTierColor } from "@/lib/tier-colors";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
+import { Tooltip } from "./Tooltip";
 
 interface TierBadgeProps {
   ratings: TierRatings;
@@ -122,30 +125,40 @@ export function TierBadgeGrid({ ratings }: { ratings: TierRatings }) {
       label: "価格",
       rank: ratings.priceRank,
       description: "他商品との価格比較",
+      tooltip:
+        "支払う金額の安さを、同じ成分を含む他商品と相対比較した評価です。商品価格そのものの安さを示します。",
     },
     {
       icon: "💡",
       label: "コスパ",
       rank: ratings.costEffectivenessRank,
       description: "成分量あたりの価格効率",
+      tooltip:
+        "1mgあたりの価格で、成分効率を評価します。価格が安くても成分量が少なければコスパは低くなります。",
     },
     {
       icon: "📊",
       label: "含有量",
       rank: ratings.contentRank,
       description: "主要成分の含有量",
+      tooltip:
+        "主要成分の1回あたりの含有量を、同じ成分を含む他商品と比較した評価です。",
     },
     {
       icon: "🔬",
       label: "エビデンス",
       rank: ratings.evidenceRank,
       description: "科学的根拠の信頼性",
+      tooltip:
+        "成分の効果に関する科学的研究の信頼性を示します。S/A/B/C/Dの5段階で評価します。",
     },
     {
       icon: "🛡️",
       label: "安全性",
       rank: ratings.safetyRank,
       description: "安全性評価スコア",
+      tooltip:
+        "副作用リスク、相互作用、禁忌情報などを総合的に評価した安全性スコアです。",
     },
   ];
 
@@ -177,24 +190,27 @@ export function TierBadgeGrid({ ratings }: { ratings: TierRatings }) {
           {badges.map((badge) => {
             const tierColor = getTierColor(badge.rank as TierRank);
             return (
-              <div
-                key={badge.label}
-                className={`group relative flex flex-col items-center p-3 rounded-lg border ${tierColor.className}
-                  transition-all duration-300 hover:scale-105 hover:shadow-xl
-                  before:absolute before:inset-0 before:rounded-lg before:opacity-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent
-                  hover:before:opacity-100 before:transition-opacity`}
-              >
-                <div className="text-2xl mb-1.5 transition-transform group-hover:scale-110">
-                  {badge.icon}
+              <Tooltip key={badge.label} content={badge.tooltip}>
+                <div
+                  className={`group relative flex flex-col items-center p-3 rounded-lg border ${tierColor.className}
+                    transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-help
+                    before:absolute before:inset-0 before:rounded-lg before:opacity-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent
+                    hover:before:opacity-100 before:transition-opacity`}
+                >
+                  <div className="text-2xl mb-1.5 transition-transform group-hover:scale-110">
+                    {badge.icon}
+                  </div>
+                  <div className="text-xs font-semibold mb-1">
+                    {badge.label}
+                  </div>
+                  <div className="text-2xl font-bold mb-1.5 drop-shadow-sm">
+                    {badge.rank}
+                  </div>
+                  <div className="text-[10px] text-center opacity-70 leading-tight">
+                    {badge.description}
+                  </div>
                 </div>
-                <div className="text-xs font-semibold mb-1">{badge.label}</div>
-                <div className="text-2xl font-bold mb-1.5 drop-shadow-sm">
-                  {badge.rank}
-                </div>
-                <div className="text-[10px] text-center opacity-70 leading-tight">
-                  {badge.description}
-                </div>
-              </div>
+              </Tooltip>
             );
           })}
         </div>
