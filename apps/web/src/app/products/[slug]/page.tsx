@@ -35,17 +35,25 @@ import type { IngredientEvidenceDetail } from "@/components/EvidenceSafetyDetail
 
 interface PriceData {
   source: string;
+  shopName?: string; // 店舗名（旧フィールド、下位互換のため保持）
+  storeName?: string; // 店舗名（新フィールド）
+  productName?: string; // 商品名（数量検出用）
+  itemCode?: string; // 商品コード（店舗名検出用）
   amount: number;
   currency: string;
   url: string;
   fetchedAt: string;
   confidence?: number;
-  quantity?: number;
-  unitPrice?: number;
-  storeName?: string;
-  productName?: string;
-  itemCode?: string;
-  shopName?: string;
+  quantity?: number; // セット数量
+  unitPrice?: number; // 単位価格
+  // 実質価格関連（改善1）
+  shippingFee?: number; // 送料
+  pointRate?: number; // ポイント還元率（0.01 = 1%）
+  isFreeShipping?: boolean; // 送料無料フラグ
+  effectivePrice?: number; // 実質価格（計算後）
+  pointAmount?: number; // ポイント還元額（計算後）
+  // 在庫状況（改善7）
+  stockStatus?: "in_stock" | "low_stock" | "out_of_stock" | "unknown";
 }
 
 interface PriceHistory {

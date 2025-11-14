@@ -559,6 +559,67 @@ export const product = defineType({
               validation: (Rule) => Rule.min(0).max(1),
               description: "0〜1の範囲（1が最高信頼度）",
             },
+            {
+              name: "storeName",
+              title: "店舗名（新）",
+              type: "string",
+              description:
+                "正規化された店舗名。shopNameより優先して使用されます",
+            },
+            {
+              name: "productName",
+              title: "商品名",
+              type: "string",
+              description: "EC商品名（セット数量検出に使用）",
+            },
+            {
+              name: "itemCode",
+              title: "商品コード",
+              type: "string",
+              description: "楽天itemCode、Yahoo商品コードなど",
+            },
+            {
+              name: "quantity",
+              title: "セット数量",
+              type: "number",
+              description: "セット商品の数量（単品の場合は1）",
+              validation: (Rule) => Rule.min(1),
+            },
+            {
+              name: "unitPrice",
+              title: "単位価格",
+              type: "number",
+              description: "1個あたりの価格（円）",
+              validation: (Rule) => Rule.min(0),
+            },
+            {
+              name: "shippingFee",
+              title: "送料",
+              type: "number",
+              description: "送料（円）。送料無料の場合は0",
+              validation: (Rule) => Rule.min(0),
+            },
+            {
+              name: "pointRate",
+              title: "ポイント還元率",
+              type: "number",
+              description: "ポイント還元率（0.01 = 1%、0.05 = 5%）",
+              validation: (Rule) => Rule.min(0).max(1),
+            },
+            {
+              name: "stockStatus",
+              title: "在庫状況",
+              type: "string",
+              options: {
+                list: [
+                  { title: "在庫あり", value: "in_stock" },
+                  { title: "残りわずか", value: "low_stock" },
+                  { title: "在庫切れ", value: "out_of_stock" },
+                  { title: "不明", value: "unknown" },
+                ],
+              },
+              initialValue: "in_stock",
+            },
           ],
           preview: {
             select: {
