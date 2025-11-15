@@ -76,7 +76,24 @@ const UNIT_CONVERSIONS: Record<string, number> = {
 };
 
 /**
- * 商品名から成分量（mg単位）を抽出
+ * 抽出候補（優先度スコアリング方式）
+ */
+interface ExtractionCandidate {
+  value: number; // mg単位の数値
+  priority: number; // 優先度（数値が大きいほど優先）
+  source: string; // 抽出元（デバッグ用）
+  position: number; // 文字列内の位置（同点時の判定用）
+}
+
+/**
+ * 商品名から成分量（mg単位）を抽出（優先度スコアリング方式）
+ *
+ * 優先順位：
+ * 1. 成分名直後 + 単位付き（例: "ビタミンC 1000mg"） - スコア100
+ * 2. 成分名直後（単位なし）（例: "ビタミンC 1000"） - スコア90
+ * 3. 「1日分」「1日あたり」の数値 - スコア80
+ * 4. 「配合量」「含有量」の数値 - スコア70
+ * 5. その他の単位付き数値 - スコア50
  *
  * @param productName - 商品名
  * @param ingredientName - 成分名（オプション、より精度の高い抽出のため）
@@ -94,49 +111,87 @@ export function extractIngredientAmount(
     .replace(/[　]/g, " ") // 全角スペース→半角
     .toLowerCase();
 
-  // パターン1: 数値 + 単位（mg/g/mcg/μg）
-  // 例: "300mg", "1000 mg", "400μg", "50mcg"
-  const unitPatterns = [
-    /(\d+(?:\.\d+)?)\s*(mg|g|mcg|μg|ug)/gi,
-    /(\d+(?:\.\d+)?)\s*ミリグラム/gi,
-    /(\d+(?:\.\d+)?)\s*マイクログラム/gi,
-  ];
+  const candidates: ExtractionCandidate[] = [];
 
-  const extractedAmounts: number[] = [];
-
-  for (const pattern of unitPatterns) {
+  // 優先度1: 成分名直後 + 単位付き（例: "ビタミンC 1000mg"） - スコア100
+  if (ingredientName) {
+    const pattern = new RegExp(
+      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?\\s*(mg|g|mcg|μg|ug)`,
+      "gi",
+    );
     let match;
     while ((match = pattern.exec(normalizedName)) !== null) {
-      const value = parseFloat(match[1]);
-      const unit = match[2]?.toLowerCase() || "mg";
-
-      // 単位をmgに変換
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2].toLowerCase();
       const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
       const amountInMg = value * conversionFactor;
 
-      extractedAmounts.push(amountInMg);
-    }
-  }
-
-  // パターン2: 成分名の直後の数値（単位なし）
-  // 例: "ビタミンC 1000", "DHA 500"
-  if (ingredientName) {
-    const ingredientPattern = new RegExp(
-      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?`,
-      "i",
-    );
-    const ingredientMatch = normalizedName.match(ingredientPattern);
-    if (ingredientMatch) {
-      const value = parseFloat(ingredientMatch[1].replace(/,/g, ""));
-      if (!isNaN(value) && value > 0 && value < 100000) {
-        // 異常値を除外
-        extractedAmounts.push(value);
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 100,
+          source: `成分名直後+単位: ${match[0]}`,
+          position: match.index,
+        });
       }
     }
   }
 
-  // パターン3: 単位なしの数値（mg想定）
-  // 例: "配合量 300", "含有量 1000"
+  // 優先度2: 成分名直後（単位なし）（例: "ビタミンC 1000"） - スコア90
+  if (ingredientName) {
+    const pattern = new RegExp(
+      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?(?!\\s*(mg|g|mcg|μg|ug))`,
+      "i",
+    );
+    const match = normalizedName.match(pattern);
+    if (match) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      if (!isNaN(value) && value > 0 && value < 100000) {
+        candidates.push({
+          value,
+          priority: 90,
+          source: `成分名直後: ${match[0]}`,
+          position: normalizedName.indexOf(match[0]),
+        });
+      }
+    }
+  }
+
+  // 優先度3: 「1日分」「1日あたり」の数値 - スコア80
+  const dailyKeywords = [
+    "1日分",
+    "1日あたり",
+    "一日分",
+    "一日あたり",
+    "1日摂取量",
+    "1粒",
+    "1カプセル",
+    "1錠",
+  ];
+  for (const keyword of dailyKeywords) {
+    const pattern = new RegExp(
+      `${keyword}[\\s　]*[:\\:：]?[\\s　]*([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)?`,
+      "i",
+    );
+    const match = normalizedName.match(pattern);
+    if (match) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2]?.toLowerCase() || "mg";
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 80,
+          source: `1日分: ${match[0]}`,
+          position: normalizedName.indexOf(match[0]),
+        });
+      }
+    }
+  }
+
+  // 優先度4: 「配合量」「含有量」の数値 - スコア70
   const amountKeywords = [
     "配合量",
     "含有量",
@@ -146,37 +201,86 @@ export function extractIngredientAmount(
     "配合成分",
   ];
   for (const keyword of amountKeywords) {
-    const keywordPattern = new RegExp(
-      `${keyword}[\\s　]*[:\\:：]?[\\s　]*([\\d,]+(?:\\.\\d+)?)`,
+    const pattern = new RegExp(
+      `${keyword}[\\s　]*[:\\:：]?[\\s　]*([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)?`,
       "i",
     );
-    const keywordMatch = normalizedName.match(keywordPattern);
-    if (keywordMatch) {
-      const value = parseFloat(keywordMatch[1].replace(/,/g, ""));
-      if (!isNaN(value) && value > 0 && value < 100000) {
-        extractedAmounts.push(value);
+    const match = normalizedName.match(pattern);
+    if (match) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2]?.toLowerCase() || "mg";
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 70,
+          source: `配合量: ${match[0]}`,
+          position: normalizedName.indexOf(match[0]),
+        });
       }
     }
   }
 
-  // 抽出された値から最も妥当なものを選択
-  if (extractedAmounts.length > 0) {
-    // 異常値を除外（0.001mg未満、または100g以上）
-    const validAmounts = extractedAmounts.filter(
-      (amount) => amount >= 0.001 && amount <= 100000,
-    );
+  // 優先度5: その他の単位付き数値 - スコア50
+  const unitPatterns = [
+    /(\d+(?:\.\d+)?)\s*(mg|g|mcg|μg|ug)/gi,
+    /(\d+(?:\.\d+)?)\s*ミリグラム/gi,
+    /(\d+(?:\.\d+)?)\s*マイクログラム/gi,
+  ];
 
-    if (validAmounts.length > 0) {
-      // 複数の値がある場合は、中央値を採用（外れ値を除外）
-      validAmounts.sort((a, b) => a - b);
-      const medianIndex = Math.floor(validAmounts.length / 2);
-      return validAmounts[medianIndex];
+  for (const pattern of unitPatterns) {
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(normalizedName)) !== null) {
+      const value = parseFloat(match[1]);
+      const unit = match[2]?.toLowerCase() || "mg";
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+      const matchIndex = match.index;
+      const matchText = match[0];
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        // 既に同じ位置で高優先度の候補がある場合はスキップ
+        const existingHighPriority = candidates.find(
+          (c) => Math.abs(c.position - matchIndex) < 10 && c.priority > 50,
+        );
+
+        if (!existingHighPriority) {
+          candidates.push({
+            value: amountInMg,
+            priority: 50,
+            source: `単位付き: ${matchText}`,
+            position: matchIndex,
+          });
+        }
+      }
     }
   }
 
-  // 抽出できなかった場合は0を返す（デフォルト値は使用しない）
-  // デフォルト値は別途管理する方針
-  return 0;
+  // 候補を優先度順にソート（優先度が高い順、同点の場合は文字列の前方優先）
+  candidates.sort((a, b) => {
+    if (b.priority !== a.priority) {
+      return b.priority - a.priority;
+    }
+    return a.position - b.position;
+  });
+
+  // デバッグ用（開発環境のみ）
+  if (process.env.NODE_ENV === "development" && candidates.length > 1) {
+    console.log(`[成分量抽出] 商品名: ${productName.substring(0, 60)}...`);
+    console.log(`  成分名: ${ingredientName || "指定なし"}`);
+    console.log(`  候補数: ${candidates.length}`);
+    candidates.slice(0, 3).forEach((c, i) => {
+      console.log(
+        `  候補${i + 1}: ${c.value}mg (優先度: ${c.priority}, ${c.source})`,
+      );
+    });
+    console.log(`  採用: ${candidates[0].value}mg`);
+  }
+
+  // 最高優先度の候補を返す
+  return candidates.length > 0 ? candidates[0].value : 0;
 }
 
 /**
