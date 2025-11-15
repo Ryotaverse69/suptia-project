@@ -371,6 +371,118 @@ export function extractIngredientAmount(
 }
 
 /**
+ * 商品説明（allIngredients）から成分量を抽出
+ *
+ * 栄養成分表示形式の解析に対応:
+ * - 「【栄養成分表示】... ビタミンC：1000mg ...」
+ * - 「ビタミンC ... 1000mg」（テーブル形式）
+ * - 「配合成分：ビタミンC 1000mg、EPA 500mg」（リスト形式）
+ *
+ * @param description - 商品説明文（allIngredientsフィールド）
+ * @param ingredientName - 抽出したい成分名
+ * @returns 抽出された成分量（mg）、抽出できない場合は0
+ */
+export function extractFromDescription(
+  description: string,
+  ingredientName?: string,
+): number {
+  if (!description || !ingredientName) return 0;
+
+  // 成分名を正規化し、エイリアスも含めた検索候補を生成
+  const normalized = normalizeIngredientName(ingredientName);
+  const searchTerms: string[] = [normalized];
+
+  const aliasEntry = INGREDIENT_ALIASES[normalized];
+  if (aliasEntry) {
+    searchTerms.push(...aliasEntry.aliases);
+  }
+
+  const candidates: ExtractionCandidate[] = [];
+
+  // パターン1: 栄養成分表示形式（例: "ビタミンC：1000mg"、"ビタミンC:1000mg"）
+  for (const searchTerm of searchTerms) {
+    const pattern = new RegExp(
+      `${escapeRegExp(searchTerm)}[\\s　]*[：:][\\s　]*([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)`,
+      "gi",
+    );
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(description)) !== null) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2].toLowerCase();
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 95, // 栄養成分表示は高優先度
+          source: `栄養成分表示: ${match[0]}`,
+          position: match.index,
+        });
+      }
+    }
+  }
+
+  // パターン2: スペース区切り形式（例: "ビタミンC 1000mg"）
+  for (const searchTerm of searchTerms) {
+    const pattern = new RegExp(
+      `${escapeRegExp(searchTerm)}[\\s　]+([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)`,
+      "gi",
+    );
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(description)) !== null) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2].toLowerCase();
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 85, // スペース区切りは中優先度
+          source: `スペース区切り: ${match[0]}`,
+          position: match.index,
+        });
+      }
+    }
+  }
+
+  // パターン3: カッコ付き形式（例: "ビタミンC(1000mg)"）
+  for (const searchTerm of searchTerms) {
+    const pattern = new RegExp(
+      `${escapeRegExp(searchTerm)}[\\s　]*[\\(（]([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)[\\)）]`,
+      "gi",
+    );
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(description)) !== null) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      const unit = match[2].toLowerCase();
+      const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+      const amountInMg = value * conversionFactor;
+
+      if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+        candidates.push({
+          value: amountInMg,
+          priority: 90, // カッコ付きは高優先度
+          source: `カッコ付き: ${match[0]}`,
+          position: match.index,
+        });
+      }
+    }
+  }
+
+  // 候補を優先度順にソート
+  candidates.sort((a, b) => {
+    if (b.priority !== a.priority) {
+      return b.priority - a.priority;
+    }
+    return a.position - b.position;
+  });
+
+  return candidates.length > 0 ? candidates[0].value : 0;
+}
+
+/**
  * 成分名からデフォルト配合量を取得
  *
  * @param ingredientName - 成分名

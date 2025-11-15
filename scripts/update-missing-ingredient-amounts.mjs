@@ -129,6 +129,75 @@ function escapeRegExp(string) {
 }
 
 /**
+ * 商品説明（allIngredients）から成分量を抽出
+ *
+ * @param description - 商品説明文
+ * @param ingredientName - 成分名
+ * @returns 抽出された成分量（mg）
+ */
+function extractFromDescription(description, ingredientName) {
+  if (!description || !ingredientName) return 0;
+
+  const extractedAmounts = [];
+
+  // パターン1: 栄養成分表示形式（例: "ビタミンC：1000mg"）
+  const colonPattern = new RegExp(
+    `${escapeRegExp(ingredientName)}[\\s　]*[：:][\\s　]*([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)`,
+    "gi"
+  );
+
+  let match;
+  while ((match = colonPattern.exec(description)) !== null) {
+    const value = parseFloat(match[1].replace(/,/g, ""));
+    const unit = match[2].toLowerCase();
+    const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+    extractedAmounts.push(value * conversionFactor);
+  }
+
+  // パターン2: スペース区切り形式（例: "ビタミンC 1000mg"）
+  const spacePattern = new RegExp(
+    `${escapeRegExp(ingredientName)}[\\s　]+([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)`,
+    "gi"
+  );
+
+  while ((match = spacePattern.exec(description)) !== null) {
+    const value = parseFloat(match[1].replace(/,/g, ""));
+    const unit = match[2].toLowerCase();
+    const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+    extractedAmounts.push(value * conversionFactor);
+  }
+
+  // パターン3: カッコ付き形式（例: "ビタミンC(1000mg)"）
+  const parenPattern = new RegExp(
+    `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]([\\d,]+(?:\\.\\d+)?)\\s*(mg|g|mcg|μg|ug)[\\)）]`,
+    "gi"
+  );
+
+  while ((match = parenPattern.exec(description)) !== null) {
+    const value = parseFloat(match[1].replace(/,/g, ""));
+    const unit = match[2].toLowerCase();
+    const conversionFactor = UNIT_CONVERSIONS[unit] || 1;
+    extractedAmounts.push(value * conversionFactor);
+  }
+
+  if (extractedAmounts.length > 0) {
+    // 異常値を除外
+    const validAmounts = extractedAmounts.filter(
+      (amount) => amount >= 0.001 && amount <= 100000
+    );
+
+    if (validAmounts.length > 0) {
+      // 中央値を返す
+      validAmounts.sort((a, b) => a - b);
+      const medianIndex = Math.floor(validAmounts.length / 2);
+      return validAmounts[medianIndex];
+    }
+  }
+
+  return 0;
+}
+
+/**
  * メイン処理
  */
 async function main() {
@@ -136,11 +205,12 @@ async function main() {
 
   console.log("\n🔍 成分量が欠損している商品を検索中...\n");
 
-  // 配合量が0mgまたはnullの商品を取得
+  // 配合量が0mgまたはnullの商品を取得（allIngredientsも含める）
   const query = `*[_type == 'product' && availability == 'in-stock']{
     _id,
     name,
     source,
+    allIngredients,
     'ingredientCount': count(ingredients),
     ingredients[]{
       _key,
@@ -199,15 +269,27 @@ async function main() {
           continue;
         }
 
-        // 商品名から成分量を抽出
-        const extractedAmount = extractIngredientAmount(
+        // 優先度1: 商品名から成分量を抽出
+        let extractedAmount = extractIngredientAmount(
           product.name,
           ingredientName
         );
 
+        // 優先度2: 商品名から抽出できない場合、allIngredientsから抽出
+        let source = "商品名";
+        if (extractedAmount === 0 && product.allIngredients) {
+          extractedAmount = extractFromDescription(
+            product.allIngredients,
+            ingredientName
+          );
+          if (extractedAmount > 0) {
+            source = "商品説明";
+          }
+        }
+
         if (extractedAmount > 0) {
           console.log(
-            `  ✅ 成分量を抽出: ${ingredientName} → ${extractedAmount}mg`
+            `  ✅ 成分量を抽出（${source}）: ${ingredientName} → ${extractedAmount}mg`
           );
 
           updates.push({
