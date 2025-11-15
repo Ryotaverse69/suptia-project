@@ -739,12 +739,19 @@ function escapeRegExp(string: string): string {
 export interface IngredientAmountExtractionResult {
   /** 抽出された成分量（mg） */
   amount: number;
-  /** 抽出方法 */
-  method: "extracted" | "default" | "none";
+  /** 抽出方法（フォールバック階層） */
+  method:
+    | "regex_name" // レベル1: 商品名から正規表現で抽出
+    | "regex_description" // レベル2: 商品説明から正規表現で抽出
+    | "ai" // レベル3: AI抽出（将来実装）
+    | "manual" // レベル4: 手動入力
+    | "none"; // 抽出失敗
   /** 信頼度（0-1） */
   confidence: number;
   /** 抽出元の文字列（デバッグ用） */
   source?: string;
+  /** 抽出に使用した具体的なパターン（デバッグ用） */
+  pattern?: string;
 }
 
 /**
@@ -753,6 +760,7 @@ export interface IngredientAmountExtractionResult {
  * @param productName - 商品名
  * @param ingredientName - 成分名（オプション）
  * @returns 抽出結果の詳細情報
+ * @deprecated extractIngredientAmountWithFallback() の使用を推奨
  */
 export function extractIngredientAmountDetailed(
   productName: string,
@@ -763,17 +771,109 @@ export function extractIngredientAmountDetailed(
   if (extractedAmount > 0) {
     return {
       amount: extractedAmount,
-      method: "extracted",
-      confidence: 0.8, // 正規表現による抽出の信頼度
-      source: productName,
+      method: "regex_name", // 商品名から抽出
+      confidence: 0.85, // 正規表現による抽出の信頼度
+      source: productName.substring(0, 100),
+      pattern: "商品名パターン抽出",
     };
   }
 
-  // デフォルト値を使用しない方針に変更
   return {
     amount: 0,
     method: "none",
     confidence: 0,
-    source: productName,
+    source: productName.substring(0, 100),
+  };
+}
+
+/**
+ * 成分量を抽出（フォールバック階層統一版）
+ *
+ * フォールバック階層:
+ * 1. 商品名から正規表現で抽出（信頼度: 0.90）
+ * 2. 商品説明（allIngredients）から抽出（信頼度: 0.85）
+ * 3. AI抽出（将来実装）（信頼度: 0.70）
+ * 4. 手動入力データ（将来実装）（信頼度: 1.00）
+ *
+ * @param productName - 商品名
+ * @param description - 商品説明（allIngredientsフィールド）、オプション
+ * @param ingredientName - 成分名
+ * @returns 抽出結果の詳細情報
+ *
+ * @example
+ * const result = extractIngredientAmountWithFallback(
+ *   "ビタミンC 1000mg 60粒",
+ *   "栄養成分表示：ビタミンC 1000mg、ビタミンE 10mg",
+ *   "ビタミンC"
+ * );
+ * // result.amount: 1000
+ * // result.method: "regex_name"
+ * // result.confidence: 0.90
+ */
+export function extractIngredientAmountWithFallback(
+  productName: string,
+  description: string | null | undefined,
+  ingredientName: string,
+): IngredientAmountExtractionResult {
+  // レベル1: 商品名から正規表現で抽出（優先度付きスコアリング）
+  const fromName = extractIngredientAmount(productName, ingredientName);
+  if (fromName > 0) {
+    return {
+      amount: fromName,
+      method: "regex_name",
+      confidence: 0.9, // 商品名からの抽出は高信頼度
+      source: productName.substring(0, 100),
+      pattern: "優先順位付き正規表現（商品名）",
+    };
+  }
+
+  // レベル2: 商品説明（allIngredients）から抽出
+  if (description) {
+    const fromDescription = extractFromDescription(description, ingredientName);
+    if (fromDescription > 0) {
+      return {
+        amount: fromDescription,
+        method: "regex_description",
+        confidence: 0.85, // 商品説明からの抽出もかなり信頼できる
+        source: description.substring(0, 100),
+        pattern: "栄養成分表示パターン（商品説明）",
+      };
+    }
+  }
+
+  // レベル3: AI抽出（将来実装）
+  // 環境変数 ENABLE_AI_EXTRACTION が true の場合のみ実行
+  // if (process.env.ENABLE_AI_EXTRACTION === "true") {
+  //   const fromAI = await extractUsingAI(productName, description, ingredientName);
+  //   if (fromAI > 0) {
+  //     return {
+  //       amount: fromAI,
+  //       method: "ai",
+  //       confidence: 0.70,
+  //       source: "AI extraction",
+  //       pattern: "GPT-4/Claude API",
+  //     };
+  //   }
+  // }
+
+  // レベル4: 手動入力データ（将来実装）
+  // const manual = await getManualIngredientAmount(productId, ingredientName);
+  // if (manual) {
+  //   return {
+  //     amount: manual.amount,
+  //     method: "manual",
+  //     confidence: 1.0,
+  //     source: "Manual entry",
+  //     pattern: "手動入力",
+  //   };
+  // }
+
+  // 抽出失敗
+  return {
+    amount: 0,
+    method: "none",
+    confidence: 0,
+    source: productName.substring(0, 100),
+    pattern: "抽出失敗",
   };
 }
