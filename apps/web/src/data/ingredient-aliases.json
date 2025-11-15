@@ -1,0 +1,358 @@
+{
+  "ビタミンA": {
+    "aliases": [
+      "Vitamin A",
+      "vitamin a",
+      "レチノール",
+      "Retinol",
+      "retinol",
+      "βカロテン",
+      "ベータカロテン",
+      "β-カロテン",
+      "beta-carotene",
+      "Beta Carotene"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンD": {
+    "aliases": [
+      "Vitamin D",
+      "vitamin d",
+      "ビタミンD3",
+      "Vitamin D3",
+      "vitamin d3",
+      "コレカルシフェロール",
+      "cholecalciferol"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンE": {
+    "aliases": [
+      "Vitamin E",
+      "vitamin e",
+      "トコフェロール",
+      "Tocopherol",
+      "tocopherol",
+      "α-トコフェロール",
+      "alpha-tocopherol"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンK": {
+    "aliases": [
+      "Vitamin K",
+      "vitamin k",
+      "ビタミンK1",
+      "ビタミンK2",
+      "Vitamin K1",
+      "Vitamin K2",
+      "メナキノン",
+      "menaquinone"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンC": {
+    "aliases": [
+      "Vitamin C",
+      "vitamin c",
+      "アスコルビン酸",
+      "L-アスコルビン酸",
+      "ascorbic acid",
+      "L-ascorbic acid",
+      "Ascorbic Acid"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンB1": {
+    "aliases": [
+      "Vitamin B1",
+      "vitamin b1",
+      "チアミン",
+      "Thiamine",
+      "thiamine",
+      "チアミン塩酸塩"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンB2": {
+    "aliases": [
+      "Vitamin B2",
+      "vitamin b2",
+      "リボフラビン",
+      "Riboflavin",
+      "riboflavin"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンB6": {
+    "aliases": [
+      "Vitamin B6",
+      "vitamin b6",
+      "ピリドキシン",
+      "Pyridoxine",
+      "pyridoxine",
+      "ピリドキサール"
+    ],
+    "category": "ビタミン"
+  },
+  "ビタミンB12": {
+    "aliases": [
+      "Vitamin B12",
+      "vitamin b12",
+      "コバラミン",
+      "Cobalamin",
+      "cobalamin",
+      "シアノコバラミン",
+      "cyanocobalamin"
+    ],
+    "category": "ビタミン"
+  },
+  "葉酸": {
+    "aliases": [
+      "Folic Acid",
+      "folic acid",
+      "Folate",
+      "folate",
+      "フォレート",
+      "プテロイルモノグルタミン酸",
+      "Pteroylmonoglutamic acid"
+    ],
+    "category": "ビタミン"
+  },
+  "ナイアシン": {
+    "aliases": [
+      "Niacin",
+      "niacin",
+      "ニコチン酸",
+      "Nicotinic acid",
+      "nicotinic acid",
+      "ビタミンB3",
+      "Vitamin B3"
+    ],
+    "category": "ビタミン"
+  },
+  "パントテン酸": {
+    "aliases": [
+      "Pantothenic Acid",
+      "pantothenic acid",
+      "ビタミンB5",
+      "Vitamin B5",
+      "パンテチン",
+      "Pantethine"
+    ],
+    "category": "ビタミン"
+  },
+  "ビオチン": {
+    "aliases": [
+      "Biotin",
+      "biotin",
+      "ビタミンB7",
+      "Vitamin B7",
+      "ビタミンH",
+      "Vitamin H"
+    ],
+    "category": "ビタミン"
+  },
+  "カルシウム": {
+    "aliases": [
+      "Calcium",
+      "calcium",
+      "Ca",
+      "炭酸カルシウム",
+      "クエン酸カルシウム",
+      "calcium carbonate",
+      "calcium citrate"
+    ],
+    "category": "ミネラル"
+  },
+  "マグネシウム": {
+    "aliases": [
+      "Magnesium",
+      "magnesium",
+      "Mg",
+      "酸化マグネシウム",
+      "クエン酸マグネシウム",
+      "magnesium oxide",
+      "magnesium citrate"
+    ],
+    "category": "ミネラル"
+  },
+  "鉄": {
+    "aliases": [
+      "Iron",
+      "iron",
+      "Fe",
+      "ヘム鉄",
+      "非ヘム鉄",
+      "heme iron",
+      "non-heme iron",
+      "クエン酸鉄"
+    ],
+    "category": "ミネラル"
+  },
+  "亜鉛": {
+    "aliases": [
+      "Zinc",
+      "zinc",
+      "Zn",
+      "グルコン酸亜鉛",
+      "zinc gluconate",
+      "ピコリン酸亜鉛",
+      "zinc picolinate"
+    ],
+    "category": "ミネラル"
+  },
+  "銅": {
+    "aliases": ["Copper", "copper", "Cu", "グルコン酸銅", "copper gluconate"],
+    "category": "ミネラル"
+  },
+  "セレン": {
+    "aliases": [
+      "Selenium",
+      "selenium",
+      "Se",
+      "セレノメチオニン",
+      "selenomethionine"
+    ],
+    "category": "ミネラル"
+  },
+  "クロム": {
+    "aliases": [
+      "Chromium",
+      "chromium",
+      "Cr",
+      "ピコリン酸クロム",
+      "chromium picolinate"
+    ],
+    "category": "ミネラル"
+  },
+  "モリブデン": {
+    "aliases": ["Molybdenum", "molybdenum", "Mo"],
+    "category": "ミネラル"
+  },
+  "ヨウ素": {
+    "aliases": [
+      "Iodine",
+      "iodine",
+      "I",
+      "ヨード",
+      "iodo",
+      "ヨウ化カリウム",
+      "potassium iodide"
+    ],
+    "category": "ミネラル"
+  },
+  "EPA": {
+    "aliases": [
+      "epa",
+      "E.P.A.",
+      "エイコサペンタエン酸",
+      "eicosapentaenoic acid",
+      "Eicosapentaenoic Acid",
+      "イコサペンタエン酸"
+    ],
+    "category": "オメガ3脂肪酸"
+  },
+  "DHA": {
+    "aliases": [
+      "dha",
+      "D.H.A.",
+      "ドコサヘキサエン酸",
+      "docosahexaenoic acid",
+      "Docosahexaenoic Acid"
+    ],
+    "category": "オメガ3脂肪酸"
+  },
+  "オメガ3": {
+    "aliases": [
+      "Omega-3",
+      "omega-3",
+      "Omega 3",
+      "omega 3",
+      "ω-3",
+      "n-3脂肪酸",
+      "オメガ3脂肪酸",
+      "omega-3 fatty acids"
+    ],
+    "category": "オメガ3脂肪酸"
+  },
+  "α-リノレン酸": {
+    "aliases": [
+      "ALA",
+      "ala",
+      "アルファリノレン酸",
+      "alpha-linolenic acid",
+      "Alpha-Linolenic Acid",
+      "α-linolenic acid"
+    ],
+    "category": "オメガ3脂肪酸"
+  },
+  "グルタミン": {
+    "aliases": [
+      "Glutamine",
+      "glutamine",
+      "L-グルタミン",
+      "L-Glutamine",
+      "l-glutamine"
+    ],
+    "category": "アミノ酸"
+  },
+  "アルギニン": {
+    "aliases": [
+      "Arginine",
+      "arginine",
+      "L-アルギニン",
+      "L-Arginine",
+      "l-arginine"
+    ],
+    "category": "アミノ酸"
+  },
+  "BCAA": {
+    "aliases": [
+      "bcaa",
+      "B.C.A.A.",
+      "分岐鎖アミノ酸",
+      "branched-chain amino acids",
+      "Branched-Chain Amino Acids"
+    ],
+    "category": "アミノ酸"
+  },
+  "ロイシン": {
+    "aliases": ["Leucine", "leucine", "L-ロイシン", "L-Leucine", "l-leucine"],
+    "category": "アミノ酸"
+  },
+  "コエンザイムQ10": {
+    "aliases": [
+      "CoQ10",
+      "coq10",
+      "Co-Q10",
+      "co-q10",
+      "Coenzyme Q10",
+      "coenzyme q10",
+      "ユビキノン",
+      "Ubiquinone",
+      "ubiquinone"
+    ],
+    "category": "その他"
+  },
+  "ルテイン": {
+    "aliases": ["Lutein", "lutein"],
+    "category": "その他"
+  },
+  "アスタキサンチン": {
+    "aliases": ["Astaxanthin", "astaxanthin"],
+    "category": "その他"
+  },
+  "リコピン": {
+    "aliases": ["Lycopene", "lycopene"],
+    "category": "その他"
+  },
+  "クルクミン": {
+    "aliases": ["Curcumin", "curcumin", "ウコン", "Turmeric", "turmeric"],
+    "category": "その他"
+  },
+  "レスベラトロール": {
+    "aliases": ["Resveratrol", "resveratrol"],
+    "category": "その他"
+  }
+}

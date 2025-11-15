@@ -12,6 +12,78 @@
  * @module extract-ingredient-amount
  */
 
+import ingredientAliases from "@/data/ingredient-aliases.json";
+
+/**
+ * エイリアス辞書の型定義
+ */
+interface IngredientAliasEntry {
+  aliases: string[];
+  category: string;
+}
+
+type IngredientAliasesMap = Record<string, IngredientAliasEntry>;
+
+const INGREDIENT_ALIASES: IngredientAliasesMap =
+  ingredientAliases as IngredientAliasesMap;
+
+/**
+ * 成分名を正規化（エイリアスを標準名に変換）
+ *
+ * @param ingredientName - 正規化する成分名（例: "Vitamin C", "アスコルビン酸"）
+ * @returns 標準化された成分名（例: "ビタミンC"）、見つからない場合は元の名前
+ *
+ * @example
+ * normalizeIngredientName("Vitamin C") // → "ビタミンC"
+ * normalizeIngredientName("アスコルビン酸") // → "ビタミンC"
+ * normalizeIngredientName("ビタミンC") // → "ビタミンC"
+ */
+export function normalizeIngredientName(ingredientName: string): string {
+  if (!ingredientName) return ingredientName;
+
+  const normalized = ingredientName.trim();
+
+  // 完全一致チェック（標準名）
+  if (INGREDIENT_ALIASES[normalized]) {
+    return normalized;
+  }
+
+  // エイリアス検索（大文字小文字を区別しない）
+  const lowerSearch = normalized.toLowerCase();
+  for (const [standardName, entry] of Object.entries(INGREDIENT_ALIASES)) {
+    // 標準名との一致（大文字小文字無視）
+    if (standardName.toLowerCase() === lowerSearch) {
+      return standardName;
+    }
+
+    // エイリアスとの一致（大文字小文字無視）
+    if (entry.aliases.some((alias) => alias.toLowerCase() === lowerSearch)) {
+      return standardName;
+    }
+  }
+
+  // 部分一致検索（商品名に含まれる成分名を検出）
+  for (const [standardName, entry] of Object.entries(INGREDIENT_ALIASES)) {
+    // 標準名が含まれているか
+    if (normalized.includes(standardName)) {
+      return standardName;
+    }
+
+    // エイリアスが含まれているか（長い順に検索して最長一致を優先）
+    const sortedAliases = [...entry.aliases].sort(
+      (a, b) => b.length - a.length,
+    );
+    for (const alias of sortedAliases) {
+      if (normalized.toLowerCase().includes(alias.toLowerCase())) {
+        return standardName;
+      }
+    }
+  }
+
+  // 見つからない場合は元の名前を返す
+  return normalized;
+}
+
 /**
  * 成分名と対応する一般的な配合量（mg）のマッピング
  * フォールバック用: 商品名から数値を抽出できない場合のデフォルト値
@@ -111,15 +183,29 @@ export function extractIngredientAmount(
     .replace(/[　]/g, " ") // 全角スペース→半角
     .toLowerCase();
 
+  // 成分名を正規化し、エイリアスも含めた検索候補を生成
+  const searchTerms: string[] = [];
+  if (ingredientName) {
+    const normalized = normalizeIngredientName(ingredientName);
+    searchTerms.push(normalized);
+
+    // エイリアスも検索対象に追加
+    const aliasEntry = INGREDIENT_ALIASES[normalized];
+    if (aliasEntry) {
+      searchTerms.push(...aliasEntry.aliases);
+    }
+  }
+
   const candidates: ExtractionCandidate[] = [];
 
   // 優先度1: 成分名直後 + 単位付き（例: "ビタミンC 1000mg"） - スコア100
-  if (ingredientName) {
+  // すべての検索候補（標準名+エイリアス）でマッチングを試みる
+  for (const searchTerm of searchTerms) {
     const pattern = new RegExp(
-      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?\\s*(mg|g|mcg|μg|ug)`,
+      `${escapeRegExp(searchTerm)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?\\s*(mg|g|mcg|μg|ug)`,
       "gi",
     );
-    let match;
+    let match: RegExpExecArray | null;
     while ((match = pattern.exec(normalizedName)) !== null) {
       const value = parseFloat(match[1].replace(/,/g, ""));
       const unit = match[2].toLowerCase();
@@ -138,9 +224,10 @@ export function extractIngredientAmount(
   }
 
   // 優先度2: 成分名直後（単位なし）（例: "ビタミンC 1000"） - スコア90
-  if (ingredientName) {
+  // すべての検索候補（標準名+エイリアス）でマッチングを試みる
+  for (const searchTerm of searchTerms) {
     const pattern = new RegExp(
-      `${escapeRegExp(ingredientName)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?(?!\\s*(mg|g|mcg|μg|ug))`,
+      `${escapeRegExp(searchTerm)}[\\s　]*[\\(（]?([\\d,]+(?:\\.\\d+)?)[\\)）]?(?!\\s*(mg|g|mcg|μg|ug))`,
       "i",
     );
     const match = normalizedName.match(pattern);
