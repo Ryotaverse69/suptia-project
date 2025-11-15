@@ -324,20 +324,329 @@ npm run test
 
 ## 🚀 今後の拡張予定
 
-### フェーズ2: 高度な分析
+### 現行ロジックの評価
 
-- **栄養価スコア導入**
-  - 成分ごとの推奨摂取量（RDA）に対する充足率を考慮
-  - 「質 × 量」の総合評価
+現在の実装は以下の点で非常に優秀：
 
-- **ターゲット別最適化**
-  - 年齢・性別・目的別の推奨量を参照
-  - パーソナライズド推薦
+- ✅ **透明性** - 計算方法が明確で説明可能
+- ✅ **説明可能性** - なぜその評価になったか説明できる
+- ✅ **水増し対策** - 微量成分での不当な評価を防止
+- ✅ **ユーザーの直感と一致** - 期待される比較結果を提供
 
-### フェーズ3: AIによる最適化
+改善ポイントは「**将来拡張の余地**」であり、現行ロジックの価値は完全に維持されます。
+
+---
+
+### フェーズ2.7-A: 栄養価スコア導入（2026年1月〜2月）
+
+#### 目的
+
+含有量の「量」だけでなく「生理学的価値」を評価に反映する。
+
+#### 実装内容
+
+**1. 含有量ランク境界の改善**
+
+現状: パーセンタイルのみで決定
+問題: 成分ごとの適正量の違いが反映されていない
+
+例：
+
+- ビタミンC：500〜2000mgが一般的
+- ビタミンD：10µg前後が一般的（過剰摂取に注意）
+
+改善案:
+
+```typescript
+// RDA（推奨摂取量）充足率ベースの補正
+interface NutritionScore {
+  ingredient: string;
+  amountMg: number;
+  rdaMg: number; // 推奨摂取量
+  fulfillmentRate: number; // 充足率 = amountMg / rdaMg
+  evidenceScore: number; // エビデンスレベルスコア
+  safetyFactor: number; // 安全性係数（UL超過で減点）
+}
+
+function calculateNutritionValue(score: NutritionScore): number {
+  // 栄養価 = (成分mg / RDA) × エビデンススコア × 安全性係数
+  return (
+    (score.amountMg / score.rdaMg) * score.evidenceScore * score.safetyFactor
+  );
+}
+```
+
+**2. マルチビタミンのトップ5集計方式の補正**
+
+現状: 含有量の多い成分トップ5の合計を使用
+問題: カルシウムやマグネシウムのような大量成分が優位になりやすい
+
+改善案:
+
+```typescript
+// RDA比重み付けによるトップ5抽出
+function getTop5ByNutritionalValue(
+  ingredients: Array<IngredientWithRDA>,
+): Array<IngredientWithRDA> {
+  // RDA充足率でソート
+  const sorted = [...ingredients].sort((a, b) => {
+    const scoreA = (a.amountMg / a.rdaMg) * a.evidenceScore;
+    const scoreB = (b.amountMg / b.rdaMg) * b.evidenceScore;
+    return scoreB - scoreA;
+  });
+
+  return sorted.slice(0, 5);
+}
+```
+
+**3. データソース**
+
+- 厚生労働省「日本人の食事摂取基準（2020年版）」
+- `data/rda-standards.json` にデータを格納
+- 年齢・性別・目的別のRDAバリエーションを管理
+
+**期待効果**:
+
+- より科学的根拠に基づいた評価
+- 成分の生理学的価値を正確に反映
+- 過剰摂取リスクの自動検出
+
+---
+
+### フェーズ2.7-B: 安全性統合（2026年2月〜3月）
+
+#### 目的
+
+含有量Sバッジに安全上限（UL: Tolerable Upper Intake Level）判定を追加。
+
+#### 実装内容
+
+**1. UL（安全上限値）チェック**
+
+現状: 「同成分グループ内で1日摂取量が最大」でS判定
+問題: 安全性ULは参照していない
+
+例：
+
+- ビタミンD 4000IU（上限ぎりぎり）
+- ビタミンA レチノール過多の商品
+
+改善案:
+
+```typescript
+interface SafetyCheck {
+  ingredient: string;
+  amountMg: number;
+  ulMg: number; // 安全上限値
+  exceedsUL: boolean; // UL超過フラグ
+}
+
+function checkSafetyForSBadge(check: SafetyCheck): BadgeDecision {
+  if (check.exceedsUL) {
+    return {
+      badge: "warning", // Sバッジではなく警告表示
+      message: `${check.ingredient}の摂取量が安全上限（${check.ulMg}mg）を超えています`,
+    };
+  }
+
+  return {
+    badge: "S",
+    message: "最高含有量",
+  };
+}
+```
+
+**2. 安全性スコアとの連動**
+
+- 既存の安全性スコア（0-100点）と統合
+- UL超過商品は安全性スコアを自動減点
+- 商品詳細ページで警告表示
+
+**期待効果**:
+
+- 過剰摂取リスクの防止
+- 安全性を最優先する姿勢を明確化
+- 薬機法コンプライアンス強化
+
+---
+
+### フェーズ2.7-C: UI/UX改善（2026年3月〜4月）
+
+#### 目的
+
+ユーザーが直感的に理解できる可視化を提供。
+
+#### 実装内容
+
+**1. RDA充足率ヒートマップ**
+
+```tsx
+<div className="grid grid-cols-5 gap-2">
+  {ingredients.map((ing) => {
+    const fulfillmentRate = (ing.amountMg / ing.rdaMg) * 100;
+    const color =
+      fulfillmentRate <= 100
+        ? "bg-green-500"
+        : fulfillmentRate <= 300
+          ? "bg-orange-500"
+          : "bg-red-500";
+
+    return (
+      <div key={ing.name} className={`p-2 rounded ${color}`}>
+        <p className="text-xs text-white">{ing.name}</p>
+        <p className="text-sm font-bold text-white">{fulfillmentRate}%</p>
+      </div>
+    );
+  })}
+</div>
+```
+
+色分け:
+
+- 緑（100%以下）: 適正範囲
+- オレンジ（100-300%）: やや過剰
+- 赤（300%以上）: 過剰注意
+
+**2. グループ内中央値表示**
+
+```tsx
+<div className="p-3 bg-gray-50 border rounded">
+  <p className="text-xs text-gray-600">ビタミンCの中央値</p>
+  <p className="text-lg font-bold text-gray-900">600mg/日</p>
+  <p className="text-xs text-gray-500">
+    この商品は中央値より
+    <span className="font-semibold text-green-600">1.5倍多い</span>
+  </p>
+</div>
+```
+
+**3. 成分別コストグラフ**
+
+Chart.jsまたはRechartsを使用:
+
+```tsx
+<ResponsiveContainer width="100%" height={300}>
+  <BarChart data={ingredientCostData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+    <Bar dataKey="costPerMg" fill="#8884d8" />
+  </BarChart>
+</ResponsiveContainer>
+```
+
+**期待効果**:
+
+- 直感的な理解の向上
+- 専門知識がなくても判断可能
+- エンゲージメント向上
+
+---
+
+### フェーズ2.7-D: 高度な分析指標（2026年4月〜）
+
+#### 目的
+
+マルチビタミンの含有量比較精度をさらに向上。
+
+#### 実装内容
+
+**1. 生理学的重要度係数**
+
+```typescript
+interface NutritionalValueIndex {
+  ingredient: string;
+  amountMg: number;
+  rdaMg: number;
+  evidenceScore: number; // S=5, A=4, B=3, C=2, D=1
+  safetyFactor: number; // UL超過で減点
+  physiologicalImportance: number; // 成分の生理学的重要度
+}
+
+function calculateOverallValue(index: NutritionalValueIndex): number {
+  // 総合価値 = (成分mg / RDA) × エビデンススコア × 安全性係数 × 重要度
+  return (
+    (index.amountMg / index.rdaMg) *
+    index.evidenceScore *
+    index.safetyFactor *
+    index.physiologicalImportance
+  );
+}
+```
+
+**2. 時系列ランク変動分析**
+
+- 価格履歴とランクの相関を分析
+- 「買い時」のタイミングを提案
+- ユーザーアラート機能との連携
+
+**3. 他ユーザーの選択傾向**
+
+- 同じ成分を探しているユーザーが選んだ商品
+- レビュー分析（将来的）
+- コミュニティ推薦
+
+**期待効果**:
+
+- 最も科学的で包括的な評価
+- Suptia独自の差別化要因
+- ユーザー満足度の最大化
+
+---
+
+### フェーズ3: AIによる最適化（2026年後半〜）
 
 - GPT連携でユーザーの健康目標に応じた推薦
 - 成分の相互作用を考慮した組み合わせ提案
+- パーソナライズドランク表示
+
+---
+
+### 技術的補足
+
+#### tolerance（許容誤差）の妥当性
+
+現状: `tolerance = 0.001mg`
+
+妥当性: ✅ 非常に適切
+
+ただし将来:
+
+- µg（マイクログラム）成分の比較精度を上げる際には調整の可能性あり
+- ビタミンD（µg単位）、ビタミンB12（µg単位）など
+- 必要に応じて `tolerance = 0.0001mg` に変更検討
+
+---
+
+### 実装優先順位
+
+| フェーズ | 機能                     | 工数    | 優先度 | 開始予定   |
+| -------- | ------------------------ | ------- | ------ | ---------- |
+| 2.7-A    | 栄養価スコア導入         | 2-3週間 | 高     | 2026年1月  |
+| 2.7-B    | 安全性統合（ULチェック） | 1-2週間 | 高     | 2026年2月  |
+| 2.7-C    | UI/UX改善                | 2-3週間 | 中     | 2026年3月  |
+| 2.7-D    | 高度な分析指標           | 3-4週間 | 低     | 2026年4月  |
+| 3        | AI最適化                 | 未定    | 低     | 2026年後半 |
+
+---
+
+### まとめ
+
+**現在の実装（v1.0.0）**:
+
+- 透明性・説明可能性・公平性を完全に満たしている
+- 微量成分の水増し対策が効果的
+- ユーザーの直感と一致する評価
+
+**将来の拡張**:
+
+- RDA充足率ベースの栄養価評価
+- 安全性（UL）との統合
+- より直感的なUI/UX
+- 科学的根拠に基づく総合評価
+
+最終的な方向性は、**栄養価スコア（RDA × エビデンス × 安全性）への統合**に自然につながります。
 
 ---
 
@@ -395,5 +704,11 @@ npm run test
 
 ---
 
-**最終更新日**: 2025-11-14
+**最終更新日**: 2025-11-15
+**バージョン**: 1.1.0
 **ドキュメント作成者**: Ryota
+
+**更新履歴**:
+
+- 2025-11-14: v1.0.0 - 初版作成（マルチビタミン対応コスパ計算実装）
+- 2025-11-15: v1.1.0 - 今後の拡張予定を詳細化（フェーズ2.7-A/B/C/D追加）
