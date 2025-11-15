@@ -226,6 +226,34 @@ export const ingredient = defineType({
       group: "scientific",
     }),
 
+    // 吸収率・化学形態（Phase 2拡張）
+    defineField({
+      name: "absorptionRate",
+      title: "吸収率（%）",
+      type: "number",
+      description:
+        "この成分の一般的な吸収率（%）。化学形態によって異なる場合は標準的な値を記載してください。",
+      validation: (Rule) => Rule.min(0).max(100),
+      group: "scientific",
+    }),
+    defineField({
+      name: "chemicalForm",
+      title: "化学形態",
+      type: "string",
+      description:
+        "この成分の化学形態（例: クエン酸塩、酸化物、キレート、アミノ酸キレート、ピコリン酸塩など）",
+      group: "scientific",
+    }),
+    defineField({
+      name: "bioavailability",
+      title: "バイオアベイラビリティ情報",
+      type: "text",
+      rows: 4,
+      description:
+        "吸収率や生物学的利用能に関する詳細情報。化学形態による違い、摂取タイミング、他の成分との組み合わせによる影響などを記載。",
+      group: "scientific",
+    }),
+
     // 安全性
     defineField({
       name: "safetyScore",

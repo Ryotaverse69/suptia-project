@@ -12,6 +12,9 @@ import { ImageLightbox } from "@/components/ImageLightbox";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TierBadgeGrid, PerfectProductBanner } from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
+import { NutritionScoreCard } from "@/components/NutritionScoreBadge";
+import { RdaFulfillmentHeatmap } from "@/components/RdaFulfillmentHeatmap";
+import { IngredientCostChart } from "@/components/IngredientCostChart";
 import { TierRank, scoreToTierRank } from "@/lib/tier-colors";
 import {
   generateProductMetadata,
@@ -1030,6 +1033,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         )}
 
+        {/* Nutrition Score Card - 栄養価スコア */}
+        {product.ingredients && product.ingredients.length > 0 && (
+          <NutritionScoreCard
+            ingredients={product.ingredients
+              .filter(
+                (ing) =>
+                  ing.ingredient?.evidenceLevel && ing.amountMgPerServing > 0,
+              )
+              .map((ing) => ({
+                name: ing.ingredient!.name,
+                amount: ing.amountMgPerServing,
+                evidenceLevel: ing.ingredient!.evidenceLevel!,
+              }))}
+            gender="male"
+            className="mb-8"
+          />
+        )}
+
         {/* 1. Product Description - 商品の詳細 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">商品説明</h2>
@@ -1049,30 +1070,73 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {similarProducts.length > 0 && (
           <>
             {mainIngredientAmount > 0 ? (
-              <CostEffectivenessDetail
-                currentProduct={{
-                  name: product.name,
-                  slug: product.slug,
-                  imageUrl:
-                    product.images?.[0]?.asset?.url || product.externalImageUrl,
-                  priceJPY: product.priceJPY,
-                  ingredientAmount: mainIngredientAmount,
-                  servingsPerContainer: product.servingsPerContainer,
-                  servingsPerDay: product.servingsPerDay,
-                  ingredients: ingredientsForCostDetail,
-                }}
-                similarProducts={similarProducts}
-                costEffectivenessRank={
-                  updatedTierRatings?.costEffectivenessRank as
-                    | "S"
-                    | "A"
-                    | "B"
-                    | "C"
-                    | "D"
-                }
-                totalProductsInCategory={totalProductsInCategory}
-                className="mb-8"
-              />
+              <>
+                <CostEffectivenessDetail
+                  currentProduct={{
+                    name: product.name,
+                    slug: product.slug,
+                    imageUrl:
+                      product.images?.[0]?.asset?.url ||
+                      product.externalImageUrl,
+                    priceJPY: product.priceJPY,
+                    ingredientAmount: mainIngredientAmount,
+                    servingsPerContainer: product.servingsPerContainer,
+                    servingsPerDay: product.servingsPerDay,
+                    ingredients: ingredientsForCostDetail,
+                  }}
+                  similarProducts={similarProducts}
+                  costEffectivenessRank={
+                    updatedTierRatings?.costEffectivenessRank as
+                      | "S"
+                      | "A"
+                      | "B"
+                      | "C"
+                      | "D"
+                  }
+                  totalProductsInCategory={totalProductsInCategory}
+                  className="mb-8"
+                />
+
+                {/* Ingredient Cost Chart - 成分別コスト分析 */}
+                {product.ingredients &&
+                  product.ingredients.length > 0 &&
+                  (() => {
+                    const totalAmount = product.ingredients.reduce(
+                      (sum, ing) => sum + (ing.amountMgPerServing || 0),
+                      0,
+                    );
+                    const costData = product.ingredients
+                      .filter(
+                        (ing) =>
+                          ing.amountMgPerServing > 0 && ing.ingredient?.name,
+                      )
+                      .map((ing) => {
+                        const amount = ing.amountMgPerServing;
+                        const costPerMg =
+                          totalAmount > 0 ? product.priceJPY / totalAmount : 0;
+                        const totalCost = amount * costPerMg;
+                        const percentage =
+                          totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+                        return {
+                          name: ing.ingredient!.name,
+                          amount,
+                          costPerMg,
+                          totalCost,
+                          percentage,
+                        };
+                      })
+                      .sort((a, b) => b.amount - a.amount)
+                      .slice(0, 5);
+
+                    return costData.length > 0 ? (
+                      <IngredientCostChart
+                        ingredients={costData}
+                        totalPrice={product.priceJPY}
+                        className="mb-8"
+                      />
+                    ) : null;
+                  })()}
+              </>
             ) : (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
                 <div className="flex items-start gap-3">
@@ -1137,6 +1201,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
             )}
           </>
+        )}
+
+        {/* RDA Fulfillment Heatmap - RDA充足率ヒートマップ */}
+        {product.ingredients && product.ingredients.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <RdaFulfillmentHeatmap
+              ingredients={product.ingredients
+                .filter(
+                  (ing) => ing.ingredient?.name && ing.amountMgPerServing > 0,
+                )
+                .map((ing) => ({
+                  name: ing.ingredient!.name,
+                  amount: ing.amountMgPerServing,
+                }))}
+              gender="male"
+              maxDisplay={10}
+            />
+          </div>
         )}
 
         {/* 5-6. Evidence & Safety - エビデンスと安全性 */}

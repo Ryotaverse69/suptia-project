@@ -1,0 +1,496 @@
+{
+  "$schema": "./rda-standards.schema.json",
+  "version": "1.0.0",
+  "source": "厚生労働省「日本人の食事摂取基準（2020年版）」",
+  "lastUpdated": "2025-11-15",
+  "notes": [
+    "RDA (Recommended Dietary Allowance): 推奨量",
+    "AI (Adequate Intake): 目安量（推奨量を算定するのに十分な科学的根拠が得られない場合）",
+    "UL (Tolerable Upper Intake Level): 耐容上限量",
+    "年齢・性別は成人（18-29歳）の基準値を使用",
+    "単位はすべてmgに統一（一部μgは0.001mg換算）"
+  ],
+  "ingredients": {
+    "ビタミンA": {
+      "nameEn": "Vitamin A",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.85,
+        "female": 0.65,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "レチノール活性当量（RAE）"
+      },
+      "ul": {
+        "value": 2.7,
+        "unit": "mg",
+        "note": "プレフォームドビタミンA"
+      },
+      "deficiencyRisks": ["夜盲症", "皮膚乾燥", "免疫機能低下"],
+      "excessRisks": ["頭痛", "めまい", "肝障害", "催奇形性（妊婦）"]
+    },
+    "ビタミンD": {
+      "nameEn": "Vitamin D",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.0085,
+        "female": 0.0085,
+        "unit": "mg",
+        "type": "AI",
+        "note": "8.5μg (340 IU)"
+      },
+      "ul": {
+        "value": 0.1,
+        "unit": "mg",
+        "note": "100μg"
+      },
+      "deficiencyRisks": ["骨軟化症", "くる病", "骨粗鬆症リスク"],
+      "excessRisks": ["高カルシウム血症", "腎障害", "軟組織の石灰化"]
+    },
+    "ビタミンE": {
+      "nameEn": "Vitamin E",
+      "category": "ビタミン",
+      "rda": {
+        "male": 6.0,
+        "female": 5.0,
+        "unit": "mg",
+        "type": "AI",
+        "note": "α-トコフェロール"
+      },
+      "ul": {
+        "value": 750,
+        "unit": "mg",
+        "note": "サプリメント等からの摂取"
+      },
+      "deficiencyRisks": ["溶血性貧血", "神経障害", "筋力低下"],
+      "excessRisks": ["出血傾向", "骨粗鬆症リスク（過剰長期摂取）"]
+    },
+    "ビタミンK": {
+      "nameEn": "Vitamin K",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.15,
+        "female": 0.15,
+        "unit": "mg",
+        "type": "AI",
+        "note": "150μg"
+      },
+      "ul": null,
+      "deficiencyRisks": ["出血傾向", "骨密度低下"],
+      "excessRisks": []
+    },
+    "ビタミンB1": {
+      "nameEn": "Vitamin B1 (Thiamine)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 1.4,
+        "female": 1.1,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": null,
+      "deficiencyRisks": ["脚気", "ウェルニッケ脳症", "疲労感", "食欲不振"],
+      "excessRisks": []
+    },
+    "ビタミンB2": {
+      "nameEn": "Vitamin B2 (Riboflavin)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 1.6,
+        "female": 1.2,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": null,
+      "deficiencyRisks": ["口角炎", "舌炎", "皮膚炎", "成長障害"],
+      "excessRisks": []
+    },
+    "ナイアシン": {
+      "nameEn": "Niacin (Vitamin B3)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 15,
+        "female": 11,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "ナイアシン当量（NE）"
+      },
+      "ul": {
+        "value": 300,
+        "unit": "mg",
+        "note": "ニコチンアミドの上限値（ニコチン酸は85mg）"
+      },
+      "deficiencyRisks": ["ペラグラ", "皮膚炎", "下痢", "認知症"],
+      "excessRisks": ["紅潮（フラッシング）", "肝障害", "消化器症状"]
+    },
+    "ビタミンB6": {
+      "nameEn": "Vitamin B6 (Pyridoxine)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 1.4,
+        "female": 1.1,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 55,
+        "unit": "mg",
+        "note": "長期大量摂取で神経障害のリスク"
+      },
+      "deficiencyRisks": ["皮膚炎", "舌炎", "貧血", "けいれん"],
+      "excessRisks": ["感覚神経障害", "光過敏症"]
+    },
+    "ビタミンB12": {
+      "nameEn": "Vitamin B12 (Cobalamin)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.0024,
+        "female": 0.0024,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "2.4μg"
+      },
+      "ul": null,
+      "deficiencyRisks": ["巨赤芽球性貧血", "神経障害", "疲労感"],
+      "excessRisks": []
+    },
+    "葉酸": {
+      "nameEn": "Folate (Folic Acid)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.24,
+        "female": 0.24,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "240μg"
+      },
+      "ul": {
+        "value": 1.0,
+        "unit": "mg",
+        "note": "プテロイルモノグルタミン酸の上限値"
+      },
+      "deficiencyRisks": ["巨赤芽球性貧血", "神経管閉鎖障害（胎児）"],
+      "excessRisks": ["ビタミンB12欠乏症の診断遅延リスク"]
+    },
+    "パントテン酸": {
+      "nameEn": "Pantothenic Acid (Vitamin B5)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 5,
+        "female": 5,
+        "unit": "mg",
+        "type": "AI"
+      },
+      "ul": null,
+      "deficiencyRisks": ["疲労感", "頭痛", "不眠", "手足のしびれ"],
+      "excessRisks": []
+    },
+    "ビオチン": {
+      "nameEn": "Biotin (Vitamin B7)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 0.05,
+        "female": 0.05,
+        "unit": "mg",
+        "type": "AI",
+        "note": "50μg"
+      },
+      "ul": null,
+      "deficiencyRisks": ["皮膚炎", "脱毛", "結膜炎", "筋肉痛"],
+      "excessRisks": []
+    },
+    "ビタミンC": {
+      "nameEn": "Vitamin C (Ascorbic Acid)",
+      "category": "ビタミン",
+      "rda": {
+        "male": 100,
+        "female": 100,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": null,
+      "deficiencyRisks": ["壊血病", "免疫機能低下", "傷の治癒遅延"],
+      "excessRisks": ["下痢", "悪心", "腹部けいれん"]
+    },
+    "カルシウム": {
+      "nameEn": "Calcium",
+      "category": "ミネラル",
+      "rda": {
+        "male": 800,
+        "female": 650,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 2500,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["骨粗鬆症", "くる病", "筋肉けいれん"],
+      "excessRisks": ["高カルシウム血症", "腎結石", "鉄・亜鉛吸収阻害"]
+    },
+    "鉄": {
+      "nameEn": "Iron",
+      "category": "ミネラル",
+      "rda": {
+        "male": 7.5,
+        "female": 10.5,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "月経あり女性は10.5mg"
+      },
+      "ul": {
+        "value": 50,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["貧血", "疲労感", "集中力低下"],
+      "excessRisks": ["消化器症状", "肝障害", "糖尿病リスク"]
+    },
+    "マグネシウム": {
+      "nameEn": "Magnesium",
+      "category": "ミネラル",
+      "rda": {
+        "male": 340,
+        "female": 270,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 350,
+        "unit": "mg",
+        "note": "サプリメント等からの摂取"
+      },
+      "deficiencyRisks": ["筋肉けいれん", "不整脈", "骨密度低下"],
+      "excessRisks": ["下痢", "悪心", "嘔吐"]
+    },
+    "亜鉛": {
+      "nameEn": "Zinc",
+      "category": "ミネラル",
+      "rda": {
+        "male": 11,
+        "female": 8,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 40,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["味覚障害", "免疫機能低下", "創傷治癒遅延"],
+      "excessRisks": ["銅欠乏", "免疫機能低下", "HDLコレステロール減少"]
+    },
+    "銅": {
+      "nameEn": "Copper",
+      "category": "ミネラル",
+      "rda": {
+        "male": 0.9,
+        "female": 0.8,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 7,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["貧血", "好中球減少", "骨異常"],
+      "excessRisks": ["肝障害", "消化器症状"]
+    },
+    "セレン": {
+      "nameEn": "Selenium",
+      "category": "ミネラル",
+      "rda": {
+        "male": 0.03,
+        "female": 0.025,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "30μg (男性), 25μg (女性)"
+      },
+      "ul": {
+        "value": 0.45,
+        "unit": "mg",
+        "note": "450μg"
+      },
+      "deficiencyRisks": ["心筋症", "甲状腺機能低下", "免疫機能低下"],
+      "excessRisks": ["脱毛", "爪の異常", "神経障害"]
+    },
+    "ヨウ素": {
+      "nameEn": "Iodine",
+      "category": "ミネラル",
+      "rda": {
+        "male": 0.13,
+        "female": 0.13,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "130μg"
+      },
+      "ul": {
+        "value": 3.0,
+        "unit": "mg",
+        "note": "3000μg"
+      },
+      "deficiencyRisks": ["甲状腺腫", "甲状腺機能低下", "成長障害"],
+      "excessRisks": ["甲状腺機能亢進", "甲状腺腫"]
+    },
+    "クロム": {
+      "nameEn": "Chromium",
+      "category": "ミネラル",
+      "rda": {
+        "male": 0.01,
+        "female": 0.01,
+        "unit": "mg",
+        "type": "AI",
+        "note": "10μg"
+      },
+      "ul": {
+        "value": 0.5,
+        "unit": "mg",
+        "note": "500μg"
+      },
+      "deficiencyRisks": ["耐糖能異常", "脂質代謝異常"],
+      "excessRisks": ["腎障害", "肝障害"]
+    },
+    "モリブデン": {
+      "nameEn": "Molybdenum",
+      "category": "ミネラル",
+      "rda": {
+        "male": 0.03,
+        "female": 0.025,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "30μg (男性), 25μg (女性)"
+      },
+      "ul": {
+        "value": 0.6,
+        "unit": "mg",
+        "note": "600μg"
+      },
+      "deficiencyRisks": ["頻脈", "頭痛", "夜盲症"],
+      "excessRisks": ["銅欠乏", "痛風様症状"]
+    },
+    "ロイシン": {
+      "nameEn": "Leucine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 2340,
+        "female": 2340,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（BCAA）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉量減少", "疲労感", "集中力低下"],
+      "excessRisks": ["腎臓負担（長期大量摂取）"]
+    },
+    "イソロイシン": {
+      "nameEn": "Isoleucine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1260,
+        "female": 1260,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（BCAA）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉量減少", "疲労感", "成長障害"],
+      "excessRisks": ["腎臓負担（長期大量摂取）"]
+    },
+    "バリン": {
+      "nameEn": "Valine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1560,
+        "female": 1560,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（BCAA）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉量減少", "疲労感", "成長障害"],
+      "excessRisks": ["腎臓負担（長期大量摂取）"]
+    },
+    "リジン": {
+      "nameEn": "Lysine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1950,
+        "female": 1950,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸"
+      },
+      "ul": null,
+      "deficiencyRisks": ["免疫機能低下", "疲労感", "集中力低下"],
+      "excessRisks": ["胃腸障害", "下痢"]
+    },
+    "メチオニン": {
+      "nameEn": "Methionine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1040,
+        "female": 1040,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（含硫アミノ酸）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["肝機能低下", "むくみ", "脂肪肝"],
+      "excessRisks": ["ホモシステイン増加（心血管疾患リスク）"]
+    },
+    "フェニルアラニン": {
+      "nameEn": "Phenylalanine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1625,
+        "female": 1625,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（芳香族アミノ酸）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["抑うつ", "集中力低下", "記憶力低下"],
+      "excessRisks": ["フェニルケトン尿症患者は禁忌"]
+    },
+    "トリプトファン": {
+      "nameEn": "Tryptophan",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 260,
+        "female": 260,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（芳香族アミノ酸）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["不眠", "抑うつ", "不安感"],
+      "excessRisks": ["セロトニン症候群（過剰摂取時）"]
+    },
+    "スレオニン": {
+      "nameEn": "Threonine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 1040,
+        "female": 1040,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸"
+      },
+      "ul": null,
+      "deficiencyRisks": ["消化器障害", "免疫機能低下", "脂肪肝"],
+      "excessRisks": ["胃腸障害"]
+    },
+    "ヒスチジン": {
+      "nameEn": "Histidine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 650,
+        "female": 650,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "必須アミノ酸（小児期は特に重要）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["貧血", "皮膚炎", "成長障害"],
+      "excessRisks": ["ヒスタミン増加（アレルギー症状）"]
+    }
+  }
+}

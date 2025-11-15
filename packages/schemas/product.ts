@@ -170,18 +170,45 @@ export const product = defineType({
                 "主成分として扱うかどうか。コスパ計算や商品タイトルで優先表示されます",
               initialValue: false,
             },
+            {
+              name: "chemicalForm",
+              title: "化学形態",
+              type: "string",
+              description:
+                "この成分の化学形態（例: クエン酸塩、酸化物、キレート、ピコリン酸塩など）。吸収率や品質の評価に使用されます。",
+            },
+            {
+              name: "absorptionRate",
+              title: "吸収率（%）",
+              type: "number",
+              description:
+                "この成分・化学形態の吸収率（%）。指定されていない場合は成分のデフォルト値を使用します。",
+              validation: (Rule) => Rule.min(0).max(100),
+            },
           ],
           preview: {
             select: {
               ingredientName: "ingredient.name",
               amount: "amountMgPerServing",
               isPrimary: "isPrimary",
+              chemicalForm: "chemicalForm",
+              absorptionRate: "absorptionRate",
             },
-            prepare({ ingredientName, amount, isPrimary }) {
+            prepare({
+              ingredientName,
+              amount,
+              isPrimary,
+              chemicalForm,
+              absorptionRate,
+            }) {
               const primaryLabel = isPrimary ? " [主成分]" : "";
+              const formLabel = chemicalForm ? ` (${chemicalForm})` : "";
+              const absorptionLabel = absorptionRate
+                ? ` ${absorptionRate}%吸収`
+                : "";
               return {
-                title: `${ingredientName || "成分未選択"}${primaryLabel}`,
-                subtitle: `${amount}mg`,
+                title: `${ingredientName || "成分未選択"}${primaryLabel}${formLabel}`,
+                subtitle: `${amount}mg${absorptionLabel}`,
               };
             },
           },

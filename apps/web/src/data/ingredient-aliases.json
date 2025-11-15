@@ -67,10 +67,19 @@
     "aliases": [
       "Vitamin B1",
       "vitamin b1",
+      "V.B1",
+      "VB1",
       "チアミン",
       "Thiamine",
       "thiamine",
-      "チアミン塩酸塩"
+      "チアミン塩酸塩",
+      "チアミンHCl",
+      "Thiamine HCl",
+      "thiamine hydrochloride",
+      "チアミン硝酸塩",
+      "チアミンモノニトレート",
+      "Thiamine Mononitrate",
+      "thiamine mononitrate"
     ],
     "category": "ビタミン"
   },
@@ -78,9 +87,18 @@
     "aliases": [
       "Vitamin B2",
       "vitamin b2",
+      "V.B2",
+      "VB2",
       "リボフラビン",
       "Riboflavin",
-      "riboflavin"
+      "riboflavin",
+      "リボフラビン-5-リン酸",
+      "Riboflavin-5-Phosphate",
+      "riboflavin-5-phosphate",
+      "フラビンモノヌクレオチド",
+      "FMN",
+      "Flavin Mononucleotide",
+      "flavin mononucleotide"
     ],
     "category": "ビタミン"
   },
@@ -88,10 +106,24 @@
     "aliases": [
       "Vitamin B6",
       "vitamin b6",
+      "V.B6",
+      "VB6",
       "ピリドキシン",
       "Pyridoxine",
       "pyridoxine",
-      "ピリドキサール"
+      "ピリドキシン塩酸塩",
+      "Pyridoxine HCl",
+      "pyridoxine hydrochloride",
+      "ピリドキサール",
+      "Pyridoxal",
+      "pyridoxal",
+      "ピリドキサール-5-リン酸",
+      "P5P",
+      "Pyridoxal-5-Phosphate",
+      "pyridoxal-5-phosphate",
+      "ピリドキサミン",
+      "Pyridoxamine",
+      "pyridoxamine"
     ],
     "category": "ビタミン"
   },
@@ -99,11 +131,23 @@
     "aliases": [
       "Vitamin B12",
       "vitamin b12",
+      "V.B12",
+      "VB12",
       "コバラミン",
       "Cobalamin",
       "cobalamin",
       "シアノコバラミン",
-      "cyanocobalamin"
+      "Cyanocobalamin",
+      "cyanocobalamin",
+      "メチルコバラミン",
+      "Methylcobalamin",
+      "methylcobalamin",
+      "ヒドロキソコバラミン",
+      "Hydroxocobalamin",
+      "hydroxocobalamin",
+      "アデノシルコバラミン",
+      "Adenosylcobalamin",
+      "adenosylcobalamin"
     ],
     "category": "ビタミン"
   },
@@ -114,8 +158,19 @@
       "Folate",
       "folate",
       "フォレート",
+      "葉酸塩",
       "プテロイルモノグルタミン酸",
-      "Pteroylmonoglutamic acid"
+      "Pteroylmonoglutamic acid",
+      "メチルフォレート",
+      "Methylfolate",
+      "methylfolate",
+      "5-MTHF",
+      "5-メチルテトラヒドロ葉酸",
+      "L-Methylfolate",
+      "l-methylfolate",
+      "レボメフォリン酸",
+      "Levomefolic Acid",
+      "levomefolic acid"
     ],
     "category": "ビタミン"
   },
@@ -126,8 +181,18 @@
       "ニコチン酸",
       "Nicotinic acid",
       "nicotinic acid",
+      "ニコチンアミド",
+      "Nicotinamide",
+      "nicotinamide",
+      "ナイアシンアミド",
+      "Niacinamide",
+      "niacinamide",
+      "ニコチン酸アミド",
       "ビタミンB3",
-      "Vitamin B3"
+      "Vitamin B3",
+      "vitamin b3",
+      "V.B3",
+      "VB3"
     ],
     "category": "ビタミン"
   },
@@ -137,8 +202,17 @@
       "pantothenic acid",
       "ビタミンB5",
       "Vitamin B5",
+      "vitamin b5",
+      "V.B5",
+      "VB5",
       "パンテチン",
-      "Pantethine"
+      "Pantethine",
+      "pantethine",
+      "パントテン酸カルシウム",
+      "Calcium Pantothenate",
+      "calcium pantothenate",
+      "D-パントテン酸",
+      "D-Pantothenic Acid"
     ],
     "category": "ビタミン"
   },
@@ -148,8 +222,49 @@
       "biotin",
       "ビタミンB7",
       "Vitamin B7",
+      "vitamin b7",
+      "V.B7",
+      "VB7",
       "ビタミンH",
-      "Vitamin H"
+      "Vitamin H",
+      "vitamin h",
+      "d-ビオチン",
+      "D-Biotin",
+      "d-biotin"
+    ],
+    "category": "ビタミン"
+  },
+  "イノシトール": {
+    "aliases": [
+      "Inositol",
+      "inositol",
+      "イノシット",
+      "ミオイノシトール",
+      "Myo-Inositol",
+      "myo-inositol",
+      "ビタミンB8",
+      "Vitamin B8"
+    ],
+    "category": "ビタミン"
+  },
+  "コリン": {
+    "aliases": [
+      "Choline",
+      "choline",
+      "コリンビタートレート",
+      "Choline Bitartrate",
+      "choline bitartrate",
+      "ホスファチジルコリン",
+      "Phosphatidylcholine",
+      "phosphatidylcholine",
+      "レシチン",
+      "Lecithin",
+      "lecithin",
+      "CDP-コリン",
+      "CDP-Choline",
+      "シチコリン",
+      "Citicoline",
+      "citicoline"
     ],
     "category": "ビタミン"
   },
@@ -303,7 +418,13 @@
       "arginine",
       "L-アルギニン",
       "L-Arginine",
-      "l-arginine"
+      "l-arginine",
+      "L-アルギニン塩酸塩",
+      "L-Arginine HCl",
+      "l-arginine hcl",
+      "アルギニンHCl",
+      "Arginine HCl",
+      "arginine hcl"
     ],
     "category": "アミノ酸"
   },
@@ -319,6 +440,165 @@
   },
   "ロイシン": {
     "aliases": ["Leucine", "leucine", "L-ロイシン", "L-Leucine", "l-leucine"],
+    "category": "アミノ酸"
+  },
+  "イソロイシン": {
+    "aliases": [
+      "Isoleucine",
+      "isoleucine",
+      "L-イソロイシン",
+      "L-Isoleucine",
+      "l-isoleucine"
+    ],
+    "category": "アミノ酸"
+  },
+  "バリン": {
+    "aliases": ["Valine", "valine", "L-バリン", "L-Valine", "l-valine"],
+    "category": "アミノ酸"
+  },
+  "リジン": {
+    "aliases": [
+      "Lysine",
+      "lysine",
+      "L-リジン",
+      "L-Lysine",
+      "l-lysine",
+      "リシン",
+      "塩酸リジン",
+      "Lysine HCl",
+      "lysine hydrochloride"
+    ],
+    "category": "アミノ酸"
+  },
+  "メチオニン": {
+    "aliases": [
+      "Methionine",
+      "methionine",
+      "L-メチオニン",
+      "L-Methionine",
+      "l-methionine"
+    ],
+    "category": "アミノ酸"
+  },
+  "システイン": {
+    "aliases": [
+      "Cysteine",
+      "cysteine",
+      "L-システイン",
+      "L-Cysteine",
+      "l-cysteine",
+      "N-アセチルシステイン",
+      "NAC",
+      "N-Acetyl Cysteine",
+      "n-acetyl cysteine"
+    ],
+    "category": "アミノ酸"
+  },
+  "フェニルアラニン": {
+    "aliases": [
+      "Phenylalanine",
+      "phenylalanine",
+      "L-フェニルアラニン",
+      "L-Phenylalanine",
+      "l-phenylalanine"
+    ],
+    "category": "アミノ酸"
+  },
+  "トリプトファン": {
+    "aliases": [
+      "Tryptophan",
+      "tryptophan",
+      "L-トリプトファン",
+      "L-Tryptophan",
+      "l-tryptophan"
+    ],
+    "category": "アミノ酸"
+  },
+  "スレオニン": {
+    "aliases": [
+      "Threonine",
+      "threonine",
+      "L-スレオニン",
+      "L-Threonine",
+      "l-threonine",
+      "トレオニン"
+    ],
+    "category": "アミノ酸"
+  },
+  "ヒスチジン": {
+    "aliases": [
+      "Histidine",
+      "histidine",
+      "L-ヒスチジン",
+      "L-Histidine",
+      "l-histidine"
+    ],
+    "category": "アミノ酸"
+  },
+  "チロシン": {
+    "aliases": [
+      "Tyrosine",
+      "tyrosine",
+      "L-チロシン",
+      "L-Tyrosine",
+      "l-tyrosine"
+    ],
+    "category": "アミノ酸"
+  },
+  "カルニチン": {
+    "aliases": [
+      "Carnitine",
+      "carnitine",
+      "L-カルニチン",
+      "L-Carnitine",
+      "l-carnitine",
+      "アセチルL-カルニチン",
+      "ALCAR",
+      "Acetyl-L-Carnitine",
+      "acetyl-l-carnitine"
+    ],
+    "category": "アミノ酸"
+  },
+  "タウリン": {
+    "aliases": ["Taurine", "taurine"],
+    "category": "アミノ酸"
+  },
+  "グリシン": {
+    "aliases": ["Glycine", "glycine"],
+    "category": "アミノ酸"
+  },
+  "プロリン": {
+    "aliases": ["Proline", "proline", "L-プロリン", "L-Proline", "l-proline"],
+    "category": "アミノ酸"
+  },
+  "アラニン": {
+    "aliases": ["Alanine", "alanine", "L-アラニン", "L-Alanine", "l-alanine"],
+    "category": "アミノ酸"
+  },
+  "セリン": {
+    "aliases": ["Serine", "serine", "L-セリン", "L-Serine", "l-serine"],
+    "category": "アミノ酸"
+  },
+  "アスパラギン酸": {
+    "aliases": [
+      "Aspartic Acid",
+      "aspartic acid",
+      "L-アスパラギン酸",
+      "L-Aspartic Acid",
+      "l-aspartic acid",
+      "アスパラギン酸塩"
+    ],
+    "category": "アミノ酸"
+  },
+  "グルタミン酸": {
+    "aliases": [
+      "Glutamic Acid",
+      "glutamic acid",
+      "L-グルタミン酸",
+      "L-Glutamic Acid",
+      "l-glutamic acid",
+      "グルタミン酸塩"
+    ],
     "category": "アミノ酸"
   },
   "コエンザイムQ10": {

@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RDA Standards Database Schema",
+  "description": "Recommended Dietary Allowance standards based on 厚生労働省「日本人の食事摂取基準（2020年版）」",
+  "type": "object",
+  "required": ["version", "source", "lastUpdated", "ingredients"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Data source reference"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date",
+      "description": "Last update date (YYYY-MM-DD)"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "General notes about the data"
+    },
+    "ingredients": {
+      "type": "object",
+      "description": "Ingredient-specific RDA data",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": ["nameEn", "category", "rda"],
+          "properties": {
+            "nameEn": {
+              "type": "string",
+              "description": "English name"
+            },
+            "category": {
+              "type": "string",
+              "enum": ["ビタミン", "ミネラル", "アミノ酸", "脂肪酸", "その他"],
+              "description": "Ingredient category"
+            },
+            "rda": {
+              "type": "object",
+              "required": ["male", "female", "unit", "type"],
+              "properties": {
+                "male": {
+                  "type": "number",
+                  "description": "RDA for adult males (18-29歳)"
+                },
+                "female": {
+                  "type": "number",
+                  "description": "RDA for adult females (18-29歳)"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": ["mg", "g", "IU"],
+                  "description": "Unit of measurement"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["RDA", "AI"],
+                  "description": "RDA (Recommended Dietary Allowance) or AI (Adequate Intake)"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Additional notes"
+                }
+              }
+            },
+            "ul": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": ["value", "unit"],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "description": "Tolerable Upper Intake Level"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": ["mg", "g", "IU"],
+                      "description": "Unit of measurement"
+                    },
+                    "note": {
+                      "type": "string",
+                      "description": "Additional notes"
+                    }
+                  }
+                }
+              ],
+              "description": "Tolerable Upper Intake Level (UL)"
+            },
+            "deficiencyRisks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Health risks associated with deficiency"
+            },
+            "excessRisks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Health risks associated with excess intake"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,9 +3,10 @@
  * 同じ成分を含む商品の成分量を比較表示
  */
 
-import { BarChart3, TrendingUp } from "lucide-react";
+import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { exceedsTolerableUpperLimit } from "@/lib/nutrition-score";
 
 interface IngredientComparisonProps {
   currentProduct: {
@@ -96,6 +97,12 @@ export function IngredientComparison({
   const currentDailyAmount =
     currentProduct.ingredientAmount * currentProduct.servingsPerDay;
 
+  // UL（耐容上限量）超過チェック
+  const exceedsUL = exceedsTolerableUpperLimit(
+    ingredientName,
+    currentDailyAmount,
+  );
+
   // 類似商品を成分量でソート
   const sortedProducts = [
     { ...currentProduct, dailyAmount: currentDailyAmount, isCurrent: true },
@@ -118,6 +125,44 @@ export function IngredientComparison({
         {ingredientName}の含有量比較
       </h2>
 
+      {/* 比較基準の明示バナー */}
+      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800">
+          💡 この比較は <strong>{ingredientName}</strong>{" "}
+          の1日あたりの含有量を基準に行っています
+          {sortedProducts.length > 1 && (
+            <span className="ml-1">（{sortedProducts.length}商品を比較）</span>
+          )}
+        </p>
+      </div>
+
+      {/* UL超過警告 */}
+      {exceedsUL && (
+        <div className="mb-4 p-4 bg-red-50 border-2 border-red-300 rounded-xl">
+          <div className="flex items-start gap-3">
+            <AlertTriangle
+              className="text-red-600 flex-shrink-0 mt-0.5"
+              size={20}
+            />
+            <div>
+              <p className="text-sm font-semibold text-red-900 mb-1">
+                ⚠️ 耐容上限量（UL）超過の可能性
+              </p>
+              <p className="text-sm text-red-800 leading-relaxed mb-2">
+                この商品の{ingredientName}含有量（1日
+                {currentDailyAmount.toLocaleString()}mg）は、
+                耐容上限量を超えている可能性があります。過剰摂取による健康リスクにご注意ください。
+              </p>
+              <p className="text-xs text-red-700 leading-relaxed">
+                <strong>注意:</strong>{" "}
+                成分の化学形態や換算方法により、実際の安全性評価は異なる場合があります。
+                長期的な摂取を検討される場合は、必ず医師または栄養士にご相談ください。
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ランクバッジ */}
       {currentRankInfo && (
         <div
@@ -137,6 +182,29 @@ export function IngredientComparison({
         >
           <p className={`text-sm ${currentRankInfo.textColor}`}>
             {currentRankInfo.description}
+          </p>
+        </div>
+      )}
+
+      {/* ランクの意味の明確化（UL警告との関係） */}
+      {currentRankInfo && (
+        <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-lg">
+          <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <span>📌</span>
+            <span>ランクの意味について</span>
+          </h4>
+          <p className="text-sm text-gray-700 leading-relaxed mb-2">
+            この<strong className="text-gray-900">{contentRank}ランク</strong>
+            は、
+            <strong className="text-gray-900">
+              同じ成分を含む商品の中での含有量の相対的な位置
+            </strong>
+            を示しています。
+          </p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            💡 <strong>重要:</strong>{" "}
+            含有量が多い（高ランク）ことが必ずしも「より良い」「より安全」を意味するわけではありません。
+            安全性やエビデンスの強さは別の評価軸で判断されます（エビデンススコア、安全性スコア、UL超過警告など）。
           </p>
         </div>
       )}
