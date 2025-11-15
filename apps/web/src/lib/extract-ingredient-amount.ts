@@ -148,6 +148,64 @@ const UNIT_CONVERSIONS: Record<string, number> = {
 };
 
 /**
+ * IU（国際単位）からmgへの変換係数（成分ごとに異なる）
+ * 参考: https://www.ncbi.nlm.nih.gov/books/NBK222310/
+ */
+const IU_TO_MG_CONVERSIONS: Record<string, number> = {
+  // ビタミンA: 1 IU = 0.0003 mg (レチノールとして)
+  ビタミンA: 0.0003,
+  "Vitamin A": 0.0003,
+  レチノール: 0.0003,
+  Retinol: 0.0003,
+
+  // ビタミンD: 1 IU = 0.000025 mg (0.025 μg)
+  ビタミンD: 0.000025,
+  "Vitamin D": 0.000025,
+  ビタミンD3: 0.000025,
+  "Vitamin D3": 0.000025,
+
+  // ビタミンE: 1 IU = 0.67 mg (天然α-トコフェロール)
+  //            1 IU = 0.45 mg (合成dl-α-トコフェロール)
+  // ※ 保守的に合成型の係数を使用
+  ビタミンE: 0.45,
+  "Vitamin E": 0.45,
+  トコフェロール: 0.45,
+  Tocopherol: 0.45,
+};
+
+/**
+ * 成分ごとの1日推奨摂取量（RDA）- %DV換算用
+ * 参考: 厚生労働省「日本人の食事摂取基準（2020年版）」
+ */
+const RDA_AMOUNTS_MG: Record<string, number> = {
+  // ビタミン
+  ビタミンA: 0.77, // 770μg RAE
+  ビタミンD: 0.0085, // 8.5μg
+  ビタミンE: 6.5, // 6.5mg α-トコフェロール
+  ビタミンK: 0.15, // 150μg
+  ビタミンB1: 1.2,
+  ビタミンB2: 1.4,
+  ビタミンB6: 1.4,
+  ビタミンB12: 0.0024, // 2.4μg
+  ビタミンC: 100,
+  葉酸: 0.24, // 240μg
+  ナイアシン: 13,
+  パントテン酸: 4.8,
+  ビオチン: 0.05, // 50μg
+
+  // ミネラル
+  カルシウム: 650,
+  マグネシウム: 320,
+  鉄: 6.5,
+  亜鉛: 10,
+  銅: 0.9,
+  セレン: 0.03, // 30μg
+  クロム: 0.01, // 10μg
+  モリブデン: 0.025, // 25μg
+  ヨウ素: 0.13, // 130μg
+};
+
+/**
  * 抽出候補（優先度スコアリング方式）
  */
 interface ExtractionCandidate {
@@ -310,7 +368,65 @@ export function extractIngredientAmount(
     }
   }
 
-  // 優先度5: その他の単位付き数値 - スコア50
+  // 優先度5: IU（国際単位）からmg換算 - スコア60
+  if (ingredientName) {
+    const normalized = normalizeIngredientName(ingredientName);
+
+    // IU変換係数を取得
+    const iuConversionFactor =
+      IU_TO_MG_CONVERSIONS[normalized] ||
+      (Object.keys(IU_TO_MG_CONVERSIONS).some((key) => normalized.includes(key))
+        ? IU_TO_MG_CONVERSIONS[
+            Object.keys(IU_TO_MG_CONVERSIONS).find((key) =>
+              normalized.includes(key),
+            )!
+          ]
+        : null);
+
+    if (iuConversionFactor) {
+      const iuPattern = /(\d+(?:,\d+)?(?:\.\d+)?)\s*IU/gi;
+      let match: RegExpExecArray | null;
+      while ((match = iuPattern.exec(normalizedName)) !== null) {
+        const value = parseFloat(match[1].replace(/,/g, ""));
+        const amountInMg = value * iuConversionFactor;
+
+        if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+          candidates.push({
+            value: amountInMg,
+            priority: 60,
+            source: `IU変換: ${match[0]}`,
+            position: match.index,
+          });
+        }
+      }
+    }
+  }
+
+  // 優先度6: %DV（Daily Value）からmg換算 - スコア55
+  if (ingredientName) {
+    const normalized = normalizeIngredientName(ingredientName);
+    const rdaAmount = RDA_AMOUNTS_MG[normalized];
+
+    if (rdaAmount) {
+      const dvPattern = /(\d+(?:\.\d+)?)\s*%\s*(?:DV|dv|daily\s*value)/gi;
+      let match: RegExpExecArray | null;
+      while ((match = dvPattern.exec(normalizedName)) !== null) {
+        const percentage = parseFloat(match[1]);
+        const amountInMg = (rdaAmount * percentage) / 100;
+
+        if (!isNaN(amountInMg) && amountInMg > 0 && amountInMg <= 100000) {
+          candidates.push({
+            value: amountInMg,
+            priority: 55,
+            source: `%DV変換: ${match[0]}`,
+            position: match.index,
+          });
+        }
+      }
+    }
+  }
+
+  // 優先度7: その他の単位付き数値 - スコア50
   const unitPatterns = [
     /(\d+(?:\.\d+)?)\s*(mg|g|mcg|μg|ug)/gi,
     /(\d+(?:\.\d+)?)\s*ミリグラム/gi,
