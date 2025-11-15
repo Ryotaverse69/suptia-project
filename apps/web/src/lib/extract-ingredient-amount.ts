@@ -28,7 +28,90 @@ const INGREDIENT_ALIASES: IngredientAliasesMap =
   ingredientAliases as IngredientAliasesMap;
 
 /**
- * 成分名を正規化（エイリアスを標準名に変換）
+ * 成分名のマッチスコアを計算（誤抽出を防ぐため）
+ *
+ * @param searchTerm - 検索対象の成分名（例: "ビタミンC"）
+ * @param context - 検索対象文字列（商品名など）
+ * @returns マッチスコア（0-100）、高いほど信頼性が高い
+ *
+ * スコアリング基準:
+ * - 完全一致: +100点
+ * - 単語境界での一致: +50点
+ * - 部分一致: +30点
+ * - 周辺に数値+単位: +20点
+ * - 一般的な接尾語（サプリメント、タブレットなど）: +20点
+ * - 誘導体・派生語を含む: -50点（ペナルティ）
+ *
+ * 信頼できるマッチ閾値: 50点以上
+ */
+function calculateMatchScore(searchTerm: string, context: string): number {
+  let score = 0;
+  const lowerContext = context.toLowerCase();
+  const lowerSearch = searchTerm.toLowerCase();
+
+  // 完全一致: +100点
+  if (lowerContext === lowerSearch) {
+    score += 100;
+    return score; // 完全一致なら他の判定不要
+  }
+
+  // 単語境界での一致: +50点（前後にスペース、括弧、記号がある）
+  const wordBoundaryPattern = new RegExp(
+    `(^|[\\s　\\(（\\[【])${escapeRegExp(lowerSearch)}($|[\\s　\\)）\\]】])`,
+    "i",
+  );
+  if (wordBoundaryPattern.test(lowerContext)) {
+    score += 50;
+  } else if (lowerContext.includes(lowerSearch)) {
+    // 部分一致: +30点
+    score += 30;
+  } else {
+    // マッチしない場合は0点
+    return 0;
+  }
+
+  // 周辺に数値+単位があるか: +20点
+  const nearbyNumberPattern = new RegExp(
+    `${escapeRegExp(lowerSearch)}.{0,20}\\d+\\s*(mg|g|μg|mcg|ug|IU|%DV)`,
+    "i",
+  );
+  if (nearbyNumberPattern.test(lowerContext)) {
+    score += 20;
+  }
+
+  // 一般的な接尾語が付いている場合: +20点（サプリメント関連の一般的な単語）
+  const commonSuffixPattern = new RegExp(
+    `${escapeRegExp(lowerSearch)}(サプリメント|サプリ|タブレット|カプセル|錠|粒|supplement|tablet|capsule)`,
+    "i",
+  );
+  if (commonSuffixPattern.test(lowerContext)) {
+    score += 20;
+  }
+
+  // 誘導体・派生語を含む場合: -50点（ペナルティ）
+  const derivativeKeywords = [
+    "誘導体",
+    "前駆体",
+    "類似",
+    "由来",
+    "配糖体",
+    "エステル",
+    "derivative",
+    "precursor",
+    "analog",
+  ];
+  for (const keyword of derivativeKeywords) {
+    if (lowerContext.includes(keyword)) {
+      score -= 50;
+      break;
+    }
+  }
+
+  return Math.max(0, score); // 負の値にならないように
+}
+
+/**
+ * 成分名を正規化（エイリアスを標準名に変換）- スコアリング方式
  *
  * @param ingredientName - 正規化する成分名（例: "Vitamin C", "アスコルビン酸"）
  * @returns 標準化された成分名（例: "ビタミンC"）、見つからない場合は元の名前
@@ -37,6 +120,7 @@ const INGREDIENT_ALIASES: IngredientAliasesMap =
  * normalizeIngredientName("Vitamin C") // → "ビタミンC"
  * normalizeIngredientName("アスコルビン酸") // → "ビタミンC"
  * normalizeIngredientName("ビタミンC") // → "ビタミンC"
+ * normalizeIngredientName("ビタミンC誘導体") // → "ビタミンC誘導体" (誤認識を防止)
  */
 export function normalizeIngredientName(ingredientName: string): string {
   if (!ingredientName) return ingredientName;
@@ -62,22 +146,47 @@ export function normalizeIngredientName(ingredientName: string): string {
     }
   }
 
-  // 部分一致検索（商品名に含まれる成分名を検出）
+  // スコアリングベースの部分一致検索
+  const matchCandidates: Array<{
+    standardName: string;
+    alias: string;
+    score: number;
+  }> = [];
+
   for (const [standardName, entry] of Object.entries(INGREDIENT_ALIASES)) {
-    // 標準名が含まれているか
-    if (normalized.includes(standardName)) {
-      return standardName;
+    // 標準名でのマッチング
+    const standardScore = calculateMatchScore(standardName, normalized);
+    if (standardScore > 0) {
+      matchCandidates.push({
+        standardName,
+        alias: standardName,
+        score: standardScore,
+      });
     }
 
-    // エイリアスが含まれているか（長い順に検索して最長一致を優先）
+    // エイリアスでのマッチング（長い順に検索）
     const sortedAliases = [...entry.aliases].sort(
       (a, b) => b.length - a.length,
     );
     for (const alias of sortedAliases) {
-      if (normalized.toLowerCase().includes(alias.toLowerCase())) {
-        return standardName;
+      const aliasScore = calculateMatchScore(alias, normalized);
+      if (aliasScore > 0) {
+        matchCandidates.push({
+          standardName,
+          alias,
+          score: aliasScore,
+        });
       }
     }
+  }
+
+  // スコアが高い順にソート
+  matchCandidates.sort((a, b) => b.score - a.score);
+
+  // 信頼できるマッチ（スコア50以上）があれば採用
+  const bestMatch = matchCandidates[0];
+  if (bestMatch && bestMatch.score >= 50) {
+    return bestMatch.standardName;
   }
 
   // 見つからない場合は元の名前を返す
