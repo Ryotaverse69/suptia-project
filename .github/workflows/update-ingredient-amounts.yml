@@ -1,0 +1,113 @@
+name: Update Missing Ingredient Amounts
+
+on:
+  # 毎週日曜日 午前3時（JST = UTC+9, つまりUTC 18:00土曜日）に自動実行
+  schedule:
+    - cron: "0 18 * * 6" # 毎週土曜日 18:00 UTC = 日曜日 3:00 JST
+
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (preview only, no updates)"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  update-ingredients:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ingredient amount update script
+        id: update
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          SANITY_API_VERSION: "2025-01-01"
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "🔍 Dry run mode - preview only"
+            node scripts/update-missing-ingredient-amounts.mjs 2>&1 | tee output.log
+          else
+            echo "✅ Update mode - applying changes"
+            node scripts/update-missing-ingredient-amounts.mjs --fix 2>&1 | tee output.log
+          fi
+
+      - name: Extract summary
+        id: summary
+        run: |
+          # ログから重要な情報を抽出
+          TOTAL=$(grep -oP '対象商品: \K\d+' output.log || echo "0")
+          UPDATED=$(grep -oP '更新した商品: \K\d+' output.log || echo "0")
+          FAILED=$(grep -oP '更新失敗: \K\d+' output.log || echo "0")
+
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "updated=$UPDATED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+
+      - name: Create job summary
+        run: |
+          echo "## 📊 成分量データ更新結果" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 件数 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 対象商品 | ${{ steps.summary.outputs.total }}件 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 更新成功 | ${{ steps.summary.outputs.updated }}件 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 更新失敗 | ${{ steps.summary.outputs.failed }}件 |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "### 🔍 Dry Run モード" >> $GITHUB_STEP_SUMMARY
+            echo "実際の更新は行われませんでした。" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ 更新完了" >> $GITHUB_STEP_SUMMARY
+            echo "Sanityデータベースに反映されました。" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**実行日時**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload log file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingredient-update-log-${{ github.run_number }}
+          path: output.log
+          retention-days: 30
+
+      # オプション: Slack通知（Slack Webhook URLを設定した場合のみ）
+      - name: Notify Slack on failure
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "⚠️ 成分量データ更新ジョブが失敗しました",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*成分量データ更新ジョブ失敗*\n\n実行時刻: ${{ github.event.head_commit.timestamp }}\nワークフロー: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|詳細を見る>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
