@@ -451,6 +451,7 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         },
         priceJPY: product.price,
         description: product.description,
+        allIngredients: product.description, // 成分量抽出スクリプト用
         availability: product.inStock ? 'in-stock' : 'out-of-stock',
         reviewStats: {
           averageRating: product.rating || 0,
@@ -500,6 +501,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
               itemCode: product.identifiers.yahooCode, // 追加: EC商品コード
               affiliateUrl: product.affiliateUrl || product.url, // 追加: アフィリエイトURL
               priceJPY: product.price,
+              description: product.description, // 商品説明を更新
+              allIngredients: product.description, // 成分量抽出スクリプト用
               availability: product.inStock ? 'in-stock' : 'out-of-stock',
               'reviewStats.averageRating': product.rating || 0,
               'reviewStats.reviewCount': product.reviewCount || 0,
