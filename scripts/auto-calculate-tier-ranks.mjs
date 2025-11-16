@@ -219,7 +219,7 @@ function calculateProductScores(ingredients, servingsPerDay) {
 }
 
 /**
- * パーセンタイルを計算（外れ値に強いTrimmed Percentile）
+ * パーセンタイルを計算（外れ値に強いTrimmed Percentile + Bessel補正）
  * @param {number} value 評価する値
  * @param {number[]} values 比較対象の値の配列
  * @param {boolean} lowerIsBetter trueの場合、低い方が良い
@@ -230,6 +230,11 @@ function calculateProductScores(ingredients, servingsPerDay) {
  * - データ数が10件以上の場合、上下5%（デフォルト）を除外
  * - 超高額商品・異常値の影響を排除してランク判定を適正化
  * - 例: [¥500, ¥800, ¥1000, ¥1200, ¥50000] → 上下除外後 [¥800, ¥1000, ¥1200]
+ *
+ * Bessel補正（統計学的精度向上）:
+ * - 平均順位を使用（重複値の場合、同じ値の中央順位を採用）
+ * - (R - 1) / (N - 1) * 100 で計算（境界ケースでも安定）
+ * - 重複値が多い場合でも正確なランク判定が可能
  */
 function calculatePercentile(value, values, lowerIsBetter = false, trimPercent = 5) {
   if (values.length === 0) return 50;
@@ -245,15 +250,21 @@ function calculatePercentile(value, values, lowerIsBetter = false, trimPercent =
     }
   }
 
-  // 除外後のデータ内でインデックスを検索
-  const index = trimmedValues.findIndex(v => v >= value);
+  const N = trimmedValues.length;
 
-  if (index === -1) {
-    // 除外範囲外の値の場合
-    return lowerIsBetter ? 0 : 100;
-  }
+  // 厳密な順位計算（平均順位方式 - Bessel補正）
+  const sameValues = trimmedValues.filter(v => v === value);
+  const lowerCount = trimmedValues.filter(v => v < value).length;
 
-  const percentile = (index / trimmedValues.length) * 100;
+  // 同じ値がある場合、その範囲の中央順位を使用
+  // 例: [1, 2, 2, 2, 3] で value=2 の場合、lowerCount=1、sameValues.length=3
+  // rank = 1 + (3 + 1) / 2 = 3（2番目、3番目、4番目の中央）
+  const rank = lowerCount + (sameValues.length + 1) / 2;
+
+  // Bessel補正: (R - 1) / (N - 1) * 100
+  // N=1の場合は50%（中央値）を返す
+  const percentile = N === 1 ? 50 : ((rank - 1) / (N - 1)) * 100;
+
   return lowerIsBetter ? 100 - percentile : percentile;
 }
 
