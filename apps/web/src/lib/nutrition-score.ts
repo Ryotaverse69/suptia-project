@@ -10,6 +10,7 @@
 
 import rdaStandards from "../data/rda-standards.json";
 import type { RdaStandards } from "../types/rda";
+import { normalizeIngredientName } from "./ingredient-utils";
 
 const rdaData = rdaStandards as RdaStandards;
 
@@ -80,7 +81,8 @@ export function calculateNutritionScore(
     {};
 
   for (const ing of ingredients) {
-    const rdaIngredient = rdaData.ingredients[ing.name];
+    const normalizedName = normalizeIngredientName(ing.name);
+    const rdaIngredient = rdaData.ingredients[normalizedName];
     if (!rdaIngredient) {
       // RDAデータがない成分はスキップ
       continue;
@@ -142,7 +144,8 @@ export function calculateRdaFulfillment(
   amountMg: number,
   gender: "male" | "female" = "male",
 ): number | null {
-  const rdaIngredient = rdaData.ingredients[ingredientName];
+  const normalizedName = normalizeIngredientName(ingredientName);
+  const rdaIngredient = rdaData.ingredients[normalizedName];
   if (!rdaIngredient) return null;
 
   const rdaValue = rdaIngredient.rda[gender];
@@ -160,7 +163,8 @@ export function exceedsTolerableUpperLimit(
   ingredientName: string,
   amountMg: number,
 ): boolean | null {
-  const rdaIngredient = rdaData.ingredients[ingredientName];
+  const normalizedName = normalizeIngredientName(ingredientName);
+  const rdaIngredient = rdaData.ingredients[normalizedName];
   if (!rdaIngredient || !rdaIngredient.ul) return null;
 
   return amountMg > rdaIngredient.ul.value;
