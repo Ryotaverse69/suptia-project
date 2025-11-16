@@ -119,7 +119,7 @@ jobs:
 
       - name: Revalidate frontend (ISR)
         run: |
-          curl -X POST "${{ secrets.NEXT_PUBLIC_SITE_URL }}/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
+          curl -X POST "https://suptia.com/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{"path": "/products"}'
 
