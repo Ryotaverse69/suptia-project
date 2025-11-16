@@ -1,0 +1,65 @@
+{
+  "水溶性ビタミン": {
+    "description": "ビタミンB群、ビタミンC、葉酸、ビオチンなど。過剰摂取リスクが低く、含有量を重視。",
+    "priceWeight": 0.15,
+    "costEffectivenessWeight": 0.25,
+    "contentWeight": 0.3,
+    "evidenceWeight": 0.2,
+    "safetyWeight": 0.1,
+    "rationale": "水溶性ビタミンは過剰摂取しても尿として排出されるため、安全性の優先度は低い。含有量とコスパを重視する。"
+  },
+  "脂溶性ビタミン": {
+    "description": "ビタミンA、D、E、Kなど。体内蓄積されるため、安全性を最重視。",
+    "priceWeight": 0.15,
+    "costEffectivenessWeight": 0.2,
+    "contentWeight": 0.2,
+    "evidenceWeight": 0.2,
+    "safetyWeight": 0.25,
+    "rationale": "脂溶性ビタミンは過剰摂取による健康リスクがあるため、安全性（UL基準）を最重視する。"
+  },
+  "ミネラル": {
+    "description": "カルシウム、マグネシウム、鉄、亜鉛、セレンなど。バランスを重視。",
+    "priceWeight": 0.15,
+    "costEffectivenessWeight": 0.25,
+    "contentWeight": 0.2,
+    "evidenceWeight": 0.2,
+    "safetyWeight": 0.2,
+    "rationale": "ミネラルは過不足いずれも問題となるため、バランスの取れた評価を行う。"
+  },
+  "機能性成分": {
+    "description": "オメガ3脂肪酸、プロバイオティクス、コエンザイムQ10、ルテインなど。科学的根拠を最重視。",
+    "priceWeight": 0.1,
+    "costEffectivenessWeight": 0.2,
+    "contentWeight": 0.2,
+    "evidenceWeight": 0.35,
+    "safetyWeight": 0.15,
+    "rationale": "機能性成分は効果に個人差があり、品質（菌株、抽出方法など）が重要。エビデンスを最重視する。"
+  },
+  "アミノ酸": {
+    "description": "BCAA、グルタミン、アルギニン、シトルリンなど。スポーツ栄養や特定目的で使用。",
+    "priceWeight": 0.15,
+    "costEffectivenessWeight": 0.3,
+    "contentWeight": 0.25,
+    "evidenceWeight": 0.2,
+    "safetyWeight": 0.1,
+    "rationale": "アミノ酸サプリは摂取量が多いため、コスパと含有量を重視。安全性リスクは比較的低い。"
+  },
+  "マルチビタミン": {
+    "description": "複数の成分を含む総合栄養補助食品。総合バランスとコスパを重視。",
+    "priceWeight": 0.15,
+    "costEffectivenessWeight": 0.3,
+    "contentWeight": 0.25,
+    "evidenceWeight": 0.15,
+    "safetyWeight": 0.15,
+    "rationale": "マルチビタミンは総合的なバランスが重要。コスパと含有量を重視し、個別成分のエビデンスは二次的。"
+  },
+  "その他": {
+    "description": "上記カテゴリに分類されない成分。デフォルトで均等な重み付け。",
+    "priceWeight": 0.2,
+    "costEffectivenessWeight": 0.2,
+    "contentWeight": 0.2,
+    "evidenceWeight": 0.2,
+    "safetyWeight": 0.2,
+    "rationale": "カテゴリ不明な成分は全ての軸を均等に評価する。"
+  }
+}

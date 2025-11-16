@@ -13,10 +13,24 @@ import { createClient } from "@sanity/client";
 import { config } from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { readFileSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 config({ path: join(__dirname, "../apps/web/.env.local") });
+
+// カテゴリ別重み付けマトリクスの読み込み
+const categoryWeights = JSON.parse(
+  readFileSync(join(__dirname, "../apps/web/src/data/category-weights.json"), "utf-8")
+);
+
+// 成分カテゴリマッピングの読み込み
+const ingredientCategoryMapping = JSON.parse(
+  readFileSync(join(__dirname, "../apps/web/src/data/ingredient-category-mapping.json"), "utf-8")
+);
+
+// 成分名正規化関数のインポート
+import { normalizeIngredientName } from "./ingredient-normalizer.mjs";
 
 const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "fny3jdcg";
 const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
@@ -119,6 +133,56 @@ function scoreToRank(score, reverse = false) {
 }
 
 /**
+ * 成分名から詳細カテゴリを判定
+ * @param {string} ingredientName - 成分名
+ * @returns {string} カテゴリ名（水溶性ビタミン、脂溶性ビタミン、ミネラル、機能性成分、アミノ酸、マルチビタミン、その他）
+ */
+function getIngredientCategory(ingredientName) {
+  if (!ingredientName) return "その他";
+
+  // 各カテゴリをチェック
+  for (const [category, ingredientList] of Object.entries(ingredientCategoryMapping)) {
+    // 完全一致または部分一致をチェック
+    const isMatch = ingredientList.some(name => {
+      return ingredientName.includes(name) || name.includes(ingredientName);
+    });
+
+    if (isMatch) {
+      return category;
+    }
+  }
+
+  // どのカテゴリにも該当しない場合
+  return "その他";
+}
+
+/**
+ * カテゴリ別重み付けによる総合スコア計算
+ * @param {object} ranks - 5つのランク {priceRank, costEffectivenessRank, contentRank, evidenceRank, safetyRank}
+ * @param {string} ingredientName - 成分名（カテゴリ判定用）
+ * @returns {number} 重み付け後の総合スコア（0-100）
+ */
+function calculateWeightedOverallScore(ranks, ingredientName) {
+  const rankValues = { S: 100, A: 85, B: 75, C: 65, D: 50 };
+
+  // 成分カテゴリを判定
+  const category = getIngredientCategory(ingredientName);
+
+  // カテゴリ別の重みを取得（デフォルトは「その他」）
+  const weights = categoryWeights[category] || categoryWeights["その他"];
+
+  // 重み付けスコアの計算
+  const weightedScore =
+    rankValues[ranks.priceRank] * weights.priceWeight +
+    rankValues[ranks.costEffectivenessRank] * weights.costEffectivenessWeight +
+    rankValues[ranks.contentRank] * weights.contentWeight +
+    rankValues[ranks.evidenceRank] * weights.evidenceWeight +
+    rankValues[ranks.safetyRank] * weights.safetyWeight;
+
+  return Math.round(weightedScore * 100) / 100; // 小数点第2位まで
+}
+
+/**
  * evidenceLevelをスコアに変換
  * @param {string} level S/A/B/C/D
  * @returns {number} 0-100のスコア
@@ -154,9 +218,10 @@ function safetyLevelToScore(level) {
  * 商品のエビデンススコア・安全性スコアを計算
  * @param {Array} ingredients 成分配列
  * @param {number} servingsPerDay 1日あたりの摂取回数
+ * @param {boolean} isMultiVitamin マルチビタミンかどうか
  * @returns {Object} {evidenceScore, safetyScore, overall}
  */
-function calculateProductScores(ingredients, servingsPerDay) {
+function calculateProductScores(ingredients, servingsPerDay, isMultiVitamin = false) {
   if (!ingredients || ingredients.length === 0) {
     return {
       evidenceScore: 50,
@@ -196,12 +261,22 @@ function calculateProductScores(ingredients, servingsPerDay) {
     };
   }
 
+  // マルチビタミンの場合、トップ5成分のみでスコア計算（コスパ計算との一貫性）
+  const targetScores = isMultiVitamin
+    ? [...ingredientScores].sort((a, b) => b.dailyAmount - a.dailyAmount).slice(0, 5)
+    : ingredientScores;
+
+  const totalTargetAmount = targetScores.reduce(
+    (sum, ing) => sum + ing.dailyAmount,
+    0
+  );
+
   // 配合量に基づく加重平均を計算
   let weightedEvidenceScore = 0;
   let weightedSafetyScore = 0;
 
-  for (const ing of ingredientScores) {
-    const weight = ing.dailyAmount / totalDailyAmount;
+  for (const ing of targetScores) {
+    const weight = ing.dailyAmount / totalTargetAmount;
     weightedEvidenceScore += ing.evidenceScore * weight;
     weightedSafetyScore += ing.safetyScore * weight;
   }
@@ -315,11 +390,14 @@ async function calculateTierRanks() {
       if (!primaryIngredient.amountMgPerServing || primaryIngredient.amountMgPerServing <= 0) continue;
 
       const ing = primaryIngredient;
-      const ingredientId = ing.ingredient._id;
 
-      if (!ingredientGroups[ingredientId]) {
-        ingredientGroups[ingredientId] = {
-          name: ing.ingredient.name,
+      // 成分名を正規化（表記ゆらぎを吸収）
+      const normalizedName = normalizeIngredientName(ing.ingredient.name);
+
+      // 正規化された成分名でグループ化
+      if (!ingredientGroups[normalizedName]) {
+        ingredientGroups[normalizedName] = {
+          name: normalizedName,
           products: [],
         };
       }
@@ -351,10 +429,14 @@ async function calculateTierRanks() {
         continue;
       }
 
-      // スコアを計算（全成分を考慮）
-      const calculatedScores = calculateProductScores(product.ingredients, product.servingsPerDay);
+      // スコアを計算（マルチビタミンの場合はトップ5のみ）
+      const calculatedScores = calculateProductScores(
+        product.ingredients,
+        product.servingsPerDay,
+        isMultiVitamin(product.ingredients) // マルチビタミン判定を渡す
+      );
 
-      ingredientGroups[ingredientId].products.push({
+      ingredientGroups[normalizedName].products.push({
         productId: product._id,
         productName: product.name,
         slug: product.slug?.current,
@@ -463,15 +545,17 @@ async function calculateTierRanks() {
         }
         const safetyRank = scoreToRank(safetyPercentile);
 
-        // 6. 総合評価ランク（5つのランクの平均）
-        const rankValues = { S: 100, A: 85, B: 75, C: 65, D: 50 };
-        const overallScore = (
-          rankValues[priceRank] +
-          rankValues[costEffectivenessRank] +
-          rankValues[contentRank] +
-          rankValues[evidenceRank] +
-          rankValues[safetyRank]
-        ) / 5;
+        // 6. 総合評価ランク（カテゴリ別重み付け）
+        const overallScore = calculateWeightedOverallScore(
+          {
+            priceRank,
+            costEffectivenessRank,
+            contentRank,
+            evidenceRank,
+            safetyRank,
+          },
+          group.name // 成分名からカテゴリを判定
+        );
 
         // 5冠達成の場合はS+
         const isFiveCrown =
