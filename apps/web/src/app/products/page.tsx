@@ -12,6 +12,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
+import { BadgeType } from "@/lib/badges";
 
 // ISR設定: 1時間ごとにページを再生成
 export const revalidate = 3600; // 3600秒 = 1時間
@@ -76,6 +77,7 @@ interface Product {
     };
   }>;
   tierRatings?: TierRatings;
+  badges?: BadgeType[];
 }
 
 // 全商品を取得
@@ -110,7 +112,8 @@ async function getAllProducts(): Promise<Product[]> {
       evidenceRank,
       safetyRank,
       overallRank
-    }
+    },
+    badges
   }`;
 
   try {

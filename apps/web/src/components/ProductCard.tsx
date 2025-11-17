@@ -119,13 +119,13 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* 5冠達成バッジ */}
+          {/* 5つ星認定バッジ */}
           {isPerfect && (
             <div className="absolute top-4 left-0 right-0 z-10 flex justify-center">
               <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
                 <span className="text-lg">🏆</span>
                 <span className="font-bold text-sm">
-                  5冠達成！すべてSランクの最高品
+                  5つ星認定！全項目で最高評価
                 </span>
                 <span className="text-lg">🏆</span>
               </div>

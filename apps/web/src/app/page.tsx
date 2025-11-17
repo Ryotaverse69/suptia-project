@@ -20,6 +20,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TierRank } from "@/lib/tier-colors";
 import { TierRatings } from "@/lib/tier-ranking";
+import { BadgeType } from "@/lib/badges";
 
 interface Product {
   _id: string;
@@ -46,6 +47,7 @@ interface Product {
     };
   }>;
   tierRatings?: TierRatings;
+  badges?: BadgeType[];
 }
 
 interface Ingredient {
@@ -94,7 +96,8 @@ async function getProducts(): Promise<Product[]> {
       evidenceRank,
       safetyRank,
       overallRank
-    }
+    },
+    badges
   }`;
 
   try {
@@ -238,7 +241,8 @@ async function getFeaturedProducts(): Promise<Product[]> {
       evidenceRank,
       safetyRank,
       overallRank
-    }
+    },
+    badges
   }[0..99]`;
 
   try {

@@ -14,6 +14,7 @@ import {
   TrendingUp,
   BookOpen,
 } from "lucide-react";
+import { BadgeType } from "@/lib/badges";
 
 export const metadata: Metadata = {
   title: "検索結果 - サプティア",
@@ -41,6 +42,7 @@ interface Product {
   slug: {
     current: string;
   };
+  badges?: BadgeType[];
 }
 
 // 検索クエリからブランド名を抽出する
@@ -166,7 +168,8 @@ async function getProductsByIngredient(
     servingsPerContainer,
     servingsPerDay,
     externalImageUrl,
-    slug
+    slug,
+    badges
   }`;
 
   try {
@@ -201,7 +204,8 @@ async function searchProducts(query: string): Promise<Product[]> {
     servingsPerContainer,
     servingsPerDay,
     externalImageUrl,
-    slug
+    slug,
+    badges
   }`;
 
   try {
