@@ -1,12 +1,12 @@
 /**
  * 商品の称号（バッジ）を判定するロジック
  *
- * 5つの称号（すべてSランク）:
- * 1. 💰 価格S - 複数ECサイトで最も安い価格
- * 2. 📊 含有量S - その成分の含有量が最も多い
- * 3. 💡 コスパS - コスパが最も優れている
- * 4. 🔬 エビデンスS - 最高レベルの科学的根拠
- * 5. 🛡️ 安全性S - 安全性スコア90点以上
+ * 5つの称号:
+ * 1. 💰 最適価格 - 複数ECサイトで最も安い価格
+ * 2. 📊 高含有リード - その成分の含有量が最も多い
+ * 3. 💡 高効率モデル - コスパが最も優れている
+ * 4. 🔬 高エビデンス - 最高レベルの科学的根拠
+ * 5. 🛡️ 高安全性 - 安全性スコア90点以上
  */
 
 export type BadgeType =
@@ -27,35 +27,35 @@ export interface Badge {
 export const BADGE_DEFINITIONS: Record<BadgeType, Badge> = {
   "lowest-price": {
     type: "lowest-price",
-    label: "価格S",
+    label: "最適価格",
     icon: "💰",
     color: "bg-green-50 border-green-200 text-green-700",
     description: "複数ECサイトで最も安い価格",
   },
   "highest-content": {
     type: "highest-content",
-    label: "含有量S",
+    label: "高含有リード",
     icon: "📊",
     color: "bg-blue-50 border-blue-200 text-blue-700",
     description: "成分量が最も多い",
   },
   "best-value": {
     type: "best-value",
-    label: "コスパS",
+    label: "高効率モデル",
     icon: "💡",
     color: "bg-yellow-50 border-yellow-200 text-yellow-700",
     description: "コスパが最も優れている",
   },
   "evidence-s": {
     type: "evidence-s",
-    label: "エビデンスS",
+    label: "高エビデンス",
     icon: "🔬",
     color: "bg-purple-50 border-purple-200 text-purple-700",
     description: "最高レベルの科学的根拠",
   },
   "high-safety": {
     type: "high-safety",
-    label: "安全性S",
+    label: "高安全性",
     icon: "🛡️",
     color: "bg-red-50 border-red-200 text-red-700",
     description: "安全性スコア90点以上",
@@ -86,27 +86,27 @@ export function evaluateBadges(
 ): BadgeType[] {
   const badges: BadgeType[] = [];
 
-  // 1. 💰 価格S判定
+  // 1. 💰 最適価格判定
   if (isLowestPrice(product, allProducts)) {
     badges.push("lowest-price");
   }
 
-  // 2. 📊 含有量S判定
+  // 2. 📊 高含有リード判定
   if (isHighestContent(product, allProducts)) {
     badges.push("highest-content");
   }
 
-  // 3. 💡 コスパS判定
+  // 3. 💡 高効率モデル判定
   if (isBestValue(product, allProducts)) {
     badges.push("best-value");
   }
 
-  // 4. 🔬 エビデンスS判定
+  // 4. 🔬 高エビデンス判定
   if (product.evidenceLevel === "S") {
     badges.push("evidence-s");
   }
 
-  // 5. 🛡️ 安全性S判定
+  // 5. 🛡️ 高安全性判定
   if (product.safetyScore && product.safetyScore >= 90) {
     badges.push("high-safety");
   }
@@ -115,7 +115,7 @@ export function evaluateBadges(
 }
 
 /**
- * 価格S判定（最安値）
+ * 最適価格判定（複数ECサイトで最安値）
  */
 function isLowestPrice(
   product: ProductForBadgeEvaluation,
@@ -133,14 +133,14 @@ function isLowestPrice(
 }
 
 /**
- * 含有量S判定（最高含有量）
+ * 高含有リード判定（成分量が最も多い）
  * 1日あたりの成分量で比較（同じ成分を含む商品同士）
  */
 function isHighestContent(
   product: ProductForBadgeEvaluation,
   allProducts: ProductForBadgeEvaluation[],
 ): boolean {
-  console.log("[含有量S判定] product:", {
+  console.log("[高含有リード判定] product:", {
     _id: product._id,
     ingredientId: product.ingredientId,
     ingredientAmount: product.ingredientAmount,
@@ -152,13 +152,13 @@ function isHighestContent(
     !product.servingsPerDay ||
     !product.ingredientId
   ) {
-    console.log("[含有量S判定] 必須データ不足でfalse");
+    console.log("[高含有リード判定] 必須データ不足でfalse");
     return false;
   }
 
   // 1日あたりの成分量を計算
   const productDailyAmount = product.ingredientAmount * product.servingsPerDay;
-  console.log("[含有量S判定] 1日あたりの成分量:", productDailyAmount);
+  console.log("[高含有リード判定] 1日あたりの成分量:", productDailyAmount);
 
   // 同じ成分を含む商品の中で最高含有量か判定
   const productsWithSameIngredient = allProducts.filter(
@@ -171,7 +171,7 @@ function isHighestContent(
   );
 
   console.log(
-    "[含有量S判定] 同じ成分の商品数:",
+    "[高含有リード判定] 同じ成分の商品数:",
     productsWithSameIngredient.length,
   );
 
@@ -185,27 +185,27 @@ function isHighestContent(
   const maxDailyAmount = Math.max(...dailyAmounts.map((d) => d.amount));
 
   console.log(
-    "[含有量S判定] 最大1日量:",
+    "[高含有リード判定] 最大1日量:",
     maxDailyAmount,
     "vs 現在の商品:",
     productDailyAmount,
   );
   console.log(
-    "[含有量S判定] 差分:",
+    "[高含有リード判定] 差分:",
     Math.abs(productDailyAmount - maxDailyAmount),
   );
-  console.log("[含有量S判定] 全商品の1日量:", dailyAmounts.slice(0, 5)); // 最初の5件のみ表示
+  console.log("[高含有リード判定] 全商品の1日量:", dailyAmounts.slice(0, 5)); // 最初の5件のみ表示
 
   // 浮動小数点の精度問題に対応するため、許容誤差を使用
   const tolerance = 0.001; // 0.001mg未満の差は同一とみなす
   const result = Math.abs(productDailyAmount - maxDailyAmount) < tolerance;
-  console.log("[含有量S判定] 結果:", result);
+  console.log("[高含有リード判定] 結果:", result);
 
   return result;
 }
 
 /**
- * コスパS判定（ベストバリュー）
+ * 高効率モデル判定（コスパが最も優れている）
  * 同じ成分を含む商品同士で比較
  */
 function isBestValue(
@@ -215,14 +215,16 @@ function isBestValue(
   // コスパ = 価格 / 成分量
   const productCostPerMg = calculateCostPerMg(product);
   console.log(
-    "[コスパS判定] productCostPerMg:",
+    "[高効率モデル判定] productCostPerMg:",
     productCostPerMg,
     "ingredientId:",
     product.ingredientId,
   );
 
   if (productCostPerMg === null || !product.ingredientId) {
-    console.log("[コスパS判定] コスト計算失敗またはingredientId不足でfalse");
+    console.log(
+      "[高効率モデル判定] コスト計算失敗またはingredientId不足でfalse",
+    );
     return false;
   }
 
@@ -241,26 +243,32 @@ function isBestValue(
   const costPerMgValues = costPerMgData.map((d) => d.cost) as number[];
 
   console.log(
-    "[コスパS判定] 同じ成分の商品数:",
+    "[高効率モデル判定] 同じ成分の商品数:",
     productsWithSameIngredient.length,
   );
-  console.log("[コスパS判定] コスト計算できた商品数:", costPerMgValues.length);
+  console.log(
+    "[高効率モデル判定] コスト計算できた商品数:",
+    costPerMgValues.length,
+  );
 
   if (costPerMgValues.length === 0) return false;
 
   const minCostPerMg = Math.min(...costPerMgValues);
   console.log(
-    "[コスパS判定] 最小コスト:",
+    "[高効率モデル判定] 最小コスト:",
     minCostPerMg,
     "vs 現在の商品:",
     productCostPerMg,
   );
-  console.log("[コスパS判定] 差分:", Math.abs(productCostPerMg - minCostPerMg));
-  console.log("[コスパS判定] 全商品のコスト:", costPerMgData.slice(0, 5)); // 最初の5件のみ表示
+  console.log(
+    "[高効率モデル判定] 差分:",
+    Math.abs(productCostPerMg - minCostPerMg),
+  );
+  console.log("[高効率モデル判定] 全商品のコスト:", costPerMgData.slice(0, 5)); // 最初の5件のみ表示
 
   const tolerance = 0.01; // 0.01円/mg未満の差は同一とみなす
   const result = Math.abs(productCostPerMg - minCostPerMg) < tolerance;
-  console.log("[コスパS判定] 結果:", result);
+  console.log("[高効率モデル判定] 結果:", result);
 
   return result;
 }
