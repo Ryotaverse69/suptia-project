@@ -1,0 +1,39 @@
+# Suptia - サプリメント比較サイト
+# ChatGPTおよび主要な検索エンジンのクローラーを許可
+
+# OpenAI GPTBot（ChatGPTのクローラー）
+User-agent: GPTBot
+Allow: /
+
+# OpenAI ChatGPT-User（ブラウジング機能）
+User-agent: ChatGPT-User
+Allow: /
+
+# Google
+User-agent: Googlebot
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Yahoo
+User-agent: Slurp
+Allow: /
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# その他すべてのクローラー
+User-agent: *
+Allow: /
+
+# クロールしないパス（管理画面など）
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /studio/
+
+# サイトマップの場所
+Sitemap: https://suptia.com/sitemap.xml

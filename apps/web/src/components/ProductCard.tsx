@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
 import { TierRank } from "@/lib/tier-colors";
+import { BadgeType, getBadgeInfo } from "@/lib/badges";
 
 interface ProductCardProps {
   product: {
@@ -44,6 +45,7 @@ interface ProductCardProps {
     imageUrl?: string;
     externalImageUrl?: string;
     tierRatings?: TierRatings; // 新: Tierランク評価
+    badges?: BadgeType[]; // 獲得している称号
   };
 }
 
@@ -64,6 +66,7 @@ export function ProductCard({ product }: ProductCardProps) {
     imageUrl,
     externalImageUrl,
     tierRatings,
+    badges = [], // デフォルトは空配列
   } = product;
 
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -129,14 +132,24 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Tierランクラベル（総合評価、左上に小さく表示） */}
-          {!isPerfect && tierRatings && tierRatings.overallRank && (
-            <div className="absolute top-3 left-3 z-10">
-              <OverallRankBadge
-                rank={tierRatings.overallRank as TierRank}
-                size="sm"
-                showLabel={false}
-              />
+          {/* 称号バッジ（アイコンのみ、ホバーでラベル表示） */}
+          {!isPerfect && badges.length > 0 && (
+            <div className="absolute top-3 left-3 z-10 flex gap-1.5">
+              {badges.map((badgeType) => {
+                const badgeInfo = getBadgeInfo(badgeType);
+                return (
+                  <div
+                    key={badgeType}
+                    className="group relative bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md hover:px-3 hover:rounded-lg transition-all duration-300 cursor-pointer"
+                    title={badgeInfo.label}
+                  >
+                    <span className="text-base">{badgeInfo.icon}</span>
+                    <span className="hidden group-hover:inline ml-1.5 text-xs font-semibold text-gray-700 whitespace-nowrap">
+                      {badgeInfo.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           )}
 
