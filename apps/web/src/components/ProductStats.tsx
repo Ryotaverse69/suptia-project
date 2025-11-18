@@ -11,7 +11,7 @@ import {
 
 interface ProductStatsProps {
   products: Array<{
-    badges: BadgeType[];
+    badges?: BadgeType[];
   }>;
   className?: string;
 }
@@ -20,14 +20,14 @@ export function ProductStats({ products, className = "" }: ProductStatsProps) {
   // 統計を計算
   const totalProducts = products.length;
   const perfectSupplements = products.filter((p) =>
-    isPerfectSupplement(p.badges),
+    isPerfectSupplement(p.badges || []),
   ).length;
 
   // 各称号の獲得商品数を計算
   const badgeCounts = Object.keys(BADGE_DEFINITIONS).reduce(
     (acc, badgeType) => {
       acc[badgeType as BadgeType] = products.filter((p) =>
-        p.badges.includes(badgeType as BadgeType),
+        (p.badges || []).includes(badgeType as BadgeType),
       ).length;
       return acc;
     },
@@ -36,7 +36,8 @@ export function ProductStats({ products, className = "" }: ProductStatsProps) {
 
   // 称号平均数を計算
   const averageBadges =
-    products.reduce((sum, p) => sum + p.badges.length, 0) / totalProducts || 0;
+    products.reduce((sum, p) => sum + (p.badges?.length || 0), 0) /
+      totalProducts || 0;
 
   return (
     <div
