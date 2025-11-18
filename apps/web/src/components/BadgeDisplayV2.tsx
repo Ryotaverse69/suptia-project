@@ -21,7 +21,7 @@ export function BadgeDisplayV2({
   showDetails = false,
 }: BadgeDisplayV2Props) {
   // 5冠達成の特別表示
-  if (result.isPerfectSupplement) {
+  if (result.isPerfectSupplement && result.badges && result.badges.length > 0) {
     return (
       <div className="bg-gradient-to-r from-yellow-100 to-yellow-200 border-2 border-yellow-400 rounded-lg p-4 mb-4">
         <div className="flex items-center gap-2 mb-3">
@@ -62,7 +62,7 @@ export function BadgeDisplayV2({
     <div className="space-y-3">
       {/* 獲得バッジの表示 */}
       <div className="flex flex-wrap gap-2">
-        {result.badges.map((badge) => {
+        {(result.badges || []).map((badge) => {
           const badgeInfo = BADGE_DEFINITIONS[badge];
           const evaluation = result.evaluations.find((e) => e.badge === badge);
 

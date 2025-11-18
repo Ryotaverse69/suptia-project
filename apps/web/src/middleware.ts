@@ -22,11 +22,11 @@ export function middleware(req: NextRequest) {
     const csp = [
       "default-src 'self'",
       "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp data: blob:",
-      "connect-src 'self' https://*.sanity.io https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+      "connect-src 'self' https://*.sanity.io https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://vercel.live",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
-      // Allow only scripts with the generated nonce + Google Tag Manager
-      `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com`,
+      // Allow only scripts with the generated nonce + Google Tag Manager + Vercel Live
+      `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://vercel.live`,
       "upgrade-insecure-requests",
     ].join("; ");
 

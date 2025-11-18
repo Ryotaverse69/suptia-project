@@ -641,7 +641,7 @@ export function getBadgeInfoV2(badgeType: BadgeType): Badge {
 export function generateEvaluationSummary(
   result: ComprehensiveBadgeResult,
 ): string {
-  const badgeCount = result.badges.length;
+  const badgeCount = result.badges?.length || 0;
 
   if (result.isPerfectSupplement) {
     return `🌟 完璧なサプリメント！5つすべての称号を獲得し、バランス指数${(result.harmonyIndex * 100).toFixed(0)}%を達成しました。`;
@@ -651,7 +651,7 @@ export function generateEvaluationSummary(
     return "称号を獲得できませんでした。商品データの見直しが必要です。";
   }
 
-  const badgeLabels = result.badges
+  const badgeLabels = (result.badges || [])
     .map((b) => BADGE_DEFINITIONS[b].label)
     .join("、");
   return `${badgeCount}個の称号を獲得: ${badgeLabels}（信頼度: ${(result.overallConfidence * 100).toFixed(0)}%）`;
