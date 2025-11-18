@@ -26,7 +26,8 @@ export function middleware(req: NextRequest) {
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
       // Allow only scripts with the generated nonce + Google Tag Manager + Vercel Live
-      `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://vercel.live`,
+      `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://www.googletagmanager.com https://vercel.live`,
+      "frame-src https://vercel.live",
       "upgrade-insecure-requests",
     ].join("; ");
 
