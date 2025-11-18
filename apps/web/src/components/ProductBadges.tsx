@@ -11,9 +11,11 @@ interface ProductBadgesProps {
 }
 
 export function ProductBadges({ badges, className = "" }: ProductBadgesProps) {
-  const isPerfect = isPerfectSupplement(badges);
+  // nullチェック: badgesがnullまたはundefinedの場合は空配列として扱う
+  const safeBadges = badges || [];
+  const isPerfect = isPerfectSupplement(safeBadges);
 
-  if (badges.length === 0) {
+  if (safeBadges.length === 0) {
     return null;
   }
 
@@ -43,7 +45,7 @@ export function ProductBadges({ badges, className = "" }: ProductBadgesProps) {
         </h2>
 
         <div className="space-y-4">
-          {badges.map((badgeType) => {
+          {safeBadges.map((badgeType) => {
             const badge = getBadgeInfo(badgeType);
             return (
               <div
@@ -64,13 +66,13 @@ export function ProductBadges({ badges, className = "" }: ProductBadgesProps) {
           })}
         </div>
 
-        {!isPerfect && badges.length > 0 && (
+        {!isPerfect && safeBadges.length > 0 && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800">
-              💡 この商品は<strong>{badges.length}つの称号</strong>
+              💡 この商品は<strong>{safeBadges.length}つの称号</strong>
               を獲得しています。
-              {badges.length < 5 &&
-                `あと${5 - badges.length}つで完璧なサプリメントです！`}
+              {safeBadges.length < 5 &&
+                `あと${5 - safeBadges.length}つで完璧なサプリメントです！`}
             </p>
           </div>
         )}
@@ -107,9 +109,11 @@ interface BadgeSummaryProps {
 }
 
 export function BadgeSummary({ badges, className = "" }: BadgeSummaryProps) {
-  const isPerfect = isPerfectSupplement(badges);
+  // nullチェック: badgesがnullまたはundefinedの場合は空配列として扱う
+  const safeBadges = badges || [];
+  const isPerfect = isPerfectSupplement(safeBadges);
 
-  if (badges.length === 0) {
+  if (safeBadges.length === 0) {
     return null;
   }
 
@@ -122,7 +126,7 @@ export function BadgeSummary({ badges, className = "" }: BadgeSummaryProps) {
         </div>
       )}
 
-      {badges.map((badgeType) => {
+      {safeBadges.map((badgeType) => {
         const badge = getBadgeInfo(badgeType);
         return (
           <div
