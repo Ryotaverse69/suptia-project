@@ -13,6 +13,7 @@ import { CookieSettingsModal } from "@/components/CookieSettingsModal";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import type { Metadata } from "next";
 import "./globals.css";
+import "@/lib/version"; // デプロイバージョンマーカー
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://suptia.com"),

@@ -66,8 +66,11 @@ export function ProductCard({ product }: ProductCardProps) {
     imageUrl,
     externalImageUrl,
     tierRatings,
-    badges = [], // デフォルトは空配列
+    badges,
   } = product;
+
+  // Ensure badges is always an array (defensive programming)
+  const safeBadges = Array.isArray(badges) ? badges : [];
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(_id);
@@ -133,9 +136,9 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           {/* 称号バッジ（アイコンのみ、ホバーでラベル表示） */}
-          {!isPerfect && badges.length > 0 && (
+          {!isPerfect && safeBadges.length > 0 && (
             <div className="absolute top-3 left-3 z-10 flex gap-1.5">
-              {badges.map((badgeType) => {
+              {safeBadges.map((badgeType) => {
                 const badgeInfo = getBadgeInfo(badgeType);
                 return (
                   <div

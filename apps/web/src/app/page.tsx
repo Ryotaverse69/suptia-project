@@ -112,7 +112,12 @@ async function getProducts(): Promise<Product[]> {
       const slugCurrent = product.slug?.current;
       if (slugCurrent && !seenSlugs.has(slugCurrent)) {
         seenSlugs.add(slugCurrent);
-        uniqueProducts.push(product);
+        // Ensure badges is always an array
+        const safeProduct = {
+          ...product,
+          badges: Array.isArray(product.badges) ? product.badges : [],
+        };
+        uniqueProducts.push(safeProduct);
 
         // 8件集まったら終了
         if (uniqueProducts.length >= 8) break;
@@ -324,7 +329,12 @@ async function getFeaturedProducts(): Promise<Product[]> {
       // 重複していない場合のみ追加
       seenSlugs.add(slugCurrent);
       seenNormalizedNames.add(normalizedName);
-      uniqueProducts.push(product);
+      // Ensure badges is always an array
+      const safeProduct = {
+        ...product,
+        badges: Array.isArray(product.badges) ? product.badges : [],
+      };
+      uniqueProducts.push(safeProduct);
 
       console.log(
         `[追加] ${product.name} (Tierスコア: ${getTierScore(product.tierRatings?.overallRank)}, 成分人気度: ${getIngredientPopularityScore(product).toFixed(1)}, 総合: ${product._calculatedScore.toFixed(1)})`,
