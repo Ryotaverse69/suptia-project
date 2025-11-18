@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+export const dynamic = "force-dynamic"; // 動的レンダリングを強制
+
 // Resendクライアントの遅延初期化（ビルド時ではなく実行時に初期化）
 function getResendClient() {
   if (!process.env.RESEND_API_KEY) {

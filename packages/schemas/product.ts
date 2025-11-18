@@ -746,6 +746,28 @@ export const product = defineType({
       initialValue: 0,
       readOnly: true,
     }),
+    defineField({
+      name: "badges",
+      title: "獲得称号バッジ",
+      type: "array",
+      of: [
+        {
+          type: "string",
+          options: {
+            list: [
+              { title: "💰 最適価格", value: "lowest-price" },
+              { title: "📊 高含有リード", value: "highest-content" },
+              { title: "💡 高効率モデル", value: "best-value" },
+              { title: "🔬 高エビデンス", value: "evidence-s" },
+              { title: "🛡️ 高安全性", value: "high-safety" },
+            ],
+          },
+        },
+      ],
+      description:
+        "この商品が獲得している5つの称号（最適価格、高含有リード、高効率モデル、高エビデンス、高安全性）。自動計算スクリプトで設定されます",
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {

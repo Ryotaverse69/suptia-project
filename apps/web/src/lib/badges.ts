@@ -9,6 +9,10 @@
  * 5. 🛡️ 高安全性 - 安全性スコア90点以上
  */
 
+// デバッグログの制御（開発環境でのみ有効）
+const DEBUG = process.env.NODE_ENV === "development";
+const debugLog = DEBUG ? console.log : () => {};
+
 export type BadgeType =
   | "lowest-price"
   | "highest-content"
@@ -140,7 +144,7 @@ function isHighestContent(
   product: ProductForBadgeEvaluation,
   allProducts: ProductForBadgeEvaluation[],
 ): boolean {
-  console.log("[高含有リード判定] product:", {
+  debugLog("[高含有リード判定] product:", {
     _id: product._id,
     ingredientId: product.ingredientId,
     ingredientAmount: product.ingredientAmount,
@@ -152,13 +156,13 @@ function isHighestContent(
     !product.servingsPerDay ||
     !product.ingredientId
   ) {
-    console.log("[高含有リード判定] 必須データ不足でfalse");
+    debugLog("[高含有リード判定] 必須データ不足でfalse");
     return false;
   }
 
   // 1日あたりの成分量を計算
   const productDailyAmount = product.ingredientAmount * product.servingsPerDay;
-  console.log("[高含有リード判定] 1日あたりの成分量:", productDailyAmount);
+  debugLog("[高含有リード判定] 1日あたりの成分量:", productDailyAmount);
 
   // 同じ成分を含む商品の中で最高含有量か判定
   const productsWithSameIngredient = allProducts.filter(
@@ -170,7 +174,7 @@ function isHighestContent(
       p.servingsPerDay > 0,
   );
 
-  console.log(
+  debugLog(
     "[高含有リード判定] 同じ成分の商品数:",
     productsWithSameIngredient.length,
   );
@@ -184,22 +188,22 @@ function isHighestContent(
 
   const maxDailyAmount = Math.max(...dailyAmounts.map((d) => d.amount));
 
-  console.log(
+  debugLog(
     "[高含有リード判定] 最大1日量:",
     maxDailyAmount,
     "vs 現在の商品:",
     productDailyAmount,
   );
-  console.log(
+  debugLog(
     "[高含有リード判定] 差分:",
     Math.abs(productDailyAmount - maxDailyAmount),
   );
-  console.log("[高含有リード判定] 全商品の1日量:", dailyAmounts.slice(0, 5)); // 最初の5件のみ表示
+  debugLog("[高含有リード判定] 全商品の1日量:", dailyAmounts.slice(0, 5));
 
   // 浮動小数点の精度問題に対応するため、許容誤差を使用
   const tolerance = 0.001; // 0.001mg未満の差は同一とみなす
   const result = Math.abs(productDailyAmount - maxDailyAmount) < tolerance;
-  console.log("[高含有リード判定] 結果:", result);
+  debugLog("[高含有リード判定] 結果:", result);
 
   return result;
 }
@@ -214,7 +218,7 @@ function isBestValue(
 ): boolean {
   // コスパ = 価格 / 成分量
   const productCostPerMg = calculateCostPerMg(product);
-  console.log(
+  debugLog(
     "[高効率モデル判定] productCostPerMg:",
     productCostPerMg,
     "ingredientId:",
@@ -222,9 +226,7 @@ function isBestValue(
   );
 
   if (productCostPerMg === null || !product.ingredientId) {
-    console.log(
-      "[高効率モデル判定] コスト計算失敗またはingredientId不足でfalse",
-    );
+    debugLog("[高効率モデル判定] コスト計算失敗またはingredientId不足でfalse");
     return false;
   }
 
@@ -242,11 +244,11 @@ function isBestValue(
 
   const costPerMgValues = costPerMgData.map((d) => d.cost) as number[];
 
-  console.log(
+  debugLog(
     "[高効率モデル判定] 同じ成分の商品数:",
     productsWithSameIngredient.length,
   );
-  console.log(
+  debugLog(
     "[高効率モデル判定] コスト計算できた商品数:",
     costPerMgValues.length,
   );
@@ -254,21 +256,21 @@ function isBestValue(
   if (costPerMgValues.length === 0) return false;
 
   const minCostPerMg = Math.min(...costPerMgValues);
-  console.log(
+  debugLog(
     "[高効率モデル判定] 最小コスト:",
     minCostPerMg,
     "vs 現在の商品:",
     productCostPerMg,
   );
-  console.log(
+  debugLog(
     "[高効率モデル判定] 差分:",
     Math.abs(productCostPerMg - minCostPerMg),
   );
-  console.log("[高効率モデル判定] 全商品のコスト:", costPerMgData.slice(0, 5)); // 最初の5件のみ表示
+  debugLog("[高効率モデル判定] 全商品のコスト:", costPerMgData.slice(0, 5));
 
   const tolerance = 0.01; // 0.01円/mg未満の差は同一とみなす
   const result = Math.abs(productCostPerMg - minCostPerMg) < tolerance;
-  console.log("[高効率モデル判定] 結果:", result);
+  debugLog("[高効率モデル判定] 結果:", result);
 
   return result;
 }

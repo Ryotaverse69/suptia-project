@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdaptersFromEnv } from "@/lib/adapters";
 import type { ProductIdentifier } from "@/lib/adapters/types";
 
+export const dynamic = "force-dynamic"; // 動的レンダリングを強制
+
 /**
  * 価格同期リクエスト
  */

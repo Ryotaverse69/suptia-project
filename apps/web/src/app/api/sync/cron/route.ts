@@ -14,6 +14,7 @@ import {
   type PriceDataForSanity,
 } from "@/lib/price-manager";
 
+export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 export const maxDuration = 300; // 5分のタイムアウト（Pro planの場合）
 
 /**

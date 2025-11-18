@@ -87,7 +87,7 @@ jobs:
           node scripts/sync-yahoo-products.mjs "$KEYWORD" --limit $LIMIT
 
   calculate-ranks:
-    name: ランク計算
+    name: ランク・バッジ計算
     runs-on: ubuntu-latest
     needs: [sync-rakuten, sync-yahoo]
     if: needs.sync-rakuten.result == 'success' || needs.sync-yahoo.result == 'success'
@@ -117,6 +117,9 @@ jobs:
       - name: Calculate tier ranks
         run: node scripts/auto-calculate-tier-ranks.mjs --fix
 
+      - name: Calculate badges
+        run: node scripts/calculate-badges.mjs --fix
+
       - name: Revalidate frontend (ISR)
         run: |
           curl -X POST "https://suptia.com/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
@@ -134,17 +137,18 @@ jobs:
         run: |
           echo "楽天同期: ${{ needs.sync-rakuten.result }}"
           echo "Yahoo同期: ${{ needs.sync-yahoo.result }}"
-          echo "ランク計算: ${{ needs.calculate-ranks.result }}"
+          echo "ランク・バッジ計算: ${{ needs.calculate-ranks.result }}"
 
           if [ "${{ needs.sync-rakuten.result }}" != "success" ] && [ "${{ needs.sync-yahoo.result }}" != "success" ]; then
             echo "⚠️  価格同期が失敗しました"
             exit 1
           elif [ "${{ needs.calculate-ranks.result }}" != "success" ]; then
-            echo "⚠️  ランク計算が失敗しました（価格は更新済み）"
+            echo "⚠️  ランク・バッジ計算が失敗しました（価格は更新済み）"
             exit 1
           else
             echo "✅ すべての同期が成功しました"
             echo "   - 価格データ更新: ✓"
-            echo "   - ランク計算: ✓"
+            echo "   - Tierランク計算: ✓"
+            echo "   - 称号バッジ計算: ✓"
             echo "   - フロントエンド更新: ✓"
           fi
