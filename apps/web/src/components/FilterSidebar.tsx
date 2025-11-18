@@ -8,14 +8,27 @@ import {
   Search,
 } from "lucide-react";
 import { TierRank } from "@/lib/tier-colors";
+import { BadgeType, BADGE_DEFINITIONS } from "@/lib/badges";
 
 interface FilterSection {
   title: string;
-  filterKey: "priceRange" | "evidenceLevel" | "ecSite";
+  filterKey: "priceRange" | "evidenceLevel" | "ecSite" | "badges";
   options: { label: string; value: string; count?: number; icon?: string }[];
 }
 
 const filterSections: FilterSection[] = [
+  {
+    title: "称号バッジ",
+    filterKey: "badges",
+    options: [
+      { label: "5冠達成", value: "perfect", icon: "🏆" },
+      { label: "最適価格", value: "lowest-price", icon: "💰" },
+      { label: "高含有リード", value: "highest-content", icon: "📊" },
+      { label: "高効率モデル", value: "best-value", icon: "💡" },
+      { label: "高エビデンス", value: "evidence-s", icon: "🔬" },
+      { label: "高安全性", value: "high-safety", icon: "🛡️" },
+    ],
+  },
   {
     title: "Tierランク",
     filterKey: "evidenceLevel",
@@ -56,6 +69,7 @@ interface FilterSidebarProps {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     ecSite?: string | null;
+    badges?: string[];
   }) => void;
   onClearFilters?: () => void;
   activeFilters?: {
@@ -63,6 +77,7 @@ interface FilterSidebarProps {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     ecSite?: string | null;
+    badges?: string[];
   };
 }
 
@@ -89,17 +104,44 @@ export function FilterSidebar({
   };
 
   const handleFilterToggle = (
-    filterKey: "priceRange" | "evidenceLevel" | "ecSite",
+    filterKey: "priceRange" | "evidenceLevel" | "ecSite" | "badges",
     value: string,
   ) => {
     if (!onFilterChange) return;
 
-    const currentValue = activeFilters[filterKey];
-    const newValue = currentValue === value ? null : value;
+    // バッジフィルターの場合は複数選択対応
+    if (filterKey === "badges") {
+      const currentBadges = activeFilters.badges || [];
+      let newBadges: string[];
 
-    onFilterChange({
-      [filterKey]: newValue,
-    });
+      // 5冠達成が選択された場合
+      if (value === "perfect") {
+        // 既に選択されている場合は解除、そうでない場合は5冠達成のみ選択
+        newBadges = currentBadges.includes("perfect") ? [] : ["perfect"];
+      } else {
+        // 5冠達成が選択されている場合は何もしない
+        if (currentBadges.includes("perfect")) {
+          return;
+        }
+
+        // 通常のバッジの場合はトグル
+        if (currentBadges.includes(value)) {
+          newBadges = currentBadges.filter((b) => b !== value);
+        } else {
+          newBadges = [...currentBadges, value];
+        }
+      }
+
+      onFilterChange({ badges: newBadges });
+    } else {
+      // その他のフィルターは単一選択
+      const currentValue = activeFilters[filterKey];
+      const newValue = currentValue === value ? null : value;
+
+      onFilterChange({
+        [filterKey]: newValue,
+      });
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,10 +160,11 @@ export function FilterSidebar({
   };
 
   const activeFilterCount =
-    Object.entries(activeFilters).filter(
-      ([key, value]) =>
-        key !== "searchQuery" && value !== null && value !== undefined,
-    ).length + (activeFilters.searchQuery ? 1 : 0);
+    Object.entries(activeFilters).filter(([key, value]) => {
+      if (key === "searchQuery") return false;
+      if (key === "badges") return Array.isArray(value) && value.length > 0;
+      return value !== null && value !== undefined;
+    }).length + (activeFilters.searchQuery ? 1 : 0);
 
   // ランク別の色（ツヤツヤグラデーション付き）
   const rankColors: Record<TierRank, string> = {
@@ -250,6 +293,60 @@ export function FilterSidebar({
                                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs">
                                   ✓
                                 </div>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : section.title === "称号バッジ" ? (
+                    // 称号バッジ専用（縦並びリスト、複数選択可能）
+                    <div className="space-y-2">
+                      {section.options.map((option) => {
+                        const activeBadges = activeFilters.badges || [];
+                        const isSelected = activeBadges.includes(option.value);
+                        const isPerfect = option.value === "perfect";
+                        const perfectSelected =
+                          activeBadges.includes("perfect");
+                        const isDisabled = !isPerfect && perfectSelected;
+
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() =>
+                              handleFilterToggle(
+                                section.filterKey,
+                                option.value,
+                              )
+                            }
+                            disabled={isDisabled}
+                            className={`relative w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              isDisabled
+                                ? "opacity-40 cursor-not-allowed"
+                                : isPerfect
+                                  ? isSelected
+                                    ? "bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white shadow-lg scale-105"
+                                    : "bg-gradient-to-r from-purple-100 via-pink-100 to-yellow-100 text-purple-700 hover:from-purple-200 hover:via-pink-200 hover:to-yellow-200"
+                                  : isSelected
+                                    ? "bg-primary text-white shadow-md scale-105"
+                                    : "bg-white/80 text-primary-700 hover:bg-white hover:shadow-sm"
+                            } border ${isSelected ? "border-primary" : "border-primary-200"}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              {option.icon && (
+                                <span className="text-base">{option.icon}</span>
+                              )}
+                              <span className="flex-1 text-left">
+                                {option.label}
+                              </span>
+                              {/* 選択マーク */}
+                              {isSelected && (
+                                <span
+                                  className={`text-xs ${isPerfect ? "text-white" : "text-primary"}`}
+                                >
+                                  ✓
+                                </span>
                               )}
                             </div>
                           </button>

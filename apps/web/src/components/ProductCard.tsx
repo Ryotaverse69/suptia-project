@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/TierBadge";
 import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
 import { TierRank } from "@/lib/tier-colors";
-import { BadgeType, getBadgeInfo } from "@/lib/badges";
+import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
 
 interface ProductCardProps {
   product: {
@@ -75,8 +75,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(_id);
 
-  // 5冠達成判定（すべてSランク）
-  const isPerfect = tierRatings ? isPerfectProduct(tierRatings) : false;
+  // 5冠達成判定（すべての称号を獲得）
+  const isPerfect = isPerfectSupplement(safeBadges);
 
   // 画像URL: 外部画像URL > imageUrl > プレースホルダー
   const displayImageUrl = externalImageUrl || imageUrl;
@@ -122,37 +122,32 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* 5つ星認定バッジ */}
-          {isPerfect && (
-            <div className="absolute top-4 left-0 right-0 z-10 flex justify-center">
-              <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
-                <span className="text-lg">🏆</span>
-                <span className="font-bold text-sm">
-                  5つ星認定！全項目で最高評価
-                </span>
-                <span className="text-lg">🏆</span>
-              </div>
-            </div>
-          )}
-
-          {/* 称号バッジ（アイコンのみ、ホバーでラベル表示） */}
-          {!isPerfect && safeBadges.length > 0 && (
-            <div className="absolute top-3 left-3 z-10 flex gap-1.5">
-              {safeBadges.map((badgeType) => {
-                const badgeInfo = getBadgeInfo(badgeType);
-                return (
-                  <div
-                    key={badgeType}
-                    className="group relative bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md hover:px-3 hover:rounded-lg transition-all duration-300 cursor-pointer"
-                    title={badgeInfo.label}
-                  >
-                    <span className="text-base">{badgeInfo.icon}</span>
-                    <span className="hidden group-hover:inline ml-1.5 text-xs font-semibold text-gray-700 whitespace-nowrap">
-                      {badgeInfo.label}
-                    </span>
-                  </div>
-                );
-              })}
+          {/* 称号バッジ（小さく表示、ホバーで拡大） - リキッドグラス版 */}
+          {(isPerfect || safeBadges.length > 0) && (
+            <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1 max-w-[90px]">
+              {isPerfect ? (
+                // 5冠達成の場合は王冠のみ表示
+                <div
+                  className="relative bg-gradient-to-br from-yellow-400/60 via-yellow-300/50 to-yellow-200/40 backdrop-blur-lg backdrop-saturate-150 p-1 rounded-lg shadow-lg border border-yellow-300/40 hover:shadow-2xl hover:border-yellow-400/60 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20 animate-pulse"
+                  title="5冠達成！全項目で最高評価"
+                >
+                  <span className="text-sm">🏆</span>
+                </div>
+              ) : (
+                // 通常のバッジ表示
+                safeBadges.map((badgeType) => {
+                  const badgeInfo = getBadgeInfo(badgeType);
+                  return (
+                    <div
+                      key={badgeType}
+                      className="relative bg-gradient-to-br from-white/50 via-white/40 to-white/30 backdrop-blur-lg backdrop-saturate-150 p-1 rounded-lg shadow-lg border border-white/30 hover:shadow-2xl hover:border-white/50 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20"
+                      title={badgeInfo.label}
+                    >
+                      <span className="text-sm">{badgeInfo.icon}</span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
 

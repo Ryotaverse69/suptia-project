@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { Award } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
+import { BadgeType, isPerfectSupplement } from "@/lib/badges";
 
 interface Product {
   _id: string;
@@ -38,6 +39,7 @@ interface Product {
     };
   }>;
   tierRatings?: TierRatings;
+  badges?: BadgeType[];
 }
 
 interface ProductsSectionProps {
@@ -59,6 +61,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     null,
   );
   const [ecSiteFilter, setEcSiteFilter] = useState<string | null>(null);
+  const [badgeFilters, setBadgeFilters] = useState<string[]>([]);
 
   // フィルタリングとソート
   const filteredAndSortedProducts = useMemo(() => {
@@ -109,6 +112,21 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       });
     }
 
+    // バッジフィルター（複数選択対応）
+    if (badgeFilters.length > 0) {
+      filtered = filtered.filter((product) => {
+        // 5冠達成が選択されている場合
+        if (badgeFilters.includes("perfect")) {
+          return isPerfectSupplement(product.badges || []);
+        }
+
+        // 複数のバッジが選択されている場合、すべてのバッジを持つ商品のみ表示（AND条件）
+        return badgeFilters.every((badgeFilter) =>
+          product.badges?.includes(badgeFilter as BadgeType),
+        );
+      });
+    }
+
     // ソート
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -141,6 +159,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     priceRange,
     evidenceLevelFilter,
     ecSiteFilter,
+    badgeFilters,
   ]);
 
   const handleFilterChange = (filters: {
@@ -148,12 +167,14 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     priceRange?: string | null;
     evidenceLevel?: string | null;
     ecSite?: string | null;
+    badges?: string[];
   }) => {
     if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
     if (filters.priceRange !== undefined) setPriceRange(filters.priceRange);
     if (filters.evidenceLevel !== undefined)
       setEvidenceLevelFilter(filters.evidenceLevel);
     if (filters.ecSite !== undefined) setEcSiteFilter(filters.ecSite);
+    if (filters.badges !== undefined) setBadgeFilters(filters.badges);
   };
 
   const handleClearFilters = () => {
@@ -161,6 +182,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     setPriceRange(null);
     setEvidenceLevelFilter(null);
     setEcSiteFilter(null);
+    setBadgeFilters([]);
   };
 
   return (
@@ -176,6 +198,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
               priceRange,
               evidenceLevel: evidenceLevelFilter,
               ecSite: ecSiteFilter,
+              badges: badgeFilters,
             }}
           />
         </aside>
