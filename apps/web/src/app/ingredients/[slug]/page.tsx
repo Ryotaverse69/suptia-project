@@ -1,6 +1,5 @@
 import { sanityServer } from "@/lib/sanityServer";
 import { notFound } from "next/navigation";
-import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ExternalLink } from "lucide-react";
@@ -141,38 +140,49 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
       {ingredient.recommendedDosage && (
         <section className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">推奨摂取量</h2>
-          <div className="prose prose-sm max-w-none">
-            <PortableText value={ingredient.recommendedDosage} />
+          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {ingredient.recommendedDosage}
           </div>
         </section>
       )}
 
       {/* 副作用・注意事項 */}
-      {ingredient.sideEffects && (
+      {ingredient.sideEffects && ingredient.sideEffects.length > 0 && (
         <section className="mb-8 bg-red-50 rounded-lg border border-red-200 p-6">
           <h2 className="text-2xl font-bold text-red-900 mb-4">
             副作用・注意事項
           </h2>
-          <div className="prose prose-sm max-w-none text-red-900">
-            <PortableText value={ingredient.sideEffects} />
-          </div>
+          <ul className="space-y-2">
+            {ingredient.sideEffects.map((effect: string, index: number) => (
+              <li key={index} className="flex gap-3">
+                <span className="flex-shrink-0 text-red-600">⚠️</span>
+                <span className="text-red-900">{effect}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
       {/* 相互作用 */}
-      {ingredient.interactions && ingredient.interactions.length > 0 && (
+      {ingredient.interactions && (
         <section className="mb-8 bg-yellow-50 rounded-lg border border-yellow-200 p-6">
           <h2 className="text-2xl font-bold text-yellow-900 mb-4">相互作用</h2>
-          <ul className="space-y-2">
-            {ingredient.interactions.map(
-              (interaction: string, index: number) => (
-                <li key={index} className="flex gap-3">
-                  <span className="flex-shrink-0 text-yellow-600">⚠️</span>
-                  <span className="text-yellow-900">{interaction}</span>
-                </li>
-              ),
-            )}
-          </ul>
+          {Array.isArray(ingredient.interactions) ? (
+            <ul className="space-y-2">
+              {ingredient.interactions.map(
+                (interaction: string, index: number) => (
+                  <li key={index} className="flex gap-3">
+                    <span className="flex-shrink-0 text-yellow-600">⚠️</span>
+                    <span className="text-yellow-900">{interaction}</span>
+                  </li>
+                ),
+              )}
+            </ul>
+          ) : (
+            <div className="text-yellow-900 whitespace-pre-wrap">
+              {ingredient.interactions}
+            </div>
+          )}
         </section>
       )}
 
