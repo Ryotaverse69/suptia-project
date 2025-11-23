@@ -509,16 +509,16 @@ export default async function Home() {
         <div className="absolute inset-0 bg-slate-50 -z-30" />
 
         {/* Hero Section Wrapper - Cloud/Mist Animation */}
-        <div className="relative w-full bg-[#3b66e0] overflow-hidden py-20 sm:py-24 md:py-32">
+        <div className="relative w-full bg-[#3b66e0] overflow-hidden py-12 sm:py-24 md:py-32">
           {/* Layer 1: Main Drift (Blue -> Mint -> Blue) */}
           <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#f1faf9] to-[#3b66e0] -z-20 opacity-90"
+            className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#f1faf9] to-[#3b66e0] -z-20 opacity-90 blur-[100px] scale-150"
             style={{ animationDuration: "15s" }}
           />
 
           {/* Layer 2: Secondary Drift (Reverse, slightly different phase) - Creates turbulence */}
           <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-[#f1faf9]/40 to-transparent -z-19 mix-blend-overlay"
+            className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-[#f1faf9]/40 to-transparent -z-19 mix-blend-overlay blur-[80px] scale-150"
             style={{
               animationDuration: "20s",
               animationDirection: "reverse",
@@ -561,34 +561,35 @@ export default async function Home() {
 
         {/* How to Use Suptia - 3 Steps */}
         <div className="glass border-b border-white/30 relative z-10">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-6xl">
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8 sm:py-12 max-w-6xl">
             {/* Steps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {/* Step 1 */}
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-blue-400/30 via-indigo-400/30 to-blue-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-blue rounded-2xl p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-6 relative border border-white/40 group-hover:border-blue-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-blue rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-blue-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-2xl">1</span>
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    <span className="text-white font-black text-xl sm:text-2xl">
+                      1
+                    </span>
                   </div>
 
                   {/* Icon */}
                   <div className="group-hover:scale-110 transition-transform duration-500">
                     <Search
-                      className="text-blue-600 group-hover:text-blue-500 transition-colors duration-300"
-                      size={48}
+                      className="text-blue-600 group-hover:text-blue-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
                       strokeWidth={1.5}
                     />
                   </div>
 
                   {/* Content */}
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
                       検索・発見
                     </h3>
-                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                       Tierランク（S+〜D）で
                       <br />
                       瞬時にサプリの実力を把握
@@ -601,27 +602,28 @@ export default async function Home() {
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-emerald-400/30 via-teal-400/30 to-emerald-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-mint rounded-2xl p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-6 relative border border-white/40 group-hover:border-emerald-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-mint rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-emerald-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl -rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-2xl">2</span>
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl sm:rounded-2xl -rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500">
+                    <span className="text-white font-black text-xl sm:text-2xl">
+                      2
+                    </span>
                   </div>
 
                   {/* Icon */}
                   <div className="group-hover:scale-110 transition-transform duration-500">
                     <BarChart3
-                      className="text-emerald-600 group-hover:text-emerald-500 transition-colors duration-300"
-                      size={48}
+                      className="text-emerald-600 group-hover:text-emerald-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
                       strokeWidth={1.5}
                     />
                   </div>
 
                   {/* Content */}
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors duration-300">
                       比較・分析
                     </h3>
-                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                       成分・コスパ・安全性を
                       <br />
                       5軸チャートで徹底比較
@@ -634,27 +636,28 @@ export default async function Home() {
               <div className="group relative perspective-1000">
                 {/* グロー効果レイヤー（ホバー時） */}
                 <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-400/30 via-pink-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-purple rounded-2xl p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-6 relative border border-white/40 group-hover:border-purple-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
+                <div className="glass-purple rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-purple-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
                   {/* Step Number Badge */}
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-2xl">3</span>
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    <span className="text-white font-black text-xl sm:text-2xl">
+                      3
+                    </span>
                   </div>
 
                   {/* Icon */}
                   <div className="group-hover:scale-110 transition-transform duration-500">
                     <CheckCircle2
-                      className="text-purple-600 group-hover:text-purple-500 transition-colors duration-300"
-                      size={48}
+                      className="text-purple-600 group-hover:text-purple-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
                       strokeWidth={1.5}
                     />
                   </div>
 
                   {/* Content */}
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-purple-600 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-purple-600 transition-colors duration-300">
                       選択・購入
                     </h3>
-                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                       最適なサプリを見つけて
                       <br />
                       最安値で賢く購入
@@ -668,38 +671,38 @@ export default async function Home() {
 
         {/* おすすめサプリセクション */}
         {featuredProductsWithCost.length > 0 && (
-          <section className="py-16 relative z-10">
-            <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
-              <div className="flex items-center justify-between mb-8">
+          <section className="py-12 sm:py-16 relative z-10">
+            <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1440px]">
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
                 <div>
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
+                  <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-1 sm:mb-2">
                     おすすめのサプリメント
                   </h2>
-                  <p className="text-slate-500 font-medium">
+                  <p className="text-xs sm:text-base text-slate-500 font-medium">
                     科学的根拠と人気度に基づいた厳選セレクション
                   </p>
                 </div>
                 <Link
                   href="/products"
-                  className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/50 hover:bg-white border border-slate-200 hover:border-blue-200 shadow-sm hover:shadow-md transition-all duration-300"
+                  className="group flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/50 hover:bg-white border border-slate-200 hover:border-blue-200 shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600">
+                  <span className="text-xs sm:text-sm font-bold text-slate-600 group-hover:text-blue-600">
                     全て見る
                   </span>
                   <TrendingUp
                     size={16}
-                    className="text-slate-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-transform"
+                    className="text-slate-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-transform w-3 h-3 sm:w-4 sm:h-4"
                   />
                 </Link>
               </div>
 
               {/* 横スクロール可能なカルーセル */}
-              <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 lg:-mx-12 lg:px-12 xl:-mx-16 xl:px-16 py-4">
-                <div className="flex gap-6 pb-4">
+              <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-12 lg:px-12 xl:-mx-16 xl:px-16 py-4">
+                <div className="flex gap-4 sm:gap-6 pb-4">
                   {featuredProductsWithCost.map((product) => (
                     <div
                       key={product.slug.current}
-                      className="group relative perspective-1000 flex-shrink-0 w-[300px]"
+                      className="group relative perspective-1000 flex-shrink-0 w-[260px] sm:w-[300px]"
                     >
                       {/* グロー効果レイヤー（ホバー時） */}
                       <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />

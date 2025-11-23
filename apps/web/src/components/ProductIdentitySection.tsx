@@ -108,6 +108,65 @@ export function ProductIdentitySection({
             )}
           </div>
 
+          {/* Product Header */}
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <div className="text-sm sm:text-lg text-slate-500 font-medium mb-1 sm:mb-2 flex items-center gap-2">
+                  {product.brandName}
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] sm:text-xs rounded-full">
+                    国内正規品
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-3xl font-black text-slate-900 leading-tight tracking-tight">
+                  {product.name}
+                </h1>
+              </div>
+
+              {/* Tier Rank Badge (Mobile Optimized) */}
+              {updatedTierRatings?.overallRank && (
+                <div className="flex flex-col items-center bg-white rounded-xl sm:rounded-2xl p-2 sm:p-4 border border-slate-200 shadow-sm">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5 sm:mb-1">
+                    Tier Rank
+                  </span>
+                  <div
+                    className={`text-4xl sm:text-6xl font-black leading-none ${
+                      updatedTierRatings.overallRank === "S+"
+                        ? "text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-pink-600"
+                        : updatedTierRatings.overallRank === "S"
+                          ? "text-purple-600"
+                          : updatedTierRatings.overallRank === "A"
+                            ? "text-blue-600"
+                            : "text-slate-700"
+                    }`}
+                  >
+                    {updatedTierRatings.overallRank}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Badges Grid */}
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
+              {badges.map((badge, i) => (
+                <span
+                  key={i}
+                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border ${
+                    badge.type === "gold"
+                      ? "bg-amber-50 text-amber-700 border-amber-200"
+                      : badge.type === "silver"
+                        ? "bg-slate-50 text-slate-700 border-slate-200"
+                        : "bg-blue-50 text-blue-700 border-blue-200"
+                  }`}
+                >
+                  {badge.icon && (
+                    <span className="text-base sm:text-lg">{badge.icon}</span>
+                  )}
+                  {badge.label}
+                </span>
+              ))}
+            </div>
+          </div>
           {/* Key Stats Row */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
@@ -123,8 +182,6 @@ export function ProductIdentitySection({
               </div>
             </div>
           </div>
-
-          <BadgeSummary badges={badges} />
 
           {/* Mobile-friendly Description Trigger */}
           <SeamlessModal

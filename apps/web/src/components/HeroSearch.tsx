@@ -36,16 +36,18 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
       </div>
 
       <div className="relative mx-auto max-w-[900px] w-full z-10 px-4 sm:px-6">
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 sm:mb-5 md:mb-6 tracking-wide drop-shadow-lg">
-            あなたに最適なサプリを見つけよう
+        <div className="text-center mb-6 sm:mb-10 md:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-3 sm:mb-5 md:mb-6 tracking-wide drop-shadow-lg leading-tight">
+            あなたに最適な
+            <br className="block sm:hidden" />
+            サプリを見つけよう
           </h1>
         </div>
 
         {/* 3D search box with focus effects */}
         <form
           onSubmit={handleSearch}
-          className="relative mb-6 sm:mb-7 md:mb-8 group"
+          className="relative mb-5 sm:mb-7 md:mb-8 group"
         >
           {/* Gathering Mist Effect Layer - Concentrates on hover */}
           <div
@@ -86,8 +88,8 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="サプリメント名、成分名で検索..."
-              className={`flex-1 py-3 sm:py-4 md:py-5 px-1 sm:px-2 text-sm sm:text-base font-light bg-transparent outline-none transition-colors duration-300 ${
+              placeholder="サプリ名、成分名で検索..."
+              className={`flex-1 py-2.5 sm:py-4 md:py-5 px-1 sm:px-2 text-sm sm:text-base font-light bg-transparent outline-none transition-colors duration-300 ${
                 isFocused
                   ? "text-slate-800 placeholder:text-slate-400"
                   : "text-white placeholder:text-white/50"
@@ -95,7 +97,7 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
             />
             <button
               type="submit"
-              className="bg-gradient-to-r from-accent-purple to-accent-purple/90 hover:from-accent-purple/90 hover:to-accent-purple text-white font-medium px-5 sm:px-7 md:px-10 py-3 sm:py-4 md:py-5 transition-all duration-300 text-xs sm:text-sm hover:shadow-glow-purple whitespace-nowrap relative z-10"
+              className="bg-gradient-to-r from-accent-purple to-accent-purple/90 hover:from-accent-purple/90 hover:to-accent-purple text-white font-medium px-4 sm:px-7 md:px-10 py-3 sm:py-4 md:py-5 transition-all duration-300 text-xs sm:text-sm hover:shadow-glow-purple whitespace-nowrap relative z-10"
               style={{
                 boxShadow:
                   "0 4px 15px 0 rgba(86, 71, 166, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)",

@@ -633,11 +633,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {/* Right Column: Data Modules (8 cols) */}
             <div className="lg:col-span-8 space-y-8">
               {/* Price Comparison Module (Direct Display) */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 relative overflow-hidden">
+              <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500" />
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
-                    <Database className="w-6 h-6 text-blue-500" />
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
+                    <Database className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                     価格比較
                   </h3>
                   {updatedTierRatings?.priceRank && (
@@ -645,7 +645,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.priceRank === "S" || updatedTierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                     >
                       <span className="text-[10px] font-bold">RANK</span>
-                      <span className="text-lg font-black leading-none">
+                      <span className="text-base sm:text-lg font-black leading-none">
                         {updatedTierRatings.priceRank}
                       </span>
                     </div>
@@ -661,28 +661,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
               <SeamlessModal layoutId="composition-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-400 to-pink-500" />
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
-                        <Beaker className="w-6 h-6 text-purple-500" />
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
+                        <Beaker className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
                         含有量比較
                       </h3>
-                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                      <span className="text-[10px] sm:text-xs text-blue-600 font-bold bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
                         詳細を見る
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-slate-500">
+                      <div className="text-xs sm:text-sm text-slate-500">
                         他社製品との成分量比較
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         {updatedTierRatings?.contentRank && (
                           <div
                             className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                           >
                             <span className="text-[10px] font-bold">RANK</span>
-                            <span className="text-lg font-black leading-none">
+                            <span className="text-base sm:text-lg font-black leading-none">
                               {updatedTierRatings.contentRank}
                             </span>
                           </div>
@@ -691,7 +691,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           {similarProducts.slice(0, 3).map((prod, i) => (
                             <div
                               key={i}
-                              className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 overflow-hidden relative"
+                              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 overflow-hidden relative"
                             >
                               {prod.imageUrl ? (
                                 <Image
@@ -709,7 +709,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             </div>
                           ))}
                           {similarProducts.length > 3 && (
-                            <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-500">
                               +{similarProducts.length - 3}
                             </div>
                           )}
@@ -762,40 +762,40 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Cost Efficiency Module */}
               <SeamlessModal layoutId="cost-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-400 to-orange-500" />
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
-                        <Zap className="w-6 h-6 text-yellow-500" />
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
+                        <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
                         コスパ分析
                       </h3>
-                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                      <span className="text-[10px] sm:text-xs text-blue-600 font-bold bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
                         詳細を見る
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-6">
+                    <div className="flex items-center justify-between gap-2 sm:gap-4">
+                      <div className="flex items-center gap-3 sm:gap-6">
                         <div>
-                          <p className="text-xs text-slate-500 mb-1 font-medium">
+                          <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1 font-medium">
                             1日あたりのコスト
                           </p>
-                          <p className="text-3xl font-bold text-slate-900 tracking-tight">
+                          <p className="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                             ¥
                             {(
                               product.priceJPY /
                               (product.servingsPerContainer /
                                 product.servingsPerDay)
                             ).toFixed(0)}
-                            <span className="text-sm text-slate-400 font-normal ml-1">
+                            <span className="text-xs sm:text-sm text-slate-400 font-normal ml-1">
                               /日
                             </span>
                           </p>
                         </div>
 
-                        <div className="h-8 w-px bg-slate-200" />
+                        <div className="hidden sm:block h-8 w-px bg-slate-200" />
 
-                        <div>
+                        <div className="hidden sm:block">
                           <p className="text-[10px] text-slate-400 mb-0.5">
                             1mgあたりの価格
                           </p>
@@ -809,9 +809,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           </p>
                         </div>
 
-                        <div className="h-8 w-px bg-slate-200" />
+                        <div className="hidden sm:block h-8 w-px bg-slate-200" />
 
-                        <div>
+                        <div className="hidden sm:block">
                           <p className="text-[10px] text-slate-400 mb-0.5">
                             主要成分量
                           </p>
@@ -823,10 +823,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
                       {updatedTierRatings?.costEffectivenessRank && (
                         <div
-                          className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${updatedTierRatings.costEffectivenessRank === "S" || updatedTierRatings.costEffectivenessRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.costEffectivenessRank === "S" || updatedTierRatings.costEffectivenessRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                         >
-                          <span className="text-xs font-bold">RANK</span>
-                          <span className="text-2xl font-black leading-none">
+                          <span className="text-[10px] sm:text-xs font-bold">
+                            RANK
+                          </span>
+                          <span className="text-lg sm:text-2xl font-black leading-none">
                             {updatedTierRatings.costEffectivenessRank}
                           </span>
                         </div>
