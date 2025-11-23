@@ -1,5 +1,7 @@
 "use client";
 
+import { TierRank } from "@/lib/tier-colors";
+
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
 import {
@@ -8,51 +10,45 @@ import {
   getDefaultPointRate,
 } from "@/lib/effective-price";
 import {
-  TrendingDown,
   ExternalLink,
+  Database,
+  Filter,
+  ShoppingBag,
+  CheckCircle2,
   AlertCircle,
-  ShoppingCart,
 } from "lucide-react";
-
-/**
- * 複数ECサイトの価格比較コンポーネント
- *
- * 「案A: 全体統合（最安値優先）」を実装
- * - 全てのECサイト・店舗を混ぜて最安値順に表示
- * - 楽天市場内の各店舗、Yahoo!ショッピング内の店舗も個別表示
- * - 単品とセット商品を分離表示
- * - 単位価格（¥/個）を表示
- */
 
 interface PriceData {
   source: string;
-  shopName?: string; // 店舗名（旧フィールド、下位互換のため保持）
-  storeName?: string; // 店舗名（新フィールド）
-  productName?: string; // 商品名（数量検出用）
-  itemCode?: string; // 商品コード（店舗名検出用）
+  shopName?: string;
+  storeName?: string;
+  productName?: string;
+  itemCode?: string;
   amount: number;
   currency: string;
   url: string;
   fetchedAt: string;
   confidence?: number;
-  quantity?: number; // セット数量
-  unitPrice?: number; // 単位価格
-  // 実質価格関連（改善1）
-  shippingFee?: number; // 送料
-  pointRate?: number; // ポイント還元率（0.01 = 1%）
-  isFreeShipping?: boolean; // 送料無料フラグ
-  effectivePrice?: number; // 実質価格（計算後）
-  pointAmount?: number; // ポイント還元額（計算後）
-  // 在庫状況（改善7）
+  quantity?: number;
+  unitPrice?: number;
+  shippingFee?: number;
+  pointRate?: number;
+  isFreeShipping?: boolean;
+  effectivePrice?: number;
+  pointAmount?: number;
   stockStatus?: "in_stock" | "low_stock" | "out_of_stock" | "unknown";
 }
 
 interface PriceComparisonProps {
   priceData?: PriceData[];
-  priceRank?: "S" | "A" | "B" | "C" | "D";
+  priceRank?: TierRank;
   className?: string;
 }
 
+/**
+ * 複数ECサイトの価格比較コンポーネント
+ * Customer-Centric Style (Readable & Actionable)
+ */
 export function PriceComparison({
   priceData,
   priceRank,
@@ -60,90 +56,71 @@ export function PriceComparison({
 }: PriceComparisonProps) {
   const [showBulkPrices, setShowBulkPrices] = useState(true);
 
-  // データがない場合でもセクションを表示
   const hasData = priceData && priceData.length > 0;
 
-  // ランク情報の定義
+  // ランク情報の定義 (Clean Style)
   const rankInfo: Record<
     string,
     {
       color: string;
-      bgColor: string;
-      borderColor: string;
       textColor: string;
       label: string;
-      description: string;
     }
   > = {
+    "S+": {
+      color: "bg-purple-100 border-purple-200",
+      textColor: "text-purple-700",
+      label: "神コスパ",
+    },
     S: {
-      color: "from-purple-500 to-purple-700",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      textColor: "text-purple-800",
-      label: "最安値",
-      description: "この商品は複数のECサイトで最安値です",
+      color: "bg-purple-50 border-purple-100",
+      textColor: "text-purple-700",
+      label: "最安値級",
     },
     A: {
-      color: "from-blue-500 to-blue-700",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      textColor: "text-blue-800",
-      label: "優良価格",
-      description: "非常にお得な価格設定です",
+      color: "bg-blue-100",
+      textColor: "text-blue-700",
+      label: "お買い得",
     },
     B: {
-      color: "from-green-500 to-green-700",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      textColor: "text-green-800",
+      color: "bg-emerald-100",
+      textColor: "text-emerald-700",
       label: "標準価格",
-      description: "標準的な価格帯です",
     },
     C: {
-      color: "from-yellow-500 to-yellow-700",
-      bgColor: "bg-yellow-50",
-      borderColor: "border-yellow-200",
-      textColor: "text-yellow-800",
+      color: "bg-amber-100",
+      textColor: "text-amber-700",
       label: "やや高め",
-      description: "他の商品と比べてやや高めの価格です",
     },
     D: {
-      color: "from-red-500 to-red-700",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      textColor: "text-red-800",
-      label: "高価格",
-      description: "比較的高価格帯の商品です",
+      color: "bg-rose-100",
+      textColor: "text-rose-700",
+      label: "割高",
     },
   };
 
   const currentRankInfo = priceRank ? rankInfo[priceRank] : null;
 
-  // データがない場合は早期リターン
   if (!hasData) {
     return (
       <div
-        className={`bg-white border border-primary-200 rounded-xl shadow-sm p-6 ${className}`}
+        className={`bg-slate-50 border border-slate-200 rounded-xl p-8 text-center ${className}`}
       >
-        <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
-          <ShoppingCart size={24} />
-          価格比較
-        </h2>
-
-        <div className="p-8 text-center bg-gray-50 rounded-lg">
-          <p className="text-gray-600">
-            現在、価格比較データは準備中です。
-            <br />
-            複数のECサイトの価格を比較できるよう準備を進めています。
-          </p>
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-200 rounded-full mb-4">
+          <Database className="w-6 h-6 text-slate-400" />
         </div>
+        <h3 className="text-lg font-bold text-slate-700 mb-2">
+          価格データ準備中
+        </h3>
+        <p className="text-sm text-slate-500">
+          現在、価格情報を取得しています。しばらくお待ちください。
+        </p>
       </div>
     );
   }
 
-  // 価格データを処理（数量・店舗名・単位価格・実質価格を追加）
+  // データ処理
   const processedPrices = priceData.map((price) => {
-    // Sanityから取得したデータがあればそれを優先、なければparseする
     const productName = price.productName || "";
     const parsed = parseProductInfo(
       productName,
@@ -152,12 +129,10 @@ export function PriceComparison({
       price.itemCode,
     );
 
-    // 最終的なquantity値（Sanityの値を優先）
     const finalQuantity = price.quantity || parsed.quantity;
     const finalUnitPrice = price.unitPrice || parsed.unitPrice;
     const isBulk = finalQuantity > 1;
 
-    // 実質価格を計算（送料・ポイント込み）
     const shippingFee =
       price.shippingFee ?? getDefaultShippingFee(price.source, price.amount);
     const pointRate = price.pointRate ?? getDefaultPointRate(price.source);
@@ -171,10 +146,8 @@ export function PriceComparison({
       ...price,
       quantity: finalQuantity,
       unitPrice: finalUnitPrice,
-      // Sanityのデータを優先（正しい店舗名が既に設定されているため）
       storeName: price.storeName || price.shopName || parsed.storeName,
       isBulk: isBulk,
-      // 実質価格データ
       shippingFee,
       pointRate,
       isFreeShipping: shippingFee === 0,
@@ -183,51 +156,21 @@ export function PriceComparison({
     };
   });
 
-  // 単品とセット商品に分離
   const singlePrices = processedPrices.filter((p) => (p.quantity || 1) === 1);
   const bulkPrices = processedPrices.filter((p) => (p.quantity || 1) > 1);
 
-  // デバッグ用ログ
-  console.log("🔍 PriceComparison Debug:");
-  console.log("  Total prices:", processedPrices.length);
-  console.log("  Single prices:", singlePrices.length);
-  console.log("  Bulk prices:", bulkPrices.length);
-  console.log(
-    "  Bulk price details:",
-    bulkPrices.map((p) => ({
-      quantity: p.quantity,
-      amount: p.amount,
-      unitPrice: p.unitPrice,
-      storeName: p.storeName,
-      isBulk: p.isBulk,
-    })),
-  );
-
-  // 表示する価格リスト
   const displayPrices = showBulkPrices
     ? [...singlePrices, ...bulkPrices]
     : singlePrices;
 
-  // デバッグ用ログ - 表示される価格
-  console.log("📺 Display Info:");
-  console.log("  showBulkPrices:", showBulkPrices);
-  console.log("  displayPrices count:", displayPrices.length);
-  console.log(
-    "  displayPrices details:",
-    displayPrices.map((p) => ({
-      quantity: p.quantity,
-      isBulk: p.isBulk,
-      storeName: p.storeName,
-      amount: p.amount,
-    })),
-  );
-
-  // 最安値を見つける（単位価格ベース）
   const minUnitPrice = Math.min(
     ...displayPrices.map((p) => p.unitPrice || p.amount),
   );
 
-  // ソース名を日本語に変換
+  const sortedPrices = [...displayPrices].sort(
+    (a, b) => (a.unitPrice || a.amount) - (b.unitPrice || b.amount),
+  );
+
   const getSourceName = (source: string) => {
     const sourceNames: Record<string, string> = {
       rakuten: "楽天市場",
@@ -235,106 +178,64 @@ export function PriceComparison({
       amazon: "Amazon",
       iherb: "iHerb",
     };
-    return sourceNames[source] || source;
-  };
-
-  // ソースアイコン（色）を取得
-  const getSourceColor = (source: string) => {
-    const colors: Record<string, string> = {
-      rakuten: "bg-red-50 border-red-200 text-red-700",
-      yahoo: "bg-purple-50 border-purple-200 text-purple-700",
-      amazon: "bg-orange-50 border-orange-200 text-orange-700",
-      iherb: "bg-green-50 border-green-200 text-green-700",
-    };
-    return colors[source] || "bg-gray-50 border-gray-200 text-gray-700";
-  };
-
-  // 価格を単位価格の安い順にソート
-  const sortedPrices = [...displayPrices].sort(
-    (a, b) => (a.unitPrice || a.amount) - (b.unitPrice || b.amount),
-  );
-
-  // 最終更新日時を計算
-  const getTimeSince = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor(diff / (1000 * 60));
-
-    if (hours >= 24) {
-      const days = Math.floor(hours / 24);
-      return `${days}日前`;
-    } else if (hours > 0) {
-      return `${hours}時間前`;
-    } else {
-      return `${minutes}分前`;
-    }
+    return sourceNames[source] || source.toUpperCase();
   };
 
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm border border-primary-200 p-6 ${className}`}
+      className={`bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${className}`}
     >
-      <h2 className="text-2xl font-bold text-primary-900 mb-4 flex items-center gap-2">
-        <TrendingDown size={24} />
-        価格比較（最安値順）
-      </h2>
-
-      {/* ランクバッジ */}
-      {currentRankInfo && (
-        <div
-          className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
-        >
-          <div className="text-white">
-            <p className="text-xl font-bold mb-1">{priceRank}ランク</p>
-            <p className="text-base opacity-90">{currentRankInfo.label}</p>
+      {/* Header */}
+      <div className="bg-white p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-50 rounded-lg">
+            <ShoppingBag className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">最安値チェック</h2>
+            <p className="text-xs text-slate-500">
+              各ショップの価格と送料を比較
+            </p>
           </div>
         </div>
-      )}
 
-      <div className="flex items-center justify-between mb-4">
-        {/* セット商品表示トグル */}
-        {bulkPrices.length > 0 && (
-          <button
-            onClick={() => setShowBulkPrices(!showBulkPrices)}
-            className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all"
-          >
-            {showBulkPrices
-              ? `単品のみ表示 (${singlePrices.length}件)`
-              : `セット商品も表示 (+${bulkPrices.length}件)`}
-          </button>
-        )}
-      </div>
+        <div className="flex items-center gap-3">
+          {currentRankInfo && (
+            <div
+              className={`px-3 py-1 rounded-full border border-transparent ${currentRankInfo.color}`}
+            >
+              <span
+                className={`text-xs font-bold ${currentRankInfo.textColor}`}
+              >
+                {currentRankInfo.label}
+              </span>
+            </div>
+          )}
 
-      {/* ランク説明 */}
-      {currentRankInfo && (
-        <div
-          className={`mb-4 p-4 rounded-lg ${currentRankInfo.bgColor} border ${currentRankInfo.borderColor}`}
-        >
-          <p className={`text-sm ${currentRankInfo.textColor}`}>
-            {currentRankInfo.description}
-          </p>
+          {bulkPrices.length > 0 && (
+            <button
+              onClick={() => setShowBulkPrices(!showBulkPrices)}
+              className={`
+                flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-all
+                ${
+                  showBulkPrices
+                    ? "bg-slate-800 text-white border-slate-800"
+                    : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+                }
+              `}
+            >
+              <Filter className="w-3 h-3" />
+              {showBulkPrices ? "まとめ買いも表示" : "単品のみ表示"}
+            </button>
+          )}
         </div>
-      )}
-
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800">
-          複数のECサイト・店舗から最安値を比較できます
-        </p>
-        {showBulkPrices && bulkPrices.length > 0 && (
-          <p className="text-sm text-blue-800 mt-2 flex items-start gap-2">
-            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-            セット商品は単位価格（¥/個）で比較しています
-          </p>
-        )}
       </div>
 
-      <div className="space-y-3">
+      {/* Data List */}
+      <div className="divide-y divide-slate-100">
         {sortedPrices.map((price, index) => {
           const unitPrice = price.unitPrice || price.amount;
           const isLowest = unitPrice === minUnitPrice;
-          const isCheapest = index === 0;
           const quantity = price.quantity || 1;
           const isBulk = quantity > 1;
 
@@ -345,155 +246,124 @@ export function PriceComparison({
               target="_blank"
               rel="noopener noreferrer"
               className={`
-                block p-4 rounded-lg border-2 transition-all hover:shadow-md
-                ${
-                  price.stockStatus === "out_of_stock"
-                    ? "opacity-50 pointer-events-none border-gray-300 bg-gray-100"
-                    : isLowest
-                      ? "border-green-500 bg-green-50"
-                      : "border-gray-200 hover:border-gray-300"
-                }
+                block p-4 transition-all hover:bg-white hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 relative group rounded-xl border border-transparent hover:border-blue-200 mb-2
+                ${isLowest ? "bg-blue-50/40" : ""}
               `}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className={`
-                      px-3 py-1 text-xs font-semibold rounded-full border
-                      ${getSourceColor(price.source)}
-                    `}
-                    >
-                      {getSourceName(price.source)}
-                    </span>
-                    {isCheapest && (
-                      <span className="px-2 py-1 text-xs font-bold text-white bg-gradient-to-r from-green-500 to-emerald-500 rounded-full">
-                        🏆 最安値
-                      </span>
-                    )}
-                    {isBulk && (
-                      <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
-                        {quantity}個セット
-                      </span>
-                    )}
-                    {/* 在庫状況バッジ */}
-                    {price.stockStatus === "out_of_stock" && (
-                      <span className="px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                        在庫切れ
-                      </span>
-                    )}
-                    {price.stockStatus === "low_stock" && (
-                      <span className="px-2 py-1 text-xs font-semibold text-orange-700 bg-orange-100 rounded-full">
-                        残りわずか
-                      </span>
-                    )}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                {/* Shop Info */}
+                <div className="flex items-start gap-4 sm:w-1/3">
+                  <div
+                    className={`
+                    flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold shadow-sm
+                    ${index === 0 ? "bg-amber-100 text-amber-700 ring-2 ring-amber-200" : "bg-slate-100 text-slate-500"}
+                  `}
+                  >
+                    {index + 1}
                   </div>
-
-                  {/* 店舗名表示 */}
-                  {price.storeName && (
-                    <div className="mb-1 text-sm font-medium text-gray-700">
-                      {price.storeName}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg font-bold text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors">
+                        {getSourceName(price.source)}
+                      </span>
+                      {isLowest && (
+                        <span className="px-2 py-0.5 text-[10px] font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 rounded-full shadow-sm">
+                          最安値
+                        </span>
+                      )}
                     </div>
-                  )}
-
-                  {/* 実質価格内訳（送料・ポイント） */}
-                  {(price.shippingFee > 0 || price.pointAmount > 0) && (
-                    <div className="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
-                      <div className="space-y-1 text-xs">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">商品価格</span>
-                          <span className="font-medium">
-                            ¥{price.amount.toLocaleString()}
-                          </span>
-                        </div>
-                        {price.shippingFee > 0 && (
-                          <div className="flex justify-between text-orange-700">
-                            <span>送料</span>
-                            <span>+¥{price.shippingFee.toLocaleString()}</span>
-                          </div>
-                        )}
-                        {price.isFreeShipping && (
-                          <div className="flex justify-between text-green-700">
-                            <span>送料</span>
-                            <span className="font-semibold">無料</span>
-                          </div>
-                        )}
-                        {price.pointAmount > 0 && (
-                          <div className="flex justify-between text-blue-700">
-                            <span>
-                              ポイント還元（{(price.pointRate * 100).toFixed(0)}
-                              %）
-                            </span>
-                            <span>-¥{price.pointAmount.toLocaleString()}</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between pt-1 border-t border-gray-300">
-                          <span className="font-bold">実質価格</span>
-                          <span className="font-bold text-primary-700">
-                            ¥{price.effectivePrice.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
+                    <div className="text-xs text-slate-500 flex flex-wrap gap-2">
+                      {price.storeName && (
+                        <span className="truncate max-w-[180px]">
+                          {price.storeName}
+                        </span>
+                      )}
+                      {isBulk && (
+                        <span className="text-blue-600 font-bold bg-blue-50 px-1.5 rounded">
+                          {quantity}個セット
+                        </span>
+                      )}
                     </div>
-                  )}
+                  </div>
+                </div>
 
-                  <div className="flex items-baseline gap-3">
-                    {/* 総額表示 */}
-                    <span className="text-2xl font-bold text-gray-900">
+                {/* Price Info */}
+                <div className="flex flex-col sm:items-end sm:w-1/3">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-bold text-slate-900 tracking-tight group-hover:text-blue-700 transition-colors">
                       ¥{price.amount.toLocaleString()}
                     </span>
-
-                    {/* 単位価格表示（セット商品の場合） */}
                     {isBulk && (
-                      <span className="text-lg text-gray-600">
-                        (¥{unitPrice.toLocaleString()}/個)
+                      <span className="text-xs text-slate-500 font-medium">
+                        (単価: ¥{unitPrice.toLocaleString()})
                       </span>
                     )}
-
-                    <span className="text-sm text-gray-500">
-                      ({price.currency})
-                    </span>
                   </div>
-
-                  <div className="mt-1 text-xs text-gray-500">
-                    最終更新: {getTimeSince(price.fetchedAt)}
-                    {price.confidence && (
-                      <span className="ml-2">
-                        信頼度: {(price.confidence * 100).toFixed(0)}%
+                  <div className="text-xs text-slate-500 flex items-center gap-3 mt-1">
+                    {price.shippingFee > 0 ? (
+                      <span className="font-medium">
+                        送料: ¥{price.shippingFee.toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        <CheckCircle2 className="w-3 h-3" /> 送料無料
+                      </span>
+                    )}
+                    {price.pointAmount > 0 && (
+                      <span className="text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded-full">
+                        {price.pointAmount}pt還元
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex-shrink-0 ml-4">
-                  <span className="text-blue-600 font-medium text-sm flex items-center gap-1">
-                    購入ページへ
-                    <ExternalLink size={16} />
-                  </span>
+                {/* Action Arrow (Visual Cue) */}
+                <div className="sm:w-1/4 flex justify-end items-center">
+                  <div className="relative group">
+                    {/* Magic Border Container */}
+                    <div
+                      className={`
+                      relative overflow-hidden rounded-lg p-[2px] transition-all duration-300
+                      ${isLowest ? "shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]"}
+                    `}
+                    >
+                      {/* Rotating Gradient Border */}
+                      <div
+                        className={`
+                        absolute inset-[-100%] w-[300%] h-[300%] animate-border-spin
+                        ${
+                          isLowest
+                            ? "bg-[conic-gradient(from_90deg_at_50%_50%,#ffe4e6_0%,#f43f5e_50%,#ffe4e6_100%)]"
+                            : "bg-[conic-gradient(from_90deg_at_50%_50%,#bfdbfe_0%,#2563eb_50%,#bfdbfe_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        }
+                      `}
+                      />
+
+                      {/* Button Content (Mask) */}
+                      <div
+                        className={`
+                        relative flex items-center gap-1 text-sm font-bold px-4 py-1.5 rounded-[6px] bg-white transition-all
+                        ${isLowest ? "text-rose-500" : "text-slate-400 group-hover:text-blue-600"}
+                      `}
+                      >
+                        <span className="relative z-10 flex items-center gap-1">
+                          サイトへ
+                          <ExternalLink className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {!isLowest && sortedPrices[0] && (
-                <div className="mt-2 pt-2 border-t border-gray-200">
-                  <span className="text-xs text-gray-500">
-                    最安値との差額: +¥
-                    {(
-                      unitPrice -
-                      (sortedPrices[0].unitPrice || sortedPrices[0].amount)
-                    ).toLocaleString()}
-                    {isBulk && "/個"}
-                  </span>
-                </div>
-              )}
             </a>
           );
         })}
       </div>
 
-      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800 flex items-start gap-2">
-          <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-          価格は定期的に更新されますが、購入時に変動している場合があります。
+      {/* Footer */}
+      <div className="bg-slate-50 p-3 border-t border-slate-200 text-center">
+        <p className="text-[10px] text-slate-400">
+          ※価格と送料は変動する可能性があります。購入前に各サイトでご確認ください。
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { TierRatings } from "@/lib/tier-ranking";
 import { TierRank } from "@/lib/tier-colors";
+import { Trophy, Info, Crown, Award, Star, Activity, Zap } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -15,15 +16,12 @@ interface TierRankStatsProps {
 
 /**
  * Tierランク統計情報を表示するコンポーネント
- * - 全商品数
- * - S+ランク（5冠達成）商品数
- * - 各ランクの分布
+ * Futuristic / HUD Style
  */
 export function TierRankStats({
   products,
   className = "",
 }: TierRankStatsProps) {
-  // tierRatingsがある商品のみをカウント
   const productsWithTierRatings = products.filter((p) => p.tierRatings);
   const totalProducts = productsWithTierRatings.length;
 
@@ -31,7 +29,6 @@ export function TierRankStats({
     return null;
   }
 
-  // 総合評価別の集計
   const rankCounts: Record<TierRank, number> = {
     "S+": 0,
     S: 0,
@@ -48,152 +45,214 @@ export function TierRankStats({
     }
   });
 
-  // パーセンテージ計算
   const rankPercentages = Object.entries(rankCounts).map(([rank, count]) => ({
     rank: rank as TierRank,
     count,
     percentage: Math.round((count / totalProducts) * 100),
   }));
 
-  // ランク別の色（ツヤツヤグラデーション付き）
-  const rankColors: Record<TierRank, string> = {
-    "S+": "bg-gradient-to-br from-purple-500/80 via-pink-500/70 to-yellow-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
-    S: "bg-gradient-to-br from-purple-500/80 via-purple-500/70 to-purple-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
-    A: "bg-gradient-to-br from-blue-500/80 via-blue-500/70 to-blue-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
-    B: "bg-gradient-to-br from-green-500/80 via-green-500/70 to-green-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
-    C: "bg-gradient-to-br from-yellow-500/80 via-yellow-500/70 to-yellow-600/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
-    D: "bg-gradient-to-br from-gray-400/80 via-gray-400/70 to-gray-500/60 backdrop-blur-sm border-2 border-white/60 shadow-lg",
+  // Futuristic Color Palette & Glows
+  const rankStyles: Record<
+    TierRank,
+    { bg: string; text: string; glow: string; border: string }
+  > = {
+    "S+": {
+      bg: "bg-purple-500/10",
+      text: "text-purple-600",
+      glow: "shadow-[0_0_15px_rgba(168,85,247,0.4)]",
+      border: "border-purple-500/30",
+    },
+    S: {
+      bg: "bg-indigo-500/10",
+      text: "text-indigo-600",
+      glow: "shadow-[0_0_10px_rgba(99,102,241,0.3)]",
+      border: "border-indigo-500/30",
+    },
+    A: {
+      bg: "bg-blue-500/10",
+      text: "text-blue-600",
+      glow: "shadow-[0_0_10px_rgba(59,130,246,0.3)]",
+      border: "border-blue-500/30",
+    },
+    B: {
+      bg: "bg-emerald-500/10",
+      text: "text-emerald-600",
+      glow: "shadow-[0_0_10px_rgba(16,185,129,0.3)]",
+      border: "border-emerald-500/30",
+    },
+    C: {
+      bg: "bg-amber-500/10",
+      text: "text-amber-600",
+      glow: "shadow-none",
+      border: "border-amber-500/30",
+    },
+    D: {
+      bg: "bg-slate-500/10",
+      text: "text-slate-600",
+      glow: "shadow-none",
+      border: "border-slate-500/30",
+    },
   };
-
-  // ランク別のテキスト色（ツヤツヤ感のため濃く）
-  const rankTextColors: Record<TierRank, string> = {
-    "S+": "text-purple-800",
-    S: "text-purple-800",
-    A: "text-blue-800",
-    B: "text-green-800",
-    C: "text-yellow-800",
-    D: "text-gray-800",
-  };
-
-  // ガラス光沢シャドウ（ツヤツヤ感強化）
-  const glassTextShadow = {
-    textShadow:
-      "0 2px 0 rgba(255,255,255,1), 0 3px 2px rgba(255,255,255,0.8), 0 4px 6px rgba(0,0,0,0.2), 0 6px 12px rgba(0,0,0,0.15), 0 0 30px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,0.4)",
-  } as React.CSSProperties;
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 ${className}`}
+      className={`relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-xl ${className}`}
     >
-      <h2 className="text-xl font-semibold mb-4 text-gray-900">
-        🏆 総合評価の分布
-      </h2>
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-100/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-      {/* サマリー */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-          <div className="text-sm text-gray-600 mb-1">評価済み商品</div>
-          <div className="text-3xl font-bold text-gray-900">
-            {totalProducts}
+      <div className="relative z-10 p-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 shadow-sm">
+              <Activity className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800 tracking-tight">
+                市場全体分析
+              </h2>
+              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+                全商品のランク分布状況
+              </p>
+            </div>
           </div>
-          <div className="text-xs text-gray-500 mt-1">件</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-lg p-4">
-          <div className="text-sm text-gray-600 mb-1">S+ランク（5冠達成）</div>
-          <div className="text-3xl font-bold text-purple-700">
-            {rankCounts["S+"]}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            全体の
-            {totalProducts > 0
-              ? Math.round((rankCounts["S+"] / totalProducts) * 100)
-              : 0}
-            %
+          <div className="px-3 py-1 rounded-full bg-slate-100/80 border border-slate-200 text-xs font-mono text-slate-600">
+            分析対象: {totalProducts}商品
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
-          <div className="text-sm text-gray-600 mb-1">高品質商品（S～A）</div>
-          <div className="text-3xl font-bold text-green-700">
-            {rankCounts["S+"] + rankCounts.S + rankCounts.A}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            全体の
-            {totalProducts > 0
-              ? Math.round(
-                  ((rankCounts["S+"] + rankCounts.S + rankCounts.A) /
-                    totalProducts) *
-                    100,
-                )
-              : 0}
-            %
-          </div>
-        </div>
-      </div>
-
-      {/* ランク分布 */}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">ランク別</h3>
-        <div className="space-y-2">
-          {rankPercentages.map(({ rank, count, percentage }) => (
-            <div key={rank} className="flex items-center gap-2">
-              {/* ランクラベル */}
-              <div className="relative w-12 h-8">
-                <div
-                  className={`absolute inset-0 flex items-center justify-center rounded font-black text-sm ${rankColors[rank]} ${rankTextColors[rank]}`}
-                >
-                  <span style={glassTextShadow}>{rank}</span>
-                </div>
-                {/* キラキラハイライト（複数レイヤー） */}
-                <div className="absolute inset-0 rounded bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none"></div>
-                <div className="absolute inset-0 rounded bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer pointer-events-none"></div>
+        {/* HUD Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Key Metrics */}
+          <div className="lg:col-span-5 space-y-4">
+            {/* S+ Rank Card (Hero) */}
+            <div className="relative group overflow-hidden rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 shadow-lg transition-all hover:shadow-purple-200/50">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Crown className="w-24 h-24 text-purple-600 rotate-12" />
               </div>
-
-              {/* プログレスバー */}
-              <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden shadow-inner">
-                <div
-                  className="relative h-full"
-                  style={{ width: `${percentage}%` }}
-                >
-                  {/* 背景グラデーション */}
-                  <div
-                    className={`absolute inset-0 transition-all duration-500 ${rankColors[rank]}`}
-                  ></div>
-                  {/* キラキラオーバーレイ（複数レイヤー） */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/10 to-transparent"></div>
-                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent"></div>
-                  <div className="absolute inset-0 bg-gradient-to-l from-transparent via-white/10 to-transparent"></div>
-
-                  {percentage > 10 && (
-                    <span
-                      className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${rankTextColors[rank]} z-10`}
-                      style={glassTextShadow}
-                    >
-                      {count}件 ({percentage}%)
-                    </span>
-                  )}
-                </div>
-                {percentage <= 10 && count > 0 && (
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-700">
-                    {count}件
+              <div className="p-5 relative z-10">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="flex h-2 w-2 rounded-full bg-purple-500 animate-pulse" />
+                  <span className="text-xs font-bold text-purple-600 tracking-wider uppercase">
+                    最高評価 S+ Tier
                   </span>
-                )}
+                </div>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
+                    {rankCounts["S+"]}
+                  </span>
+                  <span className="text-sm font-medium text-purple-600/70">
+                    商品
+                  </span>
+                </div>
+                <div className="text-xs text-slate-500 font-medium">
+                  上位{" "}
+                  {totalProducts > 0
+                    ? Math.round((rankCounts["S+"] / totalProducts) * 100)
+                    : 0}
+                  % のエリート商品
+                </div>
+              </div>
+              {/* Animated bottom border */}
+              <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 opacity-50" />
+            </div>
+
+            {/* High Quality Summary */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    高品質商品 (S+/S/A)
+                  </span>
+                </div>
+                <div className="text-2xl font-bold text-slate-800">
+                  {rankCounts["S+"] + rankCounts.S + rankCounts.A}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-1">
+                  推奨ランク以上
+                </div>
+              </div>
+              <div className="p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-3.5 h-3.5 text-blue-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    市場シェア
+                  </span>
+                </div>
+                <div className="text-2xl font-bold text-slate-800">
+                  {totalProducts > 0
+                    ? Math.round(
+                        ((rankCounts["S+"] + rankCounts.S + rankCounts.A) /
+                          totalProducts) *
+                          100,
+                      )
+                    : 0}
+                  <span className="text-sm font-normal text-slate-400 ml-0.5">
+                    %
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-400 mt-1">
+                  高品質商品の割合
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* 説明 */}
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-        <p className="text-xs text-gray-600 leading-relaxed">
-          💡 <span className="font-semibold">総合評価</span>
-          は、価格・コスパ・含有量・エビデンス・安全性の5つの評価軸を重み付け平均して算出しています。
-          <span className="font-semibold text-purple-700">S+ランク</span>
-          は、すべての評価軸でSランクを獲得した「5冠達成」商品です。
-        </p>
+          {/* Right Column: Distribution Bars */}
+          <div className="lg:col-span-7 bg-white/40 rounded-xl border border-white/60 p-5 backdrop-blur-md">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+              ランク分布詳細
+            </h3>
+            <div className="space-y-4">
+              {rankPercentages.map(({ rank, count, percentage }) => (
+                <div key={rank} className="group">
+                  <div className="flex items-end justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`font-mono text-sm font-bold ${rankStyles[rank].text}`}
+                      >
+                        {rank}
+                      </span>
+                      <span className="text-[10px] font-medium text-slate-400">
+                        TIER
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-mono text-sm font-bold text-slate-700">
+                        {count}
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        ({percentage}%)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out ${rankStyles[rank].bg.replace("/10", "")} ${rankStyles[rank].glow}`}
+                      style={{ width: `${percentage}%` }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite]" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Info */}
+        <div className="mt-6 pt-4 border-t border-slate-200/60 flex items-start gap-3">
+          <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+          <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+            総合評価アルゴリズム v2.0:
+            価格・コスパ・含有量・エビデンス・安全性の5軸解析に基づき算出。
+            <span className="text-purple-600/80">S+ランク</span>
+            は全評価軸において最高水準を満たした「5冠達成」商品にのみ付与されます。
+          </p>
+        </div>
       </div>
     </div>
   );

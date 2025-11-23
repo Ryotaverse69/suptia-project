@@ -29,63 +29,11 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6 lg:px-12 xl:px-16 overflow-hidden">
-      {/* Animated gradient base */}
-      <div
-        className="absolute inset-0 animate-gradient-shift"
-        style={{
-          background:
-            "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
-          backgroundSize: "200% 200%",
-        }}
-      ></div>
-
-      {/* 6 animated orb layers for rich depth */}
-      <div
-        className="absolute top-0 left-0 w-[800px] h-[800px] rounded-full blur-3xl animate-depth-orb-1"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(122, 152, 236, 0.6) 0%, rgba(122, 152, 236, 0.3) 40%, transparent 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full blur-3xl animate-depth-orb-2"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(90, 127, 230, 0.5) 0%, rgba(90, 127, 230, 0.25) 40%, transparent 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full blur-3xl animate-depth-orb-3"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(59, 102, 224, 0.7) 0%, rgba(59, 102, 224, 0.4) 40%, transparent 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl animate-depth-orb-4"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(45, 79, 184, 0.5) 0%, rgba(45, 79, 184, 0.3) 40%, transparent 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute top-1/2 right-0 -translate-y-1/2 w-[750px] h-[750px] rounded-full blur-3xl animate-depth-orb-5"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(36, 61, 148, 0.4) 0%, rgba(36, 61, 148, 0.2) 40%, transparent 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full blur-3xl animate-depth-orb-6"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(100, 229, 179, 0.15) 0%, rgba(100, 229, 179, 0.08) 40%, transparent 70%)",
-        }}
-      ></div>
-
-      {/* Molecule background animation */}
-      <MoleculeBackground />
+    <div className="relative min-h-[80vh] flex items-center justify-center px-6 lg:px-12 xl:px-16 overflow-hidden">
+      {/* Molecule background animation - Keep it but ensure it works on light bg */}
+      <div className="opacity-60">
+        <MoleculeBackground />
+      </div>
 
       <div className="relative mx-auto max-w-[900px] w-full z-10 px-4 sm:px-6">
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
@@ -95,37 +43,39 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
         </div>
 
         {/* 3D search box with focus effects */}
-        <form onSubmit={handleSearch} className="relative mb-6 sm:mb-7 md:mb-8">
-          {/* グロー効果のレイヤー（フォーカス時のみ表示） */}
-          {isFocused && (
-            <div
-              className="absolute -inset-[2px] rounded-lg sm:rounded-xl blur-xl animate-pulse-slow"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(100, 229, 179, 0.6), rgba(122, 152, 236, 0.6), rgba(156, 102, 255, 0.6))",
-                zIndex: -1,
-              }}
-            />
-          )}
+        <form
+          onSubmit={handleSearch}
+          className="relative mb-6 sm:mb-7 md:mb-8 group"
+        >
+          {/* Gathering Mist Effect Layer - Concentrates on hover */}
           <div
-            className={`flex items-center rounded-lg sm:rounded-xl overflow-hidden backdrop-blur-2xl border transition-all duration-500 ${
+            className={`absolute -inset-12 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
+              isFocused ? "opacity-100" : ""
+            }`}
+          >
+            {/* The gathering mist */}
+            <div className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full animate-mist-gather" />
+          </div>
+
+          <div
+            className={`relative flex items-center rounded-lg sm:rounded-xl overflow-hidden backdrop-blur-2xl border transition-all duration-500 ${
               isFocused
-                ? "border-white/80 scale-[1.02] shadow-2xl"
+                ? "border-white scale-[1.02] shadow-2xl"
                 : "border-white/40 hover:border-white/60"
             }`}
             style={{
               background: isFocused
-                ? "rgba(255, 255, 255, 0.18)"
-                : "rgba(255, 255, 255, 0.12)",
+                ? "rgba(255, 255, 255, 0.95)"
+                : "rgba(255, 255, 255, 0.08)",
               boxShadow: isFocused
-                ? "0 12px 48px 0 rgba(31, 38, 135, 0.5), 0 25px 80px -15px rgba(100, 229, 179, 0.4), 0 0 60px 5px rgba(122, 152, 236, 0.3), inset 0 2px 2px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 2px 0 rgba(0, 0, 0, 0.15)"
-                : "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 20px 60px -10px rgba(59, 102, 224, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.1)",
+                ? "0 0 50px rgba(255, 255, 255, 0.5), 0 0 20px rgba(59, 102, 224, 0.3)"
+                : "0 8px 32px 0 rgba(0, 0, 0, 0.2)",
             }}
           >
             <div className="pl-3 sm:pl-4 md:pl-6 pr-2 sm:pr-3">
               <Search
                 className={`transition-all duration-300 ${
-                  isFocused ? "text-white scale-110" : "text-white/80"
+                  isFocused ? "text-blue-600 scale-110" : "text-white/80"
                 }`}
                 size={18}
               />
@@ -137,11 +87,15 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="サプリメント名、成分名で検索..."
-              className="flex-1 py-3 sm:py-4 md:py-5 px-1 sm:px-2 text-sm sm:text-base font-light bg-transparent outline-none placeholder:text-white/50 text-white"
+              className={`flex-1 py-3 sm:py-4 md:py-5 px-1 sm:px-2 text-sm sm:text-base font-light bg-transparent outline-none transition-colors duration-300 ${
+                isFocused
+                  ? "text-slate-800 placeholder:text-slate-400"
+                  : "text-white placeholder:text-white/50"
+              }`}
             />
             <button
               type="submit"
-              className="bg-gradient-to-r from-accent-purple to-accent-purple/90 hover:from-accent-purple/90 hover:to-accent-purple text-white font-medium px-5 sm:px-7 md:px-10 py-3 sm:py-4 md:py-5 transition-all duration-300 text-xs sm:text-sm hover:shadow-glow-purple whitespace-nowrap"
+              className="bg-gradient-to-r from-accent-purple to-accent-purple/90 hover:from-accent-purple/90 hover:to-accent-purple text-white font-medium px-5 sm:px-7 md:px-10 py-3 sm:py-4 md:py-5 transition-all duration-300 text-xs sm:text-sm hover:shadow-glow-purple whitespace-nowrap relative z-10"
               style={{
                 boxShadow:
                   "0 4px 15px 0 rgba(86, 71, 166, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
@@ -164,13 +118,17 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
                 onClick={() => {
                   router.push(`/search?q=${encodeURIComponent(search.name)}`);
                 }}
-                className="px-2 sm:px-3 py-0.5 sm:py-1 text-white rounded-full text-[10px] sm:text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10"
+                className="relative px-2 sm:px-3 py-0.5 sm:py-1 text-white rounded-full text-[10px] sm:text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10 group overflow-hidden"
                 style={{
                   boxShadow:
                     "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
                 }}
               >
-                {search.name}
+                {/* Gathering Mist for Tags */}
+                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <span className="absolute inset-0 bg-blue-500/30 blur-md animate-mist-gather" />
+                </span>
+                <span className="relative z-10">{search.name}</span>
               </button>
             ))}
           </div>
@@ -180,8 +138,13 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
         <div className="flex justify-center">
           <Link
             href="/diagnosis"
-            className="group relative inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg sm:rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-xl border border-white/20"
+            className="group relative inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg sm:rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-xl border border-white/20 overflow-visible"
           >
+            {/* Gathering Mist for Button */}
+            <div className="absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+              <div className="absolute inset-0 bg-blue-500/30 blur-[30px] rounded-full animate-mist-gather" />
+            </div>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -192,11 +155,11 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:scale-110 transition-transform hidden sm:block"
+              className="group-hover:scale-110 transition-transform hidden sm:block relative z-10"
             >
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
             </svg>
-            <span className="text-sm sm:text-base">
+            <span className="text-sm sm:text-base relative z-10">
               あなたに最適なサプリを診断する
             </span>
             <svg
@@ -209,7 +172,7 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:translate-x-1 transition-transform sm:w-5 sm:h-5"
+              className="group-hover:translate-x-1 transition-transform sm:w-5 sm:h-5 relative z-10"
             >
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>

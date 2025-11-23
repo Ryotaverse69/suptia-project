@@ -7,6 +7,7 @@ import { Calculator, TrendingDown, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Tooltip } from "./ui/Tooltip";
+import { TierRank } from "@/lib/tier-colors";
 
 interface Ingredient {
   name: string;
@@ -35,7 +36,7 @@ interface CostEffectivenessDetailProps {
     servingsPerContainer: number;
     ingredients?: Ingredient[];
   }>;
-  costEffectivenessRank?: "S" | "A" | "B" | "C" | "D";
+  costEffectivenessRank?: TierRank;
   totalProductsInCategory?: number; // 同一成分カテゴリの商品総数
   className?: string;
 }
@@ -59,6 +60,14 @@ export function CostEffectivenessDetail({
       description: string;
     }
   > = {
+    "S+": {
+      color: "from-purple-600 via-fuchsia-500 to-purple-800",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
+      textColor: "text-purple-800",
+      label: "神コスパ",
+      description: "圧倒的なコストパフォーマンスです",
+    },
     S: {
       color: "from-purple-600 to-purple-800",
       bgColor: "bg-purple-50",
@@ -255,39 +264,37 @@ export function CostEffectivenessDetail({
         </div>
       )}
 
-      {/* ランクバッジ */}
+      {/* ランクバッジ (Updated Style) */}
       {currentRankInfo && (
-        <div
-          className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
-        >
-          <div className="text-white flex items-center justify-between">
-            <div>
-              <p className="text-xl font-bold mb-1">
-                {costEffectivenessRank}ランク
-              </p>
-              <p className="text-base opacity-90">{currentRankInfo.label}</p>
-            </div>
-            <Tooltip
-              content={
-                <div className="text-xs leading-relaxed">
-                  <p className="font-semibold mb-1">ランク判定について</p>
-                  {totalProductsInCategory > 0 ? (
-                    <p>
-                      同じ成分を含む{totalProductsInCategory}
-                      商品中の相対評価です。
-                      新商品の追加でランクが変動することがあります。
-                    </p>
-                  ) : (
-                    <p>
-                      同じ成分を含む商品の中での相対評価です。
-                      商品数の変化でランクが変動することがあります。
-                    </p>
-                  )}
-                </div>
-              }
-              icon
-            />
+        <div className="flex items-center justify-between mb-4">
+          <div
+            className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${currentRankInfo.bgColor} ${currentRankInfo.borderColor} ${currentRankInfo.textColor}`}
+          >
+            <span className="text-xs font-bold">RANK</span>
+            <span className="text-2xl font-black leading-none">
+              {costEffectivenessRank}
+            </span>
           </div>
+          <Tooltip
+            content={
+              <div className="text-xs leading-relaxed">
+                <p className="font-semibold mb-1">ランク判定について</p>
+                {totalProductsInCategory > 0 ? (
+                  <p>
+                    同じ成分を含む{totalProductsInCategory}
+                    商品中の相対評価です。
+                    新商品の追加でランクが変動することがあります。
+                  </p>
+                ) : (
+                  <p>
+                    同じ成分を含む商品の中での相対評価です。
+                    商品数の変化でランクが変動することがあります。
+                  </p>
+                )}
+              </div>
+            }
+            icon
+          />
         </div>
       )}
 

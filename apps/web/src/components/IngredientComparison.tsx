@@ -163,15 +163,15 @@ export function IngredientComparison({
         </div>
       )}
 
-      {/* ランクバッジ */}
+      {/* ランクバッジ (Updated Style) */}
       {currentRankInfo && (
         <div
-          className={`mb-4 p-4 rounded-xl bg-gradient-to-r ${currentRankInfo.color}`}
+          className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${currentRankInfo.bgColor} ${currentRankInfo.borderColor} ${currentRankInfo.textColor} w-fit mb-4`}
         >
-          <div className="text-white">
-            <p className="text-xl font-bold mb-1">{contentRank}ランク</p>
-            <p className="text-base opacity-90">{currentRankInfo.label}</p>
-          </div>
+          <span className="text-xs font-bold">RANK</span>
+          <span className="text-2xl font-black leading-none">
+            {contentRank}
+          </span>
         </div>
       )}
 

@@ -3,19 +3,17 @@ import { checkCompliance, generateSampleDescription } from "@/lib/compliance";
 import { WarningBanner } from "@/components/WarningBanner";
 import { PriceComparison } from "@/components/PriceComparison";
 import { PriceHistoryChart } from "@/components/PriceHistoryChart";
-import { ProductBadges, BadgeSummary } from "@/components/ProductBadges";
 import { IngredientComparison } from "@/components/IngredientComparison";
 import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
 import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import { RelatedIngredients } from "@/components/RelatedIngredients";
-import { ImageLightbox } from "@/components/ImageLightbox";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { TierBadgeGrid, PerfectProductBanner } from "@/components/ui/TierBadge";
-import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
+import { TierRatings } from "@/lib/tier-ranking";
 import { NutritionScoreCard } from "@/components/NutritionScoreBadge";
 import { RdaFulfillmentHeatmap } from "@/components/RdaFulfillmentHeatmap";
 import { IngredientCostChart } from "@/components/IngredientCostChart";
-import { TierRank, scoreToTierRank } from "@/lib/tier-colors";
+import { scoreToTierRank } from "@/lib/tier-colors";
+import { ProductIdentitySection } from "@/components/ProductIdentitySection";
 import {
   generateProductMetadata,
   generateProductJsonLd,
@@ -23,7 +21,6 @@ import {
 } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { isValidSlug } from "@/lib/sanitize";
-import Image from "next/image";
 import { headers } from "next/headers";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
 import {
@@ -31,31 +28,46 @@ import {
   calculateEvidenceScoreByRatio,
   calculateSafetyScoreByRatio,
   evidenceLevelToScore,
-  scoreToEvidenceLevel,
   type IngredientSafetyDetail,
 } from "@/lib/auto-scoring";
 import type { IngredientEvidenceDetail } from "@/components/EvidenceSafetyDetail";
+import {
+  Database,
+  ShieldCheck,
+  FileText,
+  ChevronRight,
+  Info,
+  Activity,
+  Share2,
+  Zap,
+  Beaker,
+} from "lucide-react";
+import Image from "next/image";
+import {
+  SeamlessModal,
+  SeamlessModalTrigger,
+  SeamlessModalContent,
+} from "@/components/SeamlessModal";
 
+// --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
   source: string;
-  shopName?: string; // 店舗名（旧フィールド、下位互換のため保持）
-  storeName?: string; // 店舗名（新フィールド）
-  productName?: string; // 商品名（数量検出用）
-  itemCode?: string; // 商品コード（店舗名検出用）
+  shopName?: string;
+  storeName?: string;
+  productName?: string;
+  itemCode?: string;
   amount: number;
   currency: string;
   url: string;
   fetchedAt: string;
   confidence?: number;
-  quantity?: number; // セット数量
-  unitPrice?: number; // 単位価格
-  // 実質価格関連（改善1）
-  shippingFee?: number; // 送料
-  pointRate?: number; // ポイント還元率（0.01 = 1%）
-  isFreeShipping?: boolean; // 送料無料フラグ
-  effectivePrice?: number; // 実質価格（計算後）
-  pointAmount?: number; // ポイント還元額（計算後）
-  // 在庫状況（改善7）
+  quantity?: number;
+  unitPrice?: number;
+  shippingFee?: number;
+  pointRate?: number;
+  isFreeShipping?: boolean;
+  effectivePrice?: number;
+  pointAmount?: number;
   stockStatus?: "in_stock" | "low_stock" | "out_of_stock" | "unknown";
 }
 
@@ -102,7 +114,7 @@ interface Product {
   };
   ingredients?: Array<{
     amountMgPerServing: number;
-    isPrimary?: boolean; // 主成分フラグ
+    isPrimary?: boolean;
     ingredient?: {
       _id: string;
       name: string;
@@ -122,95 +134,38 @@ interface Product {
   tierRatings?: TierRatings;
 }
 
+// --- Data Fetching Functions (Keep existing logic) ---
 async function getProduct(slug: string): Promise<Product | null> {
-  // Validate slug format for security
-  if (!isValidSlug(slug)) {
-    return null;
-  }
+  if (!isValidSlug(slug)) return null;
 
   const query = `*[_type == "product" && slug.current == $slug][0]{
-    _id,
-    name,
-    'brandName': brand->name,
-    priceJPY,
-    servingsPerContainer,
-    servingsPerDay,
-    description,
-    allIngredients,
-    slug,
-    images[]{
-      asset->{
-        url
-      },
-      alt
-    },
-    externalImageUrl,
-    priceData,
-    priceHistory,
-    urls,
-    janCode,
-    itemCode,
-    affiliateUrl,
-    source,
-    scores {
-      evidence,
-      safety,
-      overall
-    },
+    _id, name, 'brandName': brand->name, priceJPY, servingsPerContainer, servingsPerDay,
+    description, allIngredients, slug,
+    images[]{ asset->{ url }, alt },
+    externalImageUrl, priceData, priceHistory, urls, janCode, itemCode, affiliateUrl, source,
+    scores { evidence, safety, overall },
     ingredients[]{
-      amountMgPerServing,
-      isPrimary,
-      ingredient->{
-        _id,
-        name,
-        nameEn,
-        slug,
-        evidenceLevel,
-        category
-      }
+      amountMgPerServing, isPrimary,
+      ingredient->{ _id, name, nameEn, slug, evidenceLevel, category }
     },
-    thirdPartyTested,
-    warnings,
-    references,
-    tierRatings {
-      priceRank,
-      costEffectivenessRank,
-      contentRank,
-      evidenceRank,
-      safetyRank,
-      overallRank
-    }
+    thirdPartyTested, warnings, references,
+    tierRatings { priceRank, costEffectivenessRank, contentRank, evidenceRank, safetyRank, overallRank }
   }`;
 
   try {
-    const product = await sanityServer.fetch(query, { slug });
-    return product || null;
+    return (await sanityServer.fetch(query, { slug })) || null;
   } catch (error) {
     console.error("Failed to fetch product:", error);
     return null;
   }
 }
 
-/**
- * priceDataを配列に正規化
- * オブジェクト形式（キー "0", "1", ... にデータがある形式）を配列に変換
- */
 function normalizePriceData(priceData: any): PriceData[] {
   if (!priceData) return [];
-
-  // 既に配列の場合
-  if (Array.isArray(priceData)) {
+  if (Array.isArray(priceData))
     return priceData.filter((p) => p.amount && p.url && p.source);
-  }
-
-  // オブジェクトの場合、キー "0" のデータを配列に変換
   if (typeof priceData === "object") {
-    // キー "0" が存在し、有効なデータを持っているか確認
-    if (priceData["0"] && priceData["0"].amount && priceData["0"].url) {
-      return [priceData["0"]];
-    }
-
-    // 他の数値キー（"1", "2", ...）も処理
+    if (priceData["0"]?.amount && priceData["0"]?.url) return [priceData["0"]];
     const prices: PriceData[] = [];
     for (const key in priceData) {
       if (
@@ -221,44 +176,27 @@ function normalizePriceData(priceData: any): PriceData[] {
         prices.push(priceData[key]);
       }
     }
-
     return prices;
   }
-
   return [];
 }
 
-/**
- * JANコードが同じ商品を複数ソースから取得
- */
 async function getRelatedProductsByJan(
   janCode: string | null,
 ): Promise<PriceData[]> {
-  if (!janCode) {
-    return [];
-  }
-
+  if (!janCode) return [];
   const query = `*[_type == "product" && janCode == $janCode && janCode != null]{
-    _id,
-    name,
-    source,
-    priceJPY,
-    affiliateUrl,
-    availability,
-    itemCode
+    _id, name, source, priceJPY, affiliateUrl, availability, itemCode
   }`;
-
   try {
     const products = await sanityServer.fetch(query, { janCode });
-
-    // PriceData形式に変換
     return products.map((product: any) => ({
       source: product.source || "unknown",
       amount: product.priceJPY,
       currency: "JPY",
       url: product.affiliateUrl || "#",
       fetchedAt: new Date().toISOString(),
-      confidence: 0.95, // JANコード一致なので高い信頼度
+      confidence: 0.95,
     }));
   } catch (error) {
     console.error("Failed to fetch related products:", error);
@@ -266,87 +204,42 @@ async function getRelatedProductsByJan(
   }
 }
 
-/**
- * 全商品を取得（称号計算用）
- */
 async function getAllProducts(): Promise<Product[]> {
   const query = `*[_type == "product" && availability == "in-stock"]{
-    _id,
-    name,
-    priceJPY,
-    servingsPerContainer,
-    servingsPerDay,
-    scores {
-      evidence,
-      safety,
-      overall
-    },
-    ingredients[]{
-      amountMgPerServing,
-      ingredient->{
-        _id,
-        name,
-        evidenceLevel
-      }
-    },
-    priceData
+    _id, name, priceJPY, servingsPerContainer, servingsPerDay,
+    scores { evidence, safety, overall },
+    ingredients[]{ amountMgPerServing, ingredient->{ _id, name, evidenceLevel } },
+    priceData,
+    tierRatings {
+      priceRank,
+      costEffectivenessRank,
+      contentRank,
+      evidenceRank,
+      safetyRank,
+      overallRank
+    }
   }`;
-
   try {
-    const products = await sanityServer.fetch(query);
-    return products || [];
+    return (await sanityServer.fetch(query)) || [];
   } catch (error) {
     console.error("Failed to fetch all products:", error);
     return [];
   }
 }
 
-/**
- * 類似商品を取得（同じ主要成分を含む商品）
- */
-/**
- * 同じ成分を含む商品の総数を取得
- */
 async function getTotalProductsInCategory(productId: string): Promise<number> {
   try {
-    // 1. 現在の商品の主要成分を取得
-    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{
-      ingredients[]{
-        ingredient->{
-          _id
-        }
-      }
-    }`;
-
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ ingredient->{ _id } } }`;
     const currentProduct = await sanityServer.fetch(currentProductQuery, {
       productId,
     });
-
-    if (
-      !currentProduct?.ingredients ||
-      currentProduct.ingredients.length === 0
-    ) {
+    if (!currentProduct?.ingredients || currentProduct.ingredients.length === 0)
       return 0;
-    }
-
-    // 主要成分（最初の成分）のIDを取得
     const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+    if (!mainIngredientId) return 0;
 
-    if (!mainIngredientId) {
-      return 0;
-    }
-
-    // 2. 同じ主要成分を含む商品の総数を取得
-    const countQuery = `count(*[_type == "product"
-      && availability == "in-stock"
-      && $mainIngredientId in ingredients[].ingredient._ref
-    ])`;
-
-    const total = await sanityServer.fetch(countQuery, {
-      mainIngredientId,
-    });
-
-    return total || 0;
+    const countQuery = `count(*[_type == "product" && availability == "in-stock" && $mainIngredientId in ingredients[].ingredient._ref])`;
+    return (await sanityServer.fetch(countQuery, { mainIngredientId })) || 0;
   } catch (error) {
     console.error("Failed to count products in category:", error);
     return 0;
@@ -356,128 +249,47 @@ async function getTotalProductsInCategory(productId: string): Promise<number> {
 async function getSimilarProducts(
   productId: string,
   limit: number = 5,
-): Promise<
-  Array<{
-    name: string;
-    slug: { current: string };
-    imageUrl?: string;
-    ingredientAmount: number;
-    servingsPerDay: number;
-    priceJPY: number;
-    servingsPerContainer: number;
-  }>
-> {
+): Promise<any[]> {
   try {
-    // 1. 現在の商品の主要成分を取得
-    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{
-      ingredients[]{
-        ingredient->{
-          _id
-        }
-      }
-    }`;
-
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ ingredient->{ _id } } }`;
     const currentProduct = await sanityServer.fetch(currentProductQuery, {
       productId,
     });
-
-    if (
-      !currentProduct?.ingredients ||
-      currentProduct.ingredients.length === 0
-    ) {
-      console.warn("No ingredients found for product:", productId);
+    if (!currentProduct?.ingredients || currentProduct.ingredients.length === 0)
       return [];
-    }
-
-    // 主要成分（最初の成分）のIDを取得
     const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+    if (!mainIngredientId) return [];
 
-    if (!mainIngredientId) {
-      console.warn("Main ingredient ID not found for product:", productId);
-      return [];
-    }
-
-    // 2. 同じ主要成分を含む他の商品を検索
-    const similarProductsQuery = `*[_type == "product"
-      && _id != $productId
-      && availability == "in-stock"
-      && $mainIngredientId in ingredients[].ingredient._ref
-    ]{
-      name,
-      slug,
-      'imageUrl': coalesce(images[0].asset->url, externalImageUrl),
-      'ingredientAmount': coalesce(
-        ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing,
-        ingredients[0].amountMgPerServing,
-        1000
-      ),
-      servingsPerDay,
-      priceJPY,
-      servingsPerContainer
+    const similarProductsQuery = `*[_type == "product" && _id != $productId && availability == "in-stock" && $mainIngredientId in ingredients[].ingredient._ref]{
+      name, slug, 'imageUrl': coalesce(images[0].asset->url, externalImageUrl),
+      'ingredientAmount': coalesce(ingredients[ingredient._ref == $mainIngredientId][0].amountMgPerServing, ingredients[0].amountMgPerServing, 1000),
+      servingsPerDay, priceJPY, servingsPerContainer
     }[0...${limit}]`;
 
     const products = await sanityServer.fetch(similarProductsQuery, {
       productId,
       mainIngredientId,
     });
-
-    // デフォルト値を持つ商品をフィルタリング（成分量が実際に設定されている商品のみ）
-    const validProducts = products.filter(
+    return products.filter(
       (p: any) => p.ingredientAmount && p.ingredientAmount > 0,
     );
-
-    return validProducts || [];
   } catch (error) {
     console.error("Failed to fetch similar products:", error);
     return [];
   }
 }
 
-/**
- * 全成分マスタデータを取得
- */
-async function getAllIngredients(): Promise<
-  Array<{
-    _id: string;
-    name: string;
-    nameEn: string;
-    evidenceLevel?: "S" | "A" | "B" | "C" | "D";
-    category?: string;
-    sideEffects?: string[];
-    interactions?: string[];
-    contraindications?: string[];
-  }>
-> {
-  const query = `*[_type == "ingredient"]{
-    _id,
-    name,
-    nameEn,
-    evidenceLevel,
-    category,
-    sideEffects,
-    interactions,
-    contraindications
-  }`;
-
+async function getAllIngredients(): Promise<any[]> {
+  const query = `*[_type == "ingredient"]{ _id, name, nameEn, evidenceLevel, category, sideEffects, interactions, contraindications }`;
   try {
-    const ingredients = await sanityServer.fetch(query);
-    return ingredients || [];
+    return (await sanityServer.fetch(query)) || [];
   } catch (error) {
     console.error("Failed to fetch ingredients:", error);
     return [];
   }
 }
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
-/**
- * アレルギー関連の禁忌タグとそのラベル
- * ⚠️ 重要: アレルギーは命に関わるため、表現は最大限強く明確に
- */
+// --- Helper Functions ---
 const ALLERGY_TAGS: Record<string, string> = {
   "allergy-prone": "アレルギー体質の方は、使用前に必ず医師にご相談ください",
   "shellfish-allergy": "貝アレルギーの方は絶対に使用しないでください",
@@ -485,17 +297,11 @@ const ALLERGY_TAGS: Record<string, string> = {
   "nut-allergy": "ナッツアレルギーの方は絶対に使用しないでください",
 };
 
-/**
- * 商品の成分からアレルギー情報を抽出
- */
 function extractAllergyInfo(
   productIngredients: Product["ingredients"],
-  allIngredients: Awaited<ReturnType<typeof getAllIngredients>>,
-): Array<{ tag: string; label: string; ingredientName: string }> {
-  if (!productIngredients || productIngredients.length === 0) {
-    return [];
-  }
-
+  allIngredients: any[],
+) {
+  if (!productIngredients || productIngredients.length === 0) return [];
   const allergyInfo: Array<{
     tag: string;
     label: string;
@@ -503,18 +309,13 @@ function extractAllergyInfo(
   }> = [];
   const seenTags = new Set<string>();
 
-  // 商品に含まれる各成分について
   for (const prodIngredient of productIngredients) {
     if (!prodIngredient.ingredient?._id) continue;
-
-    // 成分マスタから詳細情報を取得
     const ingredientDetail = allIngredients.find(
       (ing) => ing._id === prodIngredient.ingredient!._id,
     );
-
     if (!ingredientDetail?.contraindications) continue;
 
-    // アレルギー関連の禁忌タグを抽出
     for (const tag of ingredientDetail.contraindications) {
       if (ALLERGY_TAGS[tag] && !seenTags.has(tag)) {
         allergyInfo.push({
@@ -526,27 +327,26 @@ function extractAllergyInfo(
       }
     }
   }
-
   return allergyInfo;
+}
+
+// --- Main Page Component ---
+interface PageProps {
+  params: { slug: string };
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const product = await getProduct(params.slug);
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
-  // 全成分マスタデータを取得
   const allIngredients = await getAllIngredients();
 
-  // アレルギー情報を抽出
   const allergyInfo = extractAllergyInfo(product.ingredients, allIngredients);
 
-  // Sanityに保存されているスコアを優先的に使用
-  // スコアがない場合のみフロントエンドで計算
+  // Score Calculation Logic (Keep existing logic)
   const hasSanityScores = product.scores?.evidence && product.scores?.safety;
-  let finalScores: { evidence: number; safety: number; overall: number } =
+  let finalScores =
     hasSanityScores && product.scores?.evidence && product.scores?.safety
       ? {
           evidence: product.scores.evidence,
@@ -558,88 +358,51 @@ export default async function ProductDetailPage({ params }: PageProps) {
   let evidenceDetails: IngredientEvidenceDetail[] = [];
   let hasUnregisteredMainIngredient = false;
 
-  // 主要成分を特定（配合量が最も多い成分）
   const mainIngredient = product.ingredients?.reduce(
-    (max, current) => {
-      if (
-        !max ||
-        (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
-      ) {
-        return current;
-      }
-      return max;
-    },
+    (max, current) =>
+      !max || (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
+        ? current
+        : max,
     null as (typeof product.ingredients)[0] | null,
   );
-
-  // 主要成分が登録されているかチェック
   const hasRegisteredMainIngredient =
     mainIngredient && mainIngredient.ingredient;
+  if (!hasRegisteredMainIngredient) hasUnregisteredMainIngredient = true;
 
-  if (!hasRegisteredMainIngredient) {
-    // 主要成分が未登録の場合
-    hasUnregisteredMainIngredient = true;
-  }
-
-  // 商品に成分データがあり、全ての成分にingredient情報がある場合
-  // amountMgPerServing >= 0 を許容（0は配合量未入力を意味する）
   const hasValidIngredients =
     product.ingredients &&
     product.ingredients.length > 0 &&
     product.ingredients.every((ing) => ing.ingredient);
 
-  // Sanityにスコアがない場合のみ、フロントエンドで計算
   if (!hasSanityScores && hasValidIngredients && hasRegisteredMainIngredient) {
-    // 配合率ベースのスコア計算
     const ingredientsWithAmount = product.ingredients!.map((ing) => ({
       ingredient: ing.ingredient!,
       amountMg: ing.amountMgPerServing,
     }));
-
-    // エビデンススコアは主要成分のみで判定
     const mainIngredientData = ingredientsWithAmount.find(
       (item) => item.ingredient._id === mainIngredient!.ingredient!._id,
     )!;
     const mainEvidenceLevel =
       mainIngredientData.ingredient.evidenceLevel || "D";
     const evidenceScore = evidenceLevelToScore(mainEvidenceLevel);
-
-    // 安全性は全成分を見て判定（現状維持）
     const safetyResult = calculateSafetyScoreByRatio(ingredientsWithAmount);
 
-    // エビデンス詳細を生成（主要成分のみ）
     evidenceDetails = [
       {
         name: mainIngredientData.ingredient.name,
         evidenceLevel: mainEvidenceLevel as "S" | "A" | "B" | "C" | "D",
         evidenceScore: evidenceScore,
         amountMg: mainIngredientData.amountMg,
-        ratio: 1.0, // 主要成分のみを表示するため100%
+        ratio: 1.0,
       },
     ];
-
     finalScores = {
       evidence: evidenceScore,
       safety: safetyResult.score,
       overall: Math.round((evidenceScore + safetyResult.score) / 2),
     };
     safetyDetails = safetyResult.details;
-
-    console.log(`[主要成分ベーススコア計算] ${product.name}:`, {
-      全成分数: ingredientsWithAmount.length,
-      主要成分: mainIngredientData.ingredient.name,
-      主要成分配合量: mainIngredientData.amountMg,
-      主要成分エビデンスレベル: mainEvidenceLevel,
-      evidenceScore,
-      safetyScore: safetyResult.score,
-      overall: finalScores.overall,
-    });
-    console.log(
-      `[エビデンス詳細（主要成分のみ）] evidenceDetails:`,
-      evidenceDetails,
-    );
   } else if (!hasSanityScores) {
-    // Sanityにスコアがなく、成分データもない場合は商品名から推測（フォールバック）
     const autoScores = calculateAutoScores(product.name, allIngredients);
     finalScores = {
       evidence: autoScores.evidenceScore,
@@ -647,85 +410,42 @@ export default async function ProductDetailPage({ params }: PageProps) {
       overall: autoScores.overallScore,
     };
     safetyDetails = autoScores.safetyDetails;
-
-    console.log(`[商品名ベーススコア計算] ${product.name}:`, {
-      foundIngredients: autoScores.foundIngredients,
-      evidenceScore: autoScores.evidenceScore,
-      evidenceLevel: autoScores.evidenceLevel,
-      safetyScore: autoScores.safetyScore,
-      safetyLevel: autoScores.safetyLevel,
-      safetyDetails: autoScores.safetyDetails,
-    });
   }
 
-  // SanityのパーセンタイルベースtierRatingsをそのまま使用
-  // 称号（badges）による格上げのみ適用
   const updatedTierRatings = product.tierRatings
     ? { ...product.tierRatings }
     : undefined;
+  if (updatedTierRatings && finalScores.evidence)
+    updatedTierRatings.evidenceRank = scoreToTierRank(finalScores.evidence);
+  if (updatedTierRatings && finalScores.safety)
+    updatedTierRatings.safetyRank = scoreToTierRank(finalScores.safety);
 
-  // エビデンスランクと安全性ランクは常にスコアから再計算（絶対評価）
-  if (updatedTierRatings && finalScores.evidence) {
-    const evidenceRank = scoreToTierRank(finalScores.evidence);
-    updatedTierRatings.evidenceRank = evidenceRank;
-    console.log(
-      `[エビデンスランク再計算] evidenceScore ${finalScores.evidence}点 → ${evidenceRank}ランク`,
-    );
-  }
-
-  if (updatedTierRatings && finalScores.safety) {
-    const safetyRank = scoreToTierRank(finalScores.safety);
-    updatedTierRatings.safetyRank = safetyRank;
-    console.log(
-      `[安全性ランク再計算] safetyScore ${finalScores.safety}点 → ${safetyRank}ランク`,
-    );
-  }
-
-  // 全商品を取得して称号を計算
   const allProducts = await getAllProducts();
-
-  // 称号計算用にデータを変換（配合率ベースのスコアを適用）
   const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
     (p) => {
-      // 各商品にもスコア計算を適用
       let evidenceScore = 50;
       let safetyScore = 50;
-
-      // 既にスコアがある場合はそれを使用
       if (p.scores?.evidence && p.scores?.safety) {
         evidenceScore = p.scores.evidence;
         safetyScore = p.scores.safety;
       } else {
-        // 成分データがある場合は配合率ベースで計算
-        // amountMgPerServing >= 0 を許容（0は配合量未入力を意味する）
-        const hasValidIngredients =
+        const hasValidIng =
           p.ingredients &&
           p.ingredients.length > 0 &&
           p.ingredients.every((ing: any) => ing.ingredient);
-
-        if (hasValidIngredients) {
-          const ingredientsWithAmount = p.ingredients!.map((ing: any) => ({
+        if (hasValidIng) {
+          const ingWithAmount = p.ingredients!.map((ing: any) => ({
             ingredient: ing.ingredient,
             amountMg: ing.amountMgPerServing,
           }));
-
-          evidenceScore = calculateEvidenceScoreByRatio(ingredientsWithAmount);
-          const safetyResult = calculateSafetyScoreByRatio(
-            ingredientsWithAmount,
-          );
-          safetyScore = safetyResult.score;
+          evidenceScore = calculateEvidenceScoreByRatio(ingWithAmount);
+          safetyScore = calculateSafetyScoreByRatio(ingWithAmount).score;
         } else {
-          // フォールバック: 商品名から推測
-          const autoScores = calculateAutoScores(p.name || "", allIngredients);
-          evidenceScore = autoScores.evidenceScore;
-          safetyScore = autoScores.safetyScore;
+          const auto = calculateAutoScores(p.name || "", allIngredients);
+          evidenceScore = auto.evidenceScore;
+          safetyScore = auto.safetyScore;
         }
       }
-
-      console.log(
-        `[スコア→レベル変換] ${p.name}: evidenceScore=${evidenceScore}, safetyScore=${safetyScore}`,
-      );
-
       const calculatedEvidenceLevel =
         evidenceScore >= 90
           ? "S"
@@ -736,32 +456,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
               : evidenceScore >= 60
                 ? "C"
                 : "D";
-
-      console.log(
-        `[レベル決定] ${p.name}: evidenceLevel=${calculatedEvidenceLevel}`,
-      );
-
-      // 配合量が最も多い成分を主要成分とする
-      const mainIngredient = p.ingredients?.reduce(
-        (max, current) => {
-          if (
-            !max ||
-            (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
-          ) {
-            return current;
-          }
-          return max;
-        },
+      const mainIng = p.ingredients?.reduce(
+        (max, current) =>
+          !max ||
+          (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
+            ? current
+            : max,
         null as (typeof p.ingredients)[0] | null,
       );
-
       return {
         _id: p._id,
         priceJPY: p.priceJPY,
         servingsPerContainer: p.servingsPerContainer,
         servingsPerDay: p.servingsPerDay,
-        ingredientAmount: mainIngredient?.amountMgPerServing,
-        ingredientId: mainIngredient?.ingredient?._id,
+        ingredientAmount: mainIng?.amountMgPerServing,
+        ingredientId: mainIng?.ingredient?._id,
         evidenceLevel: calculatedEvidenceLevel,
         safetyScore,
         priceData: p.priceData,
@@ -769,144 +478,45 @@ export default async function ProductDetailPage({ params }: PageProps) {
     },
   );
 
-  // 現在の商品の称号を計算
-  console.log(`[ID検索] 現在の商品ID: ${product._id}, 商品名: ${product.name}`);
-  console.log(
-    `[ID検索] productsForEvaluationの件数: ${productsForEvaluation.length}`,
-  );
-
   const currentProductForEvaluation = productsForEvaluation.find(
     (p) => p._id === product._id,
   );
-
-  if (!currentProductForEvaluation) {
-    console.log(`[ID検索エラー] 商品が見つかりません: ${product._id}`);
-    console.log(
-      `[ID検索エラー] 利用可能なID一覧:`,
-      productsForEvaluation.slice(0, 5).map((p) => p._id),
-    );
-  } else {
-    console.log(
-      `[ID検索成功] 商品が見つかりました: ${currentProductForEvaluation._id}`,
-    );
-  }
-
-  console.log(`[バッジ計算] ${product.name}:`, {
-    evidenceLevel: currentProductForEvaluation?.evidenceLevel,
-    safetyScore: currentProductForEvaluation?.safetyScore,
-    priceJPY: currentProductForEvaluation?.priceJPY,
-    ingredientAmount: currentProductForEvaluation?.ingredientAmount,
-  });
-
   const badges = currentProductForEvaluation
     ? evaluateBadges(currentProductForEvaluation, productsForEvaluation)
     : [];
 
-  console.log(`[バッジ結果] ${product.name}:`, badges);
-  console.log(
-    `[tierRatings（Sanityパーセンタイルベース）] ${product.name}:`,
-    JSON.stringify(updatedTierRatings, null, 2),
-  );
-
-  // ⚠️ 重要な変更: バッジによるランク格上げを無効化
-  // 理由: Sanityのパーセンタイルベース（相対評価）とバッジの絶対値ベース判定が矛盾するため
-  // バッジは「絶対的な1位」を示す称号として別途表示し、ランクは相対評価で統一
-  //
-  // 例: DHC ビタミンC
-  // - 含有量: 2000mg（絶対値1位） → バッジ授与 ✓
-  // - 含有量ランク: D（パーセンタイル5.63%、5位/71） → Sanityランクを尊重
-  //
-  // 以下のコードをコメントアウト（2025-11-11）
-  /*
-  if (updatedTierRatings) {
-    badges.forEach((badgeType) => {
-      console.log(`[バッジタイプ処理] ${badgeType}`);
-      if (badgeType === "lowest-price") {
-        updatedTierRatings.priceRank = "S";
-        console.log(`  → priceRank を S に更新`);
-      } else if (badgeType === "best-value") {
-        updatedTierRatings.costEffectivenessRank = "S";
-        console.log(`  → costEffectivenessRank を S に更新`);
-      } else if (badgeType === "highest-content") {
-        updatedTierRatings.contentRank = "S";
-        console.log(`  → contentRank を S に更新`);
-      } else if (badgeType === "evidence-s") {
-        updatedTierRatings.evidenceRank = "S";
-        console.log(`  → evidenceRank を S に更新`);
-      } else if (badgeType === "high-safety") {
-        updatedTierRatings.safetyRank = "S";
-        console.log(`  → safetyRank を S に更新`);
-      }
-    });
-
-    console.log(
-      `[更新後tierRatings] ${product.name}:`,
-      JSON.stringify(updatedTierRatings, null, 2),
-    );
-
-    // 5冠達成（すべてSランク）の場合は総合評価をS+に格上げ
-    if (isPerfectProduct(updatedTierRatings)) {
-      updatedTierRatings.overallRank = "S+" as TierRank;
-      console.log(`[5冠達成] overallRank を S+ に格上げ`);
-    }
-  }
-  */
-
-  console.log(
-    `[最終tierRatings] Sanityのパーセンタイルベースランクをそのまま使用`,
-  );
-
-  // 類似商品を取得
   const similarProducts = await getSimilarProducts(product._id, 5);
-
-  // 同じ成分カテゴリの全商品数を取得
   const totalProductsInCategory = await getTotalProductsInCategory(product._id);
-
-  // 主要成分データを準備（line 490で定義済み）
   const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
   const mainIngredientInfo = mainIngredient?.ingredient;
   const ingredientName = mainIngredientInfo?.name;
   const ingredientEvidenceLevel = mainIngredientInfo?.evidenceLevel;
-
-  // CostEffectivenessDetail用のingredients配列を準備
   const ingredientsForCostDetail =
     product.ingredients?.map((ing) => ({
       name: ing.ingredient?.name || "不明な成分",
       amountMgPerServing: ing.amountMgPerServing,
       isPrimary: ing.isPrimary || false,
     })) || [];
-
-  // エビデンスレベルを判定（自動計算されたスコアを使用）
   const evidenceScore = finalScores.evidence ?? 50;
   const evidenceLevel =
     evidenceScore >= 90
-      ? ("S" as const)
+      ? "S"
       : evidenceScore >= 80
-        ? ("A" as const)
+        ? "A"
         : evidenceScore >= 70
-          ? ("B" as const)
+          ? "B"
           : evidenceScore >= 60
-            ? ("C" as const)
-            : ("D" as const);
+            ? "C"
+            : "D";
 
-  // JANコードで関連商品を取得して価格比較データを作成
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
-
-  // 既存のpriceDataを正規化
   const normalizedPriceData = normalizePriceData(product.priceData);
-
-  // 既存のpriceDataとマージ（既存データを優先）
   const mergedPriceData =
     normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
-
-  // Generate sample description if not available
   const description =
     product.description || generateSampleDescription(product.name);
-
-  // Check compliance
   const complianceResult = checkCompliance(description);
 
-  // Generate JSON-LD structured data
   const productJsonLd = generateProductJsonLd({
     name: product.name,
     brand: product.brandName,
@@ -921,7 +531,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
     mainIngredient: mainIngredientInfo?.name,
     ingredientAmount: mainIngredientAmount,
   });
-
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "ホーム", url: "/" },
     { name: "商品", url: "/products" },
@@ -932,7 +541,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       <script
         id="product-jsonld"
         type="application/ld+json"
@@ -946,372 +554,501 @@ export default async function ProductDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Compliance Warning Banner */}
-        {complianceResult.hasViolations && (
-          <WarningBanner violations={complianceResult.violations} />
-        )}
-
-        {/* Breadcrumb Navigation */}
-        <nav className="text-sm text-gray-500 mb-4" aria-label="パンくずリスト">
-          <ol className="flex space-x-2">
-            <li>
-              <a href="/" className="hover:text-gray-700">
-                ホーム
-              </a>
-            </li>
-            <li>/</li>
-            <li>
-              <a href="/products" className="hover:text-gray-700">
-                商品
-              </a>
-            </li>
-            <li>/</li>
-            <li className="text-gray-900" aria-current="page">
-              {product.name}
-            </li>
-          </ol>
-        </nav>
-
-        {/* Product Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {product.name}
-              </h1>
-              <p className="text-lg text-gray-600">{product.brandName}</p>
-            </div>
-
-            {/* お気に入りボタン */}
-            <div className="flex-shrink-0">
+      {/* Futuristic Dashboard Container */}
+      <div className="min-h-screen bg-slate-50 pb-20">
+        {/* Top Navigation / Breadcrumbs */}
+        <div className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-md bg-white/80">
+          <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+            <nav className="text-xs font-medium text-slate-500">
+              <ol className="flex items-center space-x-2">
+                <li>
+                  <a href="/" className="hover:text-blue-600 transition-colors">
+                    HOME
+                  </a>
+                </li>
+                <li>/</li>
+                <li className="text-slate-900 truncate max-w-[200px]">
+                  {product.name}
+                  <div className="flex gap-2">
+                    {product.ingredients &&
+                      product.ingredients.slice(0, 3).map((ing, i) => (
+                        <span
+                          key={i}
+                          className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md"
+                        >
+                          {ing.ingredient?.name}
+                        </span>
+                      ))}
+                    {product.ingredients && product.ingredients.length > 3 && (
+                      <span className="px-2 py-1 bg-slate-100 text-slate-400 text-xs rounded-md">
+                        +{product.ingredients.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </li>
+              </ol>
+            </nav>
+            <div className="flex items-center gap-3">
+              <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
+                <Share2 size={18} />
+              </button>
               <FavoriteButton
                 productId={product._id}
                 productName={product.name}
-                size="lg"
+                size="sm"
               />
             </div>
           </div>
-
-          {/* Badge Summary */}
-          <BadgeSummary badges={badges} />
         </div>
 
-        {/* Product Image */}
-        <div className="mb-8 flex justify-center">
-          {product.externalImageUrl ||
-          (product.images && product.images.length > 0) ? (
-            <ImageLightbox
-              src={product.externalImageUrl || product.images![0].asset.url}
-              alt={product.images?.[0]?.alt || product.name}
-              width={400}
-              height={300}
-            />
-          ) : (
-            <div className="w-full max-w-md mx-auto h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm flex items-center justify-center border-2 border-dashed border-gray-300">
-              <div className="text-center p-6">
-                <div className="text-6xl mb-3">📦</div>
-                <p className="text-gray-500 font-medium">商品画像準備中</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  画像は順次追加予定です
-                </p>
-              </div>
+        <div className="container mx-auto px-4 py-6">
+          {/* System Alerts */}
+          {complianceResult.hasViolations && (
+            <div className="mb-6">
+              <WarningBanner violations={complianceResult.violations} />
             </div>
           )}
-        </div>
 
-        {/* Tier Rankings - 総合評価 */}
-        {updatedTierRatings && (
-          <div
-            className="relative overflow-hidden rounded-2xl shadow-xl border border-purple-100 p-6 mb-8
-            bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30
-            before:absolute before:inset-0 before:bg-gradient-to-br before:from-purple-500/5 before:to-blue-500/5 before:-z-10"
-          >
-            <TierBadgeGrid
-              ratings={updatedTierRatings as unknown as TierRatings}
-            />
-          </div>
-        )}
-
-        {/* Nutrition Score Card - 栄養価スコア */}
-        {product.ingredients && product.ingredients.length > 0 && (
-          <NutritionScoreCard
-            ingredients={product.ingredients
-              .filter(
-                (ing) =>
-                  ing.ingredient?.evidenceLevel && ing.amountMgPerServing > 0,
-              )
-              .map((ing) => ({
-                name: ing.ingredient!.name,
-                amount: ing.amountMgPerServing,
-                evidenceLevel: ing.ingredient!.evidenceLevel!,
-              }))}
-            gender="male"
-            className="mb-8"
-          />
-        )}
-
-        {/* 1. Product Description - 商品の詳細 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">商品説明</h2>
-          <p className="text-gray-700 leading-relaxed">{description}</p>
-        </div>
-
-        {/* 2. Price Comparison - 最安値比較 */}
-        <PriceComparison
-          priceData={mergedPriceData}
-          priceRank={
-            updatedTierRatings?.priceRank as "S" | "A" | "B" | "C" | "D"
-          }
-          className="mb-8"
-        />
-
-        {/* 3. Cost Effectiveness - コスパ比較 */}
-        {similarProducts.length > 0 && (
-          <>
-            {mainIngredientAmount > 0 ? (
-              <>
-                <CostEffectivenessDetail
-                  currentProduct={{
-                    name: product.name,
-                    slug: product.slug,
-                    imageUrl:
-                      product.images?.[0]?.asset?.url ||
-                      product.externalImageUrl,
-                    priceJPY: product.priceJPY,
-                    ingredientAmount: mainIngredientAmount,
-                    servingsPerContainer: product.servingsPerContainer,
-                    servingsPerDay: product.servingsPerDay,
-                    ingredients: ingredientsForCostDetail,
-                  }}
-                  similarProducts={similarProducts}
-                  costEffectivenessRank={
-                    updatedTierRatings?.costEffectivenessRank as
-                      | "S"
-                      | "A"
-                      | "B"
-                      | "C"
-                      | "D"
-                  }
-                  totalProductsInCategory={totalProductsInCategory}
-                  className="mb-8"
-                />
-
-                {/* Ingredient Cost Chart - 成分別コスト分析 */}
-                {product.ingredients &&
-                  product.ingredients.length > 0 &&
-                  (() => {
-                    const totalAmount = product.ingredients.reduce(
-                      (sum, ing) => sum + (ing.amountMgPerServing || 0),
-                      0,
-                    );
-                    const costData = product.ingredients
-                      .filter(
-                        (ing) =>
-                          ing.amountMgPerServing > 0 && ing.ingredient?.name,
-                      )
-                      .map((ing) => {
-                        const amount = ing.amountMgPerServing;
-                        const costPerMg =
-                          totalAmount > 0 ? product.priceJPY / totalAmount : 0;
-                        const totalCost = amount * costPerMg;
-                        const percentage =
-                          totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
-                        return {
-                          name: ing.ingredient!.name,
-                          amount,
-                          costPerMg,
-                          totalCost,
-                          percentage,
-                        };
-                      })
-                      .sort((a, b) => b.amount - a.amount)
-                      .slice(0, 5);
-
-                    return costData.length > 0 ? (
-                      <IngredientCostChart
-                        ingredients={costData}
-                        totalPrice={product.priceJPY}
-                        className="mb-8"
-                      />
-                    ) : null;
-                  })()}
-              </>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-                <div className="flex items-start gap-3">
-                  <div className="text-2xl">📊</div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-yellow-900 mb-2">
-                      コスパ比較データ準備中
-                    </h3>
-                    <p className="text-sm text-yellow-800 leading-relaxed mb-3">
-                      この商品の成分量データは現在準備中です。 価格情報は「💰
-                      最安値比較」セクションでご確認いただけます。
-                    </p>
-                    <p className="text-xs text-yellow-700">
-                      💡 ヒント:
-                      商品データは随時更新されています。しばらくしてから再度ご確認ください。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* 4. Ingredient Comparison - 含有量比較 */}
-        {similarProducts.length > 0 && (
-          <>
-            {mainIngredientAmount > 0 ? (
-              <IngredientComparison
-                currentProduct={{
+          {/* Dashboard Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Column: Product Identity (4 cols) */}
+            <div className="lg:col-span-4">
+              <ProductIdentitySection
+                product={{
+                  _id: product._id,
                   name: product.name,
-                  slug: product.slug,
-                  imageUrl:
-                    product.images?.[0]?.asset?.url || product.externalImageUrl,
-                  ingredientAmount: mainIngredientAmount,
-                  servingsPerDay: product.servingsPerDay,
+                  brandName: product.brandName,
+                  priceJPY: product.priceJPY,
+                  servingsPerContainer: product.servingsPerContainer,
+                  externalImageUrl: product.externalImageUrl,
+                  images: product.images,
                 }}
-                similarProducts={similarProducts}
-                ingredientName="主要成分"
-                contentRank={
-                  updatedTierRatings?.contentRank as "S" | "A" | "B" | "C" | "D"
-                }
-                className="mb-8"
+                badges={badges}
+                updatedTierRatings={updatedTierRatings}
+                description={description}
+                allProductsWithTierRatings={allProducts}
               />
-            ) : (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-                <div className="flex items-start gap-3">
-                  <div className="text-2xl">📏</div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                      成分量比較データ準備中
-                    </h3>
-                    <p className="text-sm text-blue-800 leading-relaxed mb-3">
-                      この商品の詳細な成分量データは現在準備中です。
-                      同じ成分を含む他の商品との比較は、データ更新後にご利用いただけます。
-                    </p>
-                    <p className="text-xs text-blue-700">
-                      💡 ヒント:
-                      エビデンスと安全性のスコアは、成分名ベースで評価されています。
-                    </p>
-                  </div>
+            </div>
+
+            {/* Right Column: Data Modules (8 cols) */}
+            <div className="lg:col-span-8 space-y-8">
+              {/* Price Comparison Module (Direct Display) */}
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500" />
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
+                    <Database className="w-6 h-6 text-blue-500" />
+                    価格比較
+                  </h3>
+                  {updatedTierRatings?.priceRank && (
+                    <div
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.priceRank === "S" || updatedTierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                    >
+                      <span className="text-[10px] font-bold">RANK</span>
+                      <span className="text-lg font-black leading-none">
+                        {updatedTierRatings.priceRank}
+                      </span>
+                    </div>
+                  )}
                 </div>
+                <PriceComparison
+                  priceData={mergedPriceData}
+                  priceRank={updatedTierRatings?.priceRank}
+                />
               </div>
-            )}
-          </>
-        )}
 
-        {/* RDA Fulfillment Heatmap - RDA充足率ヒートマップ */}
-        {product.ingredients && product.ingredients.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-            <RdaFulfillmentHeatmap
-              ingredients={product.ingredients
-                .filter(
-                  (ing) => ing.ingredient?.name && ing.amountMgPerServing > 0,
-                )
-                .map((ing) => ({
-                  name: ing.ingredient!.name,
-                  amount: ing.amountMgPerServing,
-                }))}
-              gender="male"
-              maxDisplay={10}
-            />
+              {/* Nutrition Performance Module (Removed Total Score Card) */}
+
+              <SeamlessModal layoutId="composition-modal">
+                <SeamlessModalTrigger className="w-full">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-400 to-pink-500" />
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
+                        <Beaker className="w-6 h-6 text-purple-500" />
+                        含有量比較
+                      </h3>
+                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                        詳細を見る
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-slate-500">
+                        他社製品との成分量比較
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {updatedTierRatings?.contentRank && (
+                          <div
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          >
+                            <span className="text-[10px] font-bold">RANK</span>
+                            <span className="text-lg font-black leading-none">
+                              {updatedTierRatings.contentRank}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center -space-x-2">
+                          {similarProducts.slice(0, 3).map((prod, i) => (
+                            <div
+                              key={i}
+                              className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 overflow-hidden relative"
+                            >
+                              {prod.imageUrl ? (
+                                <Image
+                                  src={prod.imageUrl}
+                                  alt=""
+                                  fill
+                                  className="object-cover"
+                                  unoptimized
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400">
+                                  ?
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          {similarProducts.length > 3 && (
+                            <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                              +{similarProducts.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SeamlessModalTrigger>
+                <SeamlessModalContent>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-2xl font-bold text-slate-900">
+                        含有量比較詳細
+                      </h2>
+                      {updatedTierRatings?.contentRank && (
+                        <div
+                          className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                        >
+                          <span className="text-xs font-bold">RANK</span>
+                          <span className="text-2xl font-black leading-none">
+                            {updatedTierRatings.contentRank}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <IngredientComparison
+                      currentProduct={{
+                        name: product.name,
+                        slug: { current: product.slug.current },
+                        imageUrl:
+                          product.externalImageUrl ||
+                          product.images?.[0]?.asset?.url,
+                        ingredientAmount: mainIngredientAmount,
+                        servingsPerDay: product.servingsPerDay,
+                      }}
+                      similarProducts={similarProducts}
+                      contentRank={
+                        updatedTierRatings?.contentRank as
+                          | "S"
+                          | "A"
+                          | "B"
+                          | "C"
+                          | "D"
+                      }
+                    />
+                  </div>
+                </SeamlessModalContent>
+              </SeamlessModal>
+
+              {/* Cost Efficiency Module */}
+              <SeamlessModal layoutId="cost-modal">
+                <SeamlessModalTrigger className="w-full">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-400 to-orange-500" />
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
+                        <Zap className="w-6 h-6 text-yellow-500" />
+                        コスパ分析
+                      </h3>
+                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                        詳細を見る
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-6">
+                        <div>
+                          <p className="text-xs text-slate-500 mb-1 font-medium">
+                            1日あたりのコスト
+                          </p>
+                          <p className="text-3xl font-bold text-slate-900 tracking-tight">
+                            ¥
+                            {(
+                              product.priceJPY /
+                              (product.servingsPerContainer /
+                                product.servingsPerDay)
+                            ).toFixed(0)}
+                            <span className="text-sm text-slate-400 font-normal ml-1">
+                              /日
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="h-8 w-px bg-slate-200" />
+
+                        <div>
+                          <p className="text-[10px] text-slate-400 mb-0.5">
+                            1mgあたりの価格
+                          </p>
+                          <p className="text-sm font-bold text-slate-700">
+                            ¥
+                            {(
+                              product.priceJPY /
+                              (product.servingsPerContainer *
+                                mainIngredientAmount)
+                            ).toFixed(2)}
+                          </p>
+                        </div>
+
+                        <div className="h-8 w-px bg-slate-200" />
+
+                        <div>
+                          <p className="text-[10px] text-slate-400 mb-0.5">
+                            主要成分量
+                          </p>
+                          <p className="text-sm font-bold text-slate-700">
+                            {mainIngredientAmount}mg
+                          </p>
+                        </div>
+                      </div>
+
+                      {updatedTierRatings?.costEffectivenessRank && (
+                        <div
+                          className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${updatedTierRatings.costEffectivenessRank === "S" || updatedTierRatings.costEffectivenessRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                        >
+                          <span className="text-xs font-bold">RANK</span>
+                          <span className="text-2xl font-black leading-none">
+                            {updatedTierRatings.costEffectivenessRank}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SeamlessModalTrigger>
+                <SeamlessModalContent>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
+                      コスパ詳細分析
+                    </h2>
+                    <CostEffectivenessDetail
+                      currentProduct={{
+                        name: product.name,
+                        slug: { current: product.slug.current },
+                        imageUrl:
+                          product.externalImageUrl ||
+                          product.images?.[0]?.asset?.url,
+                        priceJPY: product.priceJPY,
+                        ingredientAmount: mainIngredientAmount,
+                        servingsPerContainer: product.servingsPerContainer,
+                        servingsPerDay: product.servingsPerDay,
+                        ingredients: ingredientsForCostDetail,
+                      }}
+                      similarProducts={similarProducts}
+                      costEffectivenessRank={
+                        updatedTierRatings?.costEffectivenessRank
+                      }
+                      totalProductsInCategory={totalProductsInCategory}
+                    />
+                  </div>
+                </SeamlessModalContent>
+              </SeamlessModal>
+
+              {/* Evidence Level Module (New Minimal Card) */}
+              <SeamlessModal layoutId="evidence-modal">
+                <SeamlessModalTrigger className="w-full">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-cyan-500" />
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
+                        <FileText className="w-6 h-6 text-blue-500" />
+                        エビデンス分析
+                      </h3>
+                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                        詳細を見る
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-slate-500">
+                        科学的根拠の信頼性評価
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {updatedTierRatings?.evidenceRank && (
+                          <div
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.evidenceRank === "S" || updatedTierRatings.evidenceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          >
+                            <span className="text-[10px] font-bold">RANK</span>
+                            <span className="text-lg font-black leading-none">
+                              {updatedTierRatings.evidenceRank}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-400">
+                            スコア
+                          </span>
+                          <span className="text-2xl font-bold text-slate-900">
+                            {evidenceScore}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SeamlessModalTrigger>
+                <SeamlessModalContent>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
+                      エビデンス詳細
+                    </h2>
+                    <EvidenceSafetyDetail
+                      evidenceScore={evidenceScore}
+                      evidenceLevel={
+                        evidenceLevel as "S" | "A" | "B" | "C" | "D"
+                      }
+                      evidenceDetails={evidenceDetails}
+                      safetyDetails={[]} // Only show evidence here
+                      visibleSection="evidence"
+                    />
+                  </div>
+                </SeamlessModalContent>
+              </SeamlessModal>
+
+              {/* Safety Level Module (New Minimal Card) */}
+              <SeamlessModal layoutId="safety-modal">
+                <SeamlessModalTrigger className="w-full">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-green-400 to-emerald-500" />
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
+                        <ShieldCheck className="w-6 h-6 text-green-500" />
+                        安全性分析
+                      </h3>
+                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-full group-hover:bg-blue-100 transition-colors">
+                        詳細を見る
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-slate-500">
+                        添加物・副作用リスク評価
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {updatedTierRatings?.safetyRank && (
+                          <div
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.safetyRank === "S" || updatedTierRatings.safetyRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          >
+                            <span className="text-[10px] font-bold">RANK</span>
+                            <span className="text-lg font-black leading-none">
+                              {updatedTierRatings.safetyRank}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-400">
+                            スコア
+                          </span>
+                          <span className="text-2xl font-bold text-slate-900">
+                            {finalScores.safety}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SeamlessModalTrigger>
+                <SeamlessModalContent>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
+                      安全性詳細
+                    </h2>
+                    <EvidenceSafetyDetail
+                      safetyScore={finalScores.safety}
+                      evidenceDetails={[]} // Only show safety here
+                      safetyDetails={safetyDetails}
+                      visibleSection="safety"
+                    />
+                  </div>
+                </SeamlessModalContent>
+              </SeamlessModal>
+
+              {/* Nutrition Performance Module (Moved to Bottom) */}
+              <SeamlessModal layoutId="nutrition-modal">
+                <SeamlessModalTrigger className="w-full">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-blue-500" />
+                        成分詳細
+                      </h3>
+                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-full group-hover:bg-blue-100 transition-colors">
+                        詳細を見る
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      {product.ingredients?.slice(0, 3).map((ing, i) => (
+                        <div key={i} className="flex justify-between text-sm">
+                          <span className="text-slate-600">
+                            {ing.ingredient?.name}
+                          </span>
+                          <span className="font-mono font-bold text-slate-900">
+                            {ing.amountMgPerServing}mg
+                          </span>
+                        </div>
+                      ))}
+                      {(product.ingredients?.length || 0) > 3 && (
+                        <div className="text-xs text-slate-400 text-center pt-2">
+                          他 {product.ingredients!.length - 3} 成分
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SeamlessModalTrigger>
+                <SeamlessModalContent>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
+                      栄養成分分析
+                    </h2>
+                    <div className="mb-8">
+                      <RdaFulfillmentHeatmap
+                        ingredients={
+                          product.ingredients?.map((i) => ({
+                            name: i.ingredient?.name || "",
+                            amount: i.amountMgPerServing,
+                          })) || []
+                        }
+                      />
+                    </div>
+                  </div>
+                </SeamlessModalContent>
+              </SeamlessModal>
+
+              {/* Related Ingredients (Moved to Bottom) */}
+              <div className="mt-8">
+                <RelatedIngredients ingredients={product.ingredients || []} />
+              </div>
+            </div>
           </div>
-        )}
-
-        {/* 5-6. Evidence & Safety - エビデンスと安全性 */}
-        <EvidenceSafetyDetail
-          evidenceLevel={evidenceLevel}
-          evidenceScore={finalScores.evidence}
-          safetyScore={finalScores.safety}
-          thirdPartyTested={product.thirdPartyTested || false}
-          warnings={product.warnings || []}
-          referenceCount={product.references?.length || 0}
-          evidenceRank={
-            updatedTierRatings?.evidenceRank as
-              | "S"
-              | "A"
-              | "B"
-              | "C"
-              | "D"
-              | undefined
-          }
-          safetyRank={
-            updatedTierRatings?.safetyRank as
-              | "S"
-              | "A"
-              | "B"
-              | "C"
-              | "D"
-              | undefined
-          }
-          ingredientName={ingredientName}
-          ingredientEvidenceLevel={ingredientEvidenceLevel}
-          safetyDetails={safetyDetails}
-          evidenceDetails={evidenceDetails}
-          allIngredients={product.allIngredients}
-          allergyInfo={allergyInfo}
-          hasUnregisteredMainIngredient={hasUnregisteredMainIngredient}
-          className="mb-8"
-        />
-
-        {/* 7. Product Badges - 獲得した称号の説明 */}
-        <ProductBadges badges={badges} className="mb-8" />
-
-        {/* Additional Information */}
-        {/* 8. Related Ingredients - 配合成分ガイド */}
-        {product.ingredients && product.ingredients.length > 0 && (
-          <RelatedIngredients
-            ingredients={product.ingredients}
-            className="mb-8"
-          />
-        )}
-
-        {/* Price History Chart */}
-        <PriceHistoryChart
-          priceHistory={product.priceHistory}
-          className="mb-8"
-        />
-
-        {/* Back to Home */}
-        <div className="text-center">
-          <a
-            href="/"
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            商品一覧に戻る
-          </a>
         </div>
       </div>
     </>
   );
 }
 
-// ISR設定: 1時間ごとにページを再生成
-export const revalidate = 3600; // 3600秒 = 1時間
+export const revalidate = 3600;
 
-// Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps) {
   const product = await getProduct(params.slug);
-
-  if (!product) {
-    return {
-      title: "商品が見つかりません",
-    };
-  }
-
-  // JANコードで関連商品を取得して価格比較データを作成
+  if (!product) return { title: "商品が見つかりません" };
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
-
-  // 既存のpriceDataを正規化
   const normalizedPriceData = normalizePriceData(product.priceData);
-
-  // 既存のpriceDataとマージ（既存データを優先）
   const mergedPriceData =
     normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
-
   return generateProductMetadata({
     name: product.name,
     brand: product.brandName,

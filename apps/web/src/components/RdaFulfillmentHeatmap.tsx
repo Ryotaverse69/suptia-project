@@ -1,14 +1,15 @@
 /**
  * RDA Fulfillment Heatmap Component
  *
- * Phase 2.7-C: UI/UX改善
- * - 成分ごとのRDA充足率を色分けして表示
- * - 緑（適正範囲）、オレンジ（やや過剰）、赤（過剰注意）
- * - ツールチップで詳細情報を表示
+ * Phase 3: Futuristic UI Redesign
+ * - Cyberpunk/SF Style Data Visualization
+ * - Neon gradients, segmented bars, holographic glow
+ * - Terminal/HUD aesthetic
  */
 
 import React from "react";
 import { calculateRdaFulfillment } from "@/lib/nutrition-score";
+import { BarChart3, Activity, Zap, Info } from "lucide-react";
 
 interface RdaFulfillmentHeatmapProps {
   /** 成分配列 */
@@ -45,69 +46,101 @@ export function RdaFulfillmentHeatmap({
 
   if (ingredientsWithRda.length === 0) {
     return (
-      <div className={`text-center py-6 ${className}`}>
-        <p className="text-sm text-gray-500">RDAデータがある成分がありません</p>
+      <div
+        className={`text-center py-8 bg-slate-900/50 rounded-xl border border-slate-800 border-dashed ${className}`}
+      >
+        <p className="text-sm font-mono text-slate-500">
+          NO_RDA_DATA_AVAILABLE // SYSTEM_IDLE
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={className}>
-      {/* RDAの説明セクション */}
-      <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="text-base font-semibold text-blue-900 mb-2">
-          📊 RDA充足率とは？
-        </h4>
-        <p className="text-sm text-blue-800 leading-relaxed">
-          <strong>RDA（Recommended Dietary Allowance）</strong>
-          は、厚生労働省が定める「推奨1日摂取量」です。
-          この商品に含まれる各成分が、1日に必要な量の何%を満たしているかを示しています。
-        </p>
-        <ul className="mt-2 text-xs text-blue-700 space-y-1 list-disc list-inside">
-          <li>
-            <strong>100%</strong> = 1日に必要な量をちょうど満たしている
-          </li>
-          <li>
-            <strong>50%</strong> = 1日に必要な量の半分を満たしている
-          </li>
-          <li>
-            <strong>200%</strong> = 1日に必要な量の2倍を含んでいる
-          </li>
-        </ul>
+    <div
+      className={`bg-slate-900 rounded-xl border border-slate-800 overflow-hidden relative ${className}`}
+    >
+      {/* Background Grid Effect */}
+      <div
+        className="absolute inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px)",
+          backgroundSize: "20px 20px",
+        }}
+      />
+
+      {/* Header */}
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm relative z-10">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-cyan-400" />
+          <h4 className="text-sm font-bold font-mono text-cyan-400 tracking-widest uppercase">
+            RDA_ANALYSIS_MATRIX
+          </h4>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500">
+          <Activity className="w-3 h-3 animate-pulse text-emerald-500" />
+          <span>LIVE_DATA</span>
+        </div>
       </div>
 
-      <h4 className="text-sm font-medium text-gray-700 mb-3">
-        成分別RDA充足率
-      </h4>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-        {ingredientsWithRda.map((ing) => (
-          <RdaCell
-            key={ing.name}
-            name={ing.name}
-            amount={ing.amount}
-            fulfillment={ing.fulfillment}
-          />
-        ))}
-      </div>
-      <div className="mt-4 flex items-center gap-4 text-xs text-gray-600">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-500" />
-          <span>適正（≤100%）</span>
+      {/* Content */}
+      <div className="p-6 relative z-10">
+        {/* Explanation Panel */}
+        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 mb-6">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <h4 className="font-bold text-slate-900 text-sm mb-1">
+                RDA（推奨摂取量）とは？
+              </h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                RDA (Recommended Dietary Allowance)
+                は、健康な人が1日に摂取することが推奨される栄養素の量を示しています。
+                このグラフは、本製品が1日分の推奨量をどの程度満たしているかを可視化したものです。
+                <br />
+                <span className="text-slate-400 mt-1 block">
+                  ※
+                  100%に近いほど、1日分の必要量を十分に補えることを意味します。
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-orange-500" />
-          <span>やや過剰（100-300%）</span>
+
+        {/* Heatmap Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {ingredientsWithRda.map((ing) => (
+            <RdaBar
+              key={ing.name}
+              name={ing.name}
+              amount={ing.amount}
+              fulfillment={ing.fulfillment}
+            />
+          ))}
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-red-500" />
-          <span>過剰注意（≥300%）</span>
+
+        {/* Legend */}
+        <div className="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center gap-4 text-[10px] font-mono text-slate-500">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-sm bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]" />
+            <span>OPTIMAL (≤100%)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-sm bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]" />
+            <span>HIGH (100-300%)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-sm bg-rose-500 shadow-[0_0_5px_rgba(244,63,94,0.5)]" />
+            <span>EXCESS (≥300%)</span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function RdaCell({
+function RdaBar({
   name,
   amount,
   fulfillment,
@@ -116,35 +149,78 @@ function RdaCell({
   amount: number;
   fulfillment: number;
 }) {
-  const getColorClass = (fulfillment: number): string => {
-    if (fulfillment <= 100) return "bg-green-500 text-white";
-    if (fulfillment <= 300) return "bg-orange-500 text-white";
-    return "bg-red-500 text-white";
-  };
+  // Determine colors based on fulfillment
+  let barColor = "bg-emerald-500";
+  let glowColor = "shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+  let textColor = "text-emerald-400";
+  let statusText = "OPTIMAL";
 
-  const getStatusText = (fulfillment: number): string => {
-    if (fulfillment <= 50) return "不足気味";
-    if (fulfillment <= 100) return "適正";
-    if (fulfillment <= 150) return "やや多め";
-    if (fulfillment <= 300) return "過剰";
-    return "要注意";
-  };
+  if (fulfillment > 300) {
+    barColor = "bg-rose-500";
+    glowColor = "shadow-[0_0_10px_rgba(244,63,94,0.5)]";
+    textColor = "text-rose-400";
+    statusText = "EXCESS";
+  } else if (fulfillment > 100) {
+    barColor = "bg-amber-500";
+    glowColor = "shadow-[0_0_10px_rgba(245,158,11,0.5)]";
+    textColor = "text-amber-400";
+    statusText = "HIGH";
+  }
+
+  // Cap display at 100% for the bar width (since it's a fulfillment meter, not a linear scale)
+  // Actually, let's make it a segmented bar where 100% is full width, but we can go over
+  const displayPercentage = Math.min(fulfillment, 100);
+
+  // Generate segments
+  const segments = 20; // 5% per segment
+  const filledSegments = Math.ceil((displayPercentage / 100) * segments);
 
   return (
-    <div
-      className={`p-3 rounded-lg transition-all duration-200 hover:scale-105 cursor-help ${getColorClass(fulfillment)}`}
-      title={`${name}: ${amount}mg (RDA ${fulfillment.toFixed(0)}% - ${getStatusText(fulfillment)})`}
-    >
-      <p className="text-xs font-medium truncate">{name}</p>
-      <p className="text-lg font-bold mt-1">{fulfillment.toFixed(0)}%</p>
-      <p className="text-xs opacity-90">{getStatusText(fulfillment)}</p>
+    <div className="group relative">
+      <div className="flex items-end justify-between mb-1">
+        <span className="text-xs font-mono font-bold text-slate-300 truncate max-w-[120px]">
+          {name}
+        </span>
+        <div className="text-right">
+          <span className={`text-sm font-mono font-bold ${textColor}`}>
+            {fulfillment.toFixed(0)}%
+          </span>
+        </div>
+      </div>
+
+      {/* Segmented Bar Container */}
+      <div className="h-2 flex gap-0.5">
+        {Array.from({ length: segments }).map((_, i) => {
+          const isFilled = i < filledSegments;
+          const isOverfill = fulfillment > 100 && i >= segments - 1; // Last segment indicates overflow if > 100%
+
+          return (
+            <div
+              key={i}
+              className={`
+                flex-1 rounded-sm transition-all duration-300
+                ${isFilled ? barColor : "bg-slate-800"}
+                ${isFilled ? glowColor : ""}
+                ${isOverfill && fulfillment > 300 ? "animate-pulse" : ""}
+              `}
+            />
+          );
+        })}
+      </div>
+
+      <div className="flex justify-between mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-[10px] font-mono text-slate-500">{amount}mg</span>
+        <span className={`text-[10px] font-mono font-bold ${textColor}`}>
+          {statusText}
+        </span>
+      </div>
     </div>
   );
 }
 
 /**
- * RDA Fulfillment Gauge Component
- * 単一成分のRDA充足率をゲージで表示
+ * RDA Fulfillment Gauge Component (Single)
+ * Used in other parts of the app
  */
 export function RdaFulfillmentGauge({
   name,
@@ -159,46 +235,46 @@ export function RdaFulfillmentGauge({
 }) {
   const fulfillment = calculateRdaFulfillment(name, amount, gender);
 
-  if (fulfillment === null) {
-    return null;
-  }
+  if (fulfillment === null) return null;
 
-  const getBarColor = (fulfillment: number): string => {
-    if (fulfillment <= 100) return "bg-green-500";
-    if (fulfillment <= 300) return "bg-orange-500";
-    return "bg-red-500";
-  };
+  let strokeColor = "#10b981"; // emerald-500
+  if (fulfillment > 300)
+    strokeColor = "#f43f5e"; // rose-500
+  else if (fulfillment > 100) strokeColor = "#f59e0b"; // amber-500
 
-  const displayPercentage = Math.min(fulfillment, 400); // Cap at 400% for display
+  const percentage = Math.min(fulfillment, 100);
 
   return (
-    <div className={`space-y-2 ${className}`}>
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">{name}</span>
-        <span className="text-sm font-bold text-gray-900">
+    <div className={`flex items-center gap-3 ${className}`}>
+      <div className="relative w-8 h-8 flex items-center justify-center">
+        <svg className="w-full h-full transform -rotate-90">
+          <circle
+            cx="16"
+            cy="16"
+            r="14"
+            stroke="#1e293b"
+            strokeWidth="3"
+            fill="none"
+          />
+          <circle
+            cx="16"
+            cy="16"
+            r="14"
+            stroke={strokeColor}
+            strokeWidth="3"
+            fill="none"
+            strokeDasharray={88}
+            strokeDashoffset={88 - (percentage / 100) * 88}
+            className="transition-all duration-1000 ease-out"
+          />
+        </svg>
+        <Zap className="w-3 h-3 text-slate-400 absolute" />
+      </div>
+      <div>
+        <div className="text-xs font-mono font-bold text-slate-300">{name}</div>
+        <div className="text-[10px] font-mono text-slate-500">
           {fulfillment.toFixed(0)}% RDA
-        </span>
-      </div>
-      <div className="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-        {/* Background markers */}
-        <div className="absolute inset-0 flex">
-          <div className="w-1/4 border-r border-gray-300" />
-          <div className="w-1/4 border-r border-gray-300" />
-          <div className="w-1/4 border-r border-gray-300" />
-          <div className="w-1/4" />
         </div>
-        {/* Progress bar */}
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${getBarColor(fulfillment)}`}
-          style={{ width: `${(displayPercentage / 400) * 100}%` }}
-        />
-      </div>
-      <div className="flex justify-between text-xs text-gray-500">
-        <span>0%</span>
-        <span>100%</span>
-        <span>200%</span>
-        <span>300%</span>
-        <span>400%+</span>
       </div>
     </div>
   );

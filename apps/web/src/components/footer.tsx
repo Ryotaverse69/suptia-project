@@ -25,43 +25,49 @@ export function Footer() {
   //   setLanguageMenuOpen(false);
   // };
   return (
-    <footer className="border-t bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="border-t border-white/40 bg-white/30 backdrop-blur-md relative z-10">
+      <div className="container mx-auto px-6 lg:px-12 xl:px-16 py-16">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* コンテンツ */}
           <div>
-            <h3 className="font-bold text-lg mb-4">コンテンツ</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-bold text-lg mb-6 text-slate-800">
+              コンテンツ
+            </h3>
+            <ul className="space-y-3 text-sm text-slate-600">
               <li>
                 <Link
                   href="/ingredients"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   成分ガイド
                 </Link>
               </li>
               <li>
                 <Link
                   href="/guide/dangerous-ingredients"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   危険成分ガイド
                 </Link>
               </li>
               <li>
                 <Link
                   href="/guide/purposes"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   目的別ガイド
                 </Link>
               </li>
               <li>
                 <Link
                   href="/guide/audiences"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   対象者別ガイド
                 </Link>
               </li>
@@ -70,53 +76,59 @@ export function Footer() {
 
           {/* 法的義務・コンプライアンス */}
           <div>
-            <h3 className="font-bold text-lg mb-4">法的情報</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-bold text-lg mb-6 text-slate-800">法的情報</h3>
+            <ul className="space-y-3 text-sm text-slate-600">
               <li>
                 <Link
                   href="/legal/terms"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   利用規約
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/privacy"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   プライバシーポリシー
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/disclosure"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   特定商取引法に基づく表記
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/disclaimer"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   免責事項
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/cookies"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   Cookieポリシー
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/affiliate"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   アフィリエイト開示
                 </Link>
               </li>
@@ -125,37 +137,41 @@ export function Footer() {
 
           {/* 会社情報・信頼性 */}
           <div>
-            <h3 className="font-bold text-lg mb-4">運営情報</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-bold text-lg mb-6 text-slate-800">運営情報</h3>
+            <ul className="space-y-3 text-sm text-slate-600">
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   サプティアとは
                 </Link>
               </li>
               <li>
                 <Link
                   href="/advisory"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   情報ソースと方針
                 </Link>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   お問い合わせ
                 </Link>
               </li>
               <li>
                 <Link
                   href="/partners"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   提携パートナー
                 </Link>
               </li>
@@ -164,29 +180,34 @@ export function Footer() {
 
           {/* サイト情報 */}
           <div>
-            <h3 className="font-bold text-lg mb-4">サイト情報</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-bold text-lg mb-6 text-slate-800">
+              サイト情報
+            </h3>
+            <ul className="space-y-3 text-sm text-slate-600">
               <li>
                 <Link
                   href="/sitemap"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   サイトマップ
                 </Link>
               </li>
               <li>
                 <Link
                   href="/faq"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   よくある質問
                 </Link>
               </li>
               <li>
                 <Link
                   href="/how-to-use"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-blue-600 transition-colors flex items-center gap-1 group"
                 >
+                  <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-blue-500 transition-colors"></span>
                   サプティアの使い方
                 </Link>
               </li>
@@ -195,37 +216,45 @@ export function Footer() {
 
           {/* ブランド・説明 */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Image
-                src="/logo.png"
-                alt="サプティア Logo"
-                width={32}
-                height={40}
-              />
-              <h3 className="font-bold text-lg">サプティア</h3>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-white rounded-lg shadow-sm border border-slate-100">
+                <Image
+                  src="/logo.png"
+                  alt="サプティア Logo"
+                  width={32}
+                  height={40}
+                  className="w-8 h-auto"
+                />
+              </div>
+              <h3 className="font-black text-xl text-slate-800 tracking-tight">
+                サプティア
+              </h3>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
               科学的根拠に基づくサプリメント比較メタサーチ。
+              <br />
               あなたに最適なサプリメントを見つけるお手伝いをします。
             </p>
-            <p className="text-xs text-muted-foreground mb-4">
+            <p className="text-xs text-slate-400 mb-6 bg-slate-50 p-3 rounded-lg border border-slate-100">
               ※ 本サイトは医療・診断を目的としたものではありません
             </p>
 
             {/* Social Media Links */}
-            <div className="mt-6">
-              <h4 className="font-semibold text-sm mb-3">フォローする</h4>
+            <div>
+              <h4 className="font-bold text-sm mb-4 text-slate-700">
+                フォローする
+              </h4>
               <div className="flex gap-3">
                 {/* X (Twitter) */}
                 <Link
                   href="https://x.com/suptia_official"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors group"
+                  className="p-2.5 rounded-full bg-white hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-all group shadow-sm hover:shadow-md"
                   aria-label="XでSuptiaをフォロー"
                 >
                   <svg
-                    className="w-5 h-5 text-slate-900 dark:text-slate-100 transition-colors"
+                    className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
@@ -239,68 +268,18 @@ export function Footer() {
                   href="https://instagram.com/suptia_official"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 transition-all group"
+                  className="p-2.5 rounded-full bg-white border border-slate-200 group hover:border-pink-500 transition-all shadow-sm hover:shadow-md"
                   aria-label="InstagramでSuptiaをフォロー"
                 >
-                  <Instagram className="w-5 h-5 text-white transition-colors" />
+                  <Instagram className="w-5 h-5 text-slate-600 group-hover:text-pink-500 transition-colors" />
                 </Link>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 言語と通貨の選択 - 一時的に非表示（将来実装予定） */}
-        {/* TODO: 多言語・多通貨対応を実装したら有効化する */}
-        {/* <div className="border-t pt-6 mb-6">
-          <div className="flex items-center justify-center gap-4">
-            <span className="text-sm text-muted-foreground">言語と通貨:</span>
-            <div className="relative">
-              <button
-                onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary-100 transition-colors text-sm border border-primary-200"
-              >
-                <Globe size={18} className="text-primary-600" />
-                <span className="text-primary-800">
-                  {currentLanguage} · {currentCurrency}
-                </span>
-                <ChevronDown
-                  size={16}
-                  className={cn(
-                    "text-primary-500 transition-transform",
-                    languageMenuOpen && "rotate-180",
-                  )}
-                />
-              </button>
-
-              {languageMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setLanguageMenuOpen(false)}
-                  />
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white rounded-lg shadow-lg border border-primary-200 py-2 z-50">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => handleLanguageChange(lang)}
-                        className={cn(
-                          "w-full px-4 py-2 text-left hover:bg-primary-50 transition-colors text-sm",
-                          currentLanguage === lang.name &&
-                            "bg-primary-100 text-primary font-medium",
-                        )}
-                      >
-                        {lang.name} · {lang.currency}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div> */}
-
         {/* Copyright */}
-        <div className="border-t pt-6 text-center text-sm text-muted-foreground">
+        <div className="border-t border-slate-200/60 pt-8 text-center text-sm text-slate-400 font-medium">
           <p>
             &copy; {new Date().getFullYear()} サプティア. All rights reserved.
           </p>
