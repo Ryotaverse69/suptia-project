@@ -508,52 +508,24 @@ export default async function Home() {
         {/* Global Background - Light & Clean */}
         <div className="absolute inset-0 bg-slate-50 -z-30" />
 
-        {/* Hero Section Wrapper - Cloud/Mist Animation */}
+        {/* Hero Section Wrapper - Static Cloud Pattern */}
         <div className="relative w-full bg-[#3b66e0] overflow-hidden py-12 sm:py-24 md:py-32">
-          {/* Layer 1: Main Drift (Blue -> Mint -> Blue) */}
+          {/* Static Cloud Pattern Background */}
           <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#f1faf9] to-[#3b66e0] -z-20 opacity-90 blur-[100px] scale-150"
-            style={{ animationDuration: "15s" }}
-          />
-
-          {/* Layer 2: Secondary Drift (Reverse, slightly different phase) - Creates turbulence */}
-          <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-[#f1faf9]/40 to-transparent -z-19 mix-blend-overlay blur-[80px] scale-150"
+            className="absolute inset-0 -z-20"
             style={{
-              animationDuration: "20s",
-              animationDirection: "reverse",
-              backgroundSize: "200% 200%",
+              background: `
+                radial-gradient(ellipse 80% 50% at 20% 30%, #f1faf9 0%, transparent 50%),
+                radial-gradient(ellipse 60% 70% at 80% 60%, rgba(241, 250, 249, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 60% at 50% 80%, rgba(241, 250, 249, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse 90% 80% at 30% 70%, rgba(241, 250, 249, 0.3) 0%, transparent 60%),
+                #3b66e0
+              `,
             }}
           />
 
           {/* Contrast Overlay for Text Visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20 -z-15 pointer-events-none" />
-
-          {/* Hero Mist Animation Layers - Cloud-like */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-            {/* Large White Cloud Blob 1 */}
-            <div
-              className="absolute top-[-30%] left-[-10%] w-[80vw] h-[80vw] bg-white/20 blur-[120px] rounded-full animate-mist-flow"
-              style={{ animationDuration: "45s" }}
-            />
-
-            {/* Large Mint Cloud Blob 2 */}
-            <div
-              className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-[#f1faf9]/30 blur-[100px] rounded-full animate-mist-flow"
-              style={{
-                animationDuration: "35s",
-                animationDirection: "reverse",
-              }}
-            />
-
-            {/* Blue Mist Overlay */}
-            <div
-              className="absolute top-[20%] left-[20%] w-[60vw] h-[60vw] bg-[#3b66e0]/40 blur-[90px] rounded-full animate-pulse"
-              style={{ animationDuration: "8s" }}
-            />
-
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#3b66e0]/80 to-transparent opacity-80" />
-          </div>
 
           {/* Hero Content */}
           <HeroSearch popularSearches={popularIngredientsWithStats} />

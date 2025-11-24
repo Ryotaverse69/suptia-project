@@ -43,8 +43,8 @@ export function Header() {
               <Image
                 src="/logo.png"
                 alt="サプティア Logo"
-                width={40}
-                height={50}
+                width={56}
+                height={70}
                 priority
               />
               <div className="flex flex-col">
