@@ -10,7 +10,10 @@ import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TierRatings } from "@/lib/tier-ranking";
 import { NutritionScoreCard } from "@/components/NutritionScoreBadge";
-import { RdaFulfillmentHeatmap } from "@/components/RdaFulfillmentHeatmap";
+import {
+  RdaFulfillmentHeatmap,
+  RdaFulfillmentModal,
+} from "@/components/RdaFulfillmentHeatmap";
 import { IngredientCostChart } from "@/components/IngredientCostChart";
 import { scoreToTierRank } from "@/lib/tier-colors";
 import { ProductIdentitySection } from "@/components/ProductIdentitySection";
@@ -179,6 +182,84 @@ function normalizePriceData(priceData: any): PriceData[] {
     return prices;
   }
   return [];
+}
+
+/**
+ * affiliateUrl、urls、source、priceJPYから価格データを生成する
+ * priceDataがない商品でも購入リンクを表示するために使用
+ */
+function generatePriceDataFromProduct(product: Product): PriceData[] {
+  const prices: PriceData[] = [];
+  const now = new Date().toISOString();
+
+  // affiliateUrlが存在する場合
+  if (product.affiliateUrl && product.priceJPY) {
+    const source = product.source || detectSourceFromUrl(product.affiliateUrl);
+    prices.push({
+      source: source,
+      amount: product.priceJPY,
+      currency: "JPY",
+      url: product.affiliateUrl,
+      fetchedAt: now,
+      confidence: 0.9,
+    });
+  }
+
+  // urls内の各ECサイトのリンク
+  if (product.urls) {
+    if (product.urls.rakuten && product.priceJPY) {
+      // affiliateUrlと重複していないか確認
+      if (!prices.some((p) => p.source === "rakuten")) {
+        prices.push({
+          source: "rakuten",
+          amount: product.priceJPY,
+          currency: "JPY",
+          url: product.urls.rakuten,
+          fetchedAt: now,
+          confidence: 0.8,
+        });
+      }
+    }
+    if (product.urls.amazon && product.priceJPY) {
+      if (!prices.some((p) => p.source === "amazon")) {
+        prices.push({
+          source: "amazon",
+          amount: product.priceJPY,
+          currency: "JPY",
+          url: product.urls.amazon,
+          fetchedAt: now,
+          confidence: 0.8,
+        });
+      }
+    }
+    if (product.urls.iherb && product.priceJPY) {
+      if (!prices.some((p) => p.source === "iherb")) {
+        prices.push({
+          source: "iherb",
+          amount: product.priceJPY,
+          currency: "JPY",
+          url: product.urls.iherb,
+          fetchedAt: now,
+          confidence: 0.8,
+        });
+      }
+    }
+  }
+
+  return prices;
+}
+
+/**
+ * URLからECサイトのソースを判定
+ */
+function detectSourceFromUrl(url: string): string {
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.includes("rakuten")) return "rakuten";
+  if (lowerUrl.includes("amazon")) return "amazon";
+  if (lowerUrl.includes("iherb")) return "iherb";
+  if (lowerUrl.includes("yahoo") || lowerUrl.includes("shopping.yahoo"))
+    return "yahoo";
+  return "unknown";
 }
 
 async function getRelatedProductsByJan(
@@ -374,6 +455,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
     product.ingredients.length > 0 &&
     product.ingredients.every((ing) => ing.ingredient);
 
+  // スコア内訳表示のため、常にsafetyDetailsを計算する
+  if (hasValidIngredients && hasRegisteredMainIngredient) {
+    const ingredientsWithAmount = product.ingredients!.map((ing) => ({
+      ingredient: ing.ingredient!,
+      amountMg: ing.amountMgPerServing,
+    }));
+    const safetyResult = calculateSafetyScoreByRatio(ingredientsWithAmount);
+    safetyDetails = safetyResult.details;
+
+    // evidenceDetailsも計算
+    const mainIngredientData = ingredientsWithAmount.find(
+      (item) => item.ingredient._id === mainIngredient!.ingredient!._id,
+    )!;
+    const mainEvidenceLevel =
+      mainIngredientData.ingredient.evidenceLevel || "D";
+    evidenceDetails = [
+      {
+        name: mainIngredientData.ingredient.name,
+        evidenceLevel: mainEvidenceLevel as "S" | "A" | "B" | "C" | "D",
+        evidenceScore: evidenceLevelToScore(mainEvidenceLevel),
+        amountMg: mainIngredientData.amountMg,
+        ratio: 1.0,
+      },
+    ];
+  }
+
   if (!hasSanityScores && hasValidIngredients && hasRegisteredMainIngredient) {
     const ingredientsWithAmount = product.ingredients!.map((ing) => ({
       ingredient: ing.ingredient!,
@@ -511,8 +618,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
   const normalizedPriceData = normalizePriceData(product.priceData);
+  const fallbackPriceData = generatePriceDataFromProduct(product);
+
+  // 優先順位: 1. priceData 2. JANコード関連商品 3. affiliateUrl/urls
   const mergedPriceData =
-    normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
+    normalizedPriceData.length > 0
+      ? normalizedPriceData
+      : relatedPrices.length > 0
+        ? relatedPrices
+        : fallbackPriceData;
   const description =
     product.description || generateSampleDescription(product.name);
   const complianceResult = checkCompliance(description);
@@ -642,10 +756,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </h3>
                   {updatedTierRatings?.priceRank && (
                     <div
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.priceRank === "S" || updatedTierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                      className={`flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.priceRank === "S" || updatedTierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                     >
-                      <span className="text-[10px] font-bold">RANK</span>
-                      <span className="text-base sm:text-lg font-black leading-none">
+                      <span className="text-[10px] sm:text-xs font-bold">
+                        RANK
+                      </span>
+                      <span className="text-lg sm:text-2xl font-black leading-none">
                         {updatedTierRatings.priceRank}
                       </span>
                     </div>
@@ -657,13 +773,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 />
               </div>
 
-              {/* Nutrition Performance Module (Removed Total Score Card) */}
-
+              {/* Nutrition Performance Module - 含有量比較 */}
               <SeamlessModal layoutId="composition-modal">
                 <SeamlessModalTrigger className="w-full">
                   <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-400 to-pink-500" />
-                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
                         <Beaker className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
                         含有量比較
@@ -672,49 +787,59 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         詳細を見る
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs sm:text-sm text-slate-500">
-                        他社製品との成分量比較
-                      </div>
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        {updatedTierRatings?.contentRank && (
-                          <div
-                            className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
-                          >
-                            <span className="text-[10px] font-bold">RANK</span>
-                            <span className="text-base sm:text-lg font-black leading-none">
-                              {updatedTierRatings.contentRank}
+
+                    <div className="flex items-center justify-between gap-2 sm:gap-4">
+                      <div className="flex items-center gap-3 sm:gap-6">
+                        <div>
+                          <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1 font-medium">
+                            1日あたりの{ingredientName || "主成分"}量
+                          </p>
+                          <p className="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                            {(
+                              mainIngredientAmount * product.servingsPerDay
+                            ).toLocaleString()}
+                            <span className="text-xs sm:text-sm text-slate-400 font-normal ml-1">
+                              mg/日
                             </span>
-                          </div>
-                        )}
-                        <div className="flex items-center -space-x-2">
-                          {similarProducts.slice(0, 3).map((prod, i) => (
-                            <div
-                              key={i}
-                              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 overflow-hidden relative"
-                            >
-                              {prod.imageUrl ? (
-                                <Image
-                                  src={prod.imageUrl}
-                                  alt=""
-                                  fill
-                                  className="object-cover"
-                                  unoptimized
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400">
-                                  ?
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                          {similarProducts.length > 3 && (
-                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-500">
-                              +{similarProducts.length - 3}
-                            </div>
-                          )}
+                          </p>
+                        </div>
+
+                        <div className="hidden sm:block h-8 w-px bg-slate-200" />
+
+                        <div className="hidden sm:block">
+                          <p className="text-[10px] text-slate-400 mb-0.5">
+                            1回あたり
+                          </p>
+                          <p className="text-sm font-bold text-slate-700">
+                            {mainIngredientAmount.toLocaleString()}mg ×{" "}
+                            {product.servingsPerDay}回
+                          </p>
+                        </div>
+
+                        <div className="hidden sm:block h-8 w-px bg-slate-200" />
+
+                        <div className="hidden sm:block">
+                          <p className="text-[10px] text-slate-400 mb-0.5">
+                            内容量
+                          </p>
+                          <p className="text-sm font-bold text-slate-700">
+                            {product.servingsPerContainer}回分
+                          </p>
                         </div>
                       </div>
+
+                      {updatedTierRatings?.contentRank && (
+                        <div
+                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                        >
+                          <span className="text-[10px] sm:text-xs font-bold">
+                            RANK
+                          </span>
+                          <span className="text-lg sm:text-2xl font-black leading-none">
+                            {updatedTierRatings.contentRank}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </SeamlessModalTrigger>
@@ -726,10 +851,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       </h2>
                       {updatedTierRatings?.contentRank && (
                         <div
-                          className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                         >
-                          <span className="text-xs font-bold">RANK</span>
-                          <span className="text-2xl font-black leading-none">
+                          <span className="text-[10px] font-bold">RANK</span>
+                          <span className="text-lg font-black leading-none">
                             {updatedTierRatings.contentRank}
                           </span>
                         </div>
@@ -744,6 +869,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           product.images?.[0]?.asset?.url,
                         ingredientAmount: mainIngredientAmount,
                         servingsPerDay: product.servingsPerDay,
+                        priceJPY: product.priceJPY,
+                        servingsPerContainer: product.servingsPerContainer,
                       }}
                       similarProducts={similarProducts}
                       contentRank={
@@ -898,7 +1025,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             スコア
                           </span>
                           <span className="text-2xl font-bold text-slate-900">
-                            {evidenceScore}
+                            {Math.round(evidenceScore)}
                           </span>
                         </div>
                       </div>
@@ -957,7 +1084,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             スコア
                           </span>
                           <span className="text-2xl font-bold text-slate-900">
-                            {finalScores.safety}
+                            {Math.round(finalScores.safety)}
                           </span>
                         </div>
                       </div>
@@ -979,19 +1106,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </SeamlessModalContent>
               </SeamlessModal>
 
-              {/* Nutrition Performance Module (Moved to Bottom) */}
+              {/* RDA充足率モジュール */}
               <SeamlessModal layoutId="nutrition-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-blue-500" />
-                        成分詳細
+                        RDA充足率
                       </h3>
-                      <span className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-full group-hover:bg-blue-100 transition-colors">
+                      <span className="text-xs text-blue-600 font-bold bg-white/80 px-2 py-1 rounded-full group-hover:bg-white transition-colors">
                         詳細を見る
                       </span>
                     </div>
+                    <p className="text-xs text-slate-500 mb-3">
+                      1日の推奨摂取量に対する充足率
+                    </p>
                     <div className="space-y-2">
                       {product.ingredients?.slice(0, 3).map((ing, i) => (
                         <div key={i} className="flex justify-between text-sm">
@@ -999,7 +1129,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             {ing.ingredient?.name}
                           </span>
                           <span className="font-mono font-bold text-slate-900">
-                            {ing.amountMgPerServing}mg
+                            {ing.amountMgPerServing *
+                              (product.servingsPerDay || 1)}
+                            mg/日
                           </span>
                         </div>
                       ))}
@@ -1012,21 +1144,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </div>
                 </SeamlessModalTrigger>
                 <SeamlessModalContent>
-                  <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
-                      栄養成分分析
-                    </h2>
-                    <div className="mb-8">
-                      <RdaFulfillmentHeatmap
-                        ingredients={
-                          product.ingredients?.map((i) => ({
-                            name: i.ingredient?.name || "",
-                            amount: i.amountMgPerServing,
-                          })) || []
-                        }
-                      />
-                    </div>
-                  </div>
+                  <RdaFulfillmentModal
+                    ingredients={
+                      product.ingredients?.map((i) => ({
+                        name: i.ingredient?.name || "",
+                        amount:
+                          i.amountMgPerServing * (product.servingsPerDay || 1),
+                      })) || []
+                    }
+                    productName={product.name}
+                    servingsPerDay={product.servingsPerDay || 1}
+                  />
                 </SeamlessModalContent>
               </SeamlessModal>
 
@@ -1049,8 +1177,13 @@ export async function generateMetadata({ params }: PageProps) {
   if (!product) return { title: "商品が見つかりません" };
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
   const normalizedPriceData = normalizePriceData(product.priceData);
+  const fallbackPriceData = generatePriceDataFromProduct(product);
   const mergedPriceData =
-    normalizedPriceData.length > 0 ? normalizedPriceData : relatedPrices;
+    normalizedPriceData.length > 0
+      ? normalizedPriceData
+      : relatedPrices.length > 0
+        ? relatedPrices
+        : fallbackPriceData;
   return generateProductMetadata({
     name: product.name,
     brand: product.brandName,
