@@ -259,7 +259,7 @@ export function EvidenceSafetyDetail({
                     エビデンススコア
                   </div>
                   <div className="font-bold text-purple-700">
-                    {evidenceScore}点
+                    {Math.round(evidenceScore)}点
                   </div>
                   <div className="text-gray-500 text-[10px] mt-1 leading-tight">
                     主要成分のエビデンスレベルに基づく評価
@@ -275,11 +275,35 @@ export function EvidenceSafetyDetail({
                   </div>
                 </div>
               </div>
-              {referenceCount >= 5 && (
-                <div className="mt-2 p-2 bg-green-50 rounded border border-green-200 text-xs text-green-700">
-                  ✓ 参考文献5件以上でボーナス加点（+10点）
+
+              {/* スコア内訳の詳細 */}
+              <div className="mt-4 p-3 bg-white rounded border border-purple-200">
+                <h4 className="text-xs font-semibold text-purple-900 mb-2 flex items-center gap-1">
+                  📊 スコア内訳
+                </h4>
+                <div className="space-y-2 text-xs text-purple-800">
+                  <div className="flex justify-between items-center">
+                    <span>主成分のエビデンスレベル{evidenceLevel}:</span>
+                    <span className="font-mono font-semibold">
+                      {evidenceLevelToScore(evidenceLevel || "D")}点
+                    </span>
+                  </div>
+                  {evidenceDetails.length > 1 && (
+                    <div className="flex justify-between items-center text-blue-700">
+                      <span className="flex items-center gap-1">
+                        配合率による重み付け計算:
+                      </span>
+                      <span className="font-mono font-semibold">適用済み</span>
+                    </div>
+                  )}
+                  <div className="border-t border-purple-200 pt-2 mt-2 flex justify-between items-center font-semibold">
+                    <span>合計スコア:</span>
+                    <span className="font-mono text-purple-900">
+                      {Math.round(evidenceScore)}点
+                    </span>
+                  </div>
                 </div>
-              )}
+              </div>
               <div className="mt-2 text-xs text-gray-500">
                 ※
                 90点以上：S、80点以上：A、70点以上：B、60点以上：C、60点未満：D
@@ -448,7 +472,9 @@ export function EvidenceSafetyDetail({
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="p-2 bg-white rounded border border-green-100">
                 <div className="text-gray-600 text-xs mb-1">安全性スコア</div>
-                <div className="font-bold text-green-700">{safetyScore}点</div>
+                <div className="font-bold text-green-700">
+                  {Math.round(safetyScore)}点
+                </div>
                 <div className="text-gray-500 text-[10px] mt-1 leading-tight">
                   成分の安全性評価に基づく総合スコア
                 </div>
@@ -463,11 +489,163 @@ export function EvidenceSafetyDetail({
                 </div>
               </div>
             </div>
-            {warnings.length >= 3 && (
-              <div className="mt-2 p-2 bg-orange-50 rounded border border-orange-200 text-xs text-orange-700">
-                ⚠ 警告3件以上でペナルティ減点（-10点）
+
+            {/* スコア内訳の詳細 */}
+            <div className="mt-4 p-3 bg-white rounded border border-green-200">
+              <h4 className="text-xs font-semibold text-green-900 mb-2 flex items-center gap-1">
+                📊 スコア内訳
+              </h4>
+              <div className="space-y-2 text-xs text-green-800">
+                {safetyDetails.length > 0 ? (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <span>ベーススコア:</span>
+                      <span className="font-mono font-semibold">90点</span>
+                    </div>
+                    {/* エビデンスレベルボーナス/ペナルティ */}
+                    {(() => {
+                      const totalEvidenceBonus = safetyDetails.reduce(
+                        (sum, d) => sum + d.evidenceLevelPenalty,
+                        0,
+                      );
+                      const avgEvidenceBonus = Math.round(
+                        totalEvidenceBonus / safetyDetails.length,
+                      );
+                      if (avgEvidenceBonus !== 0) {
+                        return (
+                          <div
+                            className={`flex justify-between items-center ${avgEvidenceBonus > 0 ? "text-green-700" : "text-orange-700"}`}
+                          >
+                            <span className="flex items-center gap-1">
+                              {avgEvidenceBonus > 0 ? (
+                                <TrendingUp size={12} />
+                              ) : (
+                                <TrendingDown size={12} />
+                              )}
+                              エビデンスレベル調整:
+                            </span>
+                            <span className="font-mono font-semibold">
+                              {avgEvidenceBonus > 0 ? "+" : ""}
+                              {avgEvidenceBonus}点
+                            </span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    {/* カテゴリボーナス */}
+                    {(() => {
+                      const totalCategoryBonus = safetyDetails.reduce(
+                        (sum, d) => sum + d.categoryBonus,
+                        0,
+                      );
+                      const avgCategoryBonus = Math.round(
+                        totalCategoryBonus / safetyDetails.length,
+                      );
+                      if (avgCategoryBonus > 0) {
+                        return (
+                          <div className="flex justify-between items-center text-green-700">
+                            <span className="flex items-center gap-1">
+                              <TrendingUp size={12} />
+                              カテゴリボーナス（ビタミン/ミネラル）:
+                            </span>
+                            <span className="font-mono font-semibold">
+                              +{avgCategoryBonus}点
+                            </span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    {/* 副作用ペナルティ */}
+                    {(() => {
+                      const totalSideEffects = safetyDetails.reduce(
+                        (sum, d) => sum + d.sideEffectsPenalty,
+                        0,
+                      );
+                      const avgSideEffects = Math.round(
+                        totalSideEffects / safetyDetails.length,
+                      );
+                      if (avgSideEffects < 0) {
+                        return (
+                          <div className="flex justify-between items-center text-orange-700">
+                            <span className="flex items-center gap-1">
+                              <TrendingDown size={12} />
+                              副作用ペナルティ:
+                            </span>
+                            <span className="font-mono font-semibold">
+                              {avgSideEffects}点
+                            </span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    {/* 相互作用ペナルティ */}
+                    {(() => {
+                      const totalInteractions = safetyDetails.reduce(
+                        (sum, d) => sum + d.interactionsPenalty,
+                        0,
+                      );
+                      const avgInteractions = Math.round(
+                        totalInteractions / safetyDetails.length,
+                      );
+                      if (avgInteractions < 0) {
+                        return (
+                          <div className="flex justify-between items-center text-orange-700">
+                            <span className="flex items-center gap-1">
+                              <TrendingDown size={12} />
+                              相互作用ペナルティ:
+                            </span>
+                            <span className="font-mono font-semibold">
+                              {avgInteractions}点
+                            </span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    {safetyDetails.length > 1 && (
+                      <div className="flex justify-between items-center text-blue-700">
+                        <span>配合率による重み付け計算:</span>
+                        <span className="font-mono font-semibold">
+                          適用済み
+                        </span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <span>ベーススコア:</span>
+                    <span className="font-mono font-semibold">90点</span>
+                  </div>
+                )}
+                {thirdPartyTested && (
+                  <div className="flex justify-between items-center text-green-700">
+                    <span className="flex items-center gap-1">
+                      <TrendingUp size={12} />
+                      第三者機関検査ボーナス:
+                    </span>
+                    <span className="font-mono font-semibold">+10点</span>
+                  </div>
+                )}
+                {warnings.length > 0 && (
+                  <div className="flex justify-between items-center text-orange-700">
+                    <span className="flex items-center gap-1">
+                      <TrendingDown size={12} />
+                      警告（{warnings.length}件）:
+                    </span>
+                    <span className="font-mono font-semibold">考慮済み</span>
+                  </div>
+                )}
+                <div className="border-t border-green-200 pt-2 mt-2 flex justify-between items-center font-semibold">
+                  <span>合計スコア:</span>
+                  <span className="font-mono text-green-900">
+                    {Math.round(safetyScore)}点
+                  </span>
+                </div>
               </div>
-            )}
+            </div>
             <div className="mt-2 text-xs text-gray-500">
               ※ 90点以上：S、80点以上：A、70点以上：B、60点以上：C、60点未満：D
             </div>

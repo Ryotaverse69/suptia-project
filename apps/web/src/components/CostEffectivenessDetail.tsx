@@ -540,7 +540,7 @@ export function CostEffectivenessDetail({
                       </div>
 
                       {!product.isCurrent && (
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
                           <TrendingDown size={14} />
                           <span>
                             {savingsVsCurrent > 0
@@ -549,6 +549,40 @@ export function CostEffectivenessDetail({
                           </span>
                         </div>
                       )}
+
+                      {/* 詳細情報テーブル */}
+                      <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+                        <div className="grid grid-cols-4 gap-2 text-xs">
+                          <div className="text-center">
+                            <div className="text-gray-500 mb-0.5">
+                              1回あたり
+                            </div>
+                            <div className="font-bold text-primary-800">
+                              {product.ingredientAmount.toLocaleString()}mg
+                            </div>
+                          </div>
+                          <div className="text-center border-x border-gray-200">
+                            <div className="text-gray-500 mb-0.5">摂取回数</div>
+                            <div className="font-bold text-primary-800">
+                              {product.servingsPerDay}回/日
+                            </div>
+                          </div>
+                          <div className="text-center border-r border-gray-200">
+                            <div className="text-gray-500 mb-0.5">
+                              1日あたり
+                            </div>
+                            <div className="font-bold text-primary-900">
+                              {product.dailyIngredient.toLocaleString()}mg
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-gray-500 mb-0.5">価格</div>
+                            <div className="font-bold text-green-700">
+                              ¥{product.priceJPY.toLocaleString()}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </>

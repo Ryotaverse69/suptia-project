@@ -110,10 +110,12 @@ export function PriceComparison({
           <Database className="w-6 h-6 text-slate-400" />
         </div>
         <h3 className="text-lg font-bold text-slate-700 mb-2">
-          価格データ準備中
+          購入リンクを準備中
         </h3>
         <p className="text-sm text-slate-500">
-          現在、価格情報を取得しています。しばらくお待ちください。
+          各ECサイトの価格情報を取得しています。
+          <br />
+          商品名で直接検索することもできます。
         </p>
       </div>
     );

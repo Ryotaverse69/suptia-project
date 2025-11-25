@@ -15,6 +15,8 @@ interface IngredientComparisonProps {
     imageUrl?: string;
     ingredientAmount: number; // mg
     servingsPerDay: number;
+    priceJPY?: number; // 価格
+    servingsPerContainer?: number; // 内容量（回数）
   };
   similarProducts?: Array<{
     name: string;
@@ -22,6 +24,8 @@ interface IngredientComparisonProps {
     imageUrl?: string;
     ingredientAmount: number;
     servingsPerDay: number;
+    priceJPY?: number;
+    servingsPerContainer?: number;
   }>;
   ingredientName?: string;
   recommendedDailyIntake?: number; // 推奨摂取量（mg）
@@ -209,21 +213,72 @@ export function IngredientComparison({
         </div>
       )}
 
+      {/* 含有量の計算詳細 */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="text-sm font-semibold text-blue-900 mb-3">
+          含有量の計算詳細
+        </h3>
+        <div className="space-y-2 text-sm text-blue-800">
+          <div className="flex justify-between">
+            <span>1回あたりの含有量:</span>
+            <span className="font-mono font-semibold">
+              {currentProduct.ingredientAmount.toLocaleString()}mg
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>1日の摂取回数:</span>
+            <span className="font-mono">{currentProduct.servingsPerDay}回</span>
+          </div>
+          <div className="border-t border-blue-300 pt-2 mt-2 flex justify-between font-semibold">
+            <span>1日あたりの{ingredientName}含有量:</span>
+            <span className="font-mono text-primary">
+              {currentDailyAmount.toLocaleString()}mg/日
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* 推奨摂取量の表示 */}
       {recommendedDailyIntake && (
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>推奨1日摂取量:</strong>{" "}
-            {recommendedDailyIntake.toLocaleString()}mg
-          </p>
-          <p className="text-xs text-blue-700 mt-1">
-            この商品は推奨摂取量の
-            <strong>
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <h3 className="text-sm font-semibold text-green-900 mb-3">
+            推奨摂取量との比較
+          </h3>
+          <div className="space-y-2 text-sm text-green-800">
+            <div className="flex justify-between">
+              <span>推奨1日摂取量:</span>
+              <span className="font-mono">
+                {recommendedDailyIntake.toLocaleString()}mg
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>この商品の1日摂取量:</span>
+              <span className="font-mono">
+                {currentDailyAmount.toLocaleString()}mg
+              </span>
+            </div>
+            <div className="border-t border-green-300 pt-2 mt-2 flex justify-between font-semibold">
+              <span>推奨量に対する割合:</span>
+              <span className="font-mono text-green-700">
+                {((currentDailyAmount / recommendedDailyIntake) * 100).toFixed(
+                  0,
+                )}
+                %
+              </span>
+            </div>
+          </div>
+          {currentDailyAmount >= recommendedDailyIntake ? (
+            <p className="text-xs text-green-700 mt-2 flex items-center gap-1">
+              <TrendingUp size={14} />
+              推奨摂取量を満たしています
+            </p>
+          ) : (
+            <p className="text-xs text-green-700 mt-2">
+              推奨摂取量の
               {((currentDailyAmount / recommendedDailyIntake) * 100).toFixed(0)}
-              %
-            </strong>
-            を提供します。
-          </p>
+              %を提供します
+            </p>
+          )}
         </div>
       )}
 
@@ -337,11 +392,36 @@ export function IngredientComparison({
                     </div>
                   </div>
 
-                  {/* 詳細情報 */}
-                  <div className="flex items-center gap-4 text-xs text-primary-600">
-                    <span>1回分: {product.ingredientAmount}mg</span>
-                    <span>×</span>
-                    <span>1日{product.servingsPerDay}回</span>
+                  {/* 詳細情報テーブル */}
+                  <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+                    <div className="grid grid-cols-4 gap-2 text-xs">
+                      <div className="text-center">
+                        <div className="text-gray-500 mb-0.5">1回あたり</div>
+                        <div className="font-bold text-primary-800">
+                          {product.ingredientAmount.toLocaleString()}mg
+                        </div>
+                      </div>
+                      <div className="text-center border-x border-gray-200">
+                        <div className="text-gray-500 mb-0.5">摂取回数</div>
+                        <div className="font-bold text-primary-800">
+                          {product.servingsPerDay}回/日
+                        </div>
+                      </div>
+                      <div className="text-center border-r border-gray-200">
+                        <div className="text-gray-500 mb-0.5">1日あたり</div>
+                        <div className="font-bold text-primary-900">
+                          {product.dailyAmount.toLocaleString()}mg
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-500 mb-0.5">価格</div>
+                        <div className="font-bold text-green-700">
+                          {product.priceJPY
+                            ? `¥${product.priceJPY.toLocaleString()}`
+                            : "-"}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

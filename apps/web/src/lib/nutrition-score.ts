@@ -210,7 +210,8 @@ export function getSafetyLevel(
  * @returns RDAデータ、存在しない場合はnull
  */
 export function getRdaData(ingredientName: string) {
-  return rdaData.ingredients[ingredientName] || null;
+  const normalizedName = normalizeIngredientName(ingredientName);
+  return rdaData.ingredients[normalizedName] || null;
 }
 
 /**
