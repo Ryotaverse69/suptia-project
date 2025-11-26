@@ -203,7 +203,7 @@ export default async function ProductsPage() {
         </div>
 
         {/* Tier Rank Statistics */}
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-8">
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
           <TierRankStats products={productsWithCost} />
         </div>
 

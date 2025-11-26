@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductListItem } from "@/components/ProductListItem";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { Award } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
@@ -229,9 +229,9 @@ export function ProductsSection({ products }: ProductsSectionProps) {
           </div>
 
           {filteredAndSortedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-2 sm:gap-3">
               {filteredAndSortedProducts.map((product, index) => (
-                <ProductCard key={index} product={product} />
+                <ProductListItem key={index} product={product} />
               ))}
             </div>
           ) : (

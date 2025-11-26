@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Pause, Play } from "lucide-react";
 import { IngredientCoverSVG } from "./IngredientCoverSVG";
 
 interface Ingredient {
@@ -43,6 +43,7 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
   const [shuffledIngredients, setShuffledIngredients] = useState<Ingredient[]>(
     [],
   );
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     // Shuffle ingredients on client side, filter out those without valid slug
@@ -77,13 +78,29 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
           </p>
         </div>
 
+        {/* 停止/再生ボタン */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-600 hover:text-primary bg-white/70 hover:bg-white rounded-full border border-slate-200 hover:border-primary-200 transition-all shadow-sm"
+            aria-label={isPaused ? "カルーセルを再生" : "カルーセルを停止"}
+          >
+            {isPaused ? <Play size={14} /> : <Pause size={14} />}
+            {isPaused ? "再生" : "停止"}
+          </button>
+        </div>
+
         {/* Scrolling Container */}
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
           <motion.div
             className="flex gap-6"
-            animate={{
-              x: [0, -100 * shuffledIngredients.length],
-            }}
+            animate={
+              isPaused ? {} : { x: [0, -100 * shuffledIngredients.length] }
+            }
             transition={{
               x: {
                 repeat: Infinity,

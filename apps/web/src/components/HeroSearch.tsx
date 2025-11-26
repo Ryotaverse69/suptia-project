@@ -29,7 +29,7 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
   };
 
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center px-6 lg:px-12 xl:px-16 overflow-hidden">
+    <div className="relative min-h-[50vh] sm:min-h-[55vh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden">
       {/* Molecule background animation - Keep it but ensure it works on light bg */}
       <div className="opacity-60">
         <MoleculeBackground />
@@ -74,15 +74,20 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
                 : "0 8px 32px 0 rgba(0, 0, 0, 0.2)",
             }}
           >
+            <label htmlFor="hero-search" className="sr-only">
+              サプリメントや成分を検索
+            </label>
             <div className="pl-3 sm:pl-4 md:pl-6 pr-2 sm:pr-3">
               <Search
                 className={`transition-all duration-300 ${
                   isFocused ? "text-blue-600 scale-110" : "text-white/80"
                 }`}
                 size={18}
+                aria-hidden="true"
               />
             </div>
             <input
+              id="hero-search"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

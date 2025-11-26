@@ -8,6 +8,7 @@ import { CostEffectivenessDetail } from "@/components/CostEffectivenessDetail";
 import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { ShareButton } from "@/components/ShareButton";
 import { TierRatings } from "@/lib/tier-ranking";
 import { NutritionScoreCard } from "@/components/NutritionScoreBadge";
 import {
@@ -41,7 +42,6 @@ import {
   ChevronRight,
   Info,
   Activity,
-  Share2,
   Zap,
   Beaker,
 } from "lucide-react";
@@ -702,14 +702,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </li>
               </ol>
             </nav>
-            <div className="flex items-center gap-3">
-              <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
-                <Share2 size={18} />
-              </button>
+            <div className="flex items-center gap-2">
+              <ShareButton title={product.name} size={18} />
               <FavoriteButton
                 productId={product._id}
                 productName={product.name}
                 size="sm"
+                iconOnly
               />
             </div>
           </div>

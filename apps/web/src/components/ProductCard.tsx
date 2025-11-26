@@ -1,22 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Heart } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import {
-  calculateComprehensiveCost,
-  getCostEfficiencyLabel,
-} from "@/lib/cost-calculator";
-import {
-  TierBadgeRow,
-  PerfectProductBanner,
-  OverallRankBadge,
-} from "@/components/ui/TierBadge";
-import { TierRatings, isPerfectProduct } from "@/lib/tier-ranking";
-import { TierRank } from "@/lib/tier-colors";
+import { calculateComprehensiveCost } from "@/lib/cost-calculator";
+import { TierRatings } from "@/lib/tier-ranking";
 import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
 
 interface ProductCardProps {
@@ -38,13 +28,9 @@ interface ProductCardProps {
       };
     }>;
     effectiveCostPerDay?: number; // 後方互換性のため残す
-    rating?: number;
-    reviewCount?: number;
-    isBestValue?: boolean;
-    safetyScore?: number;
     imageUrl?: string;
     externalImageUrl?: string;
-    tierRatings?: TierRatings; // 新: Tierランク評価
+    tierRatings?: TierRatings; // Tierランク評価
     badges?: BadgeType[]; // 獲得している称号
   };
 }
@@ -59,10 +45,6 @@ export function ProductCard({ product }: ProductCardProps) {
     servingsPerContainer,
     ingredients,
     effectiveCostPerDay: manualCostPerDay,
-    rating = 4.5,
-    reviewCount = 127,
-    isBestValue = false,
-    safetyScore = 95,
     imageUrl,
     externalImageUrl,
     tierRatings,
@@ -103,7 +85,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${slug.current}`}>
       <Card className="group cursor-pointer overflow-hidden h-full flex flex-col hover:scale-[1.02]">
-        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-blue">
+        <div className="relative aspect-square overflow-hidden bg-gradient-blue">
           {/* Product image */}
           {displayImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -116,34 +98,40 @@ export function ProductCard({ product }: ProductCardProps) {
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
               <div className="text-center">
-                <div className="text-5xl mb-2 opacity-40">📦</div>
-                <p className="text-xs text-gray-400 font-medium">画像準備中</p>
+                <div className="text-3xl sm:text-5xl mb-1 sm:mb-2 opacity-40">
+                  📦
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-400 font-medium">
+                  画像準備中
+                </p>
               </div>
             </div>
           )}
 
-          {/* 称号バッジ（小さく表示、ホバーで拡大） - リキッドグラス版 */}
+          {/* 称号バッジ（小さく表示、ホバーで拡大） - 視認性向上版 */}
           {(isPerfect || safeBadges.length > 0) && (
-            <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1 max-w-[90px]">
+            <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 z-10 flex flex-wrap gap-0.5 sm:gap-1 max-w-[70px] sm:max-w-[90px]">
               {isPerfect ? (
                 // 5冠達成の場合は王冠のみ表示
                 <div
-                  className="relative bg-gradient-to-br from-yellow-400/60 via-yellow-300/50 to-yellow-200/40 backdrop-blur-lg backdrop-saturate-150 p-1 rounded-lg shadow-lg border border-yellow-300/40 hover:shadow-2xl hover:border-yellow-400/60 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20 animate-pulse"
+                  className="relative bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-200 p-1 rounded-md sm:rounded-lg shadow-lg border border-yellow-400 hover:shadow-2xl hover:border-yellow-500 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20 animate-pulse"
                   title="5冠達成！全項目で最高評価"
                 >
-                  <span className="text-sm">🏆</span>
+                  <span className="text-xs sm:text-sm">🏆</span>
                 </div>
               ) : (
-                // 通常のバッジ表示
+                // 通常のバッジ表示 - より見やすく
                 safeBadges.map((badgeType) => {
                   const badgeInfo = getBadgeInfo(badgeType);
                   return (
                     <div
                       key={badgeType}
-                      className="relative bg-gradient-to-br from-white/50 via-white/40 to-white/30 backdrop-blur-lg backdrop-saturate-150 p-1 rounded-lg shadow-lg border border-white/30 hover:shadow-2xl hover:border-white/50 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20"
+                      className="relative bg-white/95 p-0.5 sm:p-1 rounded-md sm:rounded-lg shadow-md border border-gray-200 hover:shadow-xl hover:border-gray-300 transition-all duration-300 cursor-pointer hover:scale-150 hover:z-20"
                       title={badgeInfo.label}
                     >
-                      <span className="text-sm">{badgeInfo.icon}</span>
+                      <span className="text-xs sm:text-sm">
+                        {badgeInfo.icon}
+                      </span>
                     </div>
                   );
                 })
@@ -153,22 +141,22 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* 成分タグ（画像下部） */}
           {ingredients && ingredients.length > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-3 py-2">
-              <div className="flex flex-wrap gap-1.5">
-                {ingredients.slice(0, 2).map(
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-sm px-2 py-1.5 sm:px-3 sm:py-2">
+              <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                {ingredients.slice(0, 1).map(
                   (item, index) =>
                     item.ingredient && (
                       <div
                         key={index}
-                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
+                        className="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold bg-white/90 text-primary-900 shadow-sm"
                       >
                         {item.ingredient.name}
                       </div>
                     ),
                 )}
-                {ingredients.length > 2 && (
-                  <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/70 text-primary-700">
-                    +{ingredients.length - 2}
+                {ingredients.length > 1 && (
+                  <div className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs font-semibold bg-white/70 text-primary-700">
+                    +{ingredients.length - 1}
                   </div>
                 )}
               </div>
@@ -182,7 +170,7 @@ export function ProductCard({ product }: ProductCardProps) {
               e.stopPropagation();
               toggleFavorite(_id);
             }}
-            className={`absolute bottom-3 right-3 z-10 p-2 rounded-full backdrop-blur-xl transition-all duration-300 ${
+            className={`absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-xl transition-all duration-300 ${
               favorite
                 ? "bg-pink-500 hover:bg-pink-600"
                 : "bg-white/80 hover:bg-white"
@@ -190,8 +178,8 @@ export function ProductCard({ product }: ProductCardProps) {
             aria-label={favorite ? "お気に入りから削除" : "お気に入りに追加"}
           >
             <Heart
-              size={18}
-              className={`transition-all duration-300 ${
+              size={14}
+              className={`sm:w-[18px] sm:h-[18px] transition-all duration-300 ${
                 favorite
                   ? "fill-white text-white"
                   : "text-gray-600 hover:text-pink-500"
@@ -200,21 +188,19 @@ export function ProductCard({ product }: ProductCardProps) {
           </button>
         </div>
 
-        <CardContent className="flex-1 pt-5 px-5">
-          <h3 className="font-light text-lg mb-3 group-hover:text-primary transition-colors line-clamp-2 tracking-wide">
+        <CardContent className="flex-1 pt-2.5 px-2.5 sm:pt-4 sm:px-4">
+          <h3 className="font-light text-sm sm:text-base mb-2 sm:mb-3 group-hover:text-primary transition-colors line-clamp-2 tracking-wide leading-tight">
             {name}
           </h3>
 
-          <div className="mb-4">
-            <StarRating rating={rating} reviewCount={reviewCount} size="sm" />
-          </div>
-
-          {/* 価格情報 - 商品価格と1日あたりの両方を表示 */}
-          <div className="flex items-end justify-between">
+          {/* 価格情報 - コンパクト版 */}
+          <div className="flex items-end justify-between gap-1">
             {/* 左側: 商品価格 */}
             <div>
-              <div className="text-xs text-gray-500 mb-1">商品価格</div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5">
+                商品価格
+              </div>
+              <div className="text-base sm:text-xl font-bold text-gray-900">
                 {formatCostJPY(priceJPY)}
               </div>
             </div>
@@ -222,19 +208,20 @@ export function ProductCard({ product }: ProductCardProps) {
             {/* 右側: 1日あたりの価格 */}
             {effectiveCostPerDay && (
               <div className="text-right">
-                <div className="text-xs text-gray-500 mb-1">最安値</div>
-                <div className="text-xl font-bold text-green-600">
+                <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5">
+                  1日
+                </div>
+                <div className="text-sm sm:text-lg font-bold text-green-600">
                   {formatCostJPY(effectiveCostPerDay)}
                 </div>
-                <div className="text-xs text-gray-500 mt-0.5">1日あたり</div>
               </div>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="pt-4 pb-5 px-5">
-          <button className="w-full bg-primary hover:bg-primary-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
-            比較する
+        <CardFooter className="pt-2 pb-2.5 px-2.5 sm:pt-3 sm:pb-4 sm:px-4">
+          <button className="w-full bg-primary hover:bg-primary-700 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-xs sm:text-sm">
+            詳細を見る
           </button>
         </CardFooter>
       </Card>

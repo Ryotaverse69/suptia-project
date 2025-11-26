@@ -32,9 +32,9 @@ export function ProductList({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {/* 商品リスト */}
-      <div className="space-y-3 sm:space-y-4">
+      <div className="flex flex-col gap-2 sm:gap-3">
         {displayedProducts.map((product, index) => (
           <ProductListItem key={index} product={product} />
         ))}

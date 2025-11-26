@@ -8,6 +8,7 @@ interface FavoriteButtonProps {
   productName: string;
   className?: string;
   size?: "sm" | "md" | "lg";
+  iconOnly?: boolean;
 }
 
 export function FavoriteButton({
@@ -15,14 +16,21 @@ export function FavoriteButton({
   productName,
   className = "",
   size = "md",
+  iconOnly = false,
 }: FavoriteButtonProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(productId);
 
   const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
+    sm: "px-2 py-1.5 text-sm sm:px-3",
+    md: "px-2.5 py-2 text-base sm:px-4",
+    lg: "px-3 py-3 text-lg sm:px-6",
+  };
+
+  const iconOnlyClasses = {
+    sm: "p-1.5",
+    md: "p-2",
+    lg: "p-2.5",
   };
 
   const iconSizes = {
@@ -30,6 +38,32 @@ export function FavoriteButton({
     md: 20,
     lg: 24,
   };
+
+  if (iconOnly) {
+    return (
+      <button
+        onClick={() => toggleFavorite(productId)}
+        className={`
+          rounded-lg transition-all duration-300
+          ${
+            favorite
+              ? "bg-pink-500 hover:bg-pink-600 text-white"
+              : "text-slate-400 hover:text-pink-500 hover:bg-pink-50"
+          }
+          ${iconOnlyClasses[size]}
+          ${className}
+        `}
+        aria-label={favorite ? "お気に入りから削除" : "お気に入りに追加"}
+      >
+        <Heart
+          size={iconSizes[size]}
+          className={`transition-all duration-300 ${
+            favorite ? "fill-white text-white" : ""
+          }`}
+        />
+      </button>
+    );
+  }
 
   return (
     <button
@@ -52,7 +86,9 @@ export function FavoriteButton({
           favorite ? "fill-white text-white" : "text-gray-600"
         }`}
       />
-      <span>{favorite ? "お気に入り済み" : "お気に入りに追加"}</span>
+      <span className="hidden sm:inline">
+        {favorite ? "お気に入り済み" : "お気に入りに追加"}
+      </span>
     </button>
   );
 }

@@ -4,7 +4,10 @@ import { HeroSearch } from "@/components/HeroSearch";
 import { ProductCard } from "@/components/ProductCard";
 import { IngredientCarousel } from "@/components/IngredientCarousel";
 import { IngredientCoverSVG } from "@/components/IngredientCoverSVG";
-import { generateItemListStructuredData } from "@/lib/structured-data";
+import {
+  generateItemListStructuredData,
+  generateFAQStructuredData,
+} from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { headers } from "next/headers";
 import Script from "next/script";
@@ -13,8 +16,8 @@ import {
   BarChart3,
   CheckCircle2,
   Award,
-  Star,
   TrendingUp,
+  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -320,9 +323,6 @@ async function getFeaturedProducts(): Promise<Product[]> {
         continue;
       }
       if (seenNormalizedNames.has(normalizedName)) {
-        console.log(
-          `[重複スキップ] ${product.name} → 正規化名: ${normalizedName}`,
-        );
         continue;
       }
 
@@ -336,10 +336,6 @@ async function getFeaturedProducts(): Promise<Product[]> {
       };
       uniqueProducts.push(safeProduct);
 
-      console.log(
-        `[追加] ${product.name} (Tierスコア: ${getTierScore(product.tierRatings?.overallRank)}, 成分人気度: ${getIngredientPopularityScore(product).toFixed(1)}, 総合: ${product._calculatedScore.toFixed(1)})`,
-      );
-
       // 10件集まったら終了
       if (uniqueProducts.length >= 10) break;
     }
@@ -351,9 +347,10 @@ async function getFeaturedProducts(): Promise<Product[]> {
   }
 }
 
-// 人気の成分を取得（横スクロールで10件表示）
-// 人気度スコア = (商品数 × 10) + (表示回数 × 1)
-async function getPopularIngredients(): Promise<Ingredient[]> {
+// 人気の成分と統計情報を1回のクエリで取得（N+1問題を解消）
+async function getPopularIngredientsWithStats(): Promise<
+  IngredientWithStats[]
+> {
   const query = `*[_type == "ingredient"] | order(coalesce(popularityScore, 0) desc)[0..9]{
     name,
     nameEn,
@@ -362,71 +359,29 @@ async function getPopularIngredients(): Promise<Ingredient[]> {
     slug,
     viewCount,
     popularityScore,
-    "productCount": count(*[_type == "product" && references(^._id)]),
     "coverImage": coverImage{
       "asset": asset->{
         url
       }
-    }
-  }`;
-
-  try {
-    const ingredients = await sanity.fetch(query);
-    return ingredients || [];
-  } catch (error) {
-    console.error("Failed to fetch popular ingredients:", error);
-    return [];
-  }
-}
-
-// 成分ごとの統計情報を取得
-async function getIngredientStats(ingredientSlug: string): Promise<{
-  productCount: number;
-  minPrice: number;
-  sampleImageUrl?: string;
-}> {
-  const query = `*[_type == "ingredient" && slug.current == $slug][0]{
+    },
     "productCount": count(*[_type == "product" && references(^._id)]),
     "minPrice": math::min(*[_type == "product" && references(^._id)].priceJPY),
     "sampleImageUrl": *[_type == "product" && references(^._id) && defined(externalImageUrl)][0].externalImageUrl
   }`;
 
   try {
-    const stats = await sanity.fetch(query, { slug: ingredientSlug });
-    return {
-      productCount: stats?.productCount || 0,
-      minPrice: stats?.minPrice || 0,
-      sampleImageUrl: stats?.sampleImageUrl,
-    };
-  } catch (error) {
-    console.error(
-      `Failed to fetch stats for ingredient ${ingredientSlug}:`,
-      error,
+    const ingredients = await sanity.fetch(query);
+    return (ingredients || []).map(
+      (ing: IngredientWithStats & { minPrice?: number | null }) => ({
+        ...ing,
+        productCount: ing.productCount || 0,
+        minPrice: ing.minPrice || 0,
+      }),
     );
-    return {
-      productCount: 0,
-      minPrice: 0,
-    };
+  } catch (error) {
+    console.error("Failed to fetch popular ingredients with stats:", error);
+    return [];
   }
-}
-
-// 人気の成分と統計情報を取得
-async function getPopularIngredientsWithStats(): Promise<
-  IngredientWithStats[]
-> {
-  const ingredients = await getPopularIngredients();
-
-  const ingredientsWithStats = await Promise.all(
-    ingredients.map(async (ingredient) => {
-      const stats = await getIngredientStats(ingredient.slug.current);
-      return {
-        ...ingredient,
-        ...stats,
-      };
-    }),
-  );
-
-  return ingredientsWithStats;
 }
 
 export default async function Home() {
@@ -437,7 +392,7 @@ export default async function Home() {
   const totalProductCount = await getTotalProductCount();
 
   // Calculate effective cost for each product
-  const productsWithCost = products.map((product, index) => {
+  const productsWithCost = products.map((product) => {
     let effectiveCostPerDay = 0;
     try {
       effectiveCostPerDay = calculateEffectiveCostPerDay({
@@ -452,15 +407,11 @@ export default async function Home() {
     return {
       ...product,
       effectiveCostPerDay,
-      rating: 4.2 + Math.random() * 0.8, // Mock rating
-      reviewCount: Math.floor(50 + Math.random() * 200), // Mock review count
-      isBestValue: index < 3, // Mark first 3 as best value
-      safetyScore: 85 + Math.floor(Math.random() * 15), // Mock safety score
     };
   });
 
   // おすすめサプリのコスト計算
-  const featuredProductsWithCost = featuredProducts.map((product, index) => {
+  const featuredProductsWithCost = featuredProducts.map((product) => {
     let effectiveCostPerDay = 0;
     try {
       effectiveCostPerDay = calculateEffectiveCostPerDay({
@@ -475,10 +426,6 @@ export default async function Home() {
     return {
       ...product,
       effectiveCostPerDay,
-      rating: 4.5 + Math.random() * 0.5, // Mock rating (higher for featured)
-      reviewCount: Math.floor(100 + Math.random() * 300), // Mock review count
-      isBestValue: true, // All featured products are marked as best value
-      safetyScore: 90 + Math.floor(Math.random() * 10), // Mock safety score (higher)
     };
   });
 
@@ -494,6 +441,38 @@ export default async function Home() {
     })),
   });
 
+  // FAQ data for JSON-LD and display
+  const faqData = [
+    {
+      question: "Suptia（サプティア）とは何ですか？",
+      answer:
+        "Suptiaは科学的エビデンスに基づいてサプリメントを比較・評価できる無料サービスです。価格、成分量、コストパフォーマンス、エビデンスレベル、安全性の5つの軸で商品を評価し、あなたに最適なサプリメント選びをサポートします。",
+    },
+    {
+      question: "Tierランク（S+〜D）とは何ですか？",
+      answer:
+        "Tierランクは、価格・成分量・コスパ・エビデンス・安全性の5項目を総合的に評価した独自のランキングシステムです。S+が最高評価で、科学的根拠と実際のデータに基づいて算出されます。同じ成分を含む商品を公平に比較できます。",
+    },
+    {
+      question: "サプリメントの価格比較はどのように行われていますか？",
+      answer:
+        "楽天市場、Yahoo!ショッピング、Amazonなど複数のECサイトから価格データを収集し、同一商品の最安値を表示しています。また、1日あたりのコスト（実効価格）も計算し、容量や服用回数が異なる商品でも公平に比較できます。",
+    },
+    {
+      question: "エビデンスレベルはどのように決まりますか？",
+      answer:
+        "エビデンスレベルは、PubMedやCochrane Reviewなどの信頼できる医学データベースの研究結果に基づいて評価しています。大規模な臨床試験やメタ解析で効果が確認されている成分ほど高い評価となります。",
+    },
+    {
+      question: "Suptiaは無料で利用できますか？",
+      answer:
+        "はい、Suptiaのすべての機能は完全無料でご利用いただけます。商品の検索、比較、成分ガイドの閲覧、診断機能など、すべて無料です。アフィリエイトリンク経由で購入いただくことで、サービスの運営を支援していただけます。",
+    },
+  ];
+
+  // Generate FAQ JSON-LD structured data
+  const faqJsonLd = generateFAQStructuredData(faqData);
+
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
 
@@ -504,12 +483,17 @@ export default async function Home() {
         {JSON.stringify(itemListJsonLd)}
       </Script>
 
+      {/* JSON-LD Structured Data for FAQ */}
+      <Script id="faq-jsonld" type="application/ld+json" nonce={nonce}>
+        {JSON.stringify(faqJsonLd)}
+      </Script>
+
       <div className="min-h-screen relative overflow-hidden bg-slate-50">
         {/* Global Background - Light & Clean */}
         <div className="absolute inset-0 bg-slate-50 -z-30" />
 
         {/* Hero Section Wrapper - Static Cloud Pattern */}
-        <div className="relative w-full bg-[#3b66e0] overflow-hidden py-12 sm:py-24 md:py-32">
+        <div className="relative w-full bg-[#3b66e0] overflow-hidden py-8 sm:py-12 md:py-16">
           {/* Static Cloud Pattern Background */}
           <div
             className="absolute inset-0 -z-20"
@@ -531,111 +515,165 @@ export default async function Home() {
           <HeroSearch popularSearches={popularIngredientsWithStats} />
         </div>
 
+        {/* Statistics Bar - Below Hero */}
+        <div className="relative bg-gradient-to-b from-white to-slate-50/80 border-b border-slate-200/60">
+          {/* 上部のアクセントライン */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="grid grid-cols-3">
+              {/* 商品数 */}
+              <div className="relative px-4 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 text-center group">
+                <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent" />
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-thin text-slate-800 tracking-tight mb-2 tabular-nums">
+                  {totalProductCount > 0
+                    ? totalProductCount.toLocaleString()
+                    : "400"}
+                  <span className="text-2xl sm:text-3xl lg:text-4xl text-primary font-light">
+                    +
+                  </span>
+                </div>
+                <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-[0.2em]">
+                  Products
+                </div>
+              </div>
+
+              {/* 評価軸 */}
+              <div className="relative px-4 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 text-center group">
+                <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent" />
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-thin text-slate-800 tracking-tight mb-2">
+                  5
+                  <span className="text-2xl sm:text-3xl lg:text-4xl text-amber-500 font-light ml-0.5">
+                    軸
+                  </span>
+                </div>
+                <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-[0.2em]">
+                  Evaluation
+                </div>
+              </div>
+
+              {/* 完全無料 */}
+              <div className="relative px-4 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 text-center group">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-thin tracking-tight mb-2">
+                  <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                    ¥0
+                  </span>
+                </div>
+                <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-[0.2em]">
+                  Forever Free
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* How to Use Suptia - 3 Steps */}
-        <div className="glass border-b border-white/30 relative z-10">
-          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8 sm:py-12 max-w-6xl">
-            {/* Steps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              {/* Step 1 */}
-              <div className="group relative perspective-1000">
-                {/* グロー効果レイヤー（ホバー時） */}
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-blue-400/30 via-indigo-400/30 to-blue-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-blue rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-blue-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
-                  {/* Step Number Badge */}
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-xl sm:text-2xl">
-                      1
-                    </span>
-                  </div>
+        <div className="relative bg-white border-b border-slate-200/60">
+          <div className="mx-auto max-w-5xl px-4">
+            {/* セクションタイトル */}
+            <div className="text-center pt-10 sm:pt-12 lg:pt-14 pb-2">
+              <p className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-[0.25em]">
+                How It Works
+              </p>
+            </div>
 
-                  {/* Icon */}
-                  <div className="group-hover:scale-110 transition-transform duration-500">
-                    <Search
-                      className="text-blue-600 group-hover:text-blue-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
-                      strokeWidth={1.5}
-                    />
-                  </div>
+            {/* 3ステップ - 横並びグリッド */}
+            <div className="grid grid-cols-1 md:grid-cols-3 pb-10 sm:pb-12 lg:pb-14">
+              {/* Step 1 - 検索・発見 */}
+              <div className="relative px-4 sm:px-8 lg:px-10 py-8 text-center group">
+                {/* 右側の縦線（md以上で表示） */}
+                <div className="hidden md:block absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent" />
+                {/* 下側の横線（md未満で表示） */}
+                <div className="md:hidden absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
-                      検索・発見
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                      Tierランク（S+〜D）で
-                      <br />
-                      瞬時にサプリの実力を把握
-                    </p>
-                  </div>
+                {/* ステップ番号 */}
+                <div className="text-5xl sm:text-6xl lg:text-7xl font-thin text-slate-200 mb-3 tracking-tighter">
+                  01
                 </div>
+
+                {/* アイコン */}
+                <div className="mb-4">
+                  <Search
+                    className="w-7 h-7 sm:w-8 sm:h-8 text-primary mx-auto"
+                    strokeWidth={1.5}
+                  />
+                </div>
+
+                {/* タイトル */}
+                <h3 className="text-base sm:text-lg font-medium text-slate-800 mb-2 tracking-wide">
+                  検索・発見
+                </h3>
+
+                {/* 説明文 */}
+                <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
+                  Tierランク（S+〜D）で
+                  <br className="hidden sm:block" />
+                  <span className="sm:hidden"> </span>
+                  瞬時にサプリの実力を把握
+                </p>
               </div>
 
-              {/* Step 2 */}
-              <div className="group relative perspective-1000">
-                {/* グロー効果レイヤー（ホバー時） */}
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-emerald-400/30 via-teal-400/30 to-emerald-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-mint rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-emerald-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
-                  {/* Step Number Badge */}
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl sm:rounded-2xl -rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-xl sm:text-2xl">
-                      2
-                    </span>
-                  </div>
+              {/* Step 2 - 比較・分析 */}
+              <div className="relative px-4 sm:px-8 lg:px-10 py-8 text-center group">
+                {/* 右側の縦線（md以上で表示） */}
+                <div className="hidden md:block absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent" />
+                {/* 下側の横線（md未満で表示） */}
+                <div className="md:hidden absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
-                  {/* Icon */}
-                  <div className="group-hover:scale-110 transition-transform duration-500">
-                    <BarChart3
-                      className="text-emerald-600 group-hover:text-emerald-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors duration-300">
-                      比較・分析
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                      成分・コスパ・安全性を
-                      <br />
-                      5軸チャートで徹底比較
-                    </p>
-                  </div>
+                {/* ステップ番号 */}
+                <div className="text-5xl sm:text-6xl lg:text-7xl font-thin text-slate-200 mb-3 tracking-tighter">
+                  02
                 </div>
+
+                {/* アイコン */}
+                <div className="mb-4">
+                  <BarChart3
+                    className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-500 mx-auto"
+                    strokeWidth={1.5}
+                  />
+                </div>
+
+                {/* タイトル */}
+                <h3 className="text-base sm:text-lg font-medium text-slate-800 mb-2 tracking-wide">
+                  比較・分析
+                </h3>
+
+                {/* 説明文 */}
+                <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
+                  成分・コスパ・安全性を
+                  <br className="hidden sm:block" />
+                  <span className="sm:hidden"> </span>
+                  5軸チャートで徹底比較
+                </p>
               </div>
 
-              {/* Step 3 */}
-              <div className="group relative perspective-1000">
-                {/* グロー効果レイヤー（ホバー時） */}
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-400/30 via-pink-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="glass-purple rounded-2xl p-6 sm:p-8 shadow-soft hover:shadow-2xl transition-all duration-500 h-full flex flex-col items-center text-center gap-4 sm:gap-6 relative border border-white/40 group-hover:border-purple-300/50 group-hover:scale-[1.02] group-hover:-translate-y-2 hover:backdrop-blur-3xl">
-                  {/* Step Number Badge */}
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl rotate-3 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-                    <span className="text-white font-black text-xl sm:text-2xl">
-                      3
-                    </span>
-                  </div>
-
-                  {/* Icon */}
-                  <div className="group-hover:scale-110 transition-transform duration-500">
-                    <CheckCircle2
-                      className="text-purple-600 group-hover:text-purple-500 transition-colors duration-300 w-8 h-8 sm:w-12 sm:h-12"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-purple-600 transition-colors duration-300">
-                      選択・購入
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                      最適なサプリを見つけて
-                      <br />
-                      最安値で賢く購入
-                    </p>
-                  </div>
+              {/* Step 3 - 選択・購入 */}
+              <div className="relative px-4 sm:px-8 lg:px-10 py-8 text-center group">
+                {/* ステップ番号 */}
+                <div className="text-5xl sm:text-6xl lg:text-7xl font-thin text-slate-200 mb-3 tracking-tighter">
+                  03
                 </div>
+
+                {/* アイコン */}
+                <div className="mb-4">
+                  <CheckCircle2
+                    className="w-7 h-7 sm:w-8 sm:h-8 text-amber-500 mx-auto"
+                    strokeWidth={1.5}
+                  />
+                </div>
+
+                {/* タイトル */}
+                <h3 className="text-base sm:text-lg font-medium text-slate-800 mb-2 tracking-wide">
+                  選択・購入
+                </h3>
+
+                {/* 説明文 */}
+                <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
+                  最適なサプリを見つけて
+                  <br className="hidden sm:block" />
+                  <span className="sm:hidden"> </span>
+                  最安値で賢く購入
+                </p>
               </div>
             </div>
           </div>
@@ -763,25 +801,9 @@ export default async function Home() {
                         {/* 商品情報 */}
                         <div className="p-5">
                           {/* 商品名 */}
-                          <h3 className="text-base font-bold text-slate-800 mb-3 line-clamp-2 min-h-[3rem] group-hover:text-blue-600 transition-colors leading-relaxed">
+                          <h3 className="text-base font-bold text-slate-800 mb-4 line-clamp-2 min-h-[3rem] group-hover:text-blue-600 transition-colors leading-relaxed">
                             {product.name}
                           </h3>
-
-                          {/* 評価 */}
-                          <div className="flex items-center gap-2 mb-4">
-                            <div className="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-100">
-                              <Star
-                                size={12}
-                                className="fill-emerald-600 text-emerald-600"
-                              />
-                              <span className="text-xs font-bold">
-                                {product.rating.toFixed(1)}
-                              </span>
-                            </div>
-                            <span className="text-xs text-slate-400 font-medium">
-                              {product.reviewCount}件のレビュー
-                            </span>
-                          </div>
 
                           {/* 価格情報 */}
                           <div className="flex items-end justify-between mb-4 p-3 bg-slate-50 rounded-xl border border-slate-100 group-hover:border-blue-100 group-hover:bg-blue-50/30 transition-colors">
@@ -894,9 +916,9 @@ export default async function Home() {
                             </div>
                           </div>
 
-                          {/* 料金プランをチェックボタン */}
+                          {/* 商品を探すボタン */}
                           <button className="w-full mt-2 px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-primary-700 transition-all duration-300 group-hover:shadow-lg">
-                            商品を見る
+                            商品を探す
                           </button>
                         </div>
                       </Link>
@@ -930,13 +952,13 @@ export default async function Home() {
                 ))}
               </div>
 
-              {/* もっと見るボタン */}
+              {/* すべて見るボタン */}
               <div className="mt-10 text-center">
                 <Link
                   href="/products"
                   className="inline-block px-10 py-4 glass-blue rounded-xl text-primary-800 font-medium shadow-glass hover:shadow-glass-hover transition-all duration-300"
                 >
-                  もっと見る
+                  すべて見る
                 </Link>
               </div>
             </div>
@@ -945,6 +967,71 @@ export default async function Home() {
 
         {/* Ingredient Carousel */}
         <IngredientCarousel ingredients={ingredients} />
+
+        {/* FAQ Section */}
+        <section className="py-12 sm:py-16 bg-white border-t border-slate-200">
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-4xl">
+            <div className="text-center mb-8 sm:mb-12">
+              <div className="inline-flex items-center justify-center gap-2 mb-4">
+                <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                  よくある質問
+                </h2>
+              </div>
+              <p className="text-sm sm:text-base text-slate-600">
+                Suptiaについてよくいただくご質問をまとめました
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {faqData.map((faq, index) => (
+                <details
+                  key={index}
+                  className="group bg-slate-50 rounded-xl border border-slate-200 hover:border-primary-200 transition-colors"
+                >
+                  <summary className="flex items-center justify-between cursor-pointer p-4 sm:p-6 list-none">
+                    <span className="text-sm sm:text-base font-semibold text-slate-800 pr-4">
+                      {faq.question}
+                    </span>
+                    <span className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-primary-100 text-primary group-open:rotate-180 transition-transform duration-300">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+                  <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            {/* お問い合わせリンク */}
+            <div className="mt-8 sm:mt-12 text-center">
+              <p className="text-sm text-slate-500 mb-4">
+                その他のご質問がございましたら、お気軽にお問い合わせください
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                お問い合わせ
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
