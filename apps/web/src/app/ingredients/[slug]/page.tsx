@@ -2,8 +2,28 @@ import { sanityServer } from "@/lib/sanityServer";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import {
+  ArrowRight,
+  ExternalLink,
+  Sparkles,
+  Pill,
+  AlertTriangle,
+  Zap,
+  HelpCircle,
+  BookOpen,
+  Package,
+  Link2,
+} from "lucide-react";
 import type { Metadata } from "next";
+import {
+  TableOfContents,
+  IngredientSection,
+  BenefitList,
+  WarningList,
+  TextContent,
+  FAQAccordion,
+  IngredientHeader,
+} from "@/components/ingredients";
 
 interface IngredientPageProps {
   params: {
@@ -72,7 +92,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性`,
+    title: `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性 | Suptia成分ガイド`,
     description:
       ingredient.description ||
       `${ingredient.name}の科学的エビデンス、推奨摂取量、副作用、相互作用について詳しく解説。`,
@@ -88,245 +108,277 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
 
   const relatedProducts = await getRelatedProducts(ingredient._id);
 
+  // 目次アイテムを動的に生成
+  const tocItems = [
+    ingredient.benefits?.length > 0 && {
+      id: "benefits",
+      title: "期待される効果",
+      icon: "✨",
+    },
+    ingredient.recommendedDosage && {
+      id: "dosage",
+      title: "推奨摂取量",
+      icon: "💊",
+    },
+    ingredient.sideEffects?.length > 0 && {
+      id: "side-effects",
+      title: "副作用・注意事項",
+      icon: "⚠️",
+    },
+    ingredient.interactions?.length > 0 && {
+      id: "interactions",
+      title: "相互作用",
+      icon: "⚡",
+    },
+    ingredient.faqs?.length > 0 && {
+      id: "faq",
+      title: "よくある質問",
+      icon: "❓",
+    },
+    ingredient.references?.length > 0 && {
+      id: "references",
+      title: "参考文献",
+      icon: "📚",
+    },
+    ingredient.relatedIngredients?.length > 0 && {
+      id: "related-ingredients",
+      title: "関連する成分",
+      icon: "🔗",
+    },
+    relatedProducts?.length > 0 && {
+      id: "related-products",
+      title: "この成分を含む商品",
+      icon: "📦",
+    },
+  ].filter(Boolean) as { id: string; title: string; icon: string }[];
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* ヘッダー */}
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {ingredient.name}
-        </h1>
-        <p className="text-xl text-gray-600 mb-4">{ingredient.nameEn}</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        {/* ヘッダー */}
+        <IngredientHeader
+          name={ingredient.name}
+          nameEn={ingredient.nameEn}
+          category={ingredient.category}
+          evidenceLevel={ingredient.evidenceLevel}
+          description={ingredient.description}
+        />
 
-        <div className="flex flex-wrap gap-2 mb-4">
-          {ingredient.category && (
-            <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-              {ingredient.category}
-            </span>
-          )}
-          {ingredient.evidenceLevel && (
-            <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-              エビデンスレベル: {ingredient.evidenceLevel}
-            </span>
-          )}
-        </div>
+        {/* メインコンテンツエリア */}
+        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
+          {/* 左側: メインコンテンツ */}
+          <main className="space-y-6 sm:space-y-8">
+            {/* モバイル用目次 */}
+            <TableOfContents items={tocItems} />
 
-        {ingredient.description && (
-          <p className="text-lg text-gray-700 leading-relaxed">
-            {ingredient.description}
-          </p>
-        )}
-      </header>
-
-      {/* 効果・効能 */}
-      {ingredient.benefits && ingredient.benefits.length > 0 && (
-        <section className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            期待される効果
-          </h2>
-          <ul className="space-y-3">
-            {ingredient.benefits.map((benefit: string, index: number) => (
-              <li key={index} className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-800 flex items-center justify-center text-sm font-bold">
-                  ✓
-                </span>
-                <span className="text-gray-700 leading-relaxed">{benefit}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* 推奨摂取量 */}
-      {ingredient.recommendedDosage && (
-        <section className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">推奨摂取量</h2>
-          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {ingredient.recommendedDosage}
-          </div>
-        </section>
-      )}
-
-      {/* 副作用・注意事項 */}
-      {ingredient.sideEffects && ingredient.sideEffects.length > 0 && (
-        <section className="mb-8 bg-red-50 rounded-lg border border-red-200 p-6">
-          <h2 className="text-2xl font-bold text-red-900 mb-4">
-            副作用・注意事項
-          </h2>
-          <ul className="space-y-2">
-            {ingredient.sideEffects.map((effect: string, index: number) => (
-              <li key={index} className="flex gap-3">
-                <span className="flex-shrink-0 text-red-600">⚠️</span>
-                <span className="text-red-900">{effect}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* 相互作用 */}
-      {ingredient.interactions && (
-        <section className="mb-8 bg-yellow-50 rounded-lg border border-yellow-200 p-6">
-          <h2 className="text-2xl font-bold text-yellow-900 mb-4">相互作用</h2>
-          {Array.isArray(ingredient.interactions) ? (
-            <ul className="space-y-2">
-              {ingredient.interactions.map(
-                (interaction: string, index: number) => (
-                  <li key={index} className="flex gap-3">
-                    <span className="flex-shrink-0 text-yellow-600">⚠️</span>
-                    <span className="text-yellow-900">{interaction}</span>
-                  </li>
-                ),
-              )}
-            </ul>
-          ) : (
-            <div className="text-yellow-900 whitespace-pre-wrap">
-              {ingredient.interactions}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* よくある質問 */}
-      {ingredient.faqs && ingredient.faqs.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            よくある質問
-          </h2>
-          <div className="space-y-4">
-            {ingredient.faqs.map(
-              (faq: { question: string; answer: string }, index: number) => (
-                <details
-                  key={index}
-                  className="bg-white rounded-lg border border-gray-200 p-4"
-                >
-                  <summary className="font-semibold text-gray-900 cursor-pointer hover:text-primary">
-                    {faq.question}
-                  </summary>
-                  <div className="mt-3 text-gray-700 leading-relaxed">
-                    {faq.answer}
-                  </div>
-                </details>
-              ),
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* 参考文献 */}
-      {ingredient.references && ingredient.references.length > 0 && (
-        <section className="mb-8 bg-gray-50 rounded-lg border border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">参考文献</h2>
-          <ul className="space-y-2">
-            {ingredient.references.map(
-              (ref: { title: string; url: string }, index: number) => (
-                <li key={index}>
-                  <a
-                    href={ref.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline flex items-center gap-1"
-                  >
-                    {ref.title}
-                    <ExternalLink size={14} />
-                  </a>
-                </li>
-              ),
-            )}
-          </ul>
-        </section>
-      )}
-
-      {/* 関連成分 */}
-      {ingredient.relatedIngredients &&
-        ingredient.relatedIngredients.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              関連する成分
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ingredient.relatedIngredients.map((related: any) => (
-                <Link
-                  key={related._id}
-                  href={`/ingredients/${related.slug.current}`}
-                  className="group border-2 border-gray-200 rounded-lg p-4 transition-all hover:border-primary hover:shadow-md"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary transition-colors">
-                    {related.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 mb-2">{related.nameEn}</p>
-                  {related.category && (
-                    <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">
-                      {related.category}
-                    </span>
-                  )}
-                  <div className="flex items-center gap-1 text-xs text-primary font-medium mt-3">
-                    詳しく見る
-                    <ArrowRight size={14} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-      {/* この成分を含む商品 */}
-      {relatedProducts && relatedProducts.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {ingredient.name}を含む商品
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedProducts.map((product: any) => (
-              <Link
-                key={product._id}
-                href={`/products/${product.slug.current}`}
-                className="group border-2 border-gray-200 rounded-lg overflow-hidden transition-all hover:border-primary hover:shadow-md"
+            {/* 効果・効能 */}
+            {ingredient.benefits && ingredient.benefits.length > 0 && (
+              <IngredientSection
+                id="benefits"
+                title="期待される効果"
+                icon={<Sparkles size={20} />}
+                variant="success"
               >
-                {product.imageUrl && (
-                  <div className="aspect-square bg-gray-100 relative">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                <BenefitList benefits={ingredient.benefits} />
+              </IngredientSection>
+            )}
+
+            {/* 推奨摂取量 */}
+            {ingredient.recommendedDosage && (
+              <IngredientSection
+                id="dosage"
+                title="推奨摂取量"
+                icon={<Pill size={20} />}
+                variant="info"
+              >
+                <TextContent content={ingredient.recommendedDosage} />
+              </IngredientSection>
+            )}
+
+            {/* 副作用・注意事項 */}
+            {ingredient.sideEffects && ingredient.sideEffects.length > 0 && (
+              <IngredientSection
+                id="side-effects"
+                title="副作用・注意事項"
+                icon={<AlertTriangle size={20} />}
+                variant="danger"
+              >
+                <WarningList items={ingredient.sideEffects} variant="danger" />
+              </IngredientSection>
+            )}
+
+            {/* 相互作用 */}
+            {ingredient.interactions && (
+              <IngredientSection
+                id="interactions"
+                title="相互作用"
+                icon={<Zap size={20} />}
+                variant="warning"
+              >
+                {Array.isArray(ingredient.interactions) ? (
+                  <WarningList
+                    items={ingredient.interactions}
+                    variant="warning"
+                  />
+                ) : (
+                  <TextContent content={ingredient.interactions} />
                 )}
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary transition-colors">
-                    {product.name}
-                  </h3>
-                  {product.brand && (
-                    <p className="text-sm text-gray-600 mb-2">
-                      {product.brand.name}
-                    </p>
+              </IngredientSection>
+            )}
+
+            {/* よくある質問 */}
+            {ingredient.faqs && ingredient.faqs.length > 0 && (
+              <IngredientSection
+                id="faq"
+                title="よくある質問"
+                icon={<HelpCircle size={20} />}
+              >
+                <FAQAccordion faqs={ingredient.faqs} />
+              </IngredientSection>
+            )}
+
+            {/* 参考文献 */}
+            {ingredient.references && ingredient.references.length > 0 && (
+              <IngredientSection
+                id="references"
+                title="参考文献"
+                icon={<BookOpen size={20} />}
+              >
+                <ul className="space-y-3">
+                  {ingredient.references.map(
+                    (ref: { title: string; url: string }, index: number) => (
+                      <li key={index}>
+                        <a
+                          href={ref.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-start gap-3 p-3 sm:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                        >
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-medium">
+                            {index + 1}
+                          </span>
+                          <span className="text-primary group-hover:underline text-sm sm:text-base flex-1">
+                            {ref.title}
+                          </span>
+                          <ExternalLink
+                            size={16}
+                            className="flex-shrink-0 text-gray-400 group-hover:text-primary transition-colors mt-0.5"
+                          />
+                        </a>
+                      </li>
+                    )
                   )}
-                  {product.ingredients?.[0]?.amountMgPerServing && (
-                    <p className="text-xs text-gray-500 mb-2">
-                      {ingredient.name}:{" "}
-                      {product.ingredients[0].amountMgPerServing}mg
-                    </p>
-                  )}
-                  {product.priceJpy && (
-                    <p className="text-lg font-bold text-gray-900">
-                      ¥{product.priceJpy.toLocaleString()}
-                    </p>
-                  )}
+                </ul>
+              </IngredientSection>
+            )}
+
+            {/* 関連成分 */}
+            {ingredient.relatedIngredients &&
+              ingredient.relatedIngredients.length > 0 && (
+                <IngredientSection
+                  id="related-ingredients"
+                  title="関連する成分"
+                  icon={<Link2 size={20} />}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {ingredient.relatedIngredients.map((related: any) => (
+                      <Link
+                        key={related._id}
+                        href={`/ingredients/${related.slug.current}`}
+                        className="group flex items-center gap-4 p-4 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-primary rounded-xl transition-all hover:shadow-md"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm sm:text-base truncate">
+                            {related.name}
+                          </h3>
+                          <p className="text-xs text-gray-500 truncate">
+                            {related.nameEn}
+                          </p>
+                          {related.category && (
+                            <span className="inline-block mt-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">
+                              {related.category}
+                            </span>
+                          )}
+                        </div>
+                        <ArrowRight
+                          size={18}
+                          className="flex-shrink-0 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all"
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                </IngredientSection>
+              )}
+
+            {/* この成分を含む商品 */}
+            {relatedProducts && relatedProducts.length > 0 && (
+              <IngredientSection
+                id="related-products"
+                title={`${ingredient.name}を含む商品`}
+                icon={<Package size={20} />}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {relatedProducts.map((product: any) => (
+                    <Link
+                      key={product._id}
+                      href={`/products/${product.slug.current}`}
+                      className="group flex gap-4 p-3 sm:p-4 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-primary rounded-xl transition-all hover:shadow-md"
+                    >
+                      {product.imageUrl && (
+                        <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-lg overflow-hidden border border-gray-200">
+                          <Image
+                            src={product.imageUrl}
+                            alt={product.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm sm:text-base line-clamp-2 mb-1">
+                          {product.name}
+                        </h3>
+                        {product.brand && (
+                          <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                            {product.brand.name}
+                          </p>
+                        )}
+                        {product.ingredients?.[0]?.amountMgPerServing && (
+                          <p className="text-xs text-primary font-medium mb-2">
+                            {ingredient.name}:{" "}
+                            {product.ingredients[0].amountMgPerServing}mg
+                          </p>
+                        )}
+                        {product.priceJpy && (
+                          <p className="text-base sm:text-lg font-bold text-gray-900">
+                            ¥{product.priceJpy.toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link
-              href={`/products?ingredient=${ingredient.name}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-            >
-              {ingredient.name}を含む商品をもっと見る
-              <ArrowRight size={18} />
-            </Link>
-          </div>
-        </section>
-      )}
+
+                <div className="mt-6 text-center">
+                  <Link
+                    href={`/products?ingredient=${ingredient.name}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+                  >
+                    {ingredient.name}を含む商品をもっと見る
+                    <ArrowRight size={18} />
+                  </Link>
+                </div>
+              </IngredientSection>
+            )}
+          </main>
+
+          {/* 右側: デスクトップ用固定目次 */}
+          <aside className="hidden lg:block">
+            <TableOfContents items={tocItems} />
+          </aside>
+        </div>
+      </div>
     </div>
   );
 }
