@@ -1,107 +1,180 @@
 /* 成分ガイドページのグローバルスタイル */
 
-/* 箇条書きリストのスタイル */
-.benefits-list ul,
-.side-effects-list ul,
-.interactions-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* ========================================
+   基本設定
+   ======================================== */
+
+/* スムーズスクロール */
+html {
+  scroll-behavior: smooth;
 }
 
-.benefits-list li,
-.side-effects-list li,
-.interactions-list li {
-  margin-bottom: 1.5rem;
-  padding-left: 0;
-  position: relative;
-  line-height: 1.9;
+/* モバイルでのタップハイライト無効化 */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-.benefits-list li:last-child,
-.side-effects-list li:last-child,
-.interactions-list li:last-child {
-  margin-bottom: 0;
-}
+/* ========================================
+   テキストコンテンツのスタイル
+   ======================================== */
 
-/* リストマーカーの装飾 */
-.benefits-list li::before,
-.side-effects-list li::before,
-.interactions-list li::before {
-  position: absolute;
-  left: -1.5rem;
-}
-
-/* モバイル表示の最適化 */
-@media (max-width: 640px) {
-  .benefits-list li,
-  .side-effects-list li,
-  .interactions-list li {
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    line-height: 1.6rem;
-    padding-right: 0.5rem;
-  }
-}
-
-/* デスクトップ表示 */
-@media (min-width: 641px) {
-  .benefits-list li,
-  .side-effects-list li,
-  .interactions-list li {
-    font-size: 1rem;
-    line-height: 1.85rem;
-  }
-}
-
-/* 段落のスタイル - 改行を増やして読みやすく */
-.dosage-content p,
-.scientific-content p,
-.faq-answer p,
-.interactions-content p {
+/* proseスタイルの上書き */
+.prose p {
   margin-bottom: 1.25rem;
   line-height: 1.9;
 }
 
-.dosage-content p:last-child,
-.scientific-content p:last-child,
-.faq-answer p:last-child,
-.interactions-content p:last-child {
+.prose p:last-child {
   margin-bottom: 0;
 }
 
-/* セクション内の改行を強調 */
-.dosage-content br,
-.interactions-content br {
-  display: block;
-  content: "";
-  margin-bottom: 0.5rem;
-}
-
 /* 強調テキスト */
-.dosage-content strong,
-.scientific-content strong,
-.benefits-list strong,
-.interactions-list strong {
+.prose strong {
   font-weight: 600;
-  color: #1e3a8a;
+  color: #1e40af;
   background: linear-gradient(to bottom, transparent 60%, #dbeafe 60%);
   padding: 0 0.15rem;
 }
 
-/* セクション見出しの装飾 */
-.ingredient-section-title {
-  border-bottom: 3px solid #e5e7eb;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;
+/* リスト内の強調テキスト */
+.prose ul strong,
+.prose ol strong {
+  background: none;
+  color: inherit;
+  font-weight: 600;
 }
 
-/* カードスタイルの統一 */
-.ingredient-card {
-  transition: all 0.3s ease;
+/* ========================================
+   モバイル最適化
+   ======================================== */
+
+@media (max-width: 640px) {
+  /* より大きなタップターゲット */
+  button,
+  a {
+    min-height: 44px;
+  }
+
+  /* テキストサイズの最適化 */
+  .prose {
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.75;
+  }
+
+  /* セクション間のスペース調整 */
+  .space-y-6 > * + * {
+    margin-top: 1.25rem;
+  }
+
+  /* パディング調整 */
+  .px-5 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
-.ingredient-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+/* ========================================
+   アニメーション
+   ======================================== */
+
+/* スムーズなトランジション */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* ホバーエフェクト */
+@media (hover: hover) {
+  .hover\:shadow-md:hover {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+}
+
+/* ========================================
+   アクセシビリティ
+   ======================================== */
+
+/* フォーカススタイル */
+:focus-visible {
+  outline: 2px solid var(--primary, #0066cc);
+  outline-offset: 2px;
+}
+
+/* スクリーンリーダー用の非表示テキスト */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ========================================
+   印刷スタイル
+   ======================================== */
+
+@media print {
+  /* 背景色を印刷 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 不要な要素を非表示 */
+  nav,
+  aside,
+  .sticky {
+    display: none !important;
+  }
+
+  /* ページ分割を制御 */
+  section {
+    page-break-inside: avoid;
+  }
+}
+
+/* ========================================
+   カスタムスクロールバー（デスクトップ）
+   ======================================== */
+
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+/* ========================================
+   SEO用構造化データのスタイル
+   ======================================== */
+
+/* FAQスキーマ用 */
+[itemtype="https://schema.org/FAQPage"] [itemprop="acceptedAnswer"] {
+  display: block;
+}
+
+/* 記事スキーマ用 */
+[itemtype="https://schema.org/Article"] [itemprop="articleBody"] {
+  display: block;
 }
