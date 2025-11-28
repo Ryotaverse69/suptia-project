@@ -5,16 +5,10 @@ import { TierRank } from "@/lib/tier-colors";
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
 import {
-  calculateEffectivePrice,
-  getDefaultShippingFee,
-  getDefaultPointRate,
-} from "@/lib/effective-price";
-import {
   ExternalLink,
   Database,
   Filter,
   ShoppingBag,
-  CheckCircle2,
   AlertCircle,
 } from "lucide-react";
 
@@ -135,26 +129,12 @@ export function PriceComparison({
     const finalUnitPrice = price.unitPrice || parsed.unitPrice;
     const isBulk = finalQuantity > 1;
 
-    const shippingFee =
-      price.shippingFee ?? getDefaultShippingFee(price.source, price.amount);
-    const pointRate = price.pointRate ?? getDefaultPointRate(price.source);
-    const effectivePriceResult = calculateEffectivePrice(
-      price.amount,
-      shippingFee,
-      pointRate,
-    );
-
     return {
       ...price,
       quantity: finalQuantity,
       unitPrice: finalUnitPrice,
       storeName: price.storeName || price.shopName || parsed.storeName,
       isBulk: isBulk,
-      shippingFee,
-      pointRate,
-      isFreeShipping: shippingFee === 0,
-      effectivePrice: effectivePriceResult.effectivePrice,
-      pointAmount: effectivePriceResult.pointAmount,
     };
   });
 
@@ -196,7 +176,7 @@ export function PriceComparison({
           <div>
             <h2 className="text-lg font-bold text-slate-900">最安値チェック</h2>
             <p className="text-xs text-slate-500">
-              各ショップの価格と送料を比較
+              各ショップの価格を比較
             </p>
           </div>
         </div>
@@ -301,22 +281,6 @@ export function PriceComparison({
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-slate-500 flex items-center gap-3 mt-1">
-                    {price.shippingFee > 0 ? (
-                      <span className="font-medium">
-                        送料: ¥{price.shippingFee.toLocaleString()}
-                      </span>
-                    ) : (
-                      <span className="text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        <CheckCircle2 className="w-3 h-3" /> 送料無料
-                      </span>
-                    )}
-                    {price.pointAmount > 0 && (
-                      <span className="text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded-full">
-                        {price.pointAmount}pt還元
-                      </span>
-                    )}
-                  </div>
                 </div>
 
                 {/* Action Arrow (Visual Cue) */}
@@ -363,10 +327,13 @@ export function PriceComparison({
       </div>
 
       {/* Footer */}
-      <div className="bg-slate-50 p-3 border-t border-slate-200 text-center">
-        <p className="text-[10px] text-slate-400">
-          ※価格と送料は変動する可能性があります。購入前に各サイトでご確認ください。
-        </p>
+      <div className="bg-amber-50 p-3 border-t border-amber-200">
+        <div className="flex items-start gap-2 justify-center">
+          <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-700">
+            送料は各ショップ・配送先により異なります。購入前に各サイトで送料をご確認ください。
+          </p>
+        </div>
       </div>
     </div>
   );
