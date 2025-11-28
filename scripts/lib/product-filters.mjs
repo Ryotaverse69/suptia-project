@@ -178,12 +178,100 @@ export function validateProduct(product) {
   };
 }
 
+/**
+ * 商品名から識別キーを生成（重複検出用）
+ */
+function generateProductKey(name) {
+  if (!name) return null;
+
+  // ブランド名を正規化
+  const brandPatterns = [
+    [/^(DHC|ディーエイチシー)/i, 'dhc'],
+    [/^(ディアナチュラ|Dear-?Natura)/i, 'dear-natura'],
+    [/^(ネイチャーメイド|Nature Made)/i, 'nature-made'],
+    [/^(FANCL|ファンケル)/i, 'fancl'],
+    [/^(小林製薬)/i, 'kobayashi'],
+    [/^(大塚製薬)/i, 'otsuka'],
+    [/^(アサヒ)/i, 'asahi'],
+    [/^(UHA味覚糖)/i, 'uha'],
+  ];
+
+  let brand = '';
+  for (const [pattern, brandKey] of brandPatterns) {
+    if (pattern.test(name)) {
+      brand = brandKey;
+      break;
+    }
+  }
+
+  // 日数を抽出
+  const daysMatch = name.match(/(\d+)\s*日\s*分?/);
+  const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
+
+  // 粒数を抽出
+  const pillsMatch = name.match(/(\d+)\s*(粒|錠|カプセル)/);
+  const pills = pillsMatch ? parseInt(pillsMatch[1], 10) : null;
+
+  // 主要成分を抽出
+  const ingredients = [];
+  const ingredientPatterns = [
+    /ビタミン\s*[A-Za-zａ-ｚ]+\d*/gi,
+    /マルチビタミン/gi,
+    /カルシウム/gi,
+    /マグネシウム/gi,
+    /亜鉛/gi,
+    /鉄/gi,
+    /葉酸/gi,
+    /DHA/gi,
+    /EPA/gi,
+    /コラーゲン/gi,
+    /グルコサミン/gi,
+    /ルテイン/gi,
+    /乳酸菌/gi,
+    /ナットウキナーゼ/gi,
+  ];
+
+  for (const pattern of ingredientPatterns) {
+    const matches = name.match(pattern);
+    if (matches) {
+      for (const match of matches) {
+        ingredients.push(match.toLowerCase().replace(/\s+/g, ''));
+      }
+    }
+  }
+
+  // セット数を抽出
+  const setPatterns = [
+    /(\d+)\s*(個|袋|本|箱|コ)\s*セット/i,
+    /×\s*(\d+)\s*(袋|本|個|箱)/i,
+  ];
+  let setCount = null;
+  for (const pattern of setPatterns) {
+    const match = name.match(pattern);
+    if (match) {
+      setCount = parseInt(match[1], 10);
+      if (setCount > 1) break;
+    }
+  }
+
+  if (!brand || (!days && !pills)) return null;
+
+  return {
+    brand,
+    days,
+    pills,
+    ingredients: [...new Set(ingredients)].sort(),
+    setCount,
+    key: `${brand}-${days || 'x'}-${pills || 'x'}-${setCount || '1'}-${ingredients.slice(0, 3).join(',')}`,
+  };
+}
+
 // Sanityから既存の商品IDリストを取得
 export async function fetchExistingProductIds(token) {
   const SANITY_PROJECT_ID = 'fny3jdcg';
   const SANITY_DATASET = 'production';
 
-  const query = '*[_type == "product"]{ itemCode, janCode, source, _id }';
+  const query = '*[_type == "product"]{ itemCode, janCode, source, _id, name }';
   const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}&perspective=previewDrafts`;
 
   const response = await fetch(url, {
@@ -199,6 +287,7 @@ export async function fetchExistingProductIds(token) {
   const existingProducts = {
     byItemCode: new Map(),
     byJanCode: new Map(),
+    byProductKey: new Map(),
   };
 
   for (const product of data.result) {
@@ -206,6 +295,7 @@ export async function fetchExistingProductIds(token) {
       existingProducts.byItemCode.set(product.itemCode, {
         _id: product._id,
         source: product.source,
+        name: product.name,
       });
     }
 
@@ -216,6 +306,21 @@ export async function fetchExistingProductIds(token) {
       existingProducts.byJanCode.get(product.janCode).push({
         _id: product._id,
         source: product.source,
+        name: product.name,
+      });
+    }
+
+    // 商品キーを生成して登録
+    const productKey = generateProductKey(product.name);
+    if (productKey) {
+      if (!existingProducts.byProductKey.has(productKey.key)) {
+        existingProducts.byProductKey.set(productKey.key, []);
+      }
+      existingProducts.byProductKey.get(productKey.key).push({
+        _id: product._id,
+        source: product.source,
+        name: product.name,
+        productKey,
       });
     }
   }
@@ -225,6 +330,7 @@ export async function fetchExistingProductIds(token) {
 
 // 商品が既に存在するかチェック
 export function checkDuplicate(product, existingProducts) {
+  // 1. itemCodeで重複チェック（最優先）
   if (product.itemCode && existingProducts.byItemCode.has(product.itemCode)) {
     const existing = existingProducts.byItemCode.get(product.itemCode);
     return {
@@ -235,16 +341,36 @@ export function checkDuplicate(product, existingProducts) {
     };
   }
 
+  // 2. JANコードで重複チェック
   if (product.janCode && existingProducts.byJanCode.has(product.janCode)) {
     const existingList = existingProducts.byJanCode.get(product.janCode);
-    const sameSourceDuplicate = existingList.find(e => e.source === product.source);
-
-    if (sameSourceDuplicate) {
+    // JANコードが一致する場合は、同一商品の可能性が高い
+    // 価格データを統合するため、既存商品のIDを返す
+    if (existingList.length > 0) {
       return {
         isDuplicate: true,
-        reason: `同じJANコードかつ同じソースの商品が既に存在: ${product.janCode}`,
-        existingId: sameSourceDuplicate._id,
-        existingSource: sameSourceDuplicate.source,
+        reason: `同じJANコードの商品が既に存在: ${product.janCode}`,
+        existingId: existingList[0]._id,
+        existingSource: existingList[0].source,
+        shouldMergePrice: true, // 価格データのみマージすべき
+      };
+    }
+  }
+
+  // 3. 商品キー（ブランド+日数+成分）で重複チェック
+  const productKey = generateProductKey(product.name);
+  if (productKey && existingProducts.byProductKey.has(productKey.key)) {
+    const existingList = existingProducts.byProductKey.get(productKey.key);
+    // 既存商品と同じ基本構成の場合は重複とみなす
+    if (existingList.length > 0) {
+      return {
+        isDuplicate: true,
+        reason: `同じ商品キーの商品が既に存在: ${productKey.key}`,
+        existingId: existingList[0]._id,
+        existingSource: existingList[0].source,
+        existingName: existingList[0].name,
+        shouldMergePrice: true, // 価格データのみマージすべき
+        productKey,
       };
     }
   }
@@ -253,6 +379,69 @@ export function checkDuplicate(product, existingProducts) {
     isDuplicate: false,
     reason: '重複なし',
   };
+}
+
+// 既存商品に価格データを追加（重複商品の価格統合用）
+export async function addPriceToExistingProduct(existingId, priceData, token) {
+  const SANITY_PROJECT_ID = 'fny3jdcg';
+  const SANITY_DATASET = 'production';
+
+  // まず既存の商品を取得
+  const query = `*[_type == "product" && _id == "${existingId}"][0]{ priceData }`;
+  const queryUrl = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+
+  const queryResponse = await fetch(queryUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!queryResponse.ok) {
+    throw new Error(`Sanity query error: ${queryResponse.status}`);
+  }
+
+  const queryData = await queryResponse.json();
+  const existingPriceData = queryData.result?.priceData || [];
+
+  // 重複チェック（ソース＋金額＋店舗名）
+  const priceKey = `${priceData.source}-${priceData.amount}-${priceData.storeName || priceData.shopName || ''}`;
+  const isDuplicatePrice = existingPriceData.some(pd => {
+    const existingKey = `${pd.source}-${pd.amount}-${pd.storeName || pd.shopName || ''}`;
+    return existingKey === priceKey;
+  });
+
+  if (isDuplicatePrice) {
+    return { success: true, skipped: true, reason: '同じ価格データが既に存在' };
+  }
+
+  // 価格データを追加
+  const mutations = [
+    {
+      patch: {
+        id: existingId,
+        setIfMissing: { priceData: [] },
+        insert: {
+          after: 'priceData[-1]',
+          items: [priceData],
+        },
+      },
+    },
+  ];
+
+  const mutateUrl = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/${SANITY_DATASET}`;
+  const mutateResponse = await fetch(mutateUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ mutations }),
+  });
+
+  if (!mutateResponse.ok) {
+    const error = await mutateResponse.json();
+    throw new Error(`Sanity mutation error: ${JSON.stringify(error)}`);
+  }
+
+  return { success: true, merged: true };
 }
 
 // フィルタリング統計を集計
