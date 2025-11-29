@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface IngredientSectionProps {
   id: string;
@@ -75,15 +75,17 @@ interface BenefitListProps {
 
 export function BenefitList({ benefits }: BenefitListProps) {
   return (
-    <ul className="space-y-4">
+    <ul className="space-y-5">
       {benefits.map((benefit, index) => (
-        <li key={index} className="flex gap-3 sm:gap-4">
-          <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-sm">
+        <li key={index} className="flex gap-4">
+          <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-md">
             {index + 1}
           </span>
-          <span className="text-gray-700 text-sm sm:text-base leading-relaxed pt-0.5">
-            {benefit}
-          </span>
+          <div className="flex-1 pt-1">
+            <p className="text-gray-800 text-sm sm:text-base leading-[1.8] sm:leading-[1.9]">
+              {benefit}
+            </p>
+          </div>
         </li>
       ))}
     </ul>
@@ -97,17 +99,21 @@ interface WarningListProps {
 }
 
 export function WarningList({ items, variant = "danger" }: WarningListProps) {
-  const iconColor = variant === "danger" ? "text-red-500" : "text-yellow-500";
+  const bgColor = variant === "danger" ? "bg-red-100" : "bg-yellow-100";
+  const borderColor = variant === "danger" ? "border-red-200" : "border-yellow-200";
   const textColor = variant === "danger" ? "text-red-900" : "text-yellow-900";
 
   return (
-    <ul className="space-y-3 sm:space-y-4">
+    <ul className="space-y-4">
       {items.map((item, index) => (
-        <li key={index} className="flex gap-3">
-          <span className={`flex-shrink-0 text-lg sm:text-xl ${iconColor}`}>⚠️</span>
-          <span className={`${textColor} text-sm sm:text-base leading-relaxed`}>
+        <li
+          key={index}
+          className={`flex gap-3 p-4 rounded-xl ${bgColor} border ${borderColor}`}
+        >
+          <span className="flex-shrink-0 text-lg">⚠️</span>
+          <p className={`${textColor} text-sm sm:text-base leading-[1.8]`}>
             {item}
-          </span>
+          </p>
         </li>
       ))}
     </ul>
@@ -119,37 +125,182 @@ interface TextContentProps {
   content: string;
 }
 
+// 数字や単位をハイライト
+function highlightNumbers(text: string): React.ReactNode[] {
+  // 数値+単位のパターン（例: 1000mg, 200〜400mg, 500mg/日）
+  const pattern = /(\d+(?:,\d{3})*(?:\.\d+)?(?:\s*[〜～\-]\s*\d+(?:,\d{3})*(?:\.\d+)?)?)\s*(mg|g|μg|mcg|IU|%|ml|mL|日|回|週|ヶ月|カ月)/g;
+
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    // マッチ前のテキスト
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    // マッチした数値+単位をハイライト
+    parts.push(
+      <span key={match.index} className="font-semibold text-primary">
+        {match[0]}
+      </span>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  // 残りのテキスト
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [text];
+}
+
+// 強調キーワードを検出してハイライト
+function highlightKeywords(text: string): React.ReactNode[] {
+  // 重要なキーワードパターン
+  const keywords = [
+    /「([^」]+)」/g, // カギ括弧内
+    /【([^】]+)】/g, // 墨付きカッコ内
+  ];
+
+  const highlights: { start: number; end: number; content: string }[] = [];
+
+  for (const pattern of keywords) {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      highlights.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        content: match[0],
+      });
+    }
+  }
+
+  if (highlights.length === 0) {
+    return highlightNumbers(text);
+  }
+
+  // ハイライト位置でソート
+  highlights.sort((a, b) => a.start - b.start);
+
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  highlights.forEach((h, i) => {
+    if (h.start > lastIndex) {
+      parts.push(...highlightNumbers(text.slice(lastIndex, h.start)));
+    }
+    parts.push(
+      <span key={`highlight-${i}`} className="font-medium text-gray-900 bg-yellow-50 px-1 rounded">
+        {h.content}
+      </span>
+    );
+    lastIndex = h.end;
+  });
+
+  if (lastIndex < text.length) {
+    parts.push(...highlightNumbers(text.slice(lastIndex)));
+  }
+
+  return parts;
+}
+
 export function TextContent({ content }: TextContentProps) {
-  // 改行と段落を処理
-  const paragraphs = content.split(/\n\n+/).filter(Boolean);
+  // 改行と段落を処理（単一改行も段落区切りとして扱う）
+  // ただし、箇条書きの場合は別処理
+  const lines = content.split(/\n/).filter(Boolean);
+
+  // 連続する箇条書き行をグループ化
+  const elements: React.ReactNode[] = [];
+  let currentList: string[] = [];
+  let currentParagraph: string[] = [];
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      const text = currentParagraph.join(' ');
+      elements.push(
+        <p
+          key={`p-${elements.length}`}
+          className="text-gray-700 text-sm sm:text-base leading-[1.9] sm:leading-[2] mb-5 last:mb-0"
+        >
+          {highlightKeywords(text)}
+        </p>
+      );
+      currentParagraph = [];
+    }
+  };
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      elements.push(
+        <ul key={`ul-${elements.length}`} className="space-y-3 my-5 pl-1">
+          {currentList.map((item, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-2.5" />
+              <span className="text-gray-700 text-sm sm:text-base leading-[1.8]">
+                {highlightKeywords(item.trim())}
+              </span>
+            </li>
+          ))}
+        </ul>
+      );
+      currentList = [];
+    }
+  };
+
+  lines.forEach((line) => {
+    const trimmedLine = line.trim();
+
+    // 見出しの検出（■、●、◆、【】で始まる行）
+    if (/^[■●◆▼▶]/.test(trimmedLine) || /^【[^】]+】/.test(trimmedLine)) {
+      flushParagraph();
+      flushList();
+      elements.push(
+        <h3
+          key={`h3-${elements.length}`}
+          className="font-bold text-gray-900 text-base sm:text-lg mt-6 mb-3 first:mt-0 flex items-center gap-2"
+        >
+          <span className="w-1 h-5 bg-primary rounded-full" />
+          {trimmedLine.replace(/^[■●◆▼▶]\s*/, '').replace(/^【([^】]+)】/, '$1')}
+        </h3>
+      );
+      return;
+    }
+
+    // 箇条書きの検出（・、•、-、※で始まる行）
+    if (/^[・•\-※]\s*/.test(trimmedLine)) {
+      flushParagraph();
+      currentList.push(trimmedLine.replace(/^[・•\-※]\s*/, ''));
+      return;
+    }
+
+    // 数字付きリストの検出（1. 2. など）
+    if (/^\d+[.．)）]\s*/.test(trimmedLine)) {
+      flushParagraph();
+      currentList.push(trimmedLine.replace(/^\d+[.．)）]\s*/, ''));
+      return;
+    }
+
+    // 空行または短い行は段落区切り
+    if (trimmedLine === '' || trimmedLine.length < 3) {
+      flushList();
+      flushParagraph();
+      return;
+    }
+
+    // 通常のテキスト行
+    flushList();
+    currentParagraph.push(trimmedLine);
+  });
+
+  // 残りをフラッシュ
+  flushList();
+  flushParagraph();
 
   return (
-    <div className="prose prose-gray max-w-none">
-      {paragraphs.map((paragraph, index) => {
-        // 箇条書きの検出
-        if (paragraph.includes("・") || paragraph.includes("•")) {
-          const lines = paragraph.split(/[・•]/).filter(Boolean);
-          return (
-            <ul key={index} className="list-disc list-inside space-y-2 my-4">
-              {lines.map((line, i) => (
-                <li key={i} className="text-gray-700 text-sm sm:text-base leading-relaxed">
-                  {line.trim()}
-                </li>
-              ))}
-            </ul>
-          );
-        }
-
-        // 通常の段落
-        return (
-          <p
-            key={index}
-            className="text-gray-700 text-sm sm:text-base leading-relaxed sm:leading-loose mb-4 last:mb-0"
-          >
-            {paragraph}
-          </p>
-        );
-      })}
+    <div className="text-content">
+      {elements}
     </div>
   );
 }

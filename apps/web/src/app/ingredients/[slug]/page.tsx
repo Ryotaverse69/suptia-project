@@ -164,13 +164,15 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
           description={ingredient.description}
         />
 
+        {/* モバイル用目次（メインコンテンツの前に配置） */}
+        <div className="lg:hidden">
+          <TableOfContents items={tocItems} variant="mobile" />
+        </div>
+
         {/* メインコンテンツエリア */}
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
           {/* 左側: メインコンテンツ */}
           <main className="space-y-6 sm:space-y-8">
-            {/* モバイル用目次 */}
-            <TableOfContents items={tocItems} />
-
             {/* 効果・効能 */}
             {ingredient.benefits && ingredient.benefits.length > 0 && (
               <IngredientSection
@@ -375,7 +377,7 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
 
           {/* 右側: デスクトップ用固定目次 */}
           <aside className="hidden lg:block">
-            <TableOfContents items={tocItems} />
+            <TableOfContents items={tocItems} variant="desktop" />
           </aside>
         </div>
       </div>

@@ -10,7 +10,15 @@ import {
   Filter,
   ShoppingBag,
   AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Package,
 } from "lucide-react";
+
+// 折りたたみ表示の閾値
+const COLLAPSE_THRESHOLD = 5;
+// 初期表示件数
+const INITIAL_DISPLAY_COUNT = 4;
 
 interface PriceData {
   source: string;
@@ -49,6 +57,7 @@ export function PriceComparison({
   className = "",
 }: PriceComparisonProps) {
   const [showBulkPrices, setShowBulkPrices] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const hasData = priceData && priceData.length > 0;
 
@@ -153,6 +162,13 @@ export function PriceComparison({
     (a, b) => (a.unitPrice || a.amount) - (b.unitPrice || b.amount),
   );
 
+  // 折りたたみ表示の制御
+  const shouldCollapse = sortedPrices.length >= COLLAPSE_THRESHOLD;
+  const visiblePrices = shouldCollapse && !isExpanded
+    ? sortedPrices.slice(0, INITIAL_DISPLAY_COUNT)
+    : sortedPrices;
+  const hiddenCount = sortedPrices.length - INITIAL_DISPLAY_COUNT;
+
   const getSourceName = (source: string) => {
     const sourceNames: Record<string, string> = {
       rakuten: "楽天市場",
@@ -215,7 +231,7 @@ export function PriceComparison({
 
       {/* Data List */}
       <div className="divide-y divide-slate-100">
-        {sortedPrices.map((price, index) => {
+        {visiblePrices.map((price, index) => {
           const unitPrice = price.unitPrice || price.amount;
           const isLowest = unitPrice === minUnitPrice;
           const quantity = price.quantity || 1;
@@ -254,14 +270,15 @@ export function PriceComparison({
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-slate-500 flex flex-wrap gap-2">
+                    <div className="text-xs text-slate-500 flex flex-wrap items-center gap-2">
                       {price.storeName && (
                         <span className="truncate max-w-[180px]">
                           {price.storeName}
                         </span>
                       )}
                       {isBulk && (
-                        <span className="text-blue-600 font-bold bg-blue-50 px-1.5 rounded">
+                        <span className="inline-flex items-center gap-1 text-orange-600 font-bold bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
+                          <Package className="w-3 h-3" />
                           {quantity}個セット
                         </span>
                       )}
@@ -275,12 +292,14 @@ export function PriceComparison({
                     <span className="text-3xl font-bold text-slate-900 tracking-tight group-hover:text-blue-700 transition-colors">
                       ¥{price.amount.toLocaleString()}
                     </span>
-                    {isBulk && (
-                      <span className="text-xs text-slate-500 font-medium">
-                        (単価: ¥{unitPrice.toLocaleString()})
-                      </span>
-                    )}
                   </div>
+                  {isBulk && (
+                    <div className="mt-1 text-xs text-slate-500">
+                      <span className="font-medium">単価: </span>
+                      <span className="text-slate-700 font-bold">¥{unitPrice.toLocaleString()}</span>
+                      <span className="text-slate-400">/個</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Arrow (Visual Cue) */}
@@ -325,6 +344,28 @@ export function PriceComparison({
           );
         })}
       </div>
+
+      {/* 折りたたみ表示ボタン */}
+      {shouldCollapse && (
+        <div className="px-4 pb-4">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition-all"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-4 h-4" />
+                表示を閉じる
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-4 h-4" />
+                他{hiddenCount}件のショップを表示
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="bg-amber-50 p-3 border-t border-amber-200">

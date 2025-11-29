@@ -11,9 +11,10 @@ interface TOCItem {
 
 interface TableOfContentsProps {
   items: TOCItem[];
+  variant?: "mobile" | "desktop";
 }
 
-export function TableOfContents({ items }: TableOfContentsProps) {
+export function TableOfContents({ items, variant = "desktop" }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -58,10 +59,10 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   if (items.length === 0) return null;
 
-  return (
-    <>
-      {/* モバイル用: 折りたたみ式目次 */}
-      <nav className="lg:hidden sticky top-16 z-40 bg-white border-b border-gray-200 -mx-4 px-4 py-3">
+  // モバイル版: 折りたたみ式目次
+  if (variant === "mobile") {
+    return (
+      <nav className="sticky top-16 z-40 bg-white border-b border-gray-200 -mx-4 px-4 py-3">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex items-center justify-between w-full text-left"
@@ -100,33 +101,35 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           </ul>
         )}
       </nav>
+    );
+  }
 
-      {/* デスクトップ用: サイドバー固定目次 */}
-      <nav className="hidden lg:block sticky top-24 h-fit">
-        <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-            <List size={18} className="text-primary" />
-            目次
-          </h2>
-          <ul className="space-y-1">
-            {items.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => scrollToSection(item.id)}
-                  className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
-                    activeId === item.id
-                      ? "bg-primary text-white font-medium shadow-sm"
-                      : "text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm"
-                  }`}
-                >
-                  {item.icon && <span className="mr-2">{item.icon}</span>}
-                  {item.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </nav>
-    </>
+  // デスクトップ版: サイドバー固定目次
+  return (
+    <nav className="sticky top-24 h-fit">
+      <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+        <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+          <List size={18} className="text-primary" />
+          目次
+        </h2>
+        <ul className="space-y-1">
+          {items.map((item) => (
+            <li key={item.id}>
+              <button
+                onClick={() => scrollToSection(item.id)}
+                className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                  activeId === item.id
+                    ? "bg-primary text-white font-medium shadow-sm"
+                    : "text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm"
+                }`}
+              >
+                {item.icon && <span className="mr-2">{item.icon}</span>}
+                {item.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
   );
 }

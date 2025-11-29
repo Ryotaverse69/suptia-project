@@ -81,10 +81,10 @@ export function IngredientHeader({
 
         {/* 概要説明 */}
         {description && (
-          <div className="bg-white/80 backdrop-blur rounded-xl p-4 sm:p-5 border border-gray-100">
+          <div className="bg-white/80 backdrop-blur rounded-xl p-4 sm:p-6 border border-gray-100">
             <div className="flex items-start gap-3">
-              <Shield size={20} className="flex-shrink-0 text-primary mt-0.5" />
-              <p className="text-gray-700 text-sm sm:text-base leading-relaxed sm:leading-loose">
+              <Shield size={20} className="flex-shrink-0 text-primary mt-1" />
+              <p className="text-gray-700 text-sm sm:text-base leading-[1.9] sm:leading-[2]">
                 {description}
               </p>
             </div>

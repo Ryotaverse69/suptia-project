@@ -52,17 +52,31 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
               openIndex === index ? "max-h-[2000px]" : "max-h-0"
             }`}
           >
-            <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0">
+            <div className="px-4 pb-5 sm:px-5 sm:pb-6 pt-0">
               <div className="flex gap-3">
                 <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs sm:text-sm font-bold">
                   A
                 </span>
-                <div className="text-gray-700 text-sm sm:text-base leading-relaxed sm:leading-loose">
-                  {faq.answer.split("\n").map((line, i) => (
-                    <p key={i} className={i > 0 ? "mt-3" : ""}>
-                      {line}
-                    </p>
-                  ))}
+                <div className="flex-1 text-gray-700 text-sm sm:text-base leading-[1.9] sm:leading-[2]">
+                  {faq.answer.split("\n").map((line, i) => {
+                    const trimmedLine = line.trim();
+                    // 空行はスキップ
+                    if (!trimmedLine) return null;
+                    // 箇条書きの検出
+                    if (/^[・•\-※]\s*/.test(trimmedLine)) {
+                      return (
+                        <div key={i} className="flex gap-2 mt-2 first:mt-0">
+                          <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-2.5" />
+                          <span>{trimmedLine.replace(/^[・•\-※]\s*/, '')}</span>
+                        </div>
+                      );
+                    }
+                    return (
+                      <p key={i} className={i > 0 ? "mt-4" : ""}>
+                        {trimmedLine}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
             </div>
