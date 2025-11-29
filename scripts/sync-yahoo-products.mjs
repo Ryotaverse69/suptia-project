@@ -26,7 +26,9 @@ import {
   validateProduct,
   fetchExistingProductIds,
   checkDuplicate,
+  addPriceToExistingProduct,
   printFilterStats,
+  generateProductKey,
 } from './lib/product-filters.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -743,14 +745,51 @@ async function main() {
 
     for (const product of validProducts) {
       const duplicateCheck = checkDuplicate({
+        name: product.name, // 商品名ベースの重複チェック（mergeKey使用）に必要
         itemCode: product.identifiers.yahooCode,
         janCode: product.identifiers.jan,
         source: 'yahoo',
       }, existingProductIds);
 
       if (duplicateCheck.isDuplicate) {
-        duplicateProducts.push({ product, reason: duplicateCheck.reason });
-        console.log(`  ⚠️  重複: ${product.name.substring(0, 50)}... (${duplicateCheck.reason})`);
+        // 重複商品の場合、価格データのみを既存商品に追加
+        if (duplicateCheck.shouldMergePrice && !dryRun) {
+          try {
+            const priceData = {
+              source: 'yahoo',
+              storeName: product.shopName,
+              shopName: product.shopName,
+              productName: product.name,
+              itemCode: product.identifiers.yahooCode,
+              amount: product.price,
+              currency: 'JPY',
+              url: product.affiliateUrl || product.url,
+              fetchedAt: new Date().toISOString(),
+              confidence: 1.0,
+            };
+
+            const result = await addPriceToExistingProduct(
+              duplicateCheck.existingId,
+              priceData,
+              SANITY_API_TOKEN,
+              {
+                setCount: duplicateCheck.setCount || 1,
+                originalProductName: product.name,
+              }
+            );
+
+            if (result.merged) {
+              console.log(`  🔗 価格統合: ${product.name.substring(0, 50)}... → ${duplicateCheck.existingName?.substring(0, 30) || duplicateCheck.existingId}`);
+            } else if (result.skipped) {
+              console.log(`  ⏭️  スキップ: ${product.name.substring(0, 50)}... (${result.reason})`);
+            }
+          } catch (error) {
+            console.error(`  ❌ 価格統合エラー: ${product.name.substring(0, 50)}...`, error.message);
+          }
+        } else {
+          duplicateProducts.push({ product, reason: duplicateCheck.reason });
+          console.log(`  ⚠️  重複: ${product.name.substring(0, 50)}... (${duplicateCheck.reason})`);
+        }
       } else {
         uniqueProducts.push(product);
       }

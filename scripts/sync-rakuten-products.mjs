@@ -26,7 +26,9 @@ import {
   validateProduct,
   fetchExistingProductIds,
   checkDuplicate,
+  addPriceToExistingProduct,
   printFilterStats,
+  generateProductKey,
 } from './lib/product-filters.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -126,93 +128,6 @@ function extractBrandFromProductName(productName) {
   }
 
   return firstWord;
-}
-
-/**
- * 商品名から識別キーを生成（重複検出用）
- * ブランド名が商品名の任意位置にあっても検出可能
- */
-function generateProductKeyFromName(name) {
-  if (!name) return null;
-
-  // ブランド名を正規化（商品名の任意位置から検出）
-  const brandPatterns = [
-    [/(DHC|ディーエイチシー)/i, 'dhc'],
-    [/(ディアナチュラ|Dear-?Natura)/i, 'dear-natura'],
-    [/(ネイチャーメイド|Nature Made)/i, 'nature-made'],
-    [/(FANCL|ファンケル)/i, 'fancl'],
-    [/(小林製薬)/i, 'kobayashi'],
-    [/(大塚製薬)/i, 'otsuka'],
-    [/(アサヒ)/i, 'asahi'],
-    [/(UHA味覚糖)/i, 'uha'],
-    [/(NOW Foods|ナウフーズ)/i, 'now-foods'],
-  ];
-
-  let brand = '';
-  for (const [pattern, brandKey] of brandPatterns) {
-    if (pattern.test(name)) {
-      brand = brandKey;
-      break;
-    }
-  }
-
-  // 日数を抽出
-  const daysMatch = name.match(/(\d+)\s*日\s*分?/);
-  const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
-
-  // 主要成分を抽出
-  const ingredients = [];
-  const ingredientPatterns = [
-    /マルチビタミン/gi,
-    /ビタミン\s*[A-Za-zａ-ｚ]+\d*/gi,
-    /カルシウム/gi,
-    /マグネシウム/gi,
-    /亜鉛/gi,
-    /鉄/gi,
-    /葉酸/gi,
-    /DHA/gi,
-    /EPA/gi,
-    /コラーゲン/gi,
-    /グルコサミン/gi,
-    /ルテイン/gi,
-    /乳酸菌/gi,
-  ];
-
-  for (const pattern of ingredientPatterns) {
-    const matches = name.match(pattern);
-    if (matches) {
-      for (const match of matches) {
-        ingredients.push(match.toLowerCase().replace(/\s+/g, ''));
-      }
-    }
-  }
-
-  // セット数を抽出
-  const setPatterns = [
-    /(\d+)\s*(個|袋|本|箱|コ)\s*セット/i,
-    /×\s*(\d+)\s*(袋|本|個|箱)/i,
-  ];
-  let setCount = 1;
-  for (const pattern of setPatterns) {
-    const match = name.match(pattern);
-    if (match) {
-      setCount = parseInt(match[1], 10);
-      if (setCount > 1) break;
-    }
-  }
-
-  if (!brand) return null;
-
-  const sortedIngredients = [...new Set(ingredients)].sort();
-  const mainIngredient = sortedIngredients[0] || 'unknown';
-
-  return {
-    brand,
-    days,
-    mainIngredient,
-    setCount,
-    key: `${brand}-${mainIngredient}-${days || 'x'}-${setCount}`,
-  };
 }
 
 // RakutenAdapter（簡易版 - 本番ではlib/ec-adaptersを使用）
@@ -498,17 +413,17 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
         );
       }
 
-      // 3. 商品名ベースの重複チェック（ブランド+成分+日数）
-      if (!existing) {
-        const productKey = generateProductKeyFromName(product.name);
-        if (productKey) {
-          existing = existingProducts.find(p => {
-            const existingKey = generateProductKeyFromName(p.name);
-            return existingKey && existingKey.key === productKey.key;
-          });
-          if (existing) {
-            console.log(`    💡 商品名ベースで既存商品を検出: ${productKey.key}`);
-          }
+      // 3. 商品名ベースの重複チェック（ブランド+成分+日数、mergeKeyを使用）
+      // generateProductKeyはセット数を除外したmergeKeyで重複チェック
+      const productKeyInfo = generateProductKey(product.name);
+      if (!existing && productKeyInfo) {
+        existing = existingProducts.find(p => {
+          const existingKey = generateProductKey(p.name);
+          // mergeKey（セット数を除外したキー）で比較
+          return existingKey && existingKey.mergeKey === productKeyInfo.mergeKey;
+        });
+        if (existing) {
+          console.log(`    💡 商品名ベースで既存商品を検出: ${productKeyInfo.mergeKey}`);
         }
       }
 
@@ -530,8 +445,8 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
       const productId = existing?._id || `product-rakuten-${product.id.replace(/[^a-z0-9]+/g, '-')}`;
 
       // 価格データ
-      // セット数量検出（商品名から自動判定）
-      const quantity = this.extractQuantity(product.name);
+      // セット数量検出（商品名から自動判定、generateProductKeyを使用）
+      const quantity = productKeyInfo?.setCount || 1;
       const unitPrice = quantity > 1 ? Math.round(product.price / quantity) : product.price;
 
       // 送料とポイント還元率（楽天のデフォルト値）
@@ -775,14 +690,51 @@ async function main() {
 
     for (const product of validProducts) {
       const duplicateCheck = checkDuplicate({
+        name: product.name, // 商品名ベースの重複チェック（mergeKey使用）に必要
         itemCode: product.identifiers.rakutenItemCode,
         janCode: product.identifiers.jan,
         source: 'rakuten',
       }, existingProductIds);
 
       if (duplicateCheck.isDuplicate) {
-        duplicateProducts.push({ product, reason: duplicateCheck.reason });
-        console.log(`  ⚠️  重複: ${product.name.substring(0, 50)}... (${duplicateCheck.reason})`);
+        // 重複商品の場合、価格データのみを既存商品に追加
+        if (duplicateCheck.shouldMergePrice && !dryRun) {
+          try {
+            const priceData = {
+              source: 'rakuten',
+              storeName: product.shopName,
+              shopName: product.shopName,
+              productName: product.name,
+              itemCode: product.identifiers.rakutenItemCode,
+              amount: product.price,
+              currency: 'JPY',
+              url: product.affiliateUrl || product.url,
+              fetchedAt: new Date().toISOString(),
+              confidence: 1.0,
+            };
+
+            const result = await addPriceToExistingProduct(
+              duplicateCheck.existingId,
+              priceData,
+              SANITY_API_TOKEN,
+              {
+                setCount: duplicateCheck.setCount || 1,
+                originalProductName: product.name,
+              }
+            );
+
+            if (result.merged) {
+              console.log(`  🔗 価格統合: ${product.name.substring(0, 50)}... → ${duplicateCheck.existingName?.substring(0, 30) || duplicateCheck.existingId}`);
+            } else if (result.skipped) {
+              console.log(`  ⏭️  スキップ: ${product.name.substring(0, 50)}... (${result.reason})`);
+            }
+          } catch (error) {
+            console.error(`  ❌ 価格統合エラー: ${product.name.substring(0, 50)}...`, error.message);
+          }
+        } else {
+          duplicateProducts.push({ product, reason: duplicateCheck.reason });
+          console.log(`  ⚠️  重複: ${product.name.substring(0, 50)}... (${duplicateCheck.reason})`);
+        }
       } else {
         uniqueProducts.push(product);
       }
