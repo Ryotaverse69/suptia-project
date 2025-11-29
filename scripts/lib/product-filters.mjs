@@ -180,20 +180,30 @@ export function validateProduct(product) {
 
 /**
  * 商品名から識別キーを生成（重複検出用）
+ *
+ * 改善版: ブランド名が商品名の任意位置にあっても検出可能
  */
 function generateProductKey(name) {
   if (!name) return null;
 
-  // ブランド名を正規化
+  // ブランド名を正規化（商品名の任意位置から検出）
   const brandPatterns = [
-    [/^(DHC|ディーエイチシー)/i, 'dhc'],
-    [/^(ディアナチュラ|Dear-?Natura)/i, 'dear-natura'],
-    [/^(ネイチャーメイド|Nature Made)/i, 'nature-made'],
-    [/^(FANCL|ファンケル)/i, 'fancl'],
-    [/^(小林製薬)/i, 'kobayashi'],
-    [/^(大塚製薬)/i, 'otsuka'],
-    [/^(アサヒ)/i, 'asahi'],
-    [/^(UHA味覚糖)/i, 'uha'],
+    [/(DHC|ディーエイチシー)/i, 'dhc'],
+    [/(ディアナチュラ|Dear-?Natura)/i, 'dear-natura'],
+    [/(ネイチャーメイド|Nature Made)/i, 'nature-made'],
+    [/(FANCL|ファンケル)/i, 'fancl'],
+    [/(小林製薬)/i, 'kobayashi'],
+    [/(大塚製薬)/i, 'otsuka'],
+    [/(アサヒ)/i, 'asahi'],
+    [/(UHA味覚糖)/i, 'uha'],
+    [/(NOW Foods|ナウフーズ)/i, 'now-foods'],
+    [/(Doctor's Best)/i, 'doctors-best'],
+    [/(Solgar|ソルガー)/i, 'solgar'],
+    [/(Life Extension)/i, 'life-extension'],
+    [/(Jarrow Formulas)/i, 'jarrow'],
+    [/(Swanson)/i, 'swanson'],
+    [/(Source Naturals)/i, 'source-naturals'],
+    [/(California Gold)/i, 'california-gold'],
   ];
 
   let brand = '';

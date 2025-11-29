@@ -128,6 +128,93 @@ function extractBrandFromProductName(productName) {
   return firstWord;
 }
 
+/**
+ * 商品名から識別キーを生成（重複検出用）
+ * ブランド名が商品名の任意位置にあっても検出可能
+ */
+function generateProductKeyFromName(name) {
+  if (!name) return null;
+
+  // ブランド名を正規化（商品名の任意位置から検出）
+  const brandPatterns = [
+    [/(DHC|ディーエイチシー)/i, 'dhc'],
+    [/(ディアナチュラ|Dear-?Natura)/i, 'dear-natura'],
+    [/(ネイチャーメイド|Nature Made)/i, 'nature-made'],
+    [/(FANCL|ファンケル)/i, 'fancl'],
+    [/(小林製薬)/i, 'kobayashi'],
+    [/(大塚製薬)/i, 'otsuka'],
+    [/(アサヒ)/i, 'asahi'],
+    [/(UHA味覚糖)/i, 'uha'],
+    [/(NOW Foods|ナウフーズ)/i, 'now-foods'],
+  ];
+
+  let brand = '';
+  for (const [pattern, brandKey] of brandPatterns) {
+    if (pattern.test(name)) {
+      brand = brandKey;
+      break;
+    }
+  }
+
+  // 日数を抽出
+  const daysMatch = name.match(/(\d+)\s*日\s*分?/);
+  const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
+
+  // 主要成分を抽出
+  const ingredients = [];
+  const ingredientPatterns = [
+    /マルチビタミン/gi,
+    /ビタミン\s*[A-Za-zａ-ｚ]+\d*/gi,
+    /カルシウム/gi,
+    /マグネシウム/gi,
+    /亜鉛/gi,
+    /鉄/gi,
+    /葉酸/gi,
+    /DHA/gi,
+    /EPA/gi,
+    /コラーゲン/gi,
+    /グルコサミン/gi,
+    /ルテイン/gi,
+    /乳酸菌/gi,
+  ];
+
+  for (const pattern of ingredientPatterns) {
+    const matches = name.match(pattern);
+    if (matches) {
+      for (const match of matches) {
+        ingredients.push(match.toLowerCase().replace(/\s+/g, ''));
+      }
+    }
+  }
+
+  // セット数を抽出
+  const setPatterns = [
+    /(\d+)\s*(個|袋|本|箱|コ)\s*セット/i,
+    /×\s*(\d+)\s*(袋|本|個|箱)/i,
+  ];
+  let setCount = 1;
+  for (const pattern of setPatterns) {
+    const match = name.match(pattern);
+    if (match) {
+      setCount = parseInt(match[1], 10);
+      if (setCount > 1) break;
+    }
+  }
+
+  if (!brand) return null;
+
+  const sortedIngredients = [...new Set(ingredients)].sort();
+  const mainIngredient = sortedIngredients[0] || 'unknown';
+
+  return {
+    brand,
+    days,
+    mainIngredient,
+    setCount,
+    key: `${brand}-${mainIngredient}-${days || 'x'}-${setCount}`,
+  };
+}
+
 // RakutenAdapter（簡易版 - 本番ではlib/ec-adaptersを使用）
 class RakutenAdapter {
   constructor(applicationId, affiliateId) {
@@ -394,19 +481,35 @@ async function syncProducts(products, existingProducts, existingBrands, dryRun =
 
   for (const product of products) {
     try {
-      // 既存商品チェック（JANコード優先、なければrakutenItemCodeで照合）
+      // 既存商品チェック（複数の方法で照合）
       let existing = null;
+
+      // 1. JANコード照合（最も信頼性が高い）
       if (product.identifiers.jan) {
-        // JANコードがある場合: JANコードで検索（他のECサイトから取得した同一商品を見つけられる）
         existing = existingProducts.find(
           p => p.janCode === product.identifiers.jan || p.identifiers?.jan === product.identifiers.jan
         );
       }
+
+      // 2. 楽天商品コード照合
       if (!existing) {
-        // JANコードがない、または見つからない場合: rakutenItemCodeで検索
         existing = existingProducts.find(
           p => p.identifiers?.rakutenItemCode === product.identifiers.rakutenItemCode
         );
+      }
+
+      // 3. 商品名ベースの重複チェック（ブランド+成分+日数）
+      if (!existing) {
+        const productKey = generateProductKeyFromName(product.name);
+        if (productKey) {
+          existing = existingProducts.find(p => {
+            const existingKey = generateProductKeyFromName(p.name);
+            return existingKey && existingKey.key === productKey.key;
+          });
+          if (existing) {
+            console.log(`    💡 商品名ベースで既存商品を検出: ${productKey.key}`);
+          }
+        }
       }
 
       // ブランド取得または作成
