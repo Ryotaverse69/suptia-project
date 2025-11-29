@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { parseFormattedText } from "./IngredientSection";
 
 interface FAQ {
   question: string;
@@ -67,13 +68,17 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
                       return (
                         <div key={i} className="flex gap-2 mt-2 first:mt-0">
                           <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-2.5" />
-                          <span>{trimmedLine.replace(/^[・•\-※]\s*/, '')}</span>
+                          <span>
+                            {parseFormattedText(
+                              trimmedLine.replace(/^[・•\-※]\s*/, ""),
+                            )}
+                          </span>
                         </div>
                       );
                     }
                     return (
                       <p key={i} className={i > 0 ? "mt-4" : ""}>
-                        {trimmedLine}
+                        {parseFormattedText(trimmedLine)}
                       </p>
                     );
                   })}

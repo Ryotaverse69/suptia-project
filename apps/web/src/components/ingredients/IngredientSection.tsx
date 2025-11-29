@@ -52,9 +52,13 @@ export function IngredientSection({
     >
       {/* セクションヘッダー */}
       <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-inherit">
-        <h2 className={`flex items-center gap-3 text-lg sm:text-xl font-bold ${styles.title}`}>
+        <h2
+          className={`flex items-center gap-3 text-lg sm:text-xl font-bold ${styles.title}`}
+        >
           {icon && (
-            <span className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full ${styles.iconBg}`}>
+            <span
+              className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full ${styles.iconBg}`}
+            >
               {icon}
             </span>
           )}
@@ -100,7 +104,8 @@ interface WarningListProps {
 
 export function WarningList({ items, variant = "danger" }: WarningListProps) {
   const bgColor = variant === "danger" ? "bg-red-100" : "bg-yellow-100";
-  const borderColor = variant === "danger" ? "border-red-200" : "border-yellow-200";
+  const borderColor =
+    variant === "danger" ? "border-red-200" : "border-yellow-200";
   const textColor = variant === "danger" ? "text-red-900" : "text-yellow-900";
 
   return (
@@ -128,7 +133,8 @@ interface TextContentProps {
 // 数字や単位をハイライト
 function highlightNumbers(text: string): React.ReactNode[] {
   // 数値+単位のパターン（例: 1000mg, 200〜400mg, 500mg/日）
-  const pattern = /(\d+(?:,\d{3})*(?:\.\d+)?(?:\s*[〜～\-]\s*\d+(?:,\d{3})*(?:\.\d+)?)?)\s*(mg|g|μg|mcg|IU|%|ml|mL|日|回|週|ヶ月|カ月)/g;
+  const pattern =
+    /(\d+(?:,\d{3})*(?:\.\d+)?(?:\s*[〜～\-]\s*\d+(?:,\d{3})*(?:\.\d+)?)?)\s*(mg|g|μg|mcg|IU|%|ml|mL|日|回|週|ヶ月|カ月)/g;
 
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -143,7 +149,7 @@ function highlightNumbers(text: string): React.ReactNode[] {
     parts.push(
       <span key={match.index} className="font-semibold text-primary">
         {match[0]}
-      </span>
+      </span>,
     );
     lastIndex = match.index + match[0].length;
   }
@@ -156,54 +162,109 @@ function highlightNumbers(text: string): React.ReactNode[] {
   return parts.length > 0 ? parts : [text];
 }
 
-// 強調キーワードを検出してハイライト
-function highlightKeywords(text: string): React.ReactNode[] {
-  // 重要なキーワードパターン
-  const keywords = [
-    /「([^」]+)」/g, // カギ括弧内
-    /【([^】]+)】/g, // 墨付きカッコ内
+// テキストをパースしてフォーマットを適用（エクスポート）
+export function parseFormattedText(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+
+  // すべてのフォーマットパターンを統合
+  // 優先順位: 太字(**text**) → カギ括弧 → 墨付きカッコ → 数値ハイライト
+  const patterns = [
+    { regex: /\*\*([^*]+)\*\*/g, type: "bold" as const },
+    { regex: /「([^」]+)」/g, type: "bracket" as const },
+    { regex: /【([^】]+)】/g, type: "square" as const },
   ];
 
-  const highlights: { start: number; end: number; content: string }[] = [];
+  interface Match {
+    start: number;
+    end: number;
+    content: string;
+    innerContent: string;
+    type: "bold" | "bracket" | "square";
+  }
 
-  for (const pattern of keywords) {
+  const allMatches: Match[] = [];
+
+  for (const { regex, type } of patterns) {
     let match;
-    while ((match = pattern.exec(text)) !== null) {
-      highlights.push({
+    // 正規表現のlastIndexをリセット
+    regex.lastIndex = 0;
+    while ((match = regex.exec(text)) !== null) {
+      allMatches.push({
         start: match.index,
         end: match.index + match[0].length,
         content: match[0],
+        innerContent: match[1],
+        type,
       });
     }
   }
 
-  if (highlights.length === 0) {
+  if (allMatches.length === 0) {
     return highlightNumbers(text);
   }
 
-  // ハイライト位置でソート
-  highlights.sort((a, b) => a.start - b.start);
+  // 開始位置でソート
+  allMatches.sort((a, b) => a.start - b.start);
 
-  const parts: React.ReactNode[] = [];
+  // 重複を除去（先にマッチしたものを優先）
+  const filteredMatches: Match[] = [];
+  let lastEnd = 0;
+  for (const match of allMatches) {
+    if (match.start >= lastEnd) {
+      filteredMatches.push(match);
+      lastEnd = match.end;
+    }
+  }
+
   let lastIndex = 0;
 
-  highlights.forEach((h, i) => {
-    if (h.start > lastIndex) {
-      parts.push(...highlightNumbers(text.slice(lastIndex, h.start)));
+  filteredMatches.forEach((m, i) => {
+    // マッチ前のテキストを数値ハイライト処理
+    if (m.start > lastIndex) {
+      parts.push(...highlightNumbers(text.slice(lastIndex, m.start)));
     }
-    parts.push(
-      <span key={`highlight-${i}`} className="font-medium text-gray-900 bg-yellow-50 px-1 rounded">
-        {h.content}
-      </span>
-    );
-    lastIndex = h.end;
+
+    // マッチ部分をタイプに応じてレンダリング
+    if (m.type === "bold") {
+      parts.push(
+        <strong key={`bold-${i}`} className="font-bold text-gray-900">
+          {m.innerContent}
+        </strong>,
+      );
+    } else if (m.type === "bracket") {
+      parts.push(
+        <span
+          key={`bracket-${i}`}
+          className="font-medium text-gray-900 bg-yellow-50 px-1 rounded"
+        >
+          「{m.innerContent}」
+        </span>,
+      );
+    } else if (m.type === "square") {
+      parts.push(
+        <span
+          key={`square-${i}`}
+          className="font-medium text-gray-900 bg-yellow-50 px-1 rounded"
+        >
+          【{m.innerContent}】
+        </span>,
+      );
+    }
+
+    lastIndex = m.end;
   });
 
+  // 残りのテキストを数値ハイライト処理
   if (lastIndex < text.length) {
     parts.push(...highlightNumbers(text.slice(lastIndex)));
   }
 
   return parts;
+}
+
+// 後方互換性のためのエイリアス
+function highlightKeywords(text: string): React.ReactNode[] {
+  return parseFormattedText(text);
 }
 
 export function TextContent({ content }: TextContentProps) {
@@ -218,14 +279,14 @@ export function TextContent({ content }: TextContentProps) {
 
   const flushParagraph = () => {
     if (currentParagraph.length > 0) {
-      const text = currentParagraph.join(' ');
+      const text = currentParagraph.join(" ");
       elements.push(
         <p
           key={`p-${elements.length}`}
           className="text-gray-700 text-sm sm:text-base leading-[1.9] sm:leading-[2] mb-5 last:mb-0"
         >
           {highlightKeywords(text)}
-        </p>
+        </p>,
       );
       currentParagraph = [];
     }
@@ -243,7 +304,7 @@ export function TextContent({ content }: TextContentProps) {
               </span>
             </li>
           ))}
-        </ul>
+        </ul>,
       );
       currentList = [];
     }
@@ -262,8 +323,10 @@ export function TextContent({ content }: TextContentProps) {
           className="font-bold text-gray-900 text-base sm:text-lg mt-6 mb-3 first:mt-0 flex items-center gap-2"
         >
           <span className="w-1 h-5 bg-primary rounded-full" />
-          {trimmedLine.replace(/^[■●◆▼▶]\s*/, '').replace(/^【([^】]+)】/, '$1')}
-        </h3>
+          {trimmedLine
+            .replace(/^[■●◆▼▶]\s*/, "")
+            .replace(/^【([^】]+)】/, "$1")}
+        </h3>,
       );
       return;
     }
@@ -271,19 +334,19 @@ export function TextContent({ content }: TextContentProps) {
     // 箇条書きの検出（・、•、-、※で始まる行）
     if (/^[・•\-※]\s*/.test(trimmedLine)) {
       flushParagraph();
-      currentList.push(trimmedLine.replace(/^[・•\-※]\s*/, ''));
+      currentList.push(trimmedLine.replace(/^[・•\-※]\s*/, ""));
       return;
     }
 
     // 数字付きリストの検出（1. 2. など）
     if (/^\d+[.．)）]\s*/.test(trimmedLine)) {
       flushParagraph();
-      currentList.push(trimmedLine.replace(/^\d+[.．)）]\s*/, ''));
+      currentList.push(trimmedLine.replace(/^\d+[.．)）]\s*/, ""));
       return;
     }
 
     // 空行または短い行は段落区切り
-    if (trimmedLine === '' || trimmedLine.length < 3) {
+    if (trimmedLine === "" || trimmedLine.length < 3) {
       flushList();
       flushParagraph();
       return;
@@ -298,9 +361,5 @@ export function TextContent({ content }: TextContentProps) {
   flushList();
   flushParagraph();
 
-  return (
-    <div className="text-content">
-      {elements}
-    </div>
-  );
+  return <div className="text-content">{elements}</div>;
 }

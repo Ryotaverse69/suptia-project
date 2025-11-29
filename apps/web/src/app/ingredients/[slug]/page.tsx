@@ -198,14 +198,21 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
             )}
 
             {/* 副作用・注意事項 */}
-            {ingredient.sideEffects && ingredient.sideEffects.length > 0 && (
+            {ingredient.sideEffects && (
               <IngredientSection
                 id="side-effects"
                 title="副作用・注意事項"
                 icon={<AlertTriangle size={20} />}
                 variant="danger"
               >
-                <WarningList items={ingredient.sideEffects} variant="danger" />
+                {Array.isArray(ingredient.sideEffects) ? (
+                  <WarningList
+                    items={ingredient.sideEffects}
+                    variant="danger"
+                  />
+                ) : (
+                  <TextContent content={ingredient.sideEffects} />
+                )}
               </IngredientSection>
             )}
 
@@ -268,7 +275,7 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                           />
                         </a>
                       </li>
-                    )
+                    ),
                   )}
                 </ul>
               </IngredientSection>
