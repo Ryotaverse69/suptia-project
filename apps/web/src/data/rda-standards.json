@@ -491,6 +491,377 @@
       "ul": null,
       "deficiencyRisks": ["貧血", "皮膚炎", "成長障害"],
       "excessRisks": ["ヒスタミン増加（アレルギー症状）"]
+    },
+    "カリウム": {
+      "nameEn": "Potassium",
+      "category": "ミネラル",
+      "rda": {
+        "male": 2500,
+        "female": 2000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "目安量（成人）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉けいれん", "脱力感", "不整脈"],
+      "excessRisks": ["高カリウム血症（腎機能低下者）"]
+    },
+    "マンガン": {
+      "nameEn": "Manganese",
+      "category": "ミネラル",
+      "rda": {
+        "male": 4.0,
+        "female": 3.5,
+        "unit": "mg",
+        "type": "AI"
+      },
+      "ul": {
+        "value": 11,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["骨代謝異常", "糖・脂質代謝異常"],
+      "excessRisks": ["神経障害（長期大量摂取）"]
+    },
+    "グルタミン": {
+      "nameEn": "Glutamine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 5000,
+        "female": 5000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "条件付き必須アミノ酸（ストレス時に必要量増加）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["免疫機能低下", "腸粘膜障害", "筋肉減少"],
+      "excessRisks": []
+    },
+    "グリシン": {
+      "nameEn": "Glycine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 3000,
+        "female": 3000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "非必須アミノ酸（睡眠・コラーゲン合成に関与）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "BCAA": {
+      "nameEn": "Branched-Chain Amino Acids",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 5160,
+        "female": 5160,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "ロイシン2340mg+イソロイシン1260mg+バリン1560mgの合計"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉量減少", "疲労感"],
+      "excessRisks": ["腎臓負担（長期大量摂取）"]
+    },
+    "ビタミンB群": {
+      "nameEn": "Vitamin B Complex",
+      "category": "ビタミン",
+      "rda": {
+        "male": 10,
+        "female": 10,
+        "unit": "mg",
+        "type": "AI",
+        "note": "B群全体の目安（個別ビタミンBの合計として）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["疲労感", "皮膚炎", "神経障害"],
+      "excessRisks": []
+    },
+    "コエンザイムQ10": {
+      "nameEn": "Coenzyme Q10",
+      "category": "その他",
+      "rda": {
+        "male": 100,
+        "female": 100,
+        "unit": "mg",
+        "type": "AI",
+        "note": "サプリメントの一般的な摂取量"
+      },
+      "ul": {
+        "value": 300,
+        "unit": "mg",
+        "note": "300mg以上で消化器症状の報告あり"
+      },
+      "deficiencyRisks": ["心機能低下", "疲労感"],
+      "excessRisks": ["消化器症状（大量摂取時）"]
+    },
+    "オメガ3": {
+      "nameEn": "Omega-3 Fatty Acids",
+      "category": "脂肪酸",
+      "rda": {
+        "male": 2000,
+        "female": 1600,
+        "unit": "mg",
+        "type": "AI",
+        "note": "EPA+DHA合計の目安量"
+      },
+      "ul": {
+        "value": 3000,
+        "unit": "mg",
+        "note": "出血リスク増加の可能性"
+      },
+      "deficiencyRisks": ["心血管リスク増加", "認知機能低下", "炎症増加"],
+      "excessRisks": ["出血傾向", "免疫機能低下"]
+    },
+    "DHA": {
+      "nameEn": "Docosahexaenoic Acid",
+      "category": "脂肪酸",
+      "rda": {
+        "male": 1000,
+        "female": 800,
+        "unit": "mg",
+        "type": "AI",
+        "note": "EPA+DHAの合計推奨量のうちDHA単独の目安"
+      },
+      "ul": null,
+      "deficiencyRisks": ["認知機能低下", "視力低下"],
+      "excessRisks": []
+    },
+    "ルテイン": {
+      "nameEn": "Lutein",
+      "category": "カロテノイド",
+      "rda": {
+        "male": 10,
+        "female": 10,
+        "unit": "mg",
+        "type": "AI",
+        "note": "眼の健康維持に関する研究での推奨量"
+      },
+      "ul": null,
+      "deficiencyRisks": ["黄斑変性リスク増加"],
+      "excessRisks": []
+    },
+    "L-カルニチン": {
+      "nameEn": "L-Carnitine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "一般的なサプリメント摂取量"
+      },
+      "ul": {
+        "value": 3000,
+        "unit": "mg",
+        "note": "消化器症状・体臭の報告"
+      },
+      "deficiencyRisks": ["疲労感", "筋力低下"],
+      "excessRisks": ["消化器症状", "体臭"]
+    },
+    "大豆イソフラボン": {
+      "nameEn": "Soy Isoflavones",
+      "category": "植物性エストロゲン",
+      "rda": {
+        "male": 40,
+        "female": 40,
+        "unit": "mg",
+        "type": "AI",
+        "note": "アグリコン換算"
+      },
+      "ul": {
+        "value": 75,
+        "unit": "mg",
+        "note": "食品安全委員会の上限値（サプリメントから）"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["ホルモンバランスへの影響"]
+    },
+    "コラーゲン": {
+      "nameEn": "Collagen",
+      "category": "タンパク質",
+      "rda": {
+        "male": 5000,
+        "female": 5000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "美容・関節サポート研究での一般的な摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "グルコサミン": {
+      "nameEn": "Glucosamine",
+      "category": "アミノ糖",
+      "rda": {
+        "male": 1500,
+        "female": 1500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "関節サポート研究での標準摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状", "血糖値上昇（糖尿病患者）"]
+    },
+    "GABA": {
+      "nameEn": "Gamma-Aminobutyric Acid",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 100,
+        "female": 100,
+        "unit": "mg",
+        "type": "AI",
+        "note": "リラックス・睡眠サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "アスタキサンチン": {
+      "nameEn": "Astaxanthin",
+      "category": "カロテノイド",
+      "rda": {
+        "male": 6,
+        "female": 6,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化研究での一般的な摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "マカ": {
+      "nameEn": "Maca",
+      "category": "ハーブ",
+      "rda": {
+        "male": 1500,
+        "female": 1500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "活力サポート研究での一般的な摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "セサミン": {
+      "nameEn": "Sesamin",
+      "category": "植物リグナン",
+      "rda": {
+        "male": 10,
+        "female": 10,
+        "unit": "mg",
+        "type": "AI",
+        "note": "一般的なサプリメント摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "ギンコ": {
+      "nameEn": "Ginkgo Biloba",
+      "category": "ハーブ",
+      "rda": {
+        "male": 120,
+        "female": 120,
+        "unit": "mg",
+        "type": "AI",
+        "note": "認知機能研究での標準摂取量（標準化エキス）"
+      },
+      "ul": {
+        "value": 240,
+        "unit": "mg"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["出血傾向", "頭痛", "消化器症状"]
+    },
+    "ビルベリー": {
+      "nameEn": "Bilberry",
+      "category": "植物エキス",
+      "rda": {
+        "male": 160,
+        "female": 160,
+        "unit": "mg",
+        "type": "AI",
+        "note": "眼の健康研究での標準摂取量（アントシアニン25%標準化）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "プロバイオティクス": {
+      "nameEn": "Probiotics",
+      "category": "プロバイオティクス",
+      "rda": {
+        "male": 10,
+        "female": 10,
+        "unit": "mg",
+        "type": "AI",
+        "note": "CFU（コロニー形成単位）で評価されるため、mg表記は参考値"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "プロテイン": {
+      "nameEn": "Protein",
+      "category": "タンパク質",
+      "rda": {
+        "male": 65000,
+        "female": 50000,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "体重1kgあたり約1g（成人男性65g、女性50g）"
+      },
+      "ul": null,
+      "deficiencyRisks": ["筋肉減少", "免疫機能低下"],
+      "excessRisks": ["腎臓負担（過剰摂取時）"]
+    },
+    "ホエイプロテイン": {
+      "nameEn": "Whey Protein",
+      "category": "タンパク質",
+      "rda": {
+        "male": 25000,
+        "female": 20000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "運動後の一般的な摂取量（20-30g）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状（乳糖不耐症の場合）"]
+    },
+    "プロポリス": {
+      "nameEn": "Propolis",
+      "category": "蜂産品",
+      "rda": {
+        "male": 300,
+        "female": 300,
+        "unit": "mg",
+        "type": "AI",
+        "note": "一般的なサプリメント摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["アレルギー反応（蜂アレルギーの方）"]
+    },
+    "マヌカハニー": {
+      "nameEn": "Manuka Honey",
+      "category": "蜂産品",
+      "rda": {
+        "male": 10000,
+        "female": 10000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "1日10g（大さじ1杯程度）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["血糖値上昇"]
     }
   }
 }

@@ -297,11 +297,14 @@
       "Iron",
       "iron",
       "Fe",
+      "鉄分",
       "ヘム鉄",
       "非ヘム鉄",
       "heme iron",
       "non-heme iron",
-      "クエン酸鉄"
+      "クエン酸鉄",
+      "フマル酸第一鉄",
+      "硫酸第一鉄"
     ],
     "category": "ミネラル"
   },
@@ -387,7 +390,10 @@
       "ω-3",
       "n-3脂肪酸",
       "オメガ3脂肪酸",
-      "omega-3 fatty acids"
+      "omega-3 fatty acids",
+      "DHA・EPA",
+      "DHA・EPA（オメガ3脂肪酸）",
+      "オメガ3脂肪酸（EPA・DHA）"
     ],
     "category": "オメガ3脂肪酸"
   },
@@ -434,7 +440,9 @@
       "B.C.A.A.",
       "分岐鎖アミノ酸",
       "branched-chain amino acids",
-      "Branched-Chain Amino Acids"
+      "Branched-Chain Amino Acids",
+      "BCAA(分岐鎖アミノ酸)",
+      "BCAA（分岐鎖アミノ酸）"
     ],
     "category": "アミノ酸"
   },
@@ -545,13 +553,13 @@
     ],
     "category": "アミノ酸"
   },
-  "カルニチン": {
+  "L-カルニチン": {
     "aliases": [
       "Carnitine",
       "carnitine",
-      "L-カルニチン",
       "L-Carnitine",
       "l-carnitine",
+      "カルニチン",
       "アセチルL-カルニチン",
       "ALCAR",
       "Acetyl-L-Carnitine",
@@ -564,7 +572,7 @@
     "category": "アミノ酸"
   },
   "グリシン": {
-    "aliases": ["Glycine", "glycine"],
+    "aliases": ["Glycine", "glycine", "L-グリシン", "L-Glycine", "l-glycine"],
     "category": "アミノ酸"
   },
   "プロリン": {
@@ -634,5 +642,149 @@
   "レスベラトロール": {
     "aliases": ["Resveratrol", "resveratrol"],
     "category": "その他"
+  },
+  "カリウム": {
+    "aliases": ["Potassium", "potassium", "K"],
+    "category": "ミネラル"
+  },
+  "マンガン": {
+    "aliases": ["Manganese", "manganese", "Mn"],
+    "category": "ミネラル"
+  },
+  "ビタミンB群": {
+    "aliases": [
+      "Vitamin B Complex",
+      "vitamin b complex",
+      "B-Complex",
+      "b-complex",
+      "ビタミンBコンプレックス",
+      "複合ビタミンB"
+    ],
+    "category": "ビタミン"
+  },
+  "コエンザイムQ10": {
+    "aliases": [
+      "CoQ10",
+      "coq10",
+      "Co-Q10",
+      "co-q10",
+      "Coenzyme Q10",
+      "coenzyme q10",
+      "ユビキノン",
+      "Ubiquinone",
+      "ubiquinone",
+      "CoQ10（コエンザイムQ10）"
+    ],
+    "category": "その他"
+  },
+  "ルテイン": {
+    "aliases": ["Lutein", "lutein", "フリールテイン", "free lutein"],
+    "category": "カロテノイド"
+  },
+  "アスタキサンチン": {
+    "aliases": ["Astaxanthin", "astaxanthin"],
+    "category": "カロテノイド"
+  },
+  "プロバイオティクス": {
+    "aliases": [
+      "Probiotics",
+      "probiotics",
+      "乳酸菌",
+      "ビフィズス菌",
+      "善玉菌",
+      "Lactobacillus",
+      "Bifidobacterium"
+    ],
+    "category": "プロバイオティクス"
+  },
+  "大豆イソフラボン": {
+    "aliases": [
+      "Soy Isoflavones",
+      "soy isoflavones",
+      "イソフラボン",
+      "isoflavones",
+      "ダイゼイン",
+      "ゲニステイン"
+    ],
+    "category": "植物性エストロゲン"
+  },
+  "マカ": {
+    "aliases": ["Maca", "maca", "マカ根", "Maca Root", "maca root"],
+    "category": "ハーブ"
+  },
+  "セサミン": {
+    "aliases": ["Sesamin", "sesamin", "ゴマリグナン"],
+    "category": "植物リグナン"
+  },
+  "コラーゲン": {
+    "aliases": [
+      "Collagen",
+      "collagen",
+      "コラーゲンペプチド",
+      "Collagen Peptides",
+      "加水分解コラーゲン"
+    ],
+    "category": "タンパク質"
+  },
+  "グルコサミン": {
+    "aliases": [
+      "Glucosamine",
+      "glucosamine",
+      "グルコサミン塩酸塩",
+      "グルコサミン硫酸塩"
+    ],
+    "category": "アミノ糖"
+  },
+  "プロポリス": {
+    "aliases": ["Propolis", "propolis", "蜂膠"],
+    "category": "蜂産品"
+  },
+  "マヌカハニー": {
+    "aliases": ["Manuka Honey", "manuka honey", "マヌカ蜂蜜"],
+    "category": "蜂産品"
+  },
+  "GABA": {
+    "aliases": [
+      "gaba",
+      "γ-アミノ酪酸",
+      "ガンマアミノ酪酸",
+      "Gamma-Aminobutyric Acid",
+      "GABA（γ-アミノ酪酸）"
+    ],
+    "category": "アミノ酸"
+  },
+  "ホエイプロテイン": {
+    "aliases": ["Whey Protein", "whey protein", "乳清タンパク", "ホエイ"],
+    "category": "タンパク質"
+  },
+  "プロテイン": {
+    "aliases": ["Protein", "protein", "タンパク質", "たんぱく質"],
+    "category": "タンパク質"
+  },
+  "ギンコ": {
+    "aliases": [
+      "Ginkgo",
+      "ginkgo",
+      "イチョウ葉",
+      "イチョウ葉エキス",
+      "ギンコ（イチョウ葉）",
+      "ギンコビロバ",
+      "Ginkgo Biloba",
+      "ginkgo biloba",
+      "ギンコビロバ（イチョウ葉エキス）"
+    ],
+    "category": "ハーブ"
+  },
+  "ビルベリー": {
+    "aliases": [
+      "Bilberry",
+      "bilberry",
+      "ブルーベリー",
+      "Blueberry",
+      "blueberry",
+      "ビルベリー（ブルーベリー）",
+      "アントシアニン"
+    ],
+    "category": "植物エキス"
   }
 }

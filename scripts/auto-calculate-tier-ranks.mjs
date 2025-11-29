@@ -529,21 +529,23 @@ async function calculateTierRanks() {
           console.log(`   含有量ランク: ${contentRank}\n`);
         }
 
-        // 4. エビデンスランク（evidenceScoreベース + 参考文献数ボーナス）
-        let evidencePercentile = calculatePercentile(productData.evidenceScore, evidenceScores, false);
+        // 4. エビデンスランク（絶対評価 + 参考文献数ボーナス）
+        // エビデンスは相対評価ではなく、成分のevidenceLevelから算出したスコアの絶対評価
+        let evidenceScore = productData.evidenceScore;
         // 参考文献が5件以上ある場合、+10点ボーナス
         if (productData.referenceCount >= 5) {
-          evidencePercentile = Math.min(100, evidencePercentile + 10);
+          evidenceScore = Math.min(100, evidenceScore + 10);
         }
-        const evidenceRank = scoreToRank(evidencePercentile);
+        const evidenceRank = scoreToRank(evidenceScore);
 
-        // 5. 安全性ランク（safetyScoreベース - 警告数ペナルティ）
-        let safetyPercentile = calculatePercentile(productData.safetyScore, safetyScores, false);
+        // 5. 安全性ランク（絶対評価 - 警告数ペナルティ）
+        // 安全性は相対評価ではなく、成分のsafetyLevelから算出したスコアの絶対評価
+        let safetyScore = productData.safetyScore;
         // 警告が3件以上ある場合、-10点ペナルティ
         if (productData.warningCount >= 3) {
-          safetyPercentile = Math.max(0, safetyPercentile - 10);
+          safetyScore = Math.max(0, safetyScore - 10);
         }
-        const safetyRank = scoreToRank(safetyPercentile);
+        const safetyRank = scoreToRank(safetyScore);
 
         // 6. 総合評価ランク（カテゴリ別重み付け）
         const overallScore = calculateWeightedOverallScore(
