@@ -44,6 +44,7 @@ const SANITY_API_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API
 
 /**
  * 商品名から正規化キーを生成（重複検出用）
+ * 改善版: セット数を無視してマージ対象を検出
  */
 function normalizeProductName(name) {
   if (!name) return null;
@@ -59,6 +60,14 @@ function normalizeProductName(name) {
     [/(アサヒ)/i, 'asahi'],
     [/(UHA味覚糖)/i, 'uha'],
     [/(NOW Foods|ナウフーズ)/i, 'now-foods'],
+    [/(Doctor's Best|ドクターズベスト)/i, 'doctors-best'],
+    [/(California Gold)/i, 'california-gold'],
+    [/(Life Extension)/i, 'life-extension'],
+    [/(Solgar|ソルガー)/i, 'solgar'],
+    [/(Jarrow|ジャロウ)/i, 'jarrow'],
+    [/(Swanson)/i, 'swanson'],
+    [/(オリヒロ)/i, 'orihiro'],
+    [/(AFC)/i, 'afc'],
   ];
 
   let brand = '';
@@ -73,22 +82,45 @@ function normalizeProductName(name) {
   const daysMatch = name.match(/(\d+)\s*日\s*分?/);
   const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
 
-  // 主要成分を抽出
+  // 粒数を抽出
+  const pillsMatch = name.match(/(\d+)\s*(粒|錠|カプセル)/);
+  const pills = pillsMatch ? parseInt(pillsMatch[1], 10) : null;
+
+  // 主要成分を抽出（より詳細に）
   const ingredients = [];
   const ingredientPatterns = [
+    // ビタミン系
     /ビタミン\s*[A-Za-zａ-ｚ]+\d*/gi,
     /マルチビタミン/gi,
+    // ミネラル系
     /カルシウム/gi,
     /マグネシウム/gi,
     /亜鉛/gi,
     /鉄/gi,
-    /葉酸/gi,
+    /セレン/gi,
+    /クロム/gi,
+    // 脂肪酸系
     /DHA/gi,
     /EPA/gi,
+    /DPA/gi,
+    /オメガ\s*3/gi,
+    // タンパク質・アミノ酸系
     /コラーゲン/gi,
+    /プロテイン/gi,
+    /BCAA/gi,
+    // 関節系
     /グルコサミン/gi,
+    /コンドロイチン/gi,
+    // その他
+    /葉酸/gi,
     /ルテイン/gi,
     /乳酸菌/gi,
+    /コエンザイム\s*Q10/gi,
+    /セサミン/gi,
+    /アスタキサンチン/gi,
+    /ブルーベリー/gi,
+    /ナットウキナーゼ/gi,
+    /プロポリス/gi,
   ];
 
   for (const pattern of ingredientPatterns) {
@@ -104,6 +136,7 @@ function normalizeProductName(name) {
   const setPatterns = [
     /(\d+)\s*(個|袋|本|箱|コ)\s*セット/i,
     /×\s*(\d+)\s*(袋|本|個|箱)/i,
+    /\*\s*(\d+)\s*(袋|本|個|箱)/i,
   ];
   let setCount = 1;
   for (const pattern of setPatterns) {
@@ -114,18 +147,34 @@ function normalizeProductName(name) {
     }
   }
 
+  // 形態を抽出（ハードカプセル、パウダーなど）
+  let form = '';
+  if (/ハードカプセル/i.test(name)) form = 'hard-capsule';
+  else if (/ソフトカプセル/i.test(name)) form = 'soft-capsule';
+  else if (/パウダー|粉末/i.test(name)) form = 'powder';
+  else if (/タブレット|錠剤/i.test(name)) form = 'tablet';
+  else if (/液体|リキッド|ドリンク/i.test(name)) form = 'liquid';
+
   if (!brand) return null;
 
   const sortedIngredients = [...new Set(ingredients)].sort();
   const mainIngredient = sortedIngredients[0] || 'unknown';
 
+  // マージキー（セット数を除外して生成 - セット違いの同一商品をマージするため）
+  const mergeKey = `${brand}-${mainIngredient}-${days || 'x'}${form ? `-${form}` : ''}`;
+
   return {
     brand,
     days,
+    pills,
     mainIngredient,
     ingredients: sortedIngredients,
     setCount,
+    form,
+    // key: セット数を含む完全キー（従来互換）
     key: `${brand}-${mainIngredient}-${days || 'x'}-${setCount}`,
+    // mergeKey: セット数を除外したマージ用キー
+    mergeKey,
   };
 }
 
@@ -179,6 +228,7 @@ async function fetchAllProducts() {
 
 /**
  * 重複商品グループを検出
+ * 改善版: mergeKeyを使用してセット違いの同一商品もマージ対象に
  */
 function findDuplicateGroups(products) {
   const groups = new Map();
@@ -187,7 +237,8 @@ function findDuplicateGroups(products) {
     const normalized = normalizeProductName(product.name);
 
     if (normalized) {
-      const key = normalized.key;
+      // mergeKeyを使用（セット数を除外）
+      const key = normalized.mergeKey;
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -258,21 +309,44 @@ function selectPrimaryProduct(products) {
 
 /**
  * 商品データをマージ
+ * 改善版: セット情報を保持してpriceDataにマージ
  */
 function mergeProducts(primary, secondaries) {
   const merged = { ...primary };
 
-  // priceDataをマージ
+  // priceDataをマージ（セット情報を付加）
   const allPriceData = [...(primary.priceData || [])];
+
+  // プライマリの既存priceDataにはセット数1を明示
+  for (const pd of allPriceData) {
+    if (!pd.quantity) {
+      pd.quantity = primary.normalized?.setCount || 1;
+    }
+  }
+
   for (const secondary of secondaries) {
     if (secondary.priceData) {
       for (const pd of secondary.priceData) {
-        // 同じソースの価格データがない場合のみ追加
+        const setCount = secondary.normalized?.setCount || 1;
+
+        // セット情報を付加
+        const enrichedPd = {
+          ...pd,
+          quantity: setCount,
+          setLabel: setCount > 1 ? `${setCount}個セット` : null,
+          originalProductId: secondary._id,
+          originalProductName: secondary.name,
+        };
+
+        // 同じソース+価格+セット数の組み合わせがない場合のみ追加
         const exists = allPriceData.some(
-          existing => existing.source === pd.source && existing.amount === pd.amount
+          existing =>
+            existing.source === pd.source &&
+            existing.amount === pd.amount &&
+            (existing.quantity || 1) === setCount
         );
         if (!exists) {
-          allPriceData.push(pd);
+          allPriceData.push(enrichedPd);
         }
       }
     }

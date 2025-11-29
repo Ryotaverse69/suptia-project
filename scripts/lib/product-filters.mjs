@@ -181,7 +181,10 @@ export function validateProduct(product) {
 /**
  * 商品名から識別キーを生成（重複検出用）
  *
- * 改善版: ブランド名が商品名の任意位置にあっても検出可能
+ * 改善版:
+ * - ブランド名が商品名の任意位置にあっても検出可能
+ * - mergeKey（セット数を除外したキー）を生成して重複検出に使用
+ * - 形態（ハードカプセル、ソフトカプセル等）を検出
  */
 function generateProductKey(name) {
   if (!name) return null;
@@ -204,6 +207,11 @@ function generateProductKey(name) {
     [/(Swanson)/i, 'swanson'],
     [/(Source Naturals)/i, 'source-naturals'],
     [/(California Gold)/i, 'california-gold'],
+    [/(iHerb)/i, 'iherb'],
+    [/(Thorne)/i, 'thorne'],
+    [/(Pure Encapsulations)/i, 'pure-encapsulations'],
+    [/(Nordic Naturals)/i, 'nordic-naturals'],
+    [/(Garden of Life)/i, 'garden-of-life'],
   ];
 
   let brand = '';
@@ -214,39 +222,76 @@ function generateProductKey(name) {
     }
   }
 
-  // 日数を抽出
-  const daysMatch = name.match(/(\d+)\s*日\s*分?/);
-  const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
+  // 日数を抽出（複数日数表記の場合は最小値を使用）
+  const multiDaysMatch = name.match(/(\d+)日.*\/.*(\d+)日/);
+  const singleDaysMatch = name.match(/(\d+)\s*日\s*分?/);
+  let days = null;
+  if (multiDaysMatch) {
+    // 複数日数表記の場合、商品はバリエーション販売なので特別扱い
+    days = 'multi';
+  } else if (singleDaysMatch) {
+    days = parseInt(singleDaysMatch[1], 10);
+  }
 
   // 粒数を抽出
   const pillsMatch = name.match(/(\d+)\s*(粒|錠|カプセル)/);
   const pills = pillsMatch ? parseInt(pillsMatch[1], 10) : null;
 
+  // 形態を検出
+  let form = null;
+  if (/ハードカプセル/i.test(name)) {
+    form = 'hard-capsule';
+  } else if (/ソフトカプセル/i.test(name)) {
+    form = 'soft-capsule';
+  } else if (/パウダー|粉末/i.test(name)) {
+    form = 'powder';
+  } else if (/タブレット/i.test(name)) {
+    form = 'tablet';
+  } else if (/リキッド|液体|ドリンク/i.test(name)) {
+    form = 'liquid';
+  } else if (/グミ/i.test(name)) {
+    form = 'gummy';
+  }
+
   // 主要成分を抽出
   const ingredients = [];
   const ingredientPatterns = [
-    /ビタミン\s*[A-Za-zａ-ｚ]+\d*/gi,
-    /マルチビタミン/gi,
-    /カルシウム/gi,
-    /マグネシウム/gi,
-    /亜鉛/gi,
-    /鉄/gi,
-    /葉酸/gi,
-    /DHA/gi,
-    /EPA/gi,
-    /コラーゲン/gi,
-    /グルコサミン/gi,
-    /ルテイン/gi,
-    /乳酸菌/gi,
-    /ナットウキナーゼ/gi,
+    [/ビタミン\s*[CＣ]/gi, 'vitamin-c'],
+    [/ビタミン\s*[DＤ]/gi, 'vitamin-d'],
+    [/ビタミン\s*[EＥ]/gi, 'vitamin-e'],
+    [/ビタミン\s*[AＡ]/gi, 'vitamin-a'],
+    [/ビタミン\s*B1/gi, 'vitamin-b1'],
+    [/ビタミン\s*B2/gi, 'vitamin-b2'],
+    [/ビタミン\s*B6/gi, 'vitamin-b6'],
+    [/ビタミン\s*B12/gi, 'vitamin-b12'],
+    [/マルチビタミン/gi, 'multivitamin'],
+    [/カルシウム/gi, 'calcium'],
+    [/マグネシウム/gi, 'magnesium'],
+    [/亜鉛/gi, 'zinc'],
+    [/鉄/gi, 'iron'],
+    [/葉酸/gi, 'folic-acid'],
+    [/DHA/gi, 'dha'],
+    [/EPA/gi, 'epa'],
+    [/オメガ\s*3|オメガ-3|Omega-?3/gi, 'omega3'],
+    [/コラーゲン/gi, 'collagen'],
+    [/グルコサミン/gi, 'glucosamine'],
+    [/コンドロイチン/gi, 'chondroitin'],
+    [/ルテイン/gi, 'lutein'],
+    [/乳酸菌/gi, 'probiotics'],
+    [/ビフィズス菌/gi, 'bifidobacterium'],
+    [/ナットウキナーゼ/gi, 'nattokinase'],
+    [/コエンザイム\s*Q10|CoQ10/gi, 'coq10'],
+    [/BCAA/gi, 'bcaa'],
+    [/HMB/gi, 'hmb'],
+    [/プロテイン/gi, 'protein'],
+    [/アスタキサンチン/gi, 'astaxanthin'],
+    [/セサミン/gi, 'sesamin'],
+    [/ブルーベリー/gi, 'blueberry'],
   ];
 
-  for (const pattern of ingredientPatterns) {
-    const matches = name.match(pattern);
-    if (matches) {
-      for (const match of matches) {
-        ingredients.push(match.toLowerCase().replace(/\s+/g, ''));
-      }
+  for (const [pattern, ingredientKey] of ingredientPatterns) {
+    if (pattern.test(name)) {
+      ingredients.push(ingredientKey);
     }
   }
 
@@ -254,8 +299,9 @@ function generateProductKey(name) {
   const setPatterns = [
     /(\d+)\s*(個|袋|本|箱|コ)\s*セット/i,
     /×\s*(\d+)\s*(袋|本|個|箱)/i,
+    /\*\s*(\d+)\s*(袋|本|個|箱)/i,
   ];
-  let setCount = null;
+  let setCount = 1;
   for (const pattern of setPatterns) {
     const match = name.match(pattern);
     if (match) {
@@ -264,15 +310,28 @@ function generateProductKey(name) {
     }
   }
 
-  if (!brand || (!days && !pills)) return null;
+  // 主要成分を1つに絞る（最初に検出された成分）
+  const mainIngredient = ingredients[0] || 'unknown';
+  const sortedIngredients = [...new Set(ingredients)].sort();
+
+  if (!brand || (!days && !pills && ingredients.length === 0)) return null;
+
+  // mergeKey: セット数を除外した重複検出用キー
+  // 同じブランド・成分・日数・形態の商品は、セット数が異なっても同一商品とみなす
+  const mergeKey = `${brand}-${mainIngredient}-${days || 'x'}${form ? `-${form}` : ''}`;
 
   return {
     brand,
     days,
     pills,
-    ingredients: [...new Set(ingredients)].sort(),
+    mainIngredient,
+    ingredients: sortedIngredients,
     setCount,
-    key: `${brand}-${days || 'x'}-${pills || 'x'}-${setCount || '1'}-${ingredients.slice(0, 3).join(',')}`,
+    form,
+    // key: セット数を含む完全なキー（価格データの重複チェック用）
+    key: `${brand}-${mainIngredient}-${days || 'x'}-${setCount}${form ? `-${form}` : ''}`,
+    // mergeKey: セット数を除外したキー（商品の重複検出用）
+    mergeKey,
   };
 }
 
@@ -281,7 +340,7 @@ export async function fetchExistingProductIds(token) {
   const SANITY_PROJECT_ID = 'fny3jdcg';
   const SANITY_DATASET = 'production';
 
-  const query = '*[_type == "product"]{ itemCode, janCode, source, _id, name }';
+  const query = '*[_type == "product"]{ itemCode, janCode, source, _id, name, priceData }';
   const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}&perspective=previewDrafts`;
 
   const response = await fetch(url, {
@@ -297,7 +356,8 @@ export async function fetchExistingProductIds(token) {
   const existingProducts = {
     byItemCode: new Map(),
     byJanCode: new Map(),
-    byProductKey: new Map(),
+    byProductKey: new Map(),      // セット数を含む完全なキー
+    byMergeKey: new Map(),        // セット数を除外したキー（重複検出用）
   };
 
   for (const product of data.result) {
@@ -306,6 +366,7 @@ export async function fetchExistingProductIds(token) {
         _id: product._id,
         source: product.source,
         name: product.name,
+        priceData: product.priceData,
       });
     }
 
@@ -317,12 +378,14 @@ export async function fetchExistingProductIds(token) {
         _id: product._id,
         source: product.source,
         name: product.name,
+        priceData: product.priceData,
       });
     }
 
     // 商品キーを生成して登録
     const productKey = generateProductKey(product.name);
     if (productKey) {
+      // 完全なキー（セット数を含む）
       if (!existingProducts.byProductKey.has(productKey.key)) {
         existingProducts.byProductKey.set(productKey.key, []);
       }
@@ -331,6 +394,19 @@ export async function fetchExistingProductIds(token) {
         source: product.source,
         name: product.name,
         productKey,
+        priceData: product.priceData,
+      });
+
+      // mergeKey（セット数を除外）で登録
+      if (!existingProducts.byMergeKey.has(productKey.mergeKey)) {
+        existingProducts.byMergeKey.set(productKey.mergeKey, []);
+      }
+      existingProducts.byMergeKey.get(productKey.mergeKey).push({
+        _id: product._id,
+        source: product.source,
+        name: product.name,
+        productKey,
+        priceData: product.priceData,
       });
     }
   }
@@ -348,6 +424,7 @@ export function checkDuplicate(product, existingProducts) {
       reason: `同じitemCodeの商品が既に存在: ${product.itemCode}`,
       existingId: existing._id,
       existingSource: existing.source,
+      existingName: existing.name,
     };
   }
 
@@ -362,16 +439,50 @@ export function checkDuplicate(product, existingProducts) {
         reason: `同じJANコードの商品が既に存在: ${product.janCode}`,
         existingId: existingList[0]._id,
         existingSource: existingList[0].source,
+        existingName: existingList[0].name,
         shouldMergePrice: true, // 価格データのみマージすべき
       };
     }
   }
 
-  // 3. 商品キー（ブランド+日数+成分）で重複チェック
+  // 3. 商品キーを生成
   const productKey = generateProductKey(product.name);
-  if (productKey && existingProducts.byProductKey.has(productKey.key)) {
+  if (!productKey) {
+    return {
+      isDuplicate: false,
+      reason: '商品キーを生成できませんでした（ブランドまたは成分が検出できない）',
+    };
+  }
+
+  // 4. mergeKey（セット数を除外）で重複チェック
+  // 同じブランド・成分・日数・形態の商品は、セット数が異なっても同一商品とみなす
+  if (existingProducts.byMergeKey.has(productKey.mergeKey)) {
+    const existingList = existingProducts.byMergeKey.get(productKey.mergeKey);
+    if (existingList.length > 0) {
+      // 最もデータが充実している既存商品を選択（priceDataが多い方を優先）
+      const sortedExisting = existingList.sort((a, b) => {
+        const aLen = a.priceData?.length || 0;
+        const bLen = b.priceData?.length || 0;
+        return bLen - aLen;
+      });
+      const primary = sortedExisting[0];
+
+      return {
+        isDuplicate: true,
+        reason: `同じmergeKeyの商品が既に存在: ${productKey.mergeKey}`,
+        existingId: primary._id,
+        existingSource: primary.source,
+        existingName: primary.name,
+        shouldMergePrice: true, // 価格データのみマージすべき
+        productKey,
+        setCount: productKey.setCount, // セット数情報を含める
+      };
+    }
+  }
+
+  // 5. 完全なキー（セット数を含む）で重複チェック（フォールバック）
+  if (existingProducts.byProductKey.has(productKey.key)) {
     const existingList = existingProducts.byProductKey.get(productKey.key);
-    // 既存商品と同じ基本構成の場合は重複とみなす
     if (existingList.length > 0) {
       return {
         isDuplicate: true,
@@ -388,13 +499,18 @@ export function checkDuplicate(product, existingProducts) {
   return {
     isDuplicate: false,
     reason: '重複なし',
+    productKey,
   };
 }
 
 // 既存商品に価格データを追加（重複商品の価格統合用）
-export async function addPriceToExistingProduct(existingId, priceData, token) {
+// setCount: セット数（2以上の場合、セット商品として記録）
+// originalProductName: マージ元の商品名（セット商品の場合、元の商品名を記録）
+export async function addPriceToExistingProduct(existingId, priceData, token, options = {}) {
   const SANITY_PROJECT_ID = 'fny3jdcg';
   const SANITY_DATASET = 'production';
+
+  const { setCount = 1, originalProductName = null } = options;
 
   // まず既存の商品を取得
   const query = `*[_type == "product" && _id == "${existingId}"][0]{ priceData }`;
@@ -411,15 +527,35 @@ export async function addPriceToExistingProduct(existingId, priceData, token) {
   const queryData = await queryResponse.json();
   const existingPriceData = queryData.result?.priceData || [];
 
-  // 重複チェック（ソース＋金額＋店舗名）
-  const priceKey = `${priceData.source}-${priceData.amount}-${priceData.storeName || priceData.shopName || ''}`;
+  // 重複チェック（ソース＋金額＋セット数）
+  const priceKey = `${priceData.source}-${priceData.amount}-${setCount}`;
   const isDuplicatePrice = existingPriceData.some(pd => {
-    const existingKey = `${pd.source}-${pd.amount}-${pd.storeName || pd.shopName || ''}`;
+    const existingKey = `${pd.source}-${pd.amount}-${pd.quantity || 1}`;
     return existingKey === priceKey;
   });
 
   if (isDuplicatePrice) {
     return { success: true, skipped: true, reason: '同じ価格データが既に存在' };
+  }
+
+  // セット情報を含めた価格データを作成
+  const enrichedPriceData = {
+    ...priceData,
+  };
+
+  // セット商品の場合、セット情報を追加
+  if (setCount > 1) {
+    enrichedPriceData.quantity = setCount;
+    enrichedPriceData.setLabel = `${setCount}個セット`;
+    // 単価を計算
+    if (priceData.amount && !priceData.unitPrice) {
+      enrichedPriceData.unitPrice = Math.round(priceData.amount / setCount);
+    }
+  }
+
+  // 元の商品名を保持（デバッグ・トレース用）
+  if (originalProductName) {
+    enrichedPriceData.originalProductName = originalProductName;
   }
 
   // 価格データを追加
@@ -430,7 +566,7 @@ export async function addPriceToExistingProduct(existingId, priceData, token) {
         setIfMissing: { priceData: [] },
         insert: {
           after: 'priceData[-1]',
-          items: [priceData],
+          items: [enrichedPriceData],
         },
       },
     },
@@ -451,7 +587,7 @@ export async function addPriceToExistingProduct(existingId, priceData, token) {
     throw new Error(`Sanity mutation error: ${JSON.stringify(error)}`);
   }
 
-  return { success: true, merged: true };
+  return { success: true, merged: true, setCount };
 }
 
 // フィルタリング統計を集計
@@ -495,3 +631,6 @@ export function printFilterStats(stats) {
     }
   }
 }
+
+// generateProductKeyをエクスポート（同期スクリプトからセット情報を取得する用途）
+export { generateProductKey };

@@ -39,6 +39,8 @@ interface PriceData {
   effectivePrice?: number;
   pointAmount?: number;
   stockStatus?: "in_stock" | "low_stock" | "out_of_stock" | "unknown";
+  setLabel?: string; // セット商品のラベル（例: "5個セット", "3袋セット"）
+  originalProductName?: string; // マージ前の元の商品名
 }
 
 interface PriceComparisonProps {
@@ -279,7 +281,7 @@ export function PriceComparison({
                       {isBulk && (
                         <span className="inline-flex items-center gap-1 text-orange-600 font-bold bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
                           <Package className="w-3 h-3" />
-                          {quantity}個セット
+                          {price.setLabel || `${quantity}個セット`}
                         </span>
                       )}
                     </div>
