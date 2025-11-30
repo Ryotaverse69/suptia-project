@@ -37,17 +37,12 @@ const client = createClient({
 
 // インポートする成分記事ファイル
 const ingredientFiles = [
-  'whey-protein-article.json',
-  'coq10-article.json',
-  'l-theanine-article.json',
-  'gaba-article.json',
-  'glycine-article.json',
-  'valerian-article.json',
-  'elderberry-article.json',
-  'echinacea-article.json',
-  'hmb-article.json',
-  'beta-alanine-article.json',
-  'rhodiola-article.json',
+  'bilberry-article.json',
+  'maca-article.json',
+  'sesamin-article.json',
+  'propolis-article.json',
+  'squalene-article.json',
+  'manuka-honey-article.json',
 ];
 
 async function importIngredients() {
