@@ -1,6 +1,16 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Target, Sparkles, Dumbbell, Moon, Shield, Zap } from "lucide-react";
+import {
+  Target,
+  Sparkles,
+  Dumbbell,
+  Moon,
+  Shield,
+  Zap,
+  ArrowRight,
+  BookOpen,
+  FlaskConical,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title:
@@ -24,6 +34,7 @@ const purposes = [
       "肌のハリ・ツヤ、アンチエイジング、美白をサポートするサプリメント",
     keywords: ["コラーゲン", "ビタミンC", "ビタミンE", "アスタキサンチン"],
     color: "from-pink-500 to-purple-500",
+    stats: { ingredients: 6, combinations: 3 },
   },
   {
     slug: "muscle",
@@ -31,8 +42,9 @@ const purposes = [
     icon: Dumbbell,
     description:
       "筋肉の成長、回復、パフォーマンス向上をサポートするサプリメント",
-    keywords: ["プロテイン", "BCAA", "クレアチン", "L-カルニチン"],
+    keywords: ["プロテイン", "BCAA", "クレアチン", "HMB"],
     color: "from-blue-500 to-cyan-500",
+    stats: { ingredients: 6, combinations: 3 },
   },
   {
     slug: "sleep",
@@ -42,6 +54,7 @@ const purposes = [
       "質の高い睡眠、寝つきの改善、深い眠りをサポートするサプリメント",
     keywords: ["メラトニン", "マグネシウム", "グリシン", "GABA"],
     color: "from-indigo-500 to-purple-500",
+    stats: { ingredients: 6, combinations: 3 },
   },
   {
     slug: "immunity",
@@ -51,6 +64,7 @@ const purposes = [
       "免疫システムの強化、風邪予防、健康維持をサポートするサプリメント",
     keywords: ["ビタミンD", "ビタミンC", "亜鉛", "プロバイオティクス"],
     color: "from-green-500 to-emerald-500",
+    stats: { ingredients: 6, combinations: 3 },
   },
   {
     slug: "energy",
@@ -58,8 +72,36 @@ const purposes = [
     icon: Zap,
     description:
       "慢性疲労の改善、エネルギー生成、活力向上をサポートするサプリメント",
-    keywords: ["ビタミンB群", "鉄分", "CoQ10", "マグネシウム"],
+    keywords: ["ビタミンB群", "鉄分", "CoQ10", "アシュワガンダ"],
     color: "from-orange-500 to-red-500",
+    stats: { ingredients: 6, combinations: 3 },
+  },
+];
+
+const features = [
+  {
+    icon: FlaskConical,
+    title: "科学的根拠",
+    description:
+      "各成分の効果は、臨床試験やメタ解析などの科学的エビデンスに基づいて評価しています。",
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: Target,
+    title: "目的別最適化",
+    description:
+      "あなたの健康目標に合わせて、最も効果的な成分と摂取量を提案します。",
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+  },
+  {
+    icon: BookOpen,
+    title: "相乗効果の解説",
+    description:
+      "成分同士の相性を考慮した、効果を最大化する組み合わせをご紹介します。",
+    color: "text-green-600",
+    bg: "bg-green-50",
   },
 ];
 
@@ -121,6 +163,33 @@ export default function PurposesGuidePage() {
             <br className="hidden sm:block" />
             科学的根拠に基づいた情報で、確実に結果を出すサポートをします。
           </p>
+
+          {/* Quick Stats */}
+          <div
+            className="flex flex-wrap justify-center gap-6 mt-12 animate-fade-in"
+            style={{ animationDelay: "0.3s" }}
+          >
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">
+                {purposes.length}
+              </div>
+              <div className="text-sm text-white/80 font-medium">
+                目的カテゴリ
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">30+</div>
+              <div className="text-sm text-white/80 font-medium">
+                推奨成分を収録
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">15+</div>
+              <div className="text-sm text-white/80 font-medium">
+                相乗効果の組み合わせ
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -203,39 +272,81 @@ export default function PurposesGuidePage() {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="relative overflow-hidden py-24 bg-white">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5" />
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-100 rounded-3xl p-10 text-center shadow-lg">
-            <h3 className="text-2xl font-bold text-slate-900 mb-4">
-              まだ目的が決まっていない方へ
-            </h3>
-            <p className="text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              成分ガイドで各栄養素の効果を学んだり、危険成分ガイドで避けるべき成分を確認することもできます。
+      {/* Features Section */}
+      <section className="py-24 px-6 lg:px-12 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-black text-slate-900 lg:text-5xl tracking-tight mb-6">
+              目的別ガイドの特徴
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              科学的根拠に基づき、あなたの健康目標に最適な情報を提供します。
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/ingredients"
-                className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-blue-600 font-bold rounded-full border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm hover:shadow-md"
-              >
-                成分ガイドを見る
-                <ArrowRight size={18} />
-              </Link>
-              <Link
-                href="/guide/dangerous-ingredients"
-                className="flex items-center justify-center gap-2 px-8 py-4 bg-slate-800 text-white font-bold rounded-full hover:bg-slate-700 transition-all shadow-lg hover:shadow-xl"
-              >
-                危険成分ガイドを見る
-                <ArrowRight size={18} />
-              </Link>
-            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col items-center text-center p-8 rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div
+                    className={`p-4 rounded-2xl ${feature.bg} ${feature.color} mb-6`}
+                  >
+                    <Icon size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <section className="relative overflow-hidden py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-12">
+          <h3 className="text-3xl font-bold text-white mb-6 lg:text-5xl">
+            まだ目的が決まっていない方へ
+          </h3>
+          <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+            成分ガイドで各栄養素の効果を学んだり、
+            <br className="hidden sm:block" />
+            危険成分ガイドで避けるべき成分を確認することもできます。
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/ingredients"
+              className="group flex items-center justify-center gap-2 px-10 py-5 bg-white text-slate-900 font-bold rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            >
+              成分ガイドを見る
+              <ArrowRight
+                size={20}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </Link>
+            <Link
+              href="/guide/dangerous-ingredients"
+              className="group flex items-center justify-center gap-2 px-10 py-5 border border-white/40 bg-white/10 text-white font-bold rounded-full backdrop-blur-md transition-all hover:bg-white/20 hover:border-white"
+            >
+              危険成分ガイドを見る
+              <ArrowRight
+                size={20}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </Link>
           </div>
         </div>
       </section>
     </div>
   );
 }
-
-// Add imports at the top if not present
-import { ArrowRight } from "lucide-react";

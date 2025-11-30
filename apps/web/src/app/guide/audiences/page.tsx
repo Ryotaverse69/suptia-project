@@ -1,5 +1,15 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import {
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  Microscope,
+  Shield,
+  Zap,
+  Link as LinkIcon,
+  Users,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "対象者別サプリメントガイド | Suptia",
@@ -15,6 +25,8 @@ const audiences = [
     description: "妊娠・授乳期に安全な成分と避けるべき成分を詳しく解説",
     benefits: ["胎児の健康", "母体の栄養", "安全性重視"],
     gradient: "from-pink-500 to-rose-500",
+    bgColor: "bg-pink-50",
+    borderColor: "border-pink-200",
   },
   {
     slug: "seniors",
@@ -23,6 +35,8 @@ const audiences = [
     description: "サルコペニア予防と認知機能維持のための成分ガイド",
     benefits: ["筋肉量維持", "認知機能", "骨密度"],
     gradient: "from-amber-500 to-orange-500",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
   },
   {
     slug: "athletes",
@@ -30,7 +44,9 @@ const audiences = [
     icon: "🏃",
     description: "パフォーマンス向上と回復促進に最適な成分を紹介",
     benefits: ["パフォーマンス", "回復促進", "持久力"],
-    gradient: "from-red-500 to-pink-500",
+    gradient: "from-blue-500 to-cyan-500",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
   },
   {
     slug: "students",
@@ -38,7 +54,9 @@ const audiences = [
     icon: "📚",
     description: "集中力・記憶力向上とストレス対策のためのサプリガイド",
     benefits: ["集中力", "記憶力", "ストレス軽減"],
-    gradient: "from-blue-500 to-cyan-500",
+    gradient: "from-indigo-500 to-purple-500",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
   },
   {
     slug: "business-professionals",
@@ -46,7 +64,9 @@ const audiences = [
     icon: "💼",
     description: "疲労回復とストレス管理で生産性を最大化",
     benefits: ["疲労回復", "ストレス管理", "生産性向上"],
-    gradient: "from-indigo-500 to-purple-500",
+    gradient: "from-slate-600 to-slate-800",
+    bgColor: "bg-slate-50",
+    borderColor: "border-slate-200",
   },
   {
     slug: "menopause",
@@ -55,6 +75,43 @@ const audiences = [
     description: "ホルモンバランスと更年期症状の緩和をサポート",
     benefits: ["ホルモンバランス", "睡眠改善", "気分安定"],
     gradient: "from-purple-500 to-pink-500",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+  },
+];
+
+const features = [
+  {
+    icon: Microscope,
+    title: "科学的根拠",
+    description:
+      "各対象者に特化した研究データに基づき、安全で効果的な成分を厳選して紹介します。",
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: Shield,
+    title: "安全性重視",
+    description:
+      "特に注意が必要な対象者（妊婦、高齢者など）には、避けるべき成分も明確に記載しています。",
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+  },
+  {
+    icon: Zap,
+    title: "実践的アドバイス",
+    description:
+      "摂取量、タイミング、組み合わせなど、実際に使える具体的な情報を提供します。",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+  },
+  {
+    icon: LinkIcon,
+    title: "成分詳細へのリンク",
+    description:
+      "各成分の詳細ページで、さらに深い情報（副作用、相互作用など）を確認できます。",
+    color: "text-purple-600",
+    bg: "bg-purple-50",
   },
 ];
 
@@ -65,14 +122,14 @@ export default function AudiencesPage() {
       <div className="absolute inset-0 bg-slate-50 -z-50" />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#3b66e0] py-24 lg:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 py-24 lg:py-32">
         {/* Background Animation */}
         <div
-          className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#f1faf9] to-[#3b66e0] -z-20 opacity-90"
+          className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 -z-20 opacity-90"
           style={{ animationDuration: "15s" }}
         />
         <div
-          className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-[#f1faf9]/40 to-transparent -z-19 mix-blend-overlay"
+          className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-white/20 to-transparent -z-19 mix-blend-overlay"
           style={{
             animationDuration: "20s",
             animationDirection: "reverse",
@@ -88,14 +145,14 @@ export default function AudiencesPage() {
             style={{ animationDuration: "45s" }}
           />
           <div
-            className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-[#f1faf9]/30 blur-[100px] rounded-full animate-mist-flow"
+            className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-pink-300/20 blur-[100px] rounded-full animate-mist-flow"
             style={{ animationDuration: "35s", animationDirection: "reverse" }}
           />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-6 lg:px-12 text-center">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 backdrop-blur-md border border-white/30 shadow-lg animate-fade-in">
-            <Sparkles size={18} className="text-yellow-300 animate-pulse" />
+            <Users size={18} className="text-yellow-300 animate-pulse" />
             <span className="text-sm font-bold text-white tracking-wide">
               ライフステージ別ガイド
             </span>
@@ -116,6 +173,33 @@ export default function AudiencesPage() {
             <br className="hidden sm:block" />
             それぞれのニーズに合わせた安全で効果的な選び方をサポートします。
           </p>
+
+          {/* Quick Stats */}
+          <div
+            className="flex flex-wrap justify-center gap-6 mt-12 animate-fade-in"
+            style={{ animationDelay: "0.3s" }}
+          >
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">
+                {audiences.length}
+              </div>
+              <div className="text-sm text-white/80 font-medium">
+                対象者カテゴリ
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">40+</div>
+              <div className="text-sm text-white/80 font-medium">
+                推奨成分を収録
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
+              <div className="text-3xl font-black text-white">20+</div>
+              <div className="text-sm text-white/80 font-medium">
+                注意成分を明記
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -180,7 +264,7 @@ export default function AudiencesPage() {
         </div>
       </section>
 
-      {/* Info Section - Glassmorphism Grid */}
+      {/* Info Section - Features Grid */}
       <section className="py-24 px-6 lg:px-12 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5" />
         <div className="mx-auto max-w-7xl relative z-10">
@@ -194,40 +278,7 @@ export default function AudiencesPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                icon: Microscope,
-                title: "科学的根拠",
-                description:
-                  "各対象者に特化した研究データに基づき、安全で効果的な成分を厳選して紹介します。",
-                color: "text-blue-600",
-                bg: "bg-blue-50",
-              },
-              {
-                icon: Shield,
-                title: "安全性重視",
-                description:
-                  "特に注意が必要な対象者（妊婦、高齢者など）には、避けるべき成分も明確に記載しています。",
-                color: "text-rose-600",
-                bg: "bg-rose-50",
-              },
-              {
-                icon: Zap,
-                title: "実践的アドバイス",
-                description:
-                  "摂取量、タイミング、組み合わせなど、実際に使える具体的な情報を提供します。",
-                color: "text-amber-600",
-                bg: "bg-amber-50",
-              },
-              {
-                icon: LinkIcon,
-                title: "成分詳細へのリンク",
-                description:
-                  "各成分の詳細ページで、さらに深い情報（副作用、相互作用など）を確認できます。",
-                color: "text-purple-600",
-                bg: "bg-purple-50",
-              },
-            ].map((item, index) => {
+            {features.map((item, index) => {
               const Icon = item.icon;
               return (
                 <div
@@ -253,23 +304,26 @@ export default function AudiencesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative overflow-hidden py-24 bg-[#3b66e0]">
-        <div className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#2d55c9] to-[#3b66e0] opacity-90" />
+      <section className="relative overflow-hidden py-24 bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600">
+        <div
+          className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 opacity-90"
+          style={{ animationDuration: "15s" }}
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-12">
           <h2 className="mb-6 text-3xl font-black text-white lg:text-5xl">
             自分に合ったサプリメントを見つけよう
           </h2>
-          <p className="mb-10 text-xl text-blue-100 font-medium">
+          <p className="mb-10 text-xl text-purple-100 font-medium">
             上記の対象者別ガイドから、あなたに最適なカテゴリーを選択してください。
-            <br />
+            <br className="hidden sm:block" />
             科学的根拠に基づいた安全で効果的なサプリメント選びをサポートします。
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/guide/purposes"
-              className="group flex items-center gap-2 rounded-full bg-white px-10 py-5 font-bold text-[#3b66e0] shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+              className="group flex items-center gap-2 rounded-full bg-white px-10 py-5 font-bold text-purple-600 shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
             >
               目的別ガイドも見る
               <ArrowRight
@@ -293,14 +347,3 @@ export default function AudiencesPage() {
     </div>
   );
 }
-
-// Add imports at the top if not present
-import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Microscope,
-  Shield,
-  Zap,
-  Link as LinkIcon,
-} from "lucide-react";
