@@ -13,6 +13,7 @@ import {
   Pill,
 } from "lucide-react";
 import { IngredientSearch } from "@/components/IngredientSearch";
+import { CategoryNav } from "@/components/CategoryNav";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 
@@ -62,18 +63,17 @@ interface Ingredient {
   safetyScore?: number; // 安全性スコア（0-100）
 }
 
-// カテゴリーの表示順序
+// カテゴリーの表示順序（整理済み）
 const categoryOrder = [
   "ビタミン",
   "ミネラル",
+  "アミノ酸・タンパク質",
   "脂肪酸",
-  "アミノ酸",
-  "ホルモン",
-  "抗酸化",
-  "ハーブ",
-  "プロバイオティクス",
+  "ハーブ・植物エキス",
+  "抗酸化物質",
+  "プロバイオティクス・消化サポート",
+  "ホルモン・睡眠",
   "その他",
-  "other", // 英語のカテゴリーも対応
 ];
 
 async function getIngredients(): Promise<Ingredient[]> {
@@ -221,6 +221,17 @@ export default async function IngredientsPage() {
           </div>
         </div>
 
+        {/* カテゴリーナビゲーション（折りたたみ式） */}
+        {sortedCategories.length > 0 && (
+          <CategoryNav
+            categories={sortedCategories.map((category) => ({
+              name: category,
+              count: ingredients.filter((ing) => ing.category === category)
+                .length,
+            }))}
+          />
+        )}
+
         {/* メインコンテンツ */}
         <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1200px]">
           {ingredients.length === 0 ? (
@@ -247,7 +258,11 @@ export default async function IngredientsPage() {
                 {ingredientsByCategory.map(
                   ({ category, ingredients }) =>
                     ingredients.length > 0 && (
-                      <section key={category}>
+                      <section
+                        key={category}
+                        id={`category-${category}`}
+                        className="scroll-mt-20"
+                      >
                         <div className="flex items-center gap-3 mb-6">
                           <div className="p-2 bg-primary-100 rounded-lg">
                             <Filter className="text-primary" size={20} />
