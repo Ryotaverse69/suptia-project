@@ -82,6 +82,7 @@ interface PriceHistory {
 
 interface Product {
   _id: string;
+  _updatedAt?: string;
   name: string;
   brandName: string;
   priceJPY: number;
@@ -142,7 +143,7 @@ async function getProduct(slug: string): Promise<Product | null> {
   if (!isValidSlug(slug)) return null;
 
   const query = `*[_type == "product" && slug.current == $slug][0]{
-    _id, name, 'brandName': brand->name, priceJPY, servingsPerContainer, servingsPerDay,
+    _id, _updatedAt, name, 'brandName': brand->name, priceJPY, servingsPerContainer, servingsPerDay,
     description, allIngredients, slug,
     images[]{ asset->{ url }, alt },
     externalImageUrl, priceData, priceHistory, urls, janCode, itemCode, affiliateUrl, source,
@@ -735,6 +736,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   servingsPerContainer: product.servingsPerContainer,
                   externalImageUrl: product.externalImageUrl,
                   images: product.images,
+                  updatedAt: product._updatedAt,
                 }}
                 badges={badges}
                 updatedTierRatings={updatedTierRatings}

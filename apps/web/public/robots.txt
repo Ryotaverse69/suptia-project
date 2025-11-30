@@ -1,5 +1,10 @@
 # Suptia - サプリメント比較サイト
-# ChatGPTおよび主要な検索エンジンのクローラーを許可
+# AI検索エンジンおよび主要な検索エンジンのクローラーを許可
+# Last Updated: 2024-11-30
+
+# ===========================================
+# AI検索エンジン・LLMクローラー
+# ===========================================
 
 # OpenAI GPTBot（ChatGPTのクローラー）
 User-agent: GPTBot
@@ -9,8 +14,63 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+# OpenAI SearchGPT
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic Claude
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Google Gemini / AI Overview
+User-agent: Google-Extended
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+# Apple Siri / Spotlight
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Microsoft Copilot
+User-agent: Bingbot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# Amazon Alexa
+User-agent: ia_archiver
+Allow: /
+
+# ===========================================
+# 従来の検索エンジン
+# ===========================================
+
 # Google
 User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
 Allow: /
 
 # Bing
@@ -25,15 +85,32 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
+# Yandex
+User-agent: YandexBot
+Allow: /
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+
+# ===========================================
 # その他すべてのクローラー
+# ===========================================
 User-agent: *
 Allow: /
 
-# クロールしないパス（管理画面など）
+# ===========================================
+# クロールしないパス（管理画面・内部API）
+# ===========================================
 Disallow: /api/
 Disallow: /admin/
 Disallow: /_next/
 Disallow: /studio/
 
-# サイトマップの場所
+# ===========================================
+# サイトマップ・AI向けファイル
+# ===========================================
 Sitemap: https://suptia.com/sitemap.xml
+
+# AI向けガイドライン（LLMsが参照可能）
+# https://suptia.com/llms.txt

@@ -416,3 +416,75 @@ export function generateStructuredDataForMetadata(data: unknown) {
 export function mergeStructuredData(dataArray: unknown[]): unknown[] {
   return dataArray.filter(Boolean);
 }
+
+/**
+ * schema.org/HowTo
+ */
+export interface HowToStructuredData {
+  "@context": "https://schema.org";
+  "@type": "HowTo";
+  name: string;
+  description?: string;
+  image?: string;
+  totalTime?: string;
+  estimatedCost?: {
+    "@type": "MonetaryAmount";
+    currency: string;
+    value: string;
+  };
+  step: Array<{
+    "@type": "HowToStep";
+    position: number;
+    name: string;
+    text: string;
+    url?: string;
+    image?: string;
+  }>;
+}
+
+/**
+ * HowTo用構造化データを生成
+ */
+export function generateHowToStructuredData(params: {
+  name: string;
+  description?: string;
+  image?: string;
+  totalTime?: string;
+  estimatedCost?: {
+    currency: string;
+    value: string;
+  };
+  steps: Array<{
+    name: string;
+    text: string;
+    url?: string;
+    image?: string;
+  }>;
+}): HowToStructuredData {
+  const structuredData: HowToStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: params.name,
+    description: params.description,
+    image: params.image,
+    totalTime: params.totalTime,
+    step: params.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      url: step.url,
+      image: step.image,
+    })),
+  };
+
+  if (params.estimatedCost) {
+    structuredData.estimatedCost = {
+      "@type": "MonetaryAmount",
+      currency: params.estimatedCost.currency,
+      value: params.estimatedCost.value,
+    };
+  }
+
+  return structuredData;
+}

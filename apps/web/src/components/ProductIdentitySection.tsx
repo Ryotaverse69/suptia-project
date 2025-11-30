@@ -3,7 +3,7 @@
 import { ProductBadges, BadgeSummary } from "@/components/ProductBadges";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { TierRatings } from "@/lib/tier-ranking";
-import { Activity, Info, FileText, ChevronRight } from "lucide-react";
+import { Activity, Info, FileText, ChevronRight, Calendar } from "lucide-react";
 import {
   SeamlessModal,
   SeamlessModalTrigger,
@@ -11,6 +11,16 @@ import {
 } from "@/components/SeamlessModal";
 import { TierEvaluationDetail } from "@/components/TierEvaluationDetail";
 import { TierRankStats } from "@/components/TierRankStats";
+
+// 日付をフォーマット
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 interface ProductIdentitySectionProps {
   product: {
@@ -26,6 +36,7 @@ interface ProductIdentitySectionProps {
       };
       alt?: string;
     }>;
+    updatedAt?: string;
   };
   badges: any[];
   updatedTierRatings?: TierRatings;
@@ -51,9 +62,20 @@ export function ProductIdentitySection({
         <div className="p-6">
           <div className="mb-4">
             <div className="flex justify-between items-start">
-              <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold tracking-wider rounded uppercase mb-2">
-                {product.brandName}
-              </span>
+              <div className="flex flex-col gap-1">
+                <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold tracking-wider rounded uppercase">
+                  {product.brandName}
+                </span>
+                {product.updatedAt && (
+                  <time
+                    dateTime={product.updatedAt}
+                    className="inline-flex items-center gap-1 text-[10px] text-slate-400"
+                  >
+                    <Calendar className="w-3 h-3" />
+                    最終更新: {formatDate(product.updatedAt)}
+                  </time>
+                )}
+              </div>
 
               <SeamlessModal layoutId="description-modal">
                 <SeamlessModalTrigger>

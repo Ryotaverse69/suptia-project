@@ -1,4 +1,4 @@
-import { Award, Shield, Beaker } from "lucide-react";
+import { Award, Shield, Beaker, Calendar } from "lucide-react";
 
 interface IngredientHeaderProps {
   name: string;
@@ -6,18 +6,52 @@ interface IngredientHeaderProps {
   category?: string;
   evidenceLevel?: string;
   description?: string;
+  updatedAt?: string;
+}
+
+// 日付をフォーマット
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 // エビデンスレベルの色とラベル
-const evidenceLevelConfig: Record<string, { color: string; bgColor: string; label: string }> = {
-  S: { color: "text-purple-700", bgColor: "bg-purple-100", label: "最高レベル" },
+const evidenceLevelConfig: Record<
+  string,
+  { color: string; bgColor: string; label: string }
+> = {
+  S: {
+    color: "text-purple-700",
+    bgColor: "bg-purple-100",
+    label: "最高レベル",
+  },
   A: { color: "text-blue-700", bgColor: "bg-blue-100", label: "高い根拠" },
-  B: { color: "text-green-700", bgColor: "bg-green-100", label: "中程度の根拠" },
-  C: { color: "text-yellow-700", bgColor: "bg-yellow-100", label: "限定的な根拠" },
+  B: {
+    color: "text-green-700",
+    bgColor: "bg-green-100",
+    label: "中程度の根拠",
+  },
+  C: {
+    color: "text-yellow-700",
+    bgColor: "bg-yellow-100",
+    label: "限定的な根拠",
+  },
   D: { color: "text-gray-700", bgColor: "bg-gray-100", label: "根拠不十分" },
   高: { color: "text-blue-700", bgColor: "bg-blue-100", label: "高い根拠" },
-  中: { color: "text-green-700", bgColor: "bg-green-100", label: "中程度の根拠" },
-  低: { color: "text-yellow-700", bgColor: "bg-yellow-100", label: "限定的な根拠" },
+  中: {
+    color: "text-green-700",
+    bgColor: "bg-green-100",
+    label: "中程度の根拠",
+  },
+  低: {
+    color: "text-yellow-700",
+    bgColor: "bg-yellow-100",
+    label: "限定的な根拠",
+  },
 };
 
 export function IngredientHeader({
@@ -26,6 +60,7 @@ export function IngredientHeader({
   category,
   evidenceLevel,
   description,
+  updatedAt,
 }: IngredientHeaderProps) {
   const evidenceConfig = evidenceLevel
     ? evidenceLevelConfig[evidenceLevel] || evidenceLevelConfig["C"]
@@ -43,7 +78,10 @@ export function IngredientHeader({
           </li>
           <li>/</li>
           <li>
-            <a href="/ingredients" className="hover:text-primary transition-colors">
+            <a
+              href="/ingredients"
+              className="hover:text-primary transition-colors"
+            >
               成分ガイド
             </a>
           </li>
@@ -54,11 +92,24 @@ export function IngredientHeader({
 
       {/* メインヘッダー */}
       <div className="bg-gradient-to-br from-primary/5 via-white to-blue-50 rounded-2xl p-5 sm:p-8 border border-primary/10">
-        {/* タイトル */}
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          {name}
-        </h1>
-        <p className="text-base sm:text-lg text-gray-500 mb-4 sm:mb-6">{nameEn}</p>
+        {/* タイトルと更新日 */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+            {name}
+          </h1>
+          {updatedAt && (
+            <time
+              dateTime={updatedAt}
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 whitespace-nowrap"
+            >
+              <Calendar size={14} className="text-gray-400" />
+              最終更新: {formatDate(updatedAt)}
+            </time>
+          )}
+        </div>
+        <p className="text-base sm:text-lg text-gray-500 mb-4 sm:mb-6">
+          {nameEn}
+        </p>
 
         {/* バッジ群 */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-5 sm:mb-6">
@@ -74,7 +125,9 @@ export function IngredientHeader({
             >
               <Award size={14} />
               エビデンス: {evidenceLevel}
-              <span className="text-xs opacity-75">({evidenceConfig.label})</span>
+              <span className="text-xs opacity-75">
+                ({evidenceConfig.label})
+              </span>
             </span>
           )}
         </div>
