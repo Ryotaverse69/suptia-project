@@ -145,12 +145,17 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
         <div className="flex justify-center">
           <Link
             href="/diagnosis"
-            className="group relative inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg sm:rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-xl border border-white/20 overflow-visible"
+            className="group relative inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] hover:bg-right text-white rounded-xl sm:rounded-2xl font-semibold transition-all duration-500 backdrop-blur-xl border border-white/30 overflow-visible transform hover:scale-105 animate-subtle-pulse"
+            style={{
+              boxShadow:
+                "0 8px 30px rgba(147, 51, 234, 0.5), 0 4px 15px rgba(219, 39, 119, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+            }}
           >
-            {/* Gathering Mist for Button */}
-            <div className="absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-              <div className="absolute inset-0 bg-blue-500/30 blur-[30px] rounded-full animate-mist-gather" />
-            </div>
+            {/* Glow ring animation */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl sm:rounded-2xl opacity-50 blur-md group-hover:opacity-75 group-hover:blur-lg transition-all duration-500 animate-glow-pulse" />
+
+            {/* Button background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] rounded-xl sm:rounded-2xl group-hover:bg-right transition-all duration-500" />
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -162,11 +167,11 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:scale-110 transition-transform hidden sm:block relative z-10"
+              className="group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 hidden sm:block relative z-10"
             >
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
             </svg>
-            <span className="text-sm sm:text-base relative z-10">
+            <span className="text-sm sm:text-base relative z-10 font-bold tracking-wide">
               あなたに最適なサプリを診断する
             </span>
             <svg
@@ -179,7 +184,7 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:translate-x-1 transition-transform sm:w-5 sm:h-5 relative z-10"
+              className="group-hover:translate-x-1.5 transition-transform duration-300 sm:w-5 sm:h-5 relative z-10"
             >
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>

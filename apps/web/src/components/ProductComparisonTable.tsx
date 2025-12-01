@@ -23,19 +23,17 @@ export function ProductComparisonTable({
 
   return (
     <div className={className}>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">おすすめトップ3</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         {recommendations.map((rec, index) => (
           <Link
             key={rec.product.id}
             href={`/products/${rec.product.slug || rec.product.id}`}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all relative block group cursor-pointer"
+            className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all relative block group cursor-pointer"
           >
             {/* ランキング順位 */}
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
               <div
-                className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-white ${
+                className={`inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-bold text-white text-sm sm:text-base ${
                   index === 0
                     ? "bg-yellow-500"
                     : index === 1
@@ -49,8 +47,8 @@ export function ProductComparisonTable({
 
             {/* 商品画像 */}
             {rec.product.imageUrl && (
-              <div className="mb-4 flex justify-center pt-8">
-                <div className="w-32 h-32 relative">
+              <div className="mb-3 sm:mb-4 flex justify-center pt-6 sm:pt-8">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 relative">
                   <Image
                     src={rec.product.imageUrl}
                     alt={rec.product.name}
@@ -62,33 +60,37 @@ export function ProductComparisonTable({
             )}
 
             {/* 商品名 */}
-            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem] group-hover:text-blue-600 transition-colors">
+            <h3 className="font-semibold text-gray-900 mb-1.5 sm:mb-2 line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem] text-sm sm:text-base group-hover:text-blue-600 transition-colors">
               {rec.product.name}
             </h3>
 
             {/* ブランド名 */}
             {rec.product.brand && (
-              <p className="text-sm text-gray-600 mb-4">{rec.product.brand}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 truncate">
+                {rec.product.brand}
+              </p>
             )}
 
             {/* 価格 */}
-            <div className="mt-auto pt-4 border-t border-gray-100">
-              <div className="text-center space-y-2">
+            <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
+              <div className="text-center space-y-1.5 sm:space-y-2">
                 {/* 1日あたりの価格 */}
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">
                   ¥{Math.round(rec.scores.costDetails.costPerDayJPY)}
-                  <span className="text-sm text-gray-500 ml-1">/日</span>
+                  <span className="text-xs sm:text-sm text-gray-500 ml-1">
+                    /日
+                  </span>
                 </div>
                 {/* 商品価格 */}
-                <div className="text-sm text-gray-600">
+                <div className="text-xs sm:text-sm text-gray-600">
                   商品価格: ¥{rec.product.priceJPY?.toLocaleString() || "—"}
                 </div>
               </div>
             </div>
 
             {/* 詳細を見るインジケーター */}
-            <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-              <span className="text-sm text-blue-600 group-hover:text-blue-700 font-medium">
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 text-center">
+              <span className="text-xs sm:text-sm text-blue-600 group-hover:text-blue-700 font-medium">
                 詳細を見る →
               </span>
             </div>

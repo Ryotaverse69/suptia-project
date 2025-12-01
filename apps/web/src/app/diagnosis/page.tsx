@@ -183,7 +183,7 @@ export default async function DiagnosisSelectionPage() {
                         />
                       </div>
                       <span className="font-medium">
-                        質問数: 10問（対話形式）
+                        質問数: 15問（対話形式）
                       </span>
                     </div>
                   </div>

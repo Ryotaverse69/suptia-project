@@ -129,8 +129,18 @@ export function Header() {
               {/* Diagnosis Link - Highlighted */}
               <Link
                 href="/diagnosis"
-                className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg text-sm font-semibold flex items-center gap-2"
+                className="group relative px-5 py-2.5 text-white rounded-xl transition-all duration-300 text-sm font-bold flex items-center gap-2 overflow-visible hover:scale-105"
+                style={{
+                  boxShadow:
+                    "0 4px 20px rgba(147, 51, 234, 0.4), 0 2px 10px rgba(219, 39, 119, 0.25)",
+                }}
               >
+                {/* Glow effect */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-60 blur-sm group-hover:opacity-80 group-hover:blur-md transition-all duration-300" />
+
+                {/* Button background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] rounded-xl group-hover:bg-right transition-all duration-500" />
+
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
@@ -141,10 +151,11 @@ export function Header() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  className="relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
                 >
                   <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                 </svg>
-                診断する
+                <span className="relative z-10">診断する</span>
               </Link>
 
               {/* Menu Dropdown */}
@@ -315,8 +326,18 @@ export function Header() {
                 <Link
                   href="/diagnosis"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all duration-150 font-semibold rounded-xl backdrop-blur-sm flex items-center gap-2"
+                  className="group relative block px-4 py-3 text-white transition-all duration-300 font-bold rounded-xl overflow-visible flex items-center gap-2 active:scale-95"
+                  style={{
+                    boxShadow:
+                      "0 4px 20px rgba(147, 51, 234, 0.4), 0 2px 10px rgba(219, 39, 119, 0.25)",
+                  }}
                 >
+                  {/* Glow effect */}
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-60 blur-sm" />
+
+                  {/* Button background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 rounded-xl" />
+
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"
@@ -327,10 +348,11 @@ export function Header() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="relative z-10"
                   >
                     <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                   </svg>
-                  診断する
+                  <span className="relative z-10">診断する</span>
                 </Link>
 
                 {/* Divider */}

@@ -89,6 +89,8 @@ module.exports = {
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
         shimmer: "shimmer 3s infinite",
         "bounce-slow": "bounce-slow 2s infinite",
+        "subtle-pulse": "subtle-pulse 2.5s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
       keyframes: {
         "gradient-shift": {
@@ -245,6 +247,28 @@ module.exports = {
           },
           "50%": {
             transform: "translateY(-4px)",
+          },
+        },
+        "subtle-pulse": {
+          "0%, 100%": {
+            transform: "scale(1)",
+            boxShadow:
+              "0 8px 30px rgba(147, 51, 234, 0.5), 0 4px 15px rgba(219, 39, 119, 0.3)",
+          },
+          "50%": {
+            transform: "scale(1.02)",
+            boxShadow:
+              "0 12px 40px rgba(147, 51, 234, 0.6), 0 6px 20px rgba(219, 39, 119, 0.4)",
+          },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            opacity: "0.5",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "0.7",
+            transform: "scale(1.05)",
           },
         },
       },

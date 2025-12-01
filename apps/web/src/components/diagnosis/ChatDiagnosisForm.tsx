@@ -216,24 +216,30 @@ const QUESTIONS: QuestionWithIcon[] = [
     ],
   },
   {
-    id: "dietBalance",
+    id: "dietQuality",
     type: "single",
     text: "食生活のバランスはどうですか？",
     options: [
       {
-        value: "balanced",
-        label: "バランスが良い",
+        value: "excellent",
+        label: "非常に良い",
         icon: Sparkles,
         gradient: "from-green-400 to-green-600",
       },
       {
-        value: "sometimes",
-        label: "時々偏る",
+        value: "good",
+        label: "まあまあ良い",
+        icon: Activity,
+        gradient: "from-blue-400 to-blue-600",
+      },
+      {
+        value: "fair",
+        label: "普通",
         icon: Activity,
         gradient: "from-yellow-400 to-yellow-600",
       },
       {
-        value: "unbalanced",
+        value: "poor",
         label: "偏りがち",
         icon: AlertCircle,
         gradient: "from-orange-400 to-red-600",
@@ -526,31 +532,12 @@ function MessageWithTyping({
   index: number;
   totalMessages: number;
 }) {
-  // デバッグ: メッセージ内容を詳細に確認
-  console.log("🎯 MessageWithTyping render:", {
-    index,
-    role: message.role,
-    content: message.content,
-    contentLength: message.content?.length,
-    contentType: typeof message.content,
-    contentJSON: JSON.stringify(message.content),
-  });
-
   const isLatestBot =
     message.role === "bot" && index === totalMessages - 1 && message.isTyping;
   const { displayedText } = useTypingEffect(
     message.content,
     isLatestBot ? 30 : 0,
   );
-
-  // デバッグ: 表示されるテキストを確認
-  if (message.role === "bot" && index === 0) {
-    console.log("📝 displayedText for first bot message:", {
-      displayedText,
-      isLatestBot,
-      willDisplay: isLatestBot ? displayedText : message.content,
-    });
-  }
 
   return (
     <div
@@ -600,11 +587,6 @@ export function ChatDiagnosisForm() {
   const router = useRouter();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  // デバッグ: 最初の質問内容を確認
-  console.log("🔍 QUESTIONS[0]:", QUESTIONS[0]);
-  console.log("🔍 QUESTIONS[0].text:", QUESTIONS[0].text);
-  console.log("🔍 QUESTIONS[0] keys:", Object.keys(QUESTIONS[0]));
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -827,7 +809,11 @@ export function ChatDiagnosisForm() {
       {/* チャット全体コンテナ */}
       <div
         className="bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-2xl border border-purple-100 flex flex-col"
-        style={{ height: "calc(85vh)" }}
+        style={{
+          height: "calc(100dvh - 180px)",
+          minHeight: "500px",
+          maxHeight: "800px",
+        }}
       >
         {/* メッセージ表示エリア（スクロール可能） */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6">
@@ -842,19 +828,19 @@ export function ChatDiagnosisForm() {
           <div ref={chatEndRef} />
         </div>
 
-        {/* 回答エリア（固定位置） */}
+        {/* 回答エリア（固定位置・スクロール可能） */}
         {!answers[currentQuestion.id] && (
-          <div className="border-t border-purple-200 bg-white/90 backdrop-blur-sm p-4 sm:p-6">
-            <div className="space-y-4">
+          <div className="border-t border-purple-200 bg-white/90 backdrop-blur-sm p-3 sm:p-4 max-h-[50vh] overflow-y-auto">
+            <div className="space-y-3">
               {currentQuestion.type === "single" && (
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {currentQuestion.options?.map((option) => {
                     const Icon = option.icon;
                     return (
                       <button
                         key={option.value}
                         onClick={() => handleSingleSelect(option.value)}
-                        className="group relative overflow-hidden w-full p-2.5 sm:p-3 rounded-lg border-2 border-gray-200 hover:border-transparent text-left transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md bg-white flex items-center gap-2.5"
+                        className="group relative overflow-hidden w-full p-3 sm:p-3.5 rounded-lg border-2 border-gray-200 hover:border-transparent text-left transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md bg-white flex items-center gap-2.5"
                       >
                         <div
                           className={`absolute inset-0 bg-gradient-to-r ${option.gradient || "from-purple-400 to-pink-600"} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
@@ -889,8 +875,8 @@ export function ChatDiagnosisForm() {
               )}
 
               {currentQuestion.type === "multiple" && (
-                <div className="space-y-2">
-                  <div className="space-y-1.5">
+                <div className="space-y-3">
+                  <div className="space-y-2">
                     {currentQuestion.options?.map((option) => {
                       const Icon = option.icon;
                       const isSelected = selectedOptions.includes(option.value);
@@ -898,7 +884,7 @@ export function ChatDiagnosisForm() {
                         <button
                           key={option.value}
                           onClick={() => handleMultipleSelect(option.value)}
-                          className={`w-full p-2 sm:p-2.5 rounded-lg border-2 text-left font-medium transition-all duration-300 flex items-center gap-2 ${
+                          className={`w-full p-3 sm:p-3.5 rounded-lg border-2 text-left font-medium transition-all duration-300 flex items-center gap-2.5 ${
                             isSelected
                               ? "border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 shadow-md"
                               : "border-gray-200 hover:border-purple-300 bg-white"

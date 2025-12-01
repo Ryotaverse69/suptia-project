@@ -1,0 +1,77 @@
+name: relatedGoals自動同期
+
+on:
+  # 毎週月曜深夜4時（JST）に実行 = UTC 19:00
+  schedule:
+    - cron: '0 19 * * 1'
+
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'ドライラン（変更なし）'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+  # 成分スキーマが変更されたときにも実行
+  push:
+    paths:
+      - 'packages/schemas/ingredient.ts'
+    branches:
+      - master
+
+jobs:
+  sync-related-goals:
+    name: relatedGoals同期
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > apps/web/.env.local << EOF
+          NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN=${{ secrets.SANITY_API_TOKEN }}
+          EOF
+
+      - name: Sync relatedGoals
+        run: |
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/sync-related-goals.mjs --dry-run
+          else
+            node scripts/sync-related-goals.mjs
+          fi
+
+      - name: Revalidate frontend (ISR)
+        if: github.event.inputs.dry_run != 'true'
+        continue-on-error: true
+        run: |
+          curl -X POST "https://suptia.com/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"path": "/ingredients"}'
+
+      - name: Summary
+        run: |
+          echo "## relatedGoals同期完了" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- 実行モード: ${{ github.event.inputs.dry_run == 'true' && 'ドライラン' || '本番' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- トリガー: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "新しい成分が追加された場合、カテゴリと名前に基づいてrelatedGoalsが自動設定されます。" >> $GITHUB_STEP_SUMMARY

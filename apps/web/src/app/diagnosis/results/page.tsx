@@ -109,19 +109,6 @@ export default async function DiagnosisResultsPage({
   // Sanityから商品データを取得
   const products = await fetchProductsForDiagnosis();
 
-  // デバッグ: 取得した商品数をログ出力
-  console.log("🔍 診断結果ページ - デバッグ情報:", {
-    診断タイプ: isDetailedDiagnosis ? "詳細診断" : "かんたん診断",
-    取得した商品数: products.length,
-    ユーザー目標: goals,
-    副次的な目標: secondaryGoals,
-    ユーザー予算: budget,
-    ユーザー優先度: priority,
-    健康状態: conditions,
-    年齢層: ageGroup,
-    ストレスレベル: stressLevel,
-  });
-
   // 推薦結果を計算（診断タイプに応じて使い分け）
   const recommendations = isDetailedDiagnosis
     ? recommendProductsDetailed(products, {
@@ -147,18 +134,6 @@ export default async function DiagnosisResultsPage({
         budgetPerDay: budget,
         priority,
       });
-
-  // デバッグ: 推薦結果数をログ出力
-  console.log("📊 推薦結果:", {
-    推薦商品数: recommendations.length,
-    トップ3:
-      recommendations.length > 0
-        ? recommendations.slice(0, 3).map((r) => ({
-            商品名: r.product.name,
-            総合スコア: r.scores.overallScore,
-          }))
-        : "なし",
-  });
 
   const topThree = recommendations.slice(0, 3);
   const otherRecommendations = recommendations.slice(3, 10); // トップ3以外の7件（合計10件）
@@ -196,12 +171,12 @@ export default async function DiagnosisResultsPage({
         {/* メインコンテンツ */}
         <div className="container mx-auto px-4 py-8">
           {/* タイトルセクション */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-full p-3">
-                <Sparkles className="text-white" size={24} />
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-full p-2.5 sm:p-3 w-fit">
+                <Sparkles className="text-white" size={20} />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                 あなたにおすすめのサプリメント
               </h1>
             </div>
@@ -247,11 +222,11 @@ export default async function DiagnosisResultsPage({
           {/* 推薦結果 */}
           {recommendations.length > 0 && (
             <>
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">
                   トップ3推薦商品
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-sm sm:text-base text-gray-600">
                   あなたの条件に最も適した商品を、科学的根拠に基づいて評価しました。
                 </p>
               </div>
@@ -264,79 +239,89 @@ export default async function DiagnosisResultsPage({
 
               {/* その他の推薦商品 */}
               {otherRecommendations.length > 0 && (
-                <div className="mt-12">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">
+                <div className="mt-8 sm:mt-12">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
                     他のおすすめ商品
                   </h2>
 
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                    <div className="space-y-4">
+                  <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
+                    <div className="space-y-3 sm:space-y-4">
                       {otherRecommendations.map((rec) => (
                         <Link
                           key={rec.product.id}
                           href={`/products/${rec.product.slug || rec.product.id}`}
-                          className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer group"
+                          className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer group"
                         >
-                          {/* ランキング順位 */}
-                          <div className="flex-shrink-0">
-                            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-white bg-blue-500">
-                              {rec.rank}
+                          {/* 上段: 順位・画像・商品名 */}
+                          <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                            {/* ランキング順位 */}
+                            <div className="flex-shrink-0">
+                              <div className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-bold text-white bg-blue-500 text-sm sm:text-base">
+                                {rec.rank}
+                              </div>
                             </div>
-                          </div>
 
-                          {/* 商品画像 */}
-                          {rec.product.imageUrl && (
-                            <div className="flex-shrink-0 w-16 h-16 relative">
-                              <Image
-                                src={rec.product.imageUrl}
-                                alt={rec.product.name}
-                                fill
-                                className="object-cover rounded-lg"
-                              />
-                            </div>
-                          )}
+                            {/* 商品画像 */}
+                            {rec.product.imageUrl && (
+                              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 relative">
+                                <Image
+                                  src={rec.product.imageUrl}
+                                  alt={rec.product.name}
+                                  fill
+                                  className="object-cover rounded-lg"
+                                />
+                              </div>
+                            )}
 
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                              {rec.product.name}
-                            </h3>
-                            <div className="text-sm text-gray-600 mt-1">
+                            {/* 商品名・ブランド */}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-sm sm:text-base line-clamp-2">
+                                {rec.product.name}
+                              </h3>
                               {rec.product.brand && (
-                                <span>{rec.product.brand}</span>
+                                <div className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 truncate">
+                                  {rec.product.brand}
+                                </div>
                               )}
                             </div>
                           </div>
-                          <div className="text-right space-y-1">
-                            {/* 1日あたりの価格 */}
-                            <div className="text-lg font-bold text-gray-900">
-                              ¥
-                              {Math.round(rec.scores.costDetails.costPerDayJPY)}
-                              <span className="text-sm text-gray-500 ml-1">
-                                /日
-                              </span>
-                            </div>
-                            {/* 商品価格 */}
-                            <div className="text-xs text-gray-500">
-                              商品価格: ¥
-                              {rec.product.priceJPY?.toLocaleString() || "—"}
-                            </div>
-                          </div>
 
-                          {/* 詳細を見るアイコン */}
-                          <div className="flex-shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="m9 18 6-6-6-6" />
-                            </svg>
+                          {/* 下段（モバイル）/ 右側（PC）: 価格情報 */}
+                          <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-11 sm:pl-0">
+                            <div className="text-left sm:text-right space-y-0.5 sm:space-y-1">
+                              {/* 1日あたりの価格 */}
+                              <div className="text-base sm:text-lg font-bold text-gray-900">
+                                ¥
+                                {Math.round(
+                                  rec.scores.costDetails.costPerDayJPY,
+                                )}
+                                <span className="text-xs sm:text-sm text-gray-500 ml-1">
+                                  /日
+                                </span>
+                              </div>
+                              {/* 商品価格 */}
+                              <div className="text-xs text-gray-500">
+                                商品価格: ¥
+                                {rec.product.priceJPY?.toLocaleString() || "—"}
+                              </div>
+                            </div>
+
+                            {/* 詳細を見るアイコン */}
+                            <div className="flex-shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="m9 18 6-6-6-6" />
+                              </svg>
+                            </div>
                           </div>
                         </Link>
                       ))}

@@ -8,7 +8,7 @@ import { getSiteUrl } from "@/lib/runtimeConfig";
 export const metadata: Metadata = {
   title: "詳細診断（チャット形式） | サプリメント診断 | Suptia",
   description:
-    "対話形式で詳しく質問に答えることで、より精度の高いサプリメント推薦を受けられます。10問・約5分で完了。",
+    "対話形式で詳しく質問に答えることで、より精度の高いサプリメント推薦を受けられます。15問・約5分で完了。",
 };
 
 export default async function DetailedDiagnosisPage() {
