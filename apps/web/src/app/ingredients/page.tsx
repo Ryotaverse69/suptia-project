@@ -16,6 +16,7 @@ import { IngredientSearch } from "@/components/IngredientSearch";
 import { CategoryNav } from "@/components/CategoryNav";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
+import { ComplianceBadge } from "@/components/ComplianceBadge";
 
 // ISR: 1時間ごとにページを再生成
 export const revalidate = 3600;
@@ -217,6 +218,26 @@ export default async function IngredientsPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Compliance Info Banner */}
+        <div className="bg-white border-b border-primary-200">
+          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-green-50/50 rounded-xl p-4 border border-green-100">
+              <div className="flex items-center gap-3">
+                <ComplianceBadge variant="compact" />
+                <p className="text-sm text-gray-600">
+                  すべての成分情報は薬機法に準拠して解説されています
+                </p>
+              </div>
+              <Link
+                href="/why-suptia"
+                className="text-sm text-primary hover:text-primary-700 font-medium whitespace-nowrap"
+              >
+                AI検索との違いを見る →
+              </Link>
             </div>
           </div>
         </div>

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
 import { BadgeType } from "@/lib/badges";
+import { ComplianceBadge } from "@/components/ComplianceBadge";
 
 // ISR設定: 1時間ごとにページを再生成
 export const revalidate = 3600; // 3600秒 = 1時間
@@ -205,6 +206,24 @@ export default async function ProductsPage() {
         {/* Tier Rank Statistics */}
         <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
           <TierRankStats products={productsWithCost} />
+        </div>
+
+        {/* Compliance Info Banner */}
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-primary-100">
+            <div className="flex items-center gap-3">
+              <ComplianceBadge variant="compact" />
+              <p className="text-sm text-gray-600">
+                すべての商品情報は薬機法に準拠して表示されています
+              </p>
+            </div>
+            <Link
+              href="/why-suptia"
+              className="text-sm text-primary hover:text-primary-700 font-medium whitespace-nowrap"
+            >
+              AI検索との違いを見る →
+            </Link>
+          </div>
         </div>
 
         {/* Main Content */}

@@ -25,10 +25,12 @@ import {
   FAQAccordion,
   IngredientHeader,
 } from "@/components/ingredients";
+import { ComplianceBadge } from "@/components/ComplianceBadge";
 import {
   generateFAQStructuredData,
   generateArticleStructuredData,
   generateBreadcrumbStructuredData,
+  generateIngredientStructuredData,
 } from "@/lib/structured-data";
 
 interface IngredientPageProps {
@@ -143,6 +145,25 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
     url: pageUrl,
   });
 
+  // MedicalWebPage + Drug スキーマ（AI検索最適化）
+  const [medicalWebPageJsonLd, drugJsonLd] = generateIngredientStructuredData({
+    name: ingredient.name,
+    nameEn: ingredient.nameEn,
+    slug: ingredient.slug.current,
+    category: ingredient.category,
+    description: ingredient.description,
+    benefits: ingredient.benefits,
+    recommendedDosage: ingredient.recommendedDosage,
+    sideEffects: Array.isArray(ingredient.sideEffects)
+      ? ingredient.sideEffects.join("。")
+      : ingredient.sideEffects,
+    evidenceLevel: ingredient.evidenceLevel,
+    references: ingredient.references,
+    datePublished: ingredient._createdAt?.split("T")[0],
+    dateModified: ingredient._updatedAt?.split("T")[0],
+    siteUrl,
+  });
+
   // FAQスキーマ（FAQがある場合のみ）
   const faqJsonLd =
     ingredient.faqs && ingredient.faqs.length > 0
@@ -211,6 +232,19 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {/* AI検索最適化：MedicalWebPage + Drug schema */}
+      <Script
+        id="medical-webpage-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(medicalWebPageJsonLd),
+        }}
+      />
+      <Script
+        id="drug-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(drugJsonLd) }}
+      />
       {faqJsonLd && (
         <Script
           id="faq-jsonld"
@@ -230,6 +264,11 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
             description={ingredient.description}
             updatedAt={ingredient._updatedAt}
           />
+
+          {/* 薬機法準拠マーク（AI検索との差別化） */}
+          <div className="mt-4 mb-6">
+            <ComplianceBadge variant="default" />
+          </div>
 
           {/* モバイル用目次（メインコンテンツの前に配置） */}
           <div className="lg:hidden">

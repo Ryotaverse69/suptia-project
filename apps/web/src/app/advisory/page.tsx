@@ -1,5 +1,13 @@
 import { Metadata } from "next";
-import { Database, BookOpen, RefreshCw, Shield, Bot, User } from "lucide-react";
+import {
+  Database,
+  BookOpen,
+  RefreshCw,
+  Shield,
+  Bot,
+  User,
+  ShieldCheck,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "情報ソースと方針 - サプティア",
@@ -342,6 +350,125 @@ export default function AdvisoryPage() {
               各製品ページおよび成分ページには、根拠となる研究論文のリストを掲載し、
               PubMedやDOIへのリンクを提供します。すべての情報源を確認できるようにしています。
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 法令遵守（薬機法準拠） */}
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8">法令遵守（薬機法準拠）</h2>
+        <div className="bg-green-100 border-2 border-green-300 rounded-xl p-6 mb-8">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-green-200 rounded-lg">
+              <ShieldCheck className="w-8 h-8 text-green-700" />
+            </div>
+            <div>
+              <p className="font-bold text-xl text-green-900 mb-2">
+                薬機法に準拠したコンテンツ
+              </p>
+              <p className="text-green-800">
+                サプティアのすべてのコンテンツは、日本の薬機法（医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律）に準拠して作成されています。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="border-2 border-slate-200 rounded-xl p-6 bg-white">
+            <h3 className="font-bold text-xl mb-6 text-slate-900">
+              コンテンツ作成ガイドライン
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-full">
+                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">
+                    効能効果の表現
+                  </p>
+                  <p className="text-slate-600">
+                    医薬品的な効能効果を標榜せず、適切な表現を使用
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-full">
+                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">
+                    疾病治療の言及
+                  </p>
+                  <p className="text-slate-600">
+                    特定の疾病の治療・予防を目的とした表現を回避
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-full">
+                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">
+                    科学的根拠の明示
+                  </p>
+                  <p className="text-slate-600">
+                    研究データは出典を明記し、誇大な解釈を避ける
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-full">
+                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">
+                    表現の適正化
+                  </p>
+                  <p className="text-slate-600">
+                    「〜をサポート」「〜に役立つ可能性」など適切な表現
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-2 border-slate-200 rounded-xl p-6 bg-white">
+            <h3 className="font-bold text-xl mb-4 text-slate-900">
+              自動コンプライアンスチェック
+            </h3>
+            <p className="text-slate-700 mb-6">
+              サプティアでは、
+              <span className="font-bold text-green-700">150以上のルール</span>
+              に基づく自動コンプライアンスチェックシステムを導入しています。
+              これにより、薬機法に抵触する可能性のある表現を事前に検出し、適切な表現への修正を行っています。
+            </p>
+            <div className="bg-slate-100 rounded-xl p-5">
+              <p className="font-semibold text-slate-800 mb-3">
+                チェック対象カテゴリ
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  医薬品的効能効果
+                </span>
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  疾病治療・予防
+                </span>
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  誇大広告
+                </span>
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  身体機能への影響
+                </span>
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  体験談・証言
+                </span>
+                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+                  比較広告
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

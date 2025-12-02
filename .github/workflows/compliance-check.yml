@@ -1,0 +1,182 @@
+name: Compliance Check
+
+on:
+  # 週次で定期実行（毎週月曜 9:00 JST）
+  schedule:
+    - cron: '0 0 * * 1'
+  # 手動実行
+  workflow_dispatch:
+    inputs:
+      fix_violations:
+        description: '違反を自動修正する'
+        required: false
+        type: boolean
+        default: false
+  # PRでの成分/商品変更時
+  pull_request:
+    paths:
+      - 'apps/web/src/lib/compliance/**'
+      - 'packages/schemas/**'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  compliance-check:
+    name: 6法コンプライアンスチェック
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Compliance Check
+        id: compliance
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          # .env.localを作成
+          mkdir -p apps/web
+          echo "NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID" > apps/web/.env.local
+          echo "NEXT_PUBLIC_SANITY_DATASET=$NEXT_PUBLIC_SANITY_DATASET" >> apps/web/.env.local
+          echo "SANITY_API_TOKEN=$SANITY_API_TOKEN" >> apps/web/.env.local
+          
+          # コンプライアンスチェック実行
+          node scripts/check-compliance-all-content.mjs --report || echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Auto-fix violations (if requested)
+        if: github.event.inputs.fix_violations == 'true'
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          echo "🔧 自動修正を実行中..."
+          node scripts/fix-compliance-violations.mjs
+
+      - name: Upload compliance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-report
+          path: compliance-report.json
+          retention-days: 30
+
+      - name: Create issue on critical violations
+        if: contains(steps.compliance.outputs.exit_code, '2')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = {};
+            try {
+              report = JSON.parse(fs.readFileSync('compliance-report.json', 'utf8'));
+            } catch (e) {
+              console.log('レポートファイルの読み込みに失敗');
+              return;
+            }
+            
+            const summary = report.summary || {};
+            const critical = summary.bySeverity?.critical || 0;
+            const high = summary.bySeverity?.high || 0;
+            
+            if (critical > 0 || high >= 3) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '⚠️ コンプライアンス違反が検出されました',
+                body: `## 検出結果
+            
+            - 🔴 重大違反: ${critical}件
+            - 🟠 高リスク: ${high}件
+            - 総違反数: ${summary.totalViolations || 0}件
+            
+            ### 法令別
+            ${Object.entries(summary.byLaw || {}).map(([law, count]) => `- ${law}: ${count}件`).join('\n')}
+            
+            ### 対応
+            1. \`node scripts/check-compliance-all-content.mjs\` で詳細を確認
+            2. \`node scripts/fix-compliance-violations.mjs\` で自動修正
+            3. 修正後、再度チェックを実行
+            
+            詳細は [compliance-report.json](../actions/runs/${{ github.run_id }}) を参照してください。
+            `,
+                labels: ['compliance', 'urgent']
+              });
+            }
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = {};
+            try {
+              report = JSON.parse(fs.readFileSync('compliance-report.json', 'utf8'));
+            } catch (e) {
+              console.log('レポートファイルなし');
+              return;
+            }
+            
+            const summary = report.summary || {};
+            const total = summary.totalViolations || 0;
+            const critical = summary.bySeverity?.critical || 0;
+            
+            let status = '✅ 合格';
+            if (critical > 0) {
+              status = '⛔ 重大違反あり';
+            } else if (total > 0) {
+              status = '⚠️ 軽微な違反あり';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 📜 6法コンプライアンスチェック結果
+            
+            **ステータス**: ${status}
+            
+            | 重大度 | 件数 |
+            |--------|------|
+            | 🔴 Critical | ${summary.bySeverity?.critical || 0} |
+            | 🟠 High | ${summary.bySeverity?.high || 0} |
+            | 🟡 Medium | ${summary.bySeverity?.medium || 0} |
+            | 🟢 Low | ${summary.bySeverity?.low || 0} |
+            
+            ${critical > 0 ? '⚠️ **重大な違反があります。マージ前に修正してください。**' : ''}
+            `
+            });
+
+  # コンプライアンスチェッカーのユニットテスト
+  compliance-unit-tests:
+    name: コンプライアンスチェッカーテスト
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm ci --ignore-scripts
+
+      - name: Run compliance tests
+        working-directory: apps/web
+        run: npx vitest run src/lib/compliance

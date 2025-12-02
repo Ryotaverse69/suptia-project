@@ -85,7 +85,12 @@
     "scores:sync:force": "node scripts/sync-product-scores.mjs --force",
     "prices:update": "node scripts/update-product-prices.mjs",
     "prices:rakuten": "node scripts/update-product-prices.mjs --source=rakuten",
-    "prices:yahoo": "node scripts/update-product-prices.mjs --source=yahoo"
+    "prices:yahoo": "node scripts/update-product-prices.mjs --source=yahoo",
+    "compliance:check": "node scripts/check-compliance-all-content.mjs",
+    "compliance:check:report": "node scripts/check-compliance-all-content.mjs --report",
+    "compliance:fix": "node scripts/fix-compliance-violations.mjs",
+    "compliance:fix:dry": "node scripts/fix-compliance-violations.mjs --dry-run",
+    "compliance:test": "cd apps/web && npx vitest run src/lib/compliance"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

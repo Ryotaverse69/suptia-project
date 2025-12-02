@@ -316,3 +316,245 @@ export function getFontPreloadLinks() {
     },
   ];
 }
+
+// ============================================================================
+// AI検索最適化：成分ガイド用JSON-LD（MedicalWebPage + Drug schema）
+// ============================================================================
+
+export interface IngredientSEOData {
+  name: string;
+  nameEn?: string;
+  slug: string;
+  category?: string;
+  description?: string;
+  benefits?: string[];
+  recommendedDosage?: string;
+  sideEffects?: string;
+  evidenceLevel?: string; // S/A/B/C/D
+  references?: Array<{
+    title?: string;
+    url?: string;
+    source?: string;
+  }>;
+  faqs?: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
+/**
+ * 成分ガイドページ用JSON-LD（MedicalWebPage + Drug schema）
+ * AI検索エンジンが成分情報を正確に理解・引用するために最適化
+ */
+export function generateIngredientJsonLd(ingredient: IngredientSEOData) {
+  const siteUrl = getSiteUrl();
+  const pageUrl = `${siteUrl}/ingredients/${ingredient.slug}`;
+
+  // MedicalWebPage schema（メインコンテナ）
+  const medicalWebPage: any = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "@id": pageUrl,
+    name: `${ingredient.name}の効果・副作用・おすすめサプリ`,
+    headline: `${ingredient.name}${ingredient.nameEn ? `（${ingredient.nameEn}）` : ""} - 科学的エビデンスに基づく成分ガイド`,
+    description:
+      ingredient.description ||
+      `${ingredient.name}の効果、推奨摂取量、副作用、相互作用について科学的根拠に基づいて解説。`,
+    url: pageUrl,
+    inLanguage: "ja",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "サプティア",
+      url: siteUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "サプティア",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+      },
+    },
+    datePublished: new Date().toISOString().split("T")[0],
+    dateModified: new Date().toISOString().split("T")[0],
+  };
+
+  // Drug/DietarySupplement schema（成分の詳細情報）
+  const drugSchema: any = {
+    "@context": "https://schema.org",
+    "@type": "Drug",
+    name: ingredient.name,
+    alternateName: ingredient.nameEn,
+    description:
+      ingredient.description ||
+      `${ingredient.name}は${ingredient.category || "栄養素"}の一種です。`,
+    drugClass: ingredient.category || "Dietary Supplement",
+    url: pageUrl,
+  };
+
+  // エビデンスレベルをlegalStatusとして表現
+  if (ingredient.evidenceLevel) {
+    const evidenceLevelMap: Record<string, string> = {
+      S: "大規模RCT・メタ解析による高い信頼性",
+      A: "良質な研究で効果が確認",
+      B: "限定的研究・条件付きの効果",
+      C: "動物実験・小規模試験レベル",
+      D: "理論・未検証レベル",
+    };
+    drugSchema.legalStatus = `エビデンスレベル ${ingredient.evidenceLevel}: ${evidenceLevelMap[ingredient.evidenceLevel] || "評価中"}`;
+  }
+
+  // 推奨摂取量
+  if (ingredient.recommendedDosage) {
+    drugSchema.dosageForm = ingredient.recommendedDosage;
+  }
+
+  // 副作用・注意事項
+  if (ingredient.sideEffects) {
+    drugSchema.warning = ingredient.sideEffects;
+  }
+
+  // 効果・効能（medicalConditionTreatedは避け、indicationを使用）
+  if (ingredient.benefits && ingredient.benefits.length > 0) {
+    drugSchema.mechanismOfAction = ingredient.benefits.slice(0, 5).join("。");
+  }
+
+  // 参考文献
+  if (ingredient.references && ingredient.references.length > 0) {
+    medicalWebPage.citation = ingredient.references
+      .filter((ref) => ref.url)
+      .slice(0, 5)
+      .map((ref) => ({
+        "@type": "CreativeWork",
+        name: ref.title || ref.source || "参考文献",
+        url: ref.url,
+      }));
+  }
+
+  return [medicalWebPage, drugSchema];
+}
+
+/**
+ * FAQPage schema（FAQ セクション用）
+ * AI検索エンジンがQ&A形式で回答を引用しやすくする
+ */
+export function generateFAQPageJsonLd(
+  faqs: Array<{ question: string; answer: string }>,
+  pageUrl?: string,
+) {
+  if (!faqs || faqs.length === 0) return null;
+
+  const siteUrl = getSiteUrl();
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+    ...(pageUrl && { url: `${siteUrl}${pageUrl}` }),
+  };
+}
+
+/**
+ * 成分ガイドページのメタデータ生成
+ */
+export function generateIngredientMetadata(
+  ingredient: IngredientSEOData,
+): Metadata {
+  const now = new Date();
+  const yearMonth = `${now.getFullYear()}年${now.getMonth() + 1}月`;
+
+  // エビデンスレベルに応じたタイトル最適化
+  const evidenceLabel = ingredient.evidenceLevel
+    ? `【エビデンス${ingredient.evidenceLevel}】`
+    : "";
+
+  const title = `${evidenceLabel}${ingredient.name}の効果・副作用・おすすめサプリ【${yearMonth}最新】`;
+
+  // AI検索に最適化されたディスクリプション
+  let description =
+    ingredient.description?.slice(0, 100) ||
+    `${ingredient.name}の科学的根拠に基づく効果と副作用を解説。`;
+
+  if (ingredient.benefits && ingredient.benefits.length > 0) {
+    description += ` 主な効果: ${ingredient.benefits.slice(0, 3).join("、")}。`;
+  }
+
+  if (ingredient.evidenceLevel) {
+    description += ` エビデンスレベル: ${ingredient.evidenceLevel}。`;
+  }
+
+  description += " サプティアで詳しく比較・検証。";
+
+  return generateMetadata({
+    title,
+    description: description.slice(0, 160),
+    canonical: `/ingredients/${ingredient.slug}`,
+    keywords: [
+      ingredient.name,
+      ingredient.nameEn || "",
+      `${ingredient.name} 効果`,
+      `${ingredient.name} 副作用`,
+      `${ingredient.name} サプリ`,
+      `${ingredient.name} おすすめ`,
+      ingredient.category || "サプリメント",
+    ].filter(Boolean),
+  });
+}
+
+// ============================================================================
+// Article schema（成分ガイド記事用）
+// ============================================================================
+
+export interface ArticleSEOData {
+  headline: string;
+  description?: string;
+  slug: string;
+  author?: string;
+  datePublished?: string;
+  dateModified?: string;
+  image?: string;
+}
+
+/**
+ * Article schema（成分ガイド記事用）
+ */
+export function generateArticleJsonLd(article: ArticleSEOData) {
+  const siteUrl = getSiteUrl();
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.headline,
+    description: article.description,
+    url: `${siteUrl}/ingredients/${article.slug}`,
+    image: article.image || `${siteUrl}/og-default.jpg`,
+    author: {
+      "@type": "Organization",
+      name: article.author || "サプティア編集部",
+      url: siteUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "サプティア",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+      },
+    },
+    datePublished: article.datePublished || new Date().toISOString(),
+    dateModified: article.dateModified || new Date().toISOString(),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/ingredients/${article.slug}`,
+    },
+  };
+}

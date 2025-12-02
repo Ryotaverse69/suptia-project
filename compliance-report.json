@@ -1,0 +1,5441 @@
+{
+  "timestamp": "2025-12-02T12:29:58.308Z",
+  "summary": {
+    "totalIngredients": 81,
+    "totalProducts": 413,
+    "ingredientsWithViolations": 49,
+    "productsWithViolations": 78,
+    "totalViolations": 288,
+    "bySeverity": {
+      "critical": 55,
+      "high": 120,
+      "medium": 113,
+      "low": 0
+    },
+    "byLaw": {
+      "pharmaceutical_affairs": 184,
+      "health_promotion": 35,
+      "food_labeling": 7,
+      "food_sanitation": 58,
+      "premiums_representations": 4,
+      "commercial_transactions": 0
+    }
+  },
+  "ingredientViolations": [
+    {
+      "id": "coq10",
+      "name": "CoQ10（コエンザイムQ10）",
+      "slug": "coq10",
+      "fields": [
+        {
+          "field": "benefits[5]",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 12,
+                "end": 21
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 12,
+                "end": 18
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[2]",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 6,
+                "end": 15
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 6,
+                "end": 15
+              }
+            },
+            {
+              "originalText": "コレステロールを低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 95,
+                "end": 105
+              }
+            },
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 543,
+                "end": 552
+              }
+            }
+          ],
+          "score": 40
+        }
+      ]
+    },
+    {
+      "id": "echinacea",
+      "name": "エキナセア",
+      "slug": "echinacea",
+      "fields": [
+        {
+          "field": "benefits[6]",
+          "violations": [
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 14,
+                "end": 18
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 15,
+                "end": 19
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[4]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 38,
+                "end": 42
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "elderberry",
+      "name": "エルダーベリー",
+      "slug": "elderberry",
+      "fields": [
+        {
+          "field": "benefits[8]",
+          "violations": [
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 17,
+                "end": 21
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            },
+            {
+              "originalText": "血糖値を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 15,
+                "end": 22
+              }
+            }
+          ],
+          "score": 40
+        },
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 12,
+                "end": 18
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "gaba",
+      "name": "GABA（γ-アミノ酪酸）",
+      "slug": "gaba",
+      "fields": [
+        {
+          "field": "benefits[3]",
+          "violations": [
+            {
+              "originalText": "血圧を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 19,
+                "end": 27
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "benefits[4]",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 59,
+                "end": 67
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[9]",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 62,
+                "end": 66
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[2]",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 9,
+                "end": 15
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "glycine",
+      "name": "グリシン",
+      "slug": "glycine",
+      "fields": [
+        {
+          "field": "benefits[10]",
+          "violations": [
+            {
+              "originalText": "代謝を促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 38,
+                "end": 43
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "ingredient-ashwagandha",
+      "name": "アシュワガンダ",
+      "slug": "ashwagandha",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 76,
+                "end": 84
+              }
+            },
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 372,
+                "end": 380
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 311,
+                "end": 319
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[8]",
+          "violations": [
+            {
+              "originalText": "血糖値を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 39,
+                "end": 48
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-bcaa",
+      "name": "BCAA(分岐鎖アミノ酸)",
+      "slug": "bcaa",
+      "fields": [
+        {
+          "field": "faqs[2].question",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 10,
+                "end": 14
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 10,
+                "end": 14
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-bilberry",
+      "name": "ビルベリー（ブルーベリー）",
+      "slug": "bilberry",
+      "fields": [
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-biotin",
+      "name": "ビオチン（ビタミンB7）",
+      "slug": "biotin",
+      "fields": [
+        {
+          "field": "benefits[4]",
+          "violations": [
+            {
+              "originalText": "糖尿病予防",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 7,
+                "end": 12
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "benefits[6]",
+          "violations": [
+            {
+              "originalText": "代謝を促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 15,
+                "end": 20
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "老化を遅らせる",
+              "suggestedText": "いつまでも元気に",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 261,
+                "end": 268
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "ingredient-black-cohosh",
+      "name": "ブラックコホシュ",
+      "slug": "black-cohosh",
+      "fields": [
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 9,
+                "end": 13
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 220,
+                "end": 224
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-caffeine",
+      "name": "カフェイン",
+      "slug": "caffeine",
+      "fields": [
+        {
+          "field": "benefits[3]",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 6,
+                "end": 10
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 348,
+                "end": 352
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-calcium",
+      "name": "カルシウム",
+      "slug": "calcium",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 579,
+                "end": 583
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-chromium",
+      "name": "クロム",
+      "slug": "chromium",
+      "fields": [
+        {
+          "field": "benefits[9]",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 49,
+                "end": 57
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-coenzyme-q10",
+      "name": "コエンザイムQ10",
+      "slug": "coenzyme-q10",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 403,
+                "end": 411
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 211,
+                "end": 220
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-coleus-forskohlii",
+      "name": "コレウスフォルスコリエキス（フォルスコリン）",
+      "slug": "coleus-forskohlii",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 52,
+                "end": 56
+              }
+            },
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 179,
+                "end": 183
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 167,
+                "end": 171
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 4
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 21,
+                "end": 25
+              }
+            },
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 111,
+                "end": 115
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "血圧を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 47,
+                "end": 55
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 28,
+                "end": 32
+              }
+            },
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 313,
+                "end": 317
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 235,
+                "end": 239
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-dha",
+      "name": "DHA",
+      "slug": "dha",
+      "fields": [
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "中性脂肪低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 6
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-dha-epa",
+      "name": "DHA・EPA（オメガ3脂肪酸）",
+      "slug": "dha-epa",
+      "fields": [
+        {
+          "field": "benefits[6]",
+          "violations": [
+            {
+              "originalText": "血液サラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 6
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[0]",
+          "violations": [
+            {
+              "originalText": "血液サラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 22,
+                "end": 28
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[5]",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 9
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 217,
+                "end": 222
+              }
+            },
+            {
+              "originalText": "血液サラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 154,
+                "end": 160
+              }
+            }
+          ],
+          "score": 50
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 194,
+                "end": 203
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-ellagic-acid",
+      "name": "エラグ酸",
+      "slug": "ellagic-acid",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 57,
+                "end": 61
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 106,
+                "end": 110
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 21,
+                "end": 25
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            },
+            {
+              "originalText": "血糖値を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 7,
+                "end": 14
+              }
+            }
+          ],
+          "score": 40
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 59,
+                "end": 63
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 106,
+                "end": 110
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-enzyme",
+      "name": "酵素",
+      "slug": "enzyme",
+      "fields": [
+        {
+          "field": "interactions[2]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-ginkgo",
+      "name": "ギンコ（イチョウ葉）",
+      "slug": "ginkgo",
+      "fields": [
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 345,
+                "end": 350
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[4].question",
+          "violations": [
+            {
+              "originalText": "血液をサラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 4,
+                "end": 11
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-ginkgo-biloba",
+      "name": "ギンコビロバ（イチョウ葉エキス）",
+      "slug": "ginkgo-biloba",
+      "fields": [
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 200,
+                "end": 205
+              }
+            },
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 273,
+                "end": 278
+              }
+            }
+          ],
+          "score": 40
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "短期間で効果",
+              "suggestedText": "継続的なサポートに",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 348,
+                "end": 354
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-glutamine",
+      "name": "グルタミン",
+      "slug": "glutamine",
+      "fields": [
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 11,
+                "end": 15
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[2]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 28,
+                "end": 32
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-iodine",
+      "name": "ヨウ素",
+      "slug": "iodine",
+      "fields": [
+        {
+          "field": "benefits[5]",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 16,
+                "end": 24
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 28,
+                "end": 30
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-l-carnitine",
+      "name": "L-カルニチン",
+      "slug": "l-carnitine",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 127,
+                "end": 131
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 75,
+                "end": 79
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 134,
+                "end": 138
+              }
+            },
+            {
+              "originalText": "脂肪を燃やす",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 163,
+                "end": 169
+              }
+            },
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 389,
+                "end": 393
+              }
+            }
+          ],
+          "score": 40
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 122,
+                "end": 126
+              }
+            },
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 329,
+                "end": 333
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 46,
+                "end": 50
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-maca",
+      "name": "マカ",
+      "slug": "maca",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 67,
+                "end": 75
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[1]",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 8
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 7,
+                "end": 15
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 45,
+                "end": 53
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 42,
+                "end": 50
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-magnesium",
+      "name": "マグネシウム",
+      "slug": "magnesium",
+      "fields": [
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "糖尿病予防",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 352,
+                "end": 357
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "代謝を促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 5,
+                "end": 10
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "ingredient-manuka-honey",
+      "name": "マヌカハニー",
+      "slug": "manuka-honey",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 37,
+                "end": 41
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 2
+              }
+            },
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 17,
+                "end": 19
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "benefits[1]",
+          "violations": [
+            {
+              "originalText": "炎症を和らげる",
+              "suggestedText": "快適な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 12,
+                "end": 19
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[0]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 26,
+                "end": 28
+              }
+            },
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 56,
+                "end": 58
+              }
+            }
+          ],
+          "score": 60
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 10,
+                "end": 12
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 15,
+                "end": 19
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-melatonin",
+      "name": "メラトニン",
+      "slug": "melatonin",
+      "fields": [
+        {
+          "field": "sideEffects",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 103,
+                "end": 111
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[9]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 4
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[1]",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 10,
+                "end": 16
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[2]",
+          "violations": [
+            {
+              "originalText": "糖尿病治療",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 0,
+                "end": 5
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 111,
+                "end": 119
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[4].question",
+          "violations": [
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 7,
+                "end": 15
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 17,
+                "end": 25
+              }
+            },
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 260,
+                "end": 268
+              }
+            },
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 351,
+                "end": 359
+              }
+            },
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 374,
+                "end": 382
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "ingredient-nac",
+      "name": "NAC（N-アセチルシステイン）",
+      "slug": "nac",
+      "fields": [
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "臨床試験で確認",
+              "suggestedText": "研究が行われています",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 73,
+                "end": 80
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "ingredient-niacin",
+      "name": "ナイアシン（ビタミンB3）",
+      "slug": "niacin",
+      "fields": [
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "中性脂肪低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 622,
+                "end": 628
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[9]",
+          "violations": [
+            {
+              "originalText": "老化を遅らせる",
+              "suggestedText": "いつまでも元気に",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 25,
+                "end": 32
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 881,
+                "end": 889
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "代謝が促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 388,
+                "end": 393
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 626,
+                "end": 634
+              }
+            },
+            {
+              "originalText": "アンチエイジング",
+              "suggestedText": "年齢に応じた健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 1198,
+                "end": 1206
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-omega-3",
+      "name": "オメガ3脂肪酸（EPA・DHA）",
+      "slug": "omega-3",
+      "fields": [
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "うつ病改善",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 201,
+                "end": 206
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "うつ病改善",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 73,
+                "end": 78
+              }
+            },
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 225,
+                "end": 230
+              }
+            },
+            {
+              "originalText": "中性脂肪低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 42,
+                "end": 48
+              }
+            },
+            {
+              "originalText": "血液サラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 22,
+                "end": 28
+              }
+            }
+          ],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "id": "ingredient-potassium",
+      "name": "カリウム",
+      "slug": "potassium",
+      "fields": [
+        {
+          "field": "faqs[3].question",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 10,
+                "end": 16
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-probiotics",
+      "name": "プロバイオティクス",
+      "slug": "probiotics",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 207,
+                "end": 209
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-propolis",
+      "name": "プロポリス",
+      "slug": "propolis",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 25,
+                "end": 27
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[1]",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 0,
+                "end": 2
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "抗菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 20,
+                "end": 22
+              }
+            },
+            {
+              "originalText": "抗菌作用",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 34,
+                "end": 38
+              }
+            },
+            {
+              "originalText": "ホルモンバランス",
+              "suggestedText": "健やかな毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 82,
+                "end": 90
+              }
+            }
+          ],
+          "score": 40
+        }
+      ]
+    },
+    {
+      "id": "ingredient-red-clover",
+      "name": "レッドクローバー",
+      "slug": "red-clover",
+      "fields": [
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "コレステロールを低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 15,
+                "end": 25
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 9,
+                "end": 13
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 216,
+                "end": 225
+              }
+            },
+            {
+              "originalText": "短期間で効果",
+              "suggestedText": "継続的なサポートに",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 417,
+                "end": 423
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "ingredient-selenium",
+      "name": "セレン",
+      "slug": "selenium",
+      "fields": [
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 38,
+                "end": 42
+              }
+            },
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 140,
+                "end": 144
+              }
+            }
+          ],
+          "score": 40
+        }
+      ]
+    },
+    {
+      "id": "ingredient-sesamin",
+      "name": "セサミン",
+      "slug": "sesamin",
+      "fields": [
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "代謝を促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 15,
+                "end": 20
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "コレステロールを低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 15,
+                "end": 25
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-soy-isoflavones",
+      "name": "大豆イソフラボン",
+      "slug": "soy-isoflavones",
+      "fields": [
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "コレステロールを低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 15,
+                "end": 25
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[0]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 9,
+                "end": 13
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[1].answer",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 524,
+                "end": 528
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 242,
+                "end": 251
+              }
+            },
+            {
+              "originalText": "短期間で効果",
+              "suggestedText": "継続的なサポートに",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 443,
+                "end": 449
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-a",
+      "name": "ビタミンA（レチノール）",
+      "slug": "vitamin-a",
+      "fields": [
+        {
+          "field": "benefits[1]",
+          "violations": [
+            {
+              "originalText": "抵抗力を高める",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 16,
+                "end": 23
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 1031,
+                "end": 1035
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 700,
+                "end": 709
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-b12",
+      "name": "ビタミンB12（コバラミン）",
+      "slug": "vitamin-b12",
+      "fields": [
+        {
+          "field": "benefits[3]",
+          "violations": [
+            {
+              "originalText": "代謝を促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 5,
+                "end": 10
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-b6",
+      "name": "ビタミンB6（ピリドキシン）",
+      "slug": "vitamin-b6",
+      "fields": [
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "臨床試験で確認",
+              "suggestedText": "研究が行われています",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 52,
+                "end": 59
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "認知症予防",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 65,
+                "end": 70
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-d",
+      "name": "ビタミンD",
+      "slug": "vitamin-d",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 371,
+                "end": 375
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "recommendedDosage",
+          "violations": [
+            {
+              "originalText": "うつ病改善",
+              "suggestedText": "気分の健康をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 381,
+                "end": 386
+              }
+            },
+            {
+              "originalText": "専門家が推奨",
+              "suggestedText": "（根拠のない推奨表現は避けてください）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 561,
+                "end": 567
+              }
+            }
+          ],
+          "score": 50
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-e",
+      "name": "ビタミンE",
+      "slug": "vitamin-e",
+      "fields": [
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "痛みを和らげる",
+              "suggestedText": "快適な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 25,
+                "end": 32
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "benefits[9]",
+          "violations": [
+            {
+              "originalText": "血液をサラサラ",
+              "suggestedText": "めぐりをサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 10,
+                "end": 17
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 324,
+                "end": 328
+              }
+            },
+            {
+              "originalText": "がん予防",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 1154,
+                "end": 1158
+              }
+            }
+          ],
+          "score": 40
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-k",
+      "name": "ビタミンK",
+      "slug": "vitamin-k",
+      "fields": [
+        {
+          "field": "faqs[2].answer",
+          "violations": [
+            {
+              "originalText": "動脈硬化を予防",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 380,
+                "end": 387
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "ingredient-vitamin-k2",
+      "name": "ビタミンK2（メナキノン）",
+      "slug": "vitamin-k2",
+      "fields": [
+        {
+          "field": "interactions[4]",
+          "violations": [
+            {
+              "originalText": "コレステロール低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 8,
+                "end": 17
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "faqs[0].answer",
+          "violations": [
+            {
+              "originalText": "動脈硬化予防",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 302,
+                "end": 308
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[4].answer",
+          "violations": [
+            {
+              "originalText": "短期間で効果",
+              "suggestedText": "継続的なサポートに",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 415,
+                "end": 421
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "ingredient-zinc",
+      "name": "亜鉛",
+      "slug": "zinc",
+      "fields": [
+        {
+          "field": "benefits[2]",
+          "violations": [
+            {
+              "originalText": "老化を遅らせる",
+              "suggestedText": "いつまでも元気に",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 27,
+                "end": 34
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "l-theanine",
+      "name": "L-テアニン",
+      "slug": "l-theanine",
+      "fields": [
+        {
+          "field": "sideEffects",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 335,
+                "end": 341
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "benefits[0]",
+          "violations": [
+            {
+              "originalText": "血圧を正常化",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 52,
+                "end": 58
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[0]",
+          "violations": [
+            {
+              "originalText": "血圧を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 11,
+                "end": 17
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[4]",
+          "violations": [
+            {
+              "originalText": "がん治療",
+              "suggestedText": "（医薬品ではないため効能効果を標榜できません）",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 37,
+                "end": 41
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "faqs[3].answer",
+          "violations": [
+            {
+              "originalText": "代謝促進",
+              "suggestedText": "活動的な毎日をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "medium",
+              "position": {
+                "start": 156,
+                "end": 160
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "rhodiola",
+      "name": "ロディオラ・ロゼア（イワベンケイ）",
+      "slug": "rhodiola",
+      "fields": [
+        {
+          "field": "benefits[7]",
+          "violations": [
+            {
+              "originalText": "抵抗力を高める",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 33,
+                "end": 40
+              }
+            }
+          ],
+          "score": 80
+        },
+        {
+          "field": "interactions[3]",
+          "violations": [
+            {
+              "originalText": "血糖値を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 11,
+                "end": 20
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "interactions[4]",
+          "violations": [
+            {
+              "originalText": "血圧を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 10,
+                "end": 18
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "whey-protein",
+      "name": "ホエイプロテイン",
+      "slug": "whey-protein",
+      "fields": [
+        {
+          "field": "benefits[11]",
+          "violations": [
+            {
+              "originalText": "コレステロールを低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 40,
+                "end": 50
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    }
+  ],
+  "productViolations": [
+    {
+      "id": "product-rakuten-afc-10002396",
+      "name": "葉酸 サプリ mitete 葉酸サプリ 30日分【袋タイプ】 AFC 葉酸サプリメント 葉酸配合 乳酸菌 鉄 カルシウム ビタミン 妊娠中 妊活【送料無料】",
+      "slug": "mitete-30-afc",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 546,
+                "end": 548
+              }
+            },
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1372,
+                "end": 1376
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-afc-10002440",
+      "name": "［23％OFF］葉酸 配合サプリ AFC mitete 葉酸サプリ 30日分 6個セット【袋タイプ】 サプリ サプリメント 送料無料",
+      "slug": "23-off-afc-mitete-30-6",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 549,
+                "end": 551
+              }
+            },
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1380,
+                "end": 1384
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-afc-10033092",
+      "name": "葉酸 配合サプリ AFC mitete 葉酸サプリ 90日分 (30日分 3個セット)【袋タイプ】サプリ サプリメント 送料無料",
+      "slug": "afc-mitete-90-30-3",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 549,
+                "end": 551
+              }
+            },
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1380,
+                "end": 1384
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-bayeryakuhin-10000004",
+      "name": "葉酸サプリ エレビット 妊活 妊婦 授乳 産後 60日分 無添加 鉄分 サプリメント 葉酸800μg カルシウム ビタミンe ビタミンd おすすめ 鉄 マタニティ ママ 妊娠 サプリ 妊活サプリ ギフト プレゼント【エレビット公式(elevit)】",
+      "slug": "60-800-g-e-d-elevit",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 29,
+                "end": 32
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "売上第1位",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1494,
+                "end": 1499
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-bayeryakuhin-10000005",
+      "name": "葉酸サプリ エレビット 妊活 妊婦 授乳 産後 90日分 無添加 鉄分 サプリメント 葉酸800μg カルシウム ビタミンe ビタミンd おすすめ 鉄 マタニティ ママ 妊娠 サプリ 妊活サプリ ギフト プレゼント【エレビット公式(elevit)】",
+      "slug": "90-800-g-e-d-elevit",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 29,
+                "end": 32
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "売上第1位",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1494,
+                "end": 1499
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-excitech-10000017",
+      "name": "【スーパーSALE★最安値挑戦】 HMB サプリ 【楽天3冠】 hmb ex サプリ 錠剤 男性 女性 タブレット 30～60日分 アミノ酸サプリメント 必須アミノ酸 サプリメント メンズ レディース 360 筋トレ トレーニング 90,000mg 日本 国産",
+      "slug": "sale-hmb-3-hmb-ex-30-60-360-90-000mg",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "最安値",
+              "suggestedText": "（比較対象の明示が必要です）",
+              "law": "premiums_representations",
+              "lawName": "景品表示法",
+              "severity": "high",
+              "position": {
+                "start": 10,
+                "end": 13
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-f222071-fujinomiya-10000771",
+      "name": "【ふるさと納税】サントリーウエルネス DHA&EPA+セサミンEX 120粒 (約30日分)　DHA EPA セサミン サプリ ふるさと納税 ふるさと 送料無料 静岡県 富士宮市",
+      "slug": "dha-epa-ex-120-30-dha-epa",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 263,
+                "end": 267
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-f222101-fuji-10001049",
+      "name": "【ふるさと納税】 【レビューキャンペーン】 DHC 血糖値 ダブル対策 30日分 4ヶ月分 セット 機能性表示食品 サプリメント 桑の葉由来イミノシュガー 食後 空腹時 バナバ葉由来コロソリン酸 サラシアエキス末 タブレット 富士市 [sf014-002]",
+      "slug": "dhc-30-4-sf014-002",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "血糖値を下げる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 168,
+                "end": 175
+              }
+            },
+            {
+              "originalText": "血糖値を低下させる",
+              "suggestedText": "健康的な生活習慣をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "critical",
+              "position": {
+                "start": 365,
+                "end": 374
+              }
+            }
+          ],
+          "score": 40
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-f222101-fuji-10001182",
+      "name": "【ふるさと納税】 選べる本数 1本 2本 サプリ サントリー セサミンEX 270粒入 (約90日分) ごま オリザプラス セサミン ビタミンE サプリメント サントリーウエルネス 富士市 [sf061-002] [sf061-009]",
+      "slug": "1-2-ex-270-90-e-sf061-002-sf061-009",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "NO.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 9,
+                "end": 13
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-f222101-fuji-10001465",
+      "name": "【ふるさと納税】 ネイチャーメイド 大塚製薬 鉄 (アイアン) 200粒 1個/2個/3個 (100〜300日分) 1日2粒 サプリメント 赤血球 女性 ミネラル スポーツ ダイエット 静岡県 富士市 [sf015-025-027]",
+      "slug": "200-1-2-3-100-300-1-2-sf015-025-027",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 231,
+                "end": 234
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-fancl-shop-10000726",
+      "name": "大人のカロリミット＜機能性表示食品＞【ファンケル 公式】 [FANCL ダイエット サポート サプリメント キトサン カロリー サプリ 健康食品 桑の葉 くわのは サポニン 女性 男性 血中中性脂肪 40代 ヘルスケア 健康サプリ キトサンサプリ 糖 吸収 抑える]",
+      "slug": "fancl-40",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 3219,
+                "end": 3221
+              }
+            },
+            {
+              "originalText": "特許取得",
+              "suggestedText": "（事実確認が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 2441,
+                "end": 2445
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-grace-grace-10000358",
+      "name": "自然由来成分使用 高濃度1日ビタミンC1000mg ビタミンC 60粒 無添加 メール便送料無料 サプリ サプリメント ララナチュラ ビタミンC レモン＆ローズヒップ タイムリリース ビタミンCサプリ アスコルビン酸 ビタミン剤 持続型",
+      "slug": "1-c1000mg-c-60-c-c",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 36,
+                "end": 39
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 297,
+                "end": 300
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 437,
+                "end": 440
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-grace-grace-10000370",
+      "name": "自然由来成分使用 ビタミンD サプリメント 60粒 (2ヶ月分) 高濃度 1粒にビタミンD 50μg (2000IU) 無添加 ビタミンD3 メール便送料無料 国内製造 ビタミンDサプリ 2000IU サプリ ララナチュラ ビタミンD ビタミンD2 びたみんD",
+      "slug": "d-60-2-1-d-50-g-2000iu-d3-d-2000iu-d-d2-d",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 60,
+                "end": 63
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 236,
+                "end": 239
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 308,
+                "end": 311
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10028795",
+      "name": "【店内8000円以上1000円OFF】Lオプティジンク(メチオニン 高吸収タイプ亜鉛) 30mg 100粒 NOW Foods (ナウフーズ) 単品 セット L-OptiZinc 30mg 100cp 銅 特許成分 L型 ミネラル mineral 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-l-30mg-100-now-foods-l-optizinc-30mg-100cp-l-mineral",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1489,
+                "end": 1495
+              }
+            },
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1527,
+                "end": 1533
+              }
+            },
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1561,
+                "end": 1567
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10028867",
+      "name": "【店内8000円以上1000円OFF】[キレイと元気をサポート！]ナウフーズ C-1000 ビタミンC サプリメント 1000mg 250粒 NOW Foods タブレット ローズヒップ タイムリリース 単品 セット 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-c-1000-c-1000mg-250-now-foods",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1668,
+                "end": 1674
+              }
+            },
+            {
+              "originalText": "卵不使用",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 293,
+                "end": 297
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10033271",
+      "name": "【店内8000円以上1000円OFF】[2個セット] グリシン酸亜鉛 30mg 120粒 NOW Foods (ナウフーズ) Zinc Glycinate - 120 Softgels 2bottles set ソフトジェル 健康サプリメント 栄養補助食品 海外 アメリカ ジンク",
+      "slug": "8000-1000-off-2-30mg-120-now-foods-zinc-glycinate-120-softgels-2bottles-set",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1535,
+                "end": 1541
+              }
+            },
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1573,
+                "end": 1579
+              }
+            },
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1607,
+                "end": 1613
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10036763",
+      "name": "【店内8000円以上1000円OFF】【11月上旬出荷予定】[健康で丈夫な体作りに!]ナウフーズ ビタミンD3 サプリメント 2000IU 120粒 NOW Foods Vitamin D-3 ソフトジェル Vitamin D-3 2000 IU 120 Softgels 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-11-d3-2000iu-120-now-foods-vitamin-d-3-vitamin-d-3-2000-iu-120-softgels",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1481,
+                "end": 1487
+              }
+            },
+            {
+              "originalText": "卵不使用",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 109,
+                "end": 113
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10039713",
+      "name": "【店内8000円以上1000円OFF】[健康で丈夫な体作りに!]ナウフーズ ビタミンD-3 サプリメント 5000IU 240粒 NOW Foods Vitamin D-3 ソフトジェル Softgels 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-d-3-5000iu-240-now-foods-vitamin-d-3-softgels",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 1754,
+                "end": 1760
+              }
+            },
+            {
+              "originalText": "卵不使用",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 266,
+                "end": 270
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10040931",
+      "name": "【店内8000円以上1000円OFF】[勉強・仕事で力を発揮したい方に]NOW Foods ウルトラオメガ 3-D 180粒 ソフトジェル ナウフーズ Ultra Omega 3-D 180softgels Ultra Omega 3-D 180softgels 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-now-foods-3-d-180-ultra-omega-3-d-180softgels-ultra-omega-3-d-180softgels",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "卵不使用",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 536,
+                "end": 540
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10042611",
+      "name": "【店内8000円以上1000円OFF】ドクターメルコラ リポソームビタミンC サプリメント 1000mg 180粒 DR. MERCOLA Liposomal VitaminC カプセル 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-c-1000mg-180-dr-mercola-liposomal-vitaminc",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "保存料不使用",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 280,
+                "end": 286
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-harmony-10057487",
+      "name": "【8000円以上1000円OFF】ソーン ピコリン酸亜鉛 ジンク ピコリネート 15mg サプリメント 60粒 カプセル Thorne Zinc Picolinate Capsules 健康維持 生活習慣 スキンケア 目の健康 健康サプリメント 栄養補助食品 海外 アメリカ",
+      "slug": "8000-1000-off-15mg-60-thorne-zinc-picolinate-capsules",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "卵不使用",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 485,
+                "end": 489
+              }
+            },
+            {
+              "originalText": "小麦フリー",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 1424,
+                "end": 1429
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-herbal-i-10000556",
+      "name": "＼1,000円ぽっきり価格／ ブランド累計170万袋突破 ビタミンD3 サプリ 無添加 約60日分 60粒 ビタミンD 高濃度 1400IU 日光 ソフトジェル サプリメント Vitamin D3 健康 国内製造 小粒タイプ 漢方生薬研究所",
+      "slug": "1-000-170-d3-60-60-d-1400iu-vitamin-d3",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 40,
+                "end": 43
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-honeymother-10000005",
+      "name": "マヌカハニー UMF10+ 250g [MGO261+] はちみつ品質証明書 残留農薬不検出 証明書付モノフローラル はちみつ 非加熱 100％ 純粋 はちみつコンテスト最高賞受賞 ；",
+      "slug": "umf10-250g-mgo261-100",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 733,
+                "end": 736
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-honeymother-10000192",
+      "name": "マヌカハニー UMF10+ 250g [2個セット - MGO261+] はちみつ非加熱 100％純粋 生マヌカ ハニーマザー オーガニック manuka マヌカはちみつ 生はちみつ ハチミツ 蜂蜜 ；",
+      "slug": "umf10-250g-2-mgo261-100-manuka",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 750,
+                "end": 753
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-jinfu-10000269",
+      "name": "【3個セット】ファンケル (FANCL) 40代からのサプリメント女性用 45〜90日分 年代 サプリ Q10/DHC/ミネラル/アスタキサンチン/コラーゲン マルチビタミン サプリ 健康食品 ヘルスケア 記憶力 gaba サプリ 総合ビタミン剤 免疫力アップサプリ えんきん サプリ 女性 人気 40代",
+      "slug": "3-fancl-40-45-90-q10-dhc-gaba-40",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "免疫力アップ",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 124,
+                "end": 130
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kenkocom-11496799",
+      "name": "オリヒロ DHA EPA(180粒)【slide_e8】【オリヒロ(サプリメント)】",
+      "slug": "dha-epa-180-slide-e8",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 128,
+                "end": 135
+              }
+            },
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 319,
+                "end": 326
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kensyokuryohin-10000284",
+      "name": "DHA EPA サプリメント お試し価格 海洋の宝 DPA オメガ3系 DHA EPA DPA オメガ3脂肪酸 深海鮫肝油とDHA フィッシュオイル クリルオイル ハープシールオイル アザラシ油 生 DHA EPA サプリ",
+      "slug": "dha-epa-dpa-3-dha-epa-dpa-3-dha-dha-epa",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 223,
+                "end": 226
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kentoku-10000437",
+      "name": "無農薬 ナチュラルカムカムC 90粒 1粒約20mgの天然ビタミンC含有 化学合成ビタミンCや酸化防止剤は不添加 サプリ 美容 ビタミンc フラボノイド エイジング ポリフェノール サプリ 賞味期限：2027.06.30",
+      "slug": "c-90-1-20mg-c-c-c-2027-06-30",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 1010,
+                "end": 1013
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 1025,
+                "end": 1028
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 1093,
+                "end": 1096
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kyunan-10001288",
+      "name": "＼レビュー高評価4.45／美粉屋 こなゆきコラーゲン100000mg コラーゲンパウダー1000円ポッキリ 送料無料食品屋が本当に美容を考えた一番搾り低分子コラーゲンペプチド| 国産100％ 粉末 サプリ コラーゲンドリンク プロテイン お買い物マラソン",
+      "slug": "4-45-100000mg-1000-100",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 51,
+                "end": 55
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 483,
+                "end": 486
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 1395,
+                "end": 1398
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 1406,
+                "end": 1409
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kyunan-10002008",
+      "name": "＼レビュー6万件の実績／酵素ドリンク 美粉屋みらいのこうそ100,000mg 砂糖不使用 長期熟成酵素と酵母・麹も配合し、さらに補酵素の高濃度ビタミンCを1日分配合！|酵素 ドリンク サプリ ファスティング 断食 酵素ダイエット サプリメント ビタミン",
+      "slug": "6-100-000mg-c-1",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 311,
+                "end": 314
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-kyunan-10020376",
+      "name": "プロテイン 女性 タンパクオトメ 送料無料 女性用 国内生産 ホエイプロテインとソイプロテインをW配合。タンパク質と25種の美容成分、高タンパク低糖質。プロテイン ダイエット 置き換えダイエット 完全栄養食",
+      "slug": "w-25",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "NO.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 2643,
+                "end": 2647
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-lohas-s-10000474",
+      "name": "DHA EPA サプリ 180粒 180日分 オメガ3 サプリメント フィッシュオイル 魚油 国産 ピュアオメガ カプセル オメガ3脂肪酸 必須脂肪酸 持ち運び・外出時に便利 飲みやすいソフトカプセル ロハスタイル LOHAStyle",
+      "slug": "dha-epa-180-180-3-3-lohastyle",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 246,
+                "end": 249
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-lypoc-10000000",
+      "name": "【 Lypo-C 公式 】リポ カプセル ビタミン C(11包入×1箱) リポソーム ビタミンC サプリ サプリメント 1000mg / 1包あたり 栄養 国内製造 日本 国産 お試しサイズ リポソームビタミンC 無添加 溶かして飲む リポシー Lypo-C リポC",
+      "slug": "lypo-c-c-11-1-c-1000mg-1-c-lypo-c-c",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 107,
+                "end": 110
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-manro-store-10000012",
+      "name": "FANCL ファンケル 50代からのサプリメント 女性用　90日分 ビタミン ミネラル ブルーベリー サプリ 女性 健康サプリ 全国送料無料・ネコポス発送 賞味期限2027.04以降",
+      "slug": "fancl-50-90-2027-04",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 277,
+                "end": 279
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-muragen-10007905",
+      "name": "◆エントリーで全品P7倍◆【ネコポス送料無料】小林製薬 DHA EPA α−リノレン酸【180粒(約30日分)】【サラサラ/青魚/ビタミンE/イワシ/カツオ/オメガ3系脂肪酸】【smtb-TD】【RCP】",
+      "slug": "p7-dha-epa-180-30-e-3-smtb-td-rcp",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 315,
+                "end": 318
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-natulabo-10002433",
+      "name": "10％OFFクーポン ビタミンD ビタミンD3 サプリ サプリメント ダグラスラボラトリーズ DLJ 25mcg 1000IU 125mcg 5000IU カルシウムの吸収を補助",
+      "slug": "10-off-d-d3-dlj-25mcg-1000iu-125mcg-5000iu",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 922,
+                "end": 925
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-oga-10268184",
+      "name": "葉酸サプリ momの葉酸 （約6ヶ月分） 匂いを抑えた カプセルタイプ 飲みやすい 葉酸サプリ 送料無料 鉄分 妊婦 カルシウム サプリメント モノグルタミン酸 授乳 ママ パパ 妊娠 赤ちゃん ビタミン 鉄 放射能分析結果済 ポイント消化 送料無 ポイント消費 送料無料",
+      "slug": "mom-6",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 154,
+                "end": 156
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-oga-10268185",
+      "name": "葉酸サプリ 【ランキング1位獲得】 葉酸サプリ 約3ヶ月分 葉酸 鉄 産後 においを抑えた カプセルタイプ 飲みやすい 鉄分 葉酸 送料無料 葉酸 妊婦 サプリメント ママ パパ 妊娠中 赤ちゃん ビタミン 放射能分析結果済 ポイント消化 送料無 ポイント消費 送料無料",
+      "slug": "1-3",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 171,
+                "end": 173
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-org-store-10000162",
+      "name": "マルチミネラルビタミン ｜ 180粒 ニューサイエンス サプリ サプリメント オーガニック村 マルチビタミン マルチミネラル オーガニック 天然 マグネシウム カルシウム 亜鉛 ビタミンC 健康食品 健康 無添加 ビタミン剤 葉酸 総合ビタミン あす楽 子供 子ども 正規品 効果",
+      "slug": "180-c",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 103,
+                "end": 106
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-org-store-10000182",
+      "name": "ニューサイエンス マグネシウム サプリ カプセル 60粒 | オーガニック村 高濃度 クエン酸 マグネシウム 飲む 効果 脂肪 サプリメント カラダがヨロコブ 325 酵素 活性化 健康 健康食品 燃焼 ファスティング 塩水湖水低塩化 ナトリウム カリウム ミネラル 頭痛",
+      "slug": "60-325",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 673,
+                "end": 676
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-orihiro-10002146",
+      "name": "送料無料 1個あたり2,490円 オリヒロ DHA EPA 180粒 ソフトカプセル 30日分 2個 機能性表示食品 orihiro サプリ サプリメント 夏バテ ダイエット dha epa dpa 中性脂肪 記憶 認知",
+      "slug": "1-2-490-dha-epa-180-30-2-orihiro-dha-epa-dpa",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 201,
+                "end": 208
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-pycno-10006922",
+      "name": "[1日から使える最大400円OFFクーポンあり] エクエル パウチ 120粒入り 大塚製薬 エクオール [ 正規品 送料無料 ] 4粒で S-エクオール 10mg 120粒 エクオール 大豆イソフラボン サプリ / EQUELLE エクエル大塚製薬 エクオル 最安値 挑戦中 [メール便]",
+      "slug": "1-400-off-120-4-s-10mg-120-equelle",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "最安値",
+              "suggestedText": "（比較対象の明示が必要です）",
+              "law": "premiums_representations",
+              "lawName": "景品表示法",
+              "severity": "high",
+              "position": {
+                "start": 130,
+                "end": 133
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-qssjapan-10000015",
+      "name": "免疫強化【正規品】ナノ乳化 D3K2（ビタミンD・ビタミンK)　サプリメント　サプリ　美容　健康　ナノ乳化　D3　K2 ビタミンD　ビタミンK　新サプリ リキッド　免疫　免疫力アップ",
+      "slug": "d3k2-d-k-d3-k2-d-k",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "免疫力アップ",
+              "suggestedText": "健康維持をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 85,
+                "end": 91
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-rakuten24-10557320",
+      "name": "オリヒロ DHA EPA(180粒)【オリヒロ(サプリメント)】",
+      "slug": "dha-epa-180",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 128,
+                "end": 135
+              }
+            },
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 319,
+                "end": 326
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-rakuten24-10874159",
+      "name": "ディアナチュラスタイル EPA*DHA+ナットウキナーゼ 60日分(240粒*2コセット)【Dear-Natura(ディアナチュラ)】",
+      "slug": "epa-dha-60-240-2-dear-natura",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 249,
+                "end": 252
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-rakuten24-11121700",
+      "name": "ディアナチュラスタイル 葉酸×鉄・カルシウム(120粒*5袋セット)【Dear-Natura(ディアナチュラ)】",
+      "slug": "120-5-dear-natura",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 103,
+                "end": 106
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-rakuten24-11291563",
+      "name": "オリヒロ DHA EPA(180粒×2セット)【オリヒロ(サプリメント)】",
+      "slug": "dha-epa-180-2",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 133,
+                "end": 140
+              }
+            },
+            {
+              "originalText": "中性脂肪を低下",
+              "suggestedText": "食生活の改善をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 324,
+                "end": 331
+              }
+            }
+          ],
+          "score": 60
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-rakutensokuhaimart-10015698",
+      "name": "ディアナチュラスタイル ビタミンC 60日分 120粒 【Dear-Natura(ディアナチュラ)】 ビタミンC",
+      "slug": "c-60-120-dear-natura-c",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 157,
+                "end": 160
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-sazukaru-baby-10000000",
+      "name": "＼ノーベル賞受賞のオートファジー／ 葉酸サプリ 妊活サプリ 【サズカルONE】 葉酸 妊活 サプリメント 無添加 天然 サプリ オートファジー 赤ちゃん ママ サポート 天然葉酸 鉄 ビタミン ミネラル アミノ酸 イシクラゲ 葉酸サプリ 30日分 60粒",
+      "slug": "one-30-60",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 53,
+                "end": 56
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 329,
+                "end": 332
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-seedcoms-10007166",
+      "name": "【11/11終了★タイムセールで1,298円】匠の野草酵素(約6ヶ月分) 送料無料 サプリメント 酵素 野草酵素 健康 健康食品 乳酸菌 ダイエット 美容 ビタミンC 葉酸 高麗人参 しょうが トンカットアリ ニン二ク マカ うこん クコ イチョウ",
+      "slug": "11-11-1-298-6-c",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 138,
+                "end": 140
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-seedcoms-10007171",
+      "name": "【11/4開始★タイムセールで298円】匠の野草酵素(約1ヶ月分)ダイエット サプリ送料無料 サプリ サプリメント 酵素 野草酵素 健康食品 野菜不足 乳酸菌 ビタミンC 葉酸 ビタミンB うこん 田七人参 イチョウ はと麦 高麗人参 マカ",
+      "slug": "11-4-298-1-c-b",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 137,
+                "end": 139
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-seedcoms-10007199",
+      "name": "【11/4開始★タイムセールで298円】コンブチャ≪約1ヵ月分≫ サプリ サプリメント 美容 健康 送料無料 乳酸菌 美容成分 紅茶キノコ 酵母 ビタミンD 葉酸 ビタミンC ビタミンB 大豆ペプチド",
+      "slug": "11-4-298-1-d-c-b",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 108,
+                "end": 110
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-seedcoms-10007310",
+      "name": "【11/28開始★タイムセールで398円】ブラックスレンダー約1ヶ月分 炭 サプリ サプリメント 送料無料 乳酸菌 オリゴ糖 食物繊維 黒生姜 松炭 ヤシ殻炭",
+      "slug": "11-28-398-1",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 237,
+                "end": 239
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-seedcoms-10007461",
+      "name": "お魚カルシウム＆DHA+EPA（約12ヶ月分） オメガ3 DHA&EPA 不飽和脂肪酸 ドコサヘキサエン酸 エイコサペンタエン酸 ドコサペンタエン酸 カルシウム",
+      "slug": "dha-epa-12-3-dha-epa",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 91,
+                "end": 93
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-showpuromo-10000020",
+      "name": "最大3,000円引きクーポン先着配布! 8時までの注文で土日も当日発送 選べる DHC ビタミンC ハードカプセル 180日分 ［栄養機能食品］60日分 × 3袋セット or 20日分 × 9袋セット【合計180日分】",
+      "slug": "3-000-8-dhc-c-180-60-3-or-20-9-180",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "最安値",
+              "suggestedText": "（比較対象の明示が必要です）",
+              "law": "premiums_representations",
+              "lawName": "景品表示法",
+              "severity": "high",
+              "position": {
+                "start": 1081,
+                "end": 1084
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-showpuromo-10002511",
+      "name": "最大3,000円引きクーポン先着配布! 【2個セット】ディアナチュラ スタイル ビタミンC 60日分 (120粒) 【Dear-Natura style ビタミンC】Asahi 1000円 食品",
+      "slug": "3-000-2-c-60-120-dear-natura-style-c-asahi-1000",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 78,
+                "end": 81
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-stars-store-10000040",
+      "name": "【管理栄養士推奨／楽天1位】セノビスター 子供 身長 成長 サプリメント サプリ 成長期 ビタミンD ビタミンB6 アルギニン 60粒（30日分）タブレット ビタミン カルシウム 骨 歯 Ca ヨーグルト マグネシウム 栄養 子どもサプリ こども おやつ",
+      "slug": "1-d-b6-60-30-ca",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 341,
+                "end": 343
+              }
+            },
+            {
+              "originalText": "特許取得",
+              "suggestedText": "（事実確認が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 49,
+                "end": 53
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-valx-10000045",
+      "name": "VALX RED GEAR (レッドギア) 燃焼系 サプリ カルニチン 国内生産 山本義徳 筋トレ ダイエット ウォーキング 脂肪 減量 シェイプアップ 運動 ボディーメイク 女性 ファットバーナー サプリメント バルクス",
+      "slug": "valx-red-gear",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "脂肪燃焼",
+              "suggestedText": "運動をサポート",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 595,
+                "end": 599
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-wadacalshop-10000129",
+      "name": "高濃度ビタミンD3 60日分 ビタミンd サプリ 無添加 ビタミンD3 サプリメント 食事で不足 2400iu 60μg uvサプリ ビタミンD3 2000IU以上 ビタミン D サプリ 楽天 カプセル 国産 送料無料 製薬会社 ワダカルシウム製薬 ベースサプリ",
+      "slug": "d3-60-d-d3-2400iu-60-g-uv-d3-2000iu-d",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 25,
+                "end": 28
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-rakuten-womensfitness-10014187",
+      "name": "【最大2000円OFFクーポン】[12個セット]クエン酸マグネシウム 100mg 100粒 1〜3ヶ月分 Life Extension (ライフエクステンション) MAGNESIUM CITRATE 100 vegetarian capsules",
+      "slug": "2000-off-12-100mg-100-1-3-life-extension-magnesium-citrate-100-vegetarian-capsules",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "小麦フリー",
+              "suggestedText": "（製造ラインの確認が必要です）",
+              "law": "food_labeling",
+              "lawName": "食品表示法",
+              "severity": "medium",
+              "position": {
+                "start": 108,
+                "end": 113
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-afcshop-06961x03",
+      "name": "葉酸サプリ mitete 30日分 3個セット サプリメント 葉酸 鉄分 カルシウム  妊婦 妊活中 妊娠 ママ  AFC公式",
+      "slug": "mitete-30-3-afc",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 18,
+                "end": 22
+              }
+            },
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 521,
+                "end": 525
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-afcshop-06961x06",
+      "name": "葉酸サプリ mitete 30日分 6個セット サプリメント 葉酸 鉄分 カルシウム 妊婦 妊活中 妊娠 ママ  AFC公式",
+      "slug": "mitete-30-6-afc",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 18,
+                "end": 22
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-babycresco-alobaby-17b",
+      "name": "葉酸 サプリ アロベビー 3袋セット 無添加 妊活中 DHA  葉酸 鉄 ビタミン カルシウム 妊活 妊娠 妊娠中 妊婦 公式",
+      "slug": "3-dha",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 19,
+                "end": 22
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "人気No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 33,
+                "end": 39
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 11,
+                "end": 14
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 464,
+                "end": 467
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-bayer-85130056",
+      "name": "葉酸サプリ エレビット 葉酸800μg 妊活 妊娠 妊娠中 産後 30日分 90粒 無添加 鉄 ビタミン ミネラル カルシウム 葉酸 サプリメント エレビット公式 ギフト",
+      "slug": "800-g-30-90",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 42,
+                "end": 45
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 357,
+                "end": 360
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-bayer-85130056-2",
+      "name": "葉酸サプリ エレビット 葉酸800μg 妊活 妊娠 妊娠中 産後 60日分 180粒 無添加 鉄 ビタミン ミネラル カルシウム 葉酸 サプリメント エレビット公式 ギフト",
+      "slug": "800-g-60-180",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 43,
+                "end": 46
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 357,
+                "end": 360
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-bayer-85130056-3",
+      "name": "葉酸サプリ エレビット 葉酸800μg 妊活 妊娠 妊娠中 産後 90日分 270粒 無添加 鉄 ビタミン ミネラル カルシウム 葉酸 サプリメント エレビット公式 ギフト",
+      "slug": "800-g-90-270",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 43,
+                "end": 46
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 357,
+                "end": 360
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-belta-shop-belta-folate-1",
+      "name": "葉酸サプリ 葉酸 ベルタ葉酸サプリ 妊活サプリメント 妊活サプリ 妊活 妊娠  鉄 ビタミン ミネラル ラクトフェリン 子宮内フローラ BELTA公式 1袋",
+      "slug": "belta-1",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 39,
+                "end": 43
+              }
+            },
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 55,
+                "end": 59
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 69,
+                "end": 72
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-euglena-farm-ml01180100",
+      "name": "【公式】 からだにユーグレナ お料理に入れるユーグレナ だし 鉄分 DHA EPA かつおだし 国産 無添加 無添加だし 出汁 完全無添加 爆買",
+      "slug": "dha-epa",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 51,
+                "end": 54
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 55,
+                "end": 58
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 66,
+                "end": 69
+              }
+            }
+          ],
+          "score": 70
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 38,
+                "end": 41
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 42,
+                "end": 45
+              }
+            },
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 53,
+                "end": 56
+              }
+            }
+          ],
+          "score": 70
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-nippon-shinyaku-451e",
+      "name": "【期間限定！ポイント5倍 5日23:59まで】【医師推奨】プロテイン ホエイ ウィンゾーン 1kg  選べる11種の風味 WINZONE 女性 男性 コスパ BCAA EAA ビタミン",
+      "slug": "5-5-23-59-1kg-11-winzone-bcaa-eaa",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "医師推奨",
+              "suggestedText": "（根拠のない推奨表現は避けてください）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "high",
+              "position": {
+                "start": 24,
+                "end": 28
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-pigeon-shop-1029575",
+      "name": "公式 葉酸カルシウムプラス １２０粒 葉酸サプリ サプリ 鉄分 カルシウム ビタミン 亜鉛 無添加 サプリメント 葉酸 鉄 ピジョン pigeon",
+      "slug": "pigeon",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 46,
+                "end": 49
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 124,
+                "end": 127
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-proe-so1",
+      "name": "鉄分 サプリ フェリチン鉄 葉酸 大豆 イソフラボン サプリメント まめ鉄 鉄分補給 女性 男性 効果 強力 フェリチン 鉄 日本製 オススメ 30日分 送料無料 (SOYFe)",
+      "slug": "30-soyfe",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 410,
+                "end": 413
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-shuterlife-mame-lab-2",
+      "name": "フェリチン鉄サプリ 鉄分サプリ まめラボ フェリチン鉄 60粒 2袋セット 2ヵ月分 鉄分補給 鉄剤 鉄分 サプリ サプリメント 貧血 鉄 男性 女性 フェリチン",
+      "slug": "60-2-2",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 49,
+                "end": 52
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-shuterlife-mame-lab-4",
+      "name": "フェリチン鉄サプリ 鉄分サプリ まめラボ フェリチン鉄 60粒 4袋セット 4ヵ月分 鉄分補給 鉄剤 鉄分 サプリ サプリメント 貧血 鉄 男性 女性 フェリチン",
+      "slug": "60-4-4",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 49,
+                "end": 52
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-shuterlife-mame-oyako-2",
+      "name": "フェリチン鉄サプリ 鉄分サプリ 親子で飲める まめラボ 120粒 2袋セット 2ヵ月分 ビフィズス菌 亜鉛 ビタミンD ビタミンB6 フェリチン鉄 サプリ サプリメント",
+      "slug": "120-2-2-d-b6",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 48,
+                "end": 51
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-tsubamelife-tetsu21",
+      "name": "鉄分 サプリ (180日分／鉄1日21mg) 鉄 チュアブル ブルーベリー風味 無添加 葉酸 国産 鉄分補給 鉄分不足 鉄剤 Vitaste（ビタステ）爆買",
+      "slug": "180-1-21mg-vitaste",
+      "fields": [
+        {
+          "field": "name",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 40,
+                "end": 43
+              }
+            }
+          ],
+          "score": 90
+        },
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "無添加",
+              "suggestedText": "（特定の添加物についての表示が必要です）",
+              "law": "food_sanitation",
+              "lawName": "食品衛生法",
+              "severity": "medium",
+              "position": {
+                "start": 73,
+                "end": 76
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-valx-v-vo",
+      "name": "VALX マルチビタミン 脂溶性ビタミン　サプリメント サプリ マルチビタミン ビタミンA ビタミンE ビタミンD ビタミンE ビタミンK",
+      "slug": "valx-a-e-d-e-k",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "最安値",
+              "suggestedText": "（比較対象の明示が必要です）",
+              "law": "premiums_representations",
+              "lawName": "景品表示法",
+              "severity": "high",
+              "position": {
+                "start": 442,
+                "end": 445
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-vetzpetz-01u5h000000xuxqaau",
+      "name": "公式 アンチノール プラス ペットサプリ 60粒 犬 犬用 サプリメント サプリ 関節 DHA EPA 皮膚 腎臓 神経 高齢 シニアケア モエギイガイ ベッツペッツ",
+      "slug": "60-dha-epa",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "No.1",
+              "suggestedText": "（出典・期間の明示が必要です）",
+              "law": "health_promotion",
+              "lawName": "健康増進法",
+              "severity": "medium",
+              "position": {
+                "start": 32,
+                "end": 36
+              }
+            }
+          ],
+          "score": 90
+        }
+      ]
+    },
+    {
+      "id": "product-yahoo-yonekichi-nvitamind0001",
+      "name": "ビタミンD サプリ 2500IU キノコと酵母から摂る 自然由来ビタミンD サプリメント 乳酸菌配合 国産 60粒 30日分 爆買",
+      "slug": "d-2500iu-d-60-30",
+      "fields": [
+        {
+          "field": "description",
+          "violations": [
+            {
+              "originalText": "殺菌",
+              "suggestedText": "清潔な状態を保つ",
+              "law": "pharmaceutical_affairs",
+              "lawName": "薬機法",
+              "severity": "high",
+              "position": {
+                "start": 406,
+                "end": 408
+              }
+            }
+          ],
+          "score": 80
+        }
+      ]
+    }
+  ]
+}

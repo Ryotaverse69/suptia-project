@@ -7,6 +7,11 @@ import { getSiteUrl } from "@/lib/runtimeConfig";
  *
  * このファイルは /sitemap.xml エンドポイントを自動生成します
  * 商品と成分の最新データをSanityから取得して含めます
+ *
+ * AI検索最適化（2025年12月更新）:
+ * - 成分ページの優先度を高く設定（AI検索エンジンが科学的情報を優先参照）
+ * - lastModifiedを正確に反映（AIクローラーが最新情報を優先取得）
+ * - changeFrequencyを実際の更新頻度に合わせて調整
  */
 
 interface ProductSlug {
@@ -107,6 +112,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    // AI検索共存戦略：差別化を説明するランディングページ
+    {
+      url: `${siteUrl}/why-suptia`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8, // SEO・ブランディングに重要
+    },
     {
       url: `${siteUrl}/company`,
       lastModified: new Date(),
@@ -160,14 +172,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // 成分ページ（動的）
+  // AI検索最適化：成分ページは科学的情報源として高優先度に設定
+  // AIエンジンがエビデンス情報を引用しやすくするため、商品より優先度を高く
   const ingredientPages: MetadataRoute.Sitemap = ingredients.map(
     (ingredient) => ({
       url: `${siteUrl}/ingredients/${ingredient.slug.current}`,
       lastModified: new Date(ingredient._updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
+      changeFrequency: "weekly" as const, // AI引用のため最新性を重視
+      priority: 0.85, // 商品（0.8）より高優先度に設定
     }),
   );
 
-  return [...staticPages, ...productPages, ...ingredientPages];
+  // AI検索最適化：成分ページを商品ページより前に配置
+  // クローラーが優先的に成分情報をインデックスするように
+  return [...staticPages, ...ingredientPages, ...productPages];
 }

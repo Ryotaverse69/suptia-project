@@ -488,3 +488,173 @@ export function generateHowToStructuredData(params: {
 
   return structuredData;
 }
+
+// ============================================================================
+// AI検索最適化：MedicalWebPage + Drug schema（成分ガイド用）
+// ============================================================================
+
+/**
+ * schema.org/MedicalWebPage（成分ガイド用）
+ */
+export interface MedicalWebPageStructuredData {
+  "@context": "https://schema.org";
+  "@type": "MedicalWebPage";
+  "@id": string;
+  name: string;
+  headline: string;
+  description: string;
+  url: string;
+  inLanguage: string;
+  isPartOf: {
+    "@type": "WebSite";
+    name: string;
+    url: string;
+  };
+  publisher: {
+    "@type": "Organization";
+    name: string;
+    url: string;
+    logo: {
+      "@type": "ImageObject";
+      url: string;
+    };
+  };
+  datePublished: string;
+  dateModified: string;
+  citation?: Array<{
+    "@type": "CreativeWork";
+    name: string;
+    url: string;
+  }>;
+}
+
+/**
+ * schema.org/Drug（サプリメント成分用）
+ */
+export interface DrugStructuredData {
+  "@context": "https://schema.org";
+  "@type": "Drug";
+  name: string;
+  alternateName?: string;
+  description: string;
+  drugClass?: string;
+  url: string;
+  legalStatus?: string;
+  dosageForm?: string;
+  warning?: string;
+  mechanismOfAction?: string;
+}
+
+/**
+ * 成分ガイド用構造化データを生成（MedicalWebPage + Drug schema）
+ * AI検索エンジンが成分情報を正確に理解・引用するために最適化
+ */
+export function generateIngredientStructuredData(params: {
+  name: string;
+  nameEn?: string;
+  slug: string;
+  category?: string;
+  description?: string;
+  benefits?: string[];
+  recommendedDosage?: string;
+  sideEffects?: string;
+  evidenceLevel?: string;
+  references?: Array<{
+    title?: string;
+    url?: string;
+    source?: string;
+  }>;
+  datePublished?: string;
+  dateModified?: string;
+  siteUrl?: string;
+}): [MedicalWebPageStructuredData, DrugStructuredData] {
+  const siteUrl = params.siteUrl || "https://suptia.com";
+  const pageUrl = `${siteUrl}/ingredients/${params.slug}`;
+
+  // エビデンスレベルの説明マップ
+  const evidenceLevelMap: Record<string, string> = {
+    S: "大規模RCT・メタ解析による高い信頼性",
+    A: "良質な研究で効果が確認",
+    B: "限定的研究・条件付きの効果",
+    C: "動物実験・小規模試験レベル",
+    D: "理論・未検証レベル",
+  };
+
+  // MedicalWebPage schema
+  const medicalWebPage: MedicalWebPageStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "@id": pageUrl,
+    name: `${params.name}の効果・副作用・おすすめサプリ`,
+    headline: `${params.name}${params.nameEn ? `（${params.nameEn}）` : ""} - 科学的エビデンスに基づく成分ガイド`,
+    description:
+      params.description ||
+      `${params.name}の効果、推奨摂取量、副作用、相互作用について科学的根拠に基づいて解説。`,
+    url: pageUrl,
+    inLanguage: "ja",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "サプティア",
+      url: siteUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "サプティア",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+      },
+    },
+    datePublished:
+      params.datePublished || new Date().toISOString().split("T")[0],
+    dateModified: params.dateModified || new Date().toISOString().split("T")[0],
+  };
+
+  // 参考文献を追加
+  if (params.references && params.references.length > 0) {
+    medicalWebPage.citation = params.references
+      .filter((ref) => ref.url)
+      .slice(0, 5)
+      .map((ref) => ({
+        "@type": "CreativeWork",
+        name: ref.title || ref.source || "参考文献",
+        url: ref.url!,
+      }));
+  }
+
+  // Drug schema
+  const drugSchema: DrugStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Drug",
+    name: params.name,
+    alternateName: params.nameEn,
+    description:
+      params.description ||
+      `${params.name}は${params.category || "栄養素"}の一種です。`,
+    drugClass: params.category || "Dietary Supplement",
+    url: pageUrl,
+  };
+
+  // エビデンスレベル
+  if (params.evidenceLevel) {
+    drugSchema.legalStatus = `エビデンスレベル ${params.evidenceLevel}: ${evidenceLevelMap[params.evidenceLevel] || "評価中"}`;
+  }
+
+  // 推奨摂取量
+  if (params.recommendedDosage) {
+    drugSchema.dosageForm = params.recommendedDosage;
+  }
+
+  // 副作用・注意事項
+  if (params.sideEffects) {
+    drugSchema.warning = params.sideEffects;
+  }
+
+  // 効果・効能
+  if (params.benefits && params.benefits.length > 0) {
+    drugSchema.mechanismOfAction = params.benefits.slice(0, 5).join("。");
+  }
+
+  return [medicalWebPage, drugSchema];
+}

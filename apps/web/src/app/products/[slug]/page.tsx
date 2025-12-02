@@ -51,6 +51,7 @@ import {
   SeamlessModalTrigger,
   SeamlessModalContent,
 } from "@/components/SeamlessModal";
+import { ComplianceBadge } from "@/components/ComplianceBadge";
 
 // --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
@@ -722,6 +723,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <WarningBanner violations={complianceResult.violations} />
             </div>
           )}
+
+          {/* 薬機法準拠マーク（AI検索との差別化） */}
+          <div className="mb-6 flex justify-end">
+            <ComplianceBadge variant="compact" />
+          </div>
 
           {/* Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

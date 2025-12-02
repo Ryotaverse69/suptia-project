@@ -115,6 +115,13 @@ export function Header() {
                         サプティアとは
                       </Link>
                       <Link
+                        href="/why-suptia"
+                        onClick={() => setGuideMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        AI検索との違い
+                      </Link>
+                      <Link
                         href="/how-to-use"
                         onClick={() => setGuideMenuOpen(false)}
                         className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
@@ -380,6 +387,15 @@ export function Header() {
                   className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
                 >
                   サプティアとは
+                </Link>
+
+                {/* Why Suptia - Mobile */}
+                <Link
+                  href="/why-suptia"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                >
+                  AI検索との違い
                 </Link>
 
                 {/* How to Use - Mobile */}

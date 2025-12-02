@@ -102,7 +102,100 @@ export default function DisclaimerPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            3. 外部ECサイトでの購入について
+            3. 薬機法（医薬品医療機器等法）への準拠
+          </h2>
+          <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-4">
+            <h3 className="font-bold text-lg mb-3 text-green-800 dark:text-green-400">
+              ✓ コンプライアンスへの取り組み
+            </h3>
+            <p className="mb-4">
+              サプティアは、日本の
+              <strong>
+                薬機法（医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律）
+              </strong>
+              を遵守し、すべてのコンテンツを適切に管理しています。
+            </p>
+          </div>
+
+          <h3 className="text-xl font-semibold mb-3 mt-6">
+            3.1 コンテンツガイドライン
+          </h3>
+          <p className="mb-4">
+            当サイトでは、以下のガイドラインに従ってコンテンツを作成しています：
+          </p>
+          <ul className="list-disc list-inside space-y-2 mb-4">
+            <li>
+              <strong>効能効果の表現</strong>
+              ：医薬品的な効能効果（「治る」「予防する」等）を標榜しません
+            </li>
+            <li>
+              <strong>疾病治療の言及</strong>
+              ：特定の疾病の治療・予防を目的とした表現を使用しません
+            </li>
+            <li>
+              <strong>科学的根拠の明示</strong>
+              ：研究データを引用する際は、出典を明記し、誇大な解釈を避けます
+            </li>
+            <li>
+              <strong>表現の適正化</strong>
+              ：「〜をサポート」「〜に役立つ可能性」など、適切な表現を使用します
+            </li>
+          </ul>
+
+          <h3 className="text-xl font-semibold mb-3 mt-6">
+            3.2 自動コンプライアンスチェック
+          </h3>
+          <p className="mb-4">
+            当サイトでは、150以上のルールに基づく自動コンプライアンスチェックシステムを導入しています。
+            これにより、薬機法に抵触する可能性のある表現を検出し、適切な表現への修正を行っています。
+          </p>
+          <div className="border rounded-lg p-4 mb-4">
+            <p className="text-sm text-muted-foreground">
+              <strong>チェック項目例：</strong>
+              <br />
+              ・医薬品的効能効果の表現（8カテゴリ）
+              <br />
+              ・疾病の治療・予防を示唆する表現
+              <br />
+              ・誇大広告に該当する可能性のある表現
+              <br />
+              ・身体の構造機能への影響を示す表現
+            </p>
+          </div>
+
+          <h3 className="text-xl font-semibold mb-3 mt-6">
+            3.3 AI検索との違い
+          </h3>
+          <p className="mb-4">
+            一般的なAI検索（ChatGPT、Perplexity等）との重要な違い：
+          </p>
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <div className="border border-red-200 rounded-lg p-4">
+              <p className="font-semibold text-red-700 dark:text-red-400 mb-2">
+                ✗ AI検索の課題
+              </p>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>・法的責任を負えない</li>
+                <li>・薬機法違反表現をそのまま出力するリスク</li>
+                <li>・情報源の信頼性が不明確な場合がある</li>
+              </ul>
+            </div>
+            <div className="border border-green-200 rounded-lg p-4">
+              <p className="font-semibold text-green-700 dark:text-green-400 mb-2">
+                ✓ サプティアの対応
+              </p>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>・すべてのコンテンツを法令準拠でチェック</li>
+                <li>・150+ルールによる自動検証</li>
+                <li>・信頼できる情報源のみを参照</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">
+            4. 外部ECサイトでの購入について
           </h2>
           <p className="mb-4">
             当サイトは商品の販売を行っておりません。商品購入は外部ECサイトで行われます。
@@ -146,7 +239,7 @@ export default function DisclaimerPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            4. AIレコメンデーション・データ分析
+            5. AIレコメンデーション・データ分析
           </h2>
           <p className="mb-4">
             当サイトはAI技術を使用していますが、以下の点にご留意ください：
@@ -160,10 +253,10 @@ export default function DisclaimerPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">5. 第三者コンテンツ</h2>
+          <h2 className="text-2xl font-semibold mb-4">6. 第三者コンテンツ</h2>
 
           <h3 className="text-xl font-semibold mb-3 mt-6">
-            5.1 ユーザー投稿コンテンツ
+            6.1 ユーザー投稿コンテンツ
           </h3>
           <p className="mb-4">
             ユーザーレビュー、評価、コメント等は投稿者個人の意見であり、当サイトの見解を代表するものではありません。
@@ -174,7 +267,7 @@ export default function DisclaimerPage() {
             <li>ステマ・アフィリエイト目的の投稿が含まれる可能性があります</li>
           </ul>
 
-          <h3 className="text-xl font-semibold mb-3 mt-6">5.2 外部リンク</h3>
+          <h3 className="text-xl font-semibold mb-3 mt-6">6.2 外部リンク</h3>
           <p className="mb-4">
             当サイトから外部サイトへのリンクは情報提供目的です。リンク先の内容について、当サイトは責任を負いません。
           </p>
@@ -182,7 +275,7 @@ export default function DisclaimerPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            6. サービスの中断・変更・終了
+            7. サービスの中断・変更・終了
           </h2>
           <p className="mb-4">
             当サイトは、以下の対応を予告なく行う場合があります：
@@ -199,7 +292,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">7. 損害賠償の制限</h2>
+          <h2 className="text-2xl font-semibold mb-4">8. 損害賠償の制限</h2>
           <p className="mb-4">
             当サイトは、本サービスの利用により生じた以下の損害について、一切の責任を負いません：
           </p>
@@ -217,7 +310,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">8. 科学的研究の解釈</h2>
+          <h2 className="text-2xl font-semibold mb-4">9. 科学的研究の解釈</h2>
           <p className="mb-4">当サイトで引用される科学的研究について：</p>
           <ul className="list-disc list-inside space-y-2 mb-4">
             <li>研究結果は常に更新されます</li>
@@ -231,7 +324,9 @@ export default function DisclaimerPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">9. アフィリエイト開示</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            10. アフィリエイト開示
+          </h2>
           <p className="mb-4">
             当サイトはアフィリエイトプログラムに参加しており、商品リンクから紹介料を得る場合があります。
             ただし、これがレビューや評価の中立性に影響を与えることはありません。
@@ -239,7 +334,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">10. 免責事項の変更</h2>
+          <h2 className="text-2xl font-semibold mb-4">11. 免責事項の変更</h2>
           <p className="mb-4">
             当サイトは、必要に応じて本免責事項を変更することがあります。変更後の免責事項は、本ページに掲載した時点で効力を生じます。
           </p>
