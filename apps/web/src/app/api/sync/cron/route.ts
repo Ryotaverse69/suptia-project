@@ -4,6 +4,11 @@
  * 毎日午前3時に実行され、全商品の価格を更新します。
  * Schedule: 0 3 * * * (毎日午前3時 UTC)
  *
+ * 最適化機能：
+ * - スマート同期: 最近更新した商品はスキップ（APIリクエスト削減）
+ * - 優先度ベース: JANコードがある商品を優先
+ * - バッチサイズ制限: 月間リクエスト制限（10,000回）を考慮
+ *
  * @see https://vercel.com/docs/cron-jobs
  */
 
@@ -16,6 +21,22 @@ import {
 
 export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 export const maxDuration = 300; // 5分のタイムアウト（Pro planの場合）
+
+/**
+ * 同期設定
+ * 月間リクエスト制限（10,000回）を考慮した設定
+ *
+ * 計算: 10,000 / 30日 ≈ 333商品/日
+ * 安全マージン込み: 300商品/日
+ */
+const SYNC_CONFIG = {
+  // 1日あたりの最大同期商品数（楽天API制限対策）
+  MAX_PRODUCTS_PER_DAY: 300,
+  // 価格更新をスキップする期間（時間）
+  SKIP_IF_UPDATED_WITHIN_HOURS: 24,
+  // 優先同期: JANコードがある商品を優先
+  PRIORITIZE_JAN_CODE: true,
+} as const;
 
 /**
  * GET /api/sync/cron
@@ -37,17 +58,18 @@ export async function GET(request: NextRequest) {
 
     console.log("[Cron] Starting price sync batch job...");
 
-    // Sanityから全商品を取得（識別子も含む）
-    const products = await sanityServer.fetch(
+    // Sanityから全商品を取得（識別子と最終更新日時も含む）
+    const allProducts = await sanityServer.fetch(
       `*[_type == "product" && availability == "in-stock"] {
         _id,
         name,
         "brand": brand->name,
-        identifiers
+        identifiers,
+        "lastPriceUpdate": prices[0].fetchedAt
       }`,
     );
 
-    if (products.length === 0) {
+    if (allProducts.length === 0) {
       console.log("[Cron] No products found");
       return NextResponse.json({
         success: true,
@@ -57,7 +79,46 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`[Cron] Found ${products.length} products to sync`);
+    console.log(`[Cron] Found ${allProducts.length} total products`);
+
+    // スマート同期: 最近更新した商品をスキップ
+    const now = Date.now();
+    const skipThreshold =
+      SYNC_CONFIG.SKIP_IF_UPDATED_WITHIN_HOURS * 60 * 60 * 1000;
+
+    const productsNeedingUpdate = allProducts.filter((product: any) => {
+      if (!product.lastPriceUpdate) return true;
+      const lastUpdate = new Date(product.lastPriceUpdate).getTime();
+      return now - lastUpdate > skipThreshold;
+    });
+
+    console.log(
+      `[Cron] ${productsNeedingUpdate.length} products need update (${allProducts.length - productsNeedingUpdate.length} skipped - recently updated)`,
+    );
+
+    // 優先度ソート: JANコードがある商品を優先
+    if (SYNC_CONFIG.PRIORITIZE_JAN_CODE) {
+      productsNeedingUpdate.sort((a: any, b: any) => {
+        const aHasJan = a.identifiers?.jan ? 1 : 0;
+        const bHasJan = b.identifiers?.jan ? 1 : 0;
+        return bHasJan - aHasJan; // JANコードありを先に
+      });
+    }
+
+    // バッチサイズ制限（月間リクエスト制限対策）
+    const products = productsNeedingUpdate.slice(
+      0,
+      SYNC_CONFIG.MAX_PRODUCTS_PER_DAY,
+    );
+    const skippedDueToLimit = productsNeedingUpdate.length - products.length;
+
+    if (skippedDueToLimit > 0) {
+      console.log(
+        `[Cron] Limiting to ${SYNC_CONFIG.MAX_PRODUCTS_PER_DAY} products (${skippedDueToLimit} deferred to next run)`,
+      );
+    }
+
+    console.log(`[Cron] Syncing ${products.length} products`);
 
     // バッチ同期APIを呼び出し（識別子を優先的に使用）
     const batchRequest = {
@@ -180,11 +241,19 @@ export async function GET(request: NextRequest) {
       success: true,
       message: "Price sync completed",
       stats: {
-        totalProducts: result.totalProducts,
+        totalProducts: allProducts.length,
+        skippedRecentlyUpdated:
+          allProducts.length - productsNeedingUpdate.length,
+        skippedDueToLimit,
+        syncedProducts: products.length,
         successCount: result.successCount,
         failureCount: result.failureCount,
         savedToSanity: saveResult.successCount,
         saveErrors: saveResult.failureCount,
+      },
+      config: {
+        maxProductsPerDay: SYNC_CONFIG.MAX_PRODUCTS_PER_DAY,
+        skipIfUpdatedWithinHours: SYNC_CONFIG.SKIP_IF_UPDATED_WITHIN_HOURS,
       },
       timestamp: new Date().toISOString(),
       duration: Date.now() - startTime,

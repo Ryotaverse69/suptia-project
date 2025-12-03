@@ -3,7 +3,11 @@ import "@/env";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { getSiteUrl } from "@/lib/runtimeConfig";
-import { generateOrganizationJsonLd } from "@/lib/seo";
+import {
+  generateOrganizationJsonLd,
+  generateWebSiteJsonLd,
+  generateLocalBusinessJsonLd,
+} from "@/lib/seo";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
 import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
@@ -67,14 +71,9 @@ export default async function RootLayout({
 }) {
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
-  const siteUrl = getSiteUrl();
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "サプティア",
-    url: siteUrl,
-  };
+  const websiteJsonLd = generateWebSiteJsonLd();
   const organizationJsonLd = generateOrganizationJsonLd();
+  const localBusinessJsonLd = generateLocalBusinessJsonLd();
 
   return (
     <html lang="ja">
@@ -91,6 +90,15 @@ export default async function RootLayout({
           nonce={nonce}
         >
           {JSON.stringify(organizationJsonLd)}
+        </Script>
+
+        {/* JSON-LD Structured Data: LocalBusiness */}
+        <Script
+          id="localbusiness-jsonld"
+          type="application/ld+json"
+          nonce={nonce}
+        >
+          {JSON.stringify(localBusinessJsonLd)}
         </Script>
 
         <CookieConsentProvider>

@@ -10,6 +10,12 @@ import type {
   AdapterConfig,
   AdapterErrorCode,
 } from "./types";
+import {
+  getPriceCache,
+  generateCacheKey,
+  withCache,
+  DEFAULT_CACHE_TTL,
+} from "./cache";
 
 /**
  * Yahoo! Shopping API固有の設定
@@ -93,9 +99,26 @@ export class YahooAdapter extends BaseAdapter {
   }
 
   /**
-   * 価格情報を取得
+   * 価格情報を取得（キャッシュ対応）
    */
   async fetchPrice(
+    identifier: ProductIdentifier,
+  ): Promise<AdapterResult<PriceData>> {
+    const cacheKey = generateCacheKey(this.name, identifier, "price");
+    const cache = getPriceCache();
+
+    return withCache(
+      cache,
+      cacheKey,
+      () => this.fetchPriceFromAPI(identifier),
+      DEFAULT_CACHE_TTL.PRICE,
+    );
+  }
+
+  /**
+   * APIから価格情報を取得（内部メソッド）
+   */
+  private async fetchPriceFromAPI(
     identifier: ProductIdentifier,
   ): Promise<AdapterResult<PriceData>> {
     try {

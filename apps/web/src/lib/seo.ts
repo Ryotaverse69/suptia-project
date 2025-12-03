@@ -277,6 +277,114 @@ export function generateOrganizationJsonLd() {
   };
 }
 
+/**
+ * WebSite schema with SearchAction（サイト内検索対応）
+ * Googleがサイト内検索を理解し、検索結果でサイトリンク検索ボックスを表示
+ */
+export function generateWebSiteJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "サプティア",
+    alternateName: "Suptia",
+    url: siteUrl,
+    description:
+      "科学的根拠に基づくサプリメント比較メタサーチ。価格・成分・エビデンス・安全性で最適なサプリを見つける。",
+    inLanguage: "ja",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/products?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/**
+ * LocalBusiness schema（サービス事業者情報）
+ * AI検索エンジンがサプティアのビジネス情報を正確に理解
+ */
+export function generateLocalBusinessJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${siteUrl}/#business`,
+    name: "サプティア",
+    alternateName: "Suptia",
+    description:
+      "サプリメントの価格比較・成分分析・エビデンス評価を提供するオンラインサービス。安全で科学的根拠に基づいたサプリ選びをサポート。",
+    url: siteUrl,
+    logo: `${siteUrl}/logo.png`,
+    image: `${siteUrl}/og-image.png`,
+    priceRange: "無料〜¥980/月",
+    currenciesAccepted: "JPY",
+    paymentAccepted: "クレジットカード",
+    areaServed: {
+      "@type": "Country",
+      name: "Japan",
+    },
+    serviceType: [
+      "サプリメント価格比較",
+      "成分分析",
+      "エビデンス評価",
+      "安全性チェック",
+    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "サプティアサービス",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "無料プラン",
+            description: "基本的な価格比較と成分情報の閲覧",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Proプラン",
+            description: "詳細な成分分析と価格アラート機能",
+          },
+          price: "490",
+          priceCurrency: "JPY",
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Pro+Safetyプラン",
+            description: "相互作用チェックと安全性レポート",
+          },
+          price: "980",
+          priceCurrency: "JPY",
+        },
+      ],
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "Customer Service",
+      email: "info@suptia.com",
+      availableLanguage: "Japanese",
+    },
+    foundingDate: "2024",
+    knowsAbout: [
+      "サプリメント",
+      "栄養補助食品",
+      "ビタミン",
+      "ミネラル",
+      "プロテイン",
+      "健康食品",
+    ],
+  };
+}
+
 // Canonical URL utilities
 export function cleanUrl(url: string): string {
   const urlObj = new URL(url);

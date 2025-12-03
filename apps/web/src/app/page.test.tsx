@@ -42,9 +42,11 @@ beforeEach(() => {
   // モックのリセット
   mockFetch.mockReset();
 
+  // 新しいページ構造に合わせたモック (page.tsx の呼び出し順):
   // 1回目: getProducts() - 商品一覧
   mockFetch.mockResolvedValueOnce([
     {
+      _id: "test-1",
       name: "Test Product",
       priceJPY: 1000,
       servingsPerContainer: 30,
@@ -60,10 +62,27 @@ beforeEach(() => {
           },
         },
       ],
+      tierRatings: { overallRank: "A" },
+      badges: [],
     },
   ] as any);
 
-  // 2回目: getIngredients() - 成分一覧
+  // 2回目: getFeaturedProducts() - おすすめ商品
+  mockFetch.mockResolvedValueOnce([
+    {
+      _id: "featured-1",
+      name: "Test Product",
+      priceJPY: 1500,
+      servingsPerContainer: 60,
+      servingsPerDay: 2,
+      slug: { current: "featured-product" },
+      ingredients: [],
+      tierRatings: { overallRank: "S" },
+      badges: [],
+    },
+  ] as any);
+
+  // 3回目: getPopularIngredientsWithStats() - 人気成分
   mockFetch.mockResolvedValueOnce([
     {
       name: "ビタミンC",
@@ -71,22 +90,15 @@ beforeEach(() => {
       category: "ビタミン",
       description: "テスト説明",
       slug: { current: "vitamin-c" },
+      productCount: 10,
+      minPrice: 500,
     },
   ] as any);
 
-  // 3回目: getFeaturedProducts() - おすすめ商品
-  mockFetch.mockResolvedValueOnce([
-    {
-      name: "Featured Product",
-      priceJPY: 1500,
-      servingsPerContainer: 60,
-      servingsPerDay: 2,
-      slug: { current: "featured-product" },
-      ingredients: [],
-    },
-  ] as any);
+  // 4回目: getTotalProductCount() - 商品数
+  mockFetch.mockResolvedValueOnce(100 as any);
 
-  // 4回目以降: getPopularIngredientsWithStats() および統計データ
+  // 5回目以降
   mockFetch.mockResolvedValue([] as any);
 });
 
@@ -95,7 +107,9 @@ describe("Home Page", () => {
     const HomeComponent = await Home();
     render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
     const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading).toHaveTextContent("あなたに最適なサプリを見つけよう");
+    // The heading text is split across multiple spans
+    expect(heading).toHaveTextContent(/あなたに最適な/);
+    expect(heading).toHaveTextContent(/サプリを見つけよう/);
   });
 
   it("renders the recommended products section", async () => {

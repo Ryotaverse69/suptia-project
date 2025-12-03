@@ -25,7 +25,7 @@ export function Footer() {
   //   setLanguageMenuOpen(false);
   // };
   return (
-    <footer className="border-t border-white/40 bg-white/30 backdrop-blur-md relative z-10">
+    <footer className="border-t border-slate-200 bg-slate-100 relative z-10">
       <div className="container mx-auto px-6 lg:px-12 xl:px-16 py-16">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
