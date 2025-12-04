@@ -1,7 +1,20 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+
+// Apple式：モバイル検出
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
 
 interface StatItemProps {
   value: number;
@@ -69,6 +82,8 @@ function StatCard({
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -77,74 +92,92 @@ function StatCard({
     <motion.div
       ref={ref}
       className="relative group will-change-transform"
-      initial={{ opacity: 0, y: 50, rotateX: -15 }}
+      initial={{
+        opacity: 0,
+        y: isMobile ? 30 : 50,
+        rotateX: isMobile ? 0 : -15,
+      }}
       animate={isInView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        duration: isMobile ? 0.5 : 0.8,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
-        transformStyle: "preserve-3d",
-        perspective: 1000,
-        transform: "translateZ(0)", // GPU レイヤー強制
+        transformStyle: isMobile ? "flat" : "preserve-3d",
+        perspective: isMobile ? undefined : 1000,
+        transform: "translateZ(0)",
       }}
     >
-      {/* Card Container */}
+      {/* Card Container - Apple式：モバイルでは3D効果無効 */}
       <motion.div
         className="relative h-full bg-white border border-slate-200 rounded-3xl p-8 overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 will-change-transform"
-        animate={{
-          rotateY: isHovered ? 5 : 0,
-          rotateX: isHovered ? -5 : 0,
-          scale: isHovered ? 1.02 : 1,
-        }}
+        animate={
+          isMobile
+            ? { scale: isHovered ? 1.01 : 1 }
+            : {
+                rotateY: isHovered ? 5 : 0,
+                rotateX: isHovered ? -5 : 0,
+                scale: isHovered ? 1.02 : 1,
+              }
+        }
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          transformStyle: "preserve-3d",
+          transformStyle: isMobile ? "flat" : "preserve-3d",
           transform: "translateZ(0)",
         }}
       >
-        {/* Background Glow - 強化版 */}
-        <motion.div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background: `
-              radial-gradient(circle at 30% 30%, ${color}20 0%, transparent 50%),
-              radial-gradient(circle at 70% 70%, ${color}15 0%, transparent 50%)
-            `,
-          }}
-        />
+        {/* Background Glow - モバイルでは簡略化 */}
+        {!isMobile && (
+          <motion.div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background: `
+                radial-gradient(circle at 30% 30%, ${color}20 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, ${color}15 0%, transparent 50%)
+              `,
+            }}
+          />
+        )}
 
-        {/* Animated Border Glow */}
-        <motion.div
-          className="absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, ${color}40 0%, transparent 40%, transparent 60%, ${color}40 100%)`,
-          }}
-        />
+        {/* Animated Border Glow - デスクトップのみ */}
+        {!isMobile && (
+          <motion.div
+            className="absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              background: `linear-gradient(135deg, ${color}40 0%, transparent 40%, transparent 60%, ${color}40 100%)`,
+            }}
+          />
+        )}
 
-        {/* Floating Particles - カード内の微細エフェクト */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                backgroundColor: `${color}30`,
-                left: `${20 + i * 30}%`,
-                top: `${30 + i * 20}%`,
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0, 0.6, 0],
-              }}
-              transition={{
-                duration: 3 + i,
-                repeat: Infinity,
-                delay: i * 0.5,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </div>
+        {/* Floating Particles - Apple式：モバイルでは無効、reduced-motion対応 */}
+        {!isMobile && !prefersReducedMotion && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[0, 1].map((i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 rounded-full"
+                style={{
+                  backgroundColor: `${color}30`,
+                  left: `${25 + i * 50}%`,
+                  top: `${35 + i * 30}%`,
+                }}
+                animate={{
+                  y: [0, -20, 0],
+                  opacity: [0, 0.6, 0],
+                }}
+                transition={{
+                  duration: 4 + i,
+                  repeat: Infinity,
+                  delay: i * 0.8,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Content */}
         <div className="relative z-10">
@@ -154,7 +187,8 @@ function StatCard({
               className="text-5xl sm:text-6xl lg:text-7xl font-extralight tracking-tight will-change-transform"
               style={{
                 color,
-                textShadow: isHovered ? `0 0 40px ${color}30` : "none",
+                textShadow:
+                  !isMobile && isHovered ? `0 0 40px ${color}30` : "none",
                 transition: "text-shadow 0.3s ease",
               }}
             >
@@ -174,17 +208,19 @@ function StatCard({
           </motion.div>
         </div>
 
-        {/* Enhanced Shine Effect */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.4) 50%, transparent 55%)",
-            transform: "translateX(-100%)",
-          }}
-          animate={isHovered ? { transform: "translateX(100%)" } : {}}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-        />
+        {/* Enhanced Shine Effect - デスクトップのみ */}
+        {!isMobile && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.4) 50%, transparent 55%)",
+              transform: "translateX(-100%)",
+            }}
+            animate={isHovered ? { transform: "translateX(100%)" } : {}}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
+        )}
 
         {/* Corner Accent */}
         <div

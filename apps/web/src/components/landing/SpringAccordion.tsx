@@ -1,9 +1,27 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useRef, useState, useCallback, useEffect } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { HelpCircle, Plus, MessageCircle } from "lucide-react";
 import Link from "next/link";
+
+// Apple式：モバイル検出
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
 
 interface FAQItem {
   question: string;
@@ -30,6 +48,7 @@ function AccordionItem({
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -65,11 +84,11 @@ function AccordionItem({
         layout
         style={{ transform: "translateZ(0)" }}
       >
-        {/* Question Button */}
+        {/* Question Button - Apple式：モバイルではホバー効果無効 */}
         <motion.button
           className="w-full flex items-center justify-between p-6 text-left will-change-transform"
           onClick={onToggle}
-          whileHover={{ x: 4 }}
+          whileHover={isMobile ? {} : { x: 4 }}
           transition={{ duration: 0.2 }}
           style={{ transform: "translateZ(0)" }}
         >
@@ -78,10 +97,14 @@ function AccordionItem({
               className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
                 isOpen ? "bg-primary text-white" : "bg-slate-100 text-slate-500"
               }`}
-              animate={{
-                rotate: isOpen ? 180 : 0,
-                scale: isHovered && !isOpen ? 1.1 : 1,
-              }}
+              animate={
+                isMobile
+                  ? { rotate: isOpen ? 180 : 0 }
+                  : {
+                      rotate: isOpen ? 180 : 0,
+                      scale: isHovered && !isOpen ? 1.1 : 1,
+                    }
+              }
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               {String(index + 1).padStart(2, "0")}
@@ -99,11 +122,19 @@ function AccordionItem({
             className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
               isOpen ? "bg-primary text-white" : "bg-slate-100 text-slate-500"
             }`}
-            animate={{
-              rotate: isOpen ? 45 : 0,
-              scale: isHovered && !isOpen ? 1.1 : 1,
-            }}
-            transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+            animate={
+              isMobile
+                ? { rotate: isOpen ? 45 : 0 }
+                : {
+                    rotate: isOpen ? 45 : 0,
+                    scale: isHovered && !isOpen ? 1.1 : 1,
+                  }
+            }
+            transition={
+              isMobile
+                ? { duration: 0.25, ease: [0.22, 1, 0.36, 1] }
+                : { duration: 0.3, type: "spring", stiffness: 200 }
+            }
           >
             <Plus className="w-5 h-5" />
           </motion.div>
@@ -174,6 +205,8 @@ export function SpringAccordion({
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
 
   const handleToggle = useCallback((index: number) => {
     setOpenIndex((current) => (current === index ? null : index));
@@ -206,25 +239,29 @@ export function SpringAccordion({
         >
           <motion.div
             className="inline-flex items-center justify-center gap-3 mb-6"
-            initial={{ scale: 0, rotate: -180 }}
+            initial={{ scale: 0, rotate: isMobile ? 0 : -180 }}
             animate={isInView ? { scale: 1, rotate: 0 } : {}}
-            transition={{
-              duration: 0.6,
-              delay: 0.2,
-              type: "spring",
-              stiffness: 200,
-            }}
+            transition={
+              isMobile
+                ? { duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }
+                : { duration: 0.6, delay: 0.2, type: "spring", stiffness: 200 }
+            }
           >
-            <motion.div
-              className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7a98ec] to-primary flex items-center justify-center shadow-lg will-change-transform"
-              animate={{
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-              style={{ transform: "translateZ(0)" }}
-            >
-              <HelpCircle className="w-6 h-6 text-white" />
-            </motion.div>
+            {/* Apple式：モバイル・reduced-motionでは連続アニメーション無効 */}
+            {isMobile || prefersReducedMotion ? (
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7a98ec] to-primary flex items-center justify-center shadow-lg">
+                <HelpCircle className="w-6 h-6 text-white" />
+              </div>
+            ) : (
+              <motion.div
+                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7a98ec] to-primary flex items-center justify-center shadow-lg will-change-transform"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                style={{ transform: "translateZ(0)" }}
+              >
+                <HelpCircle className="w-6 h-6 text-white" />
+              </motion.div>
+            )}
           </motion.div>
           <motion.h2
             className="text-3xl sm:text-4xl font-light text-slate-800 mb-3"
@@ -257,7 +294,7 @@ export function SpringAccordion({
           ))}
         </div>
 
-        {/* Contact CTA - 強化版 */}
+        {/* Contact CTA - Apple式モバイル最適化 */}
         <motion.div
           className="mt-12 text-center"
           initial={{ opacity: 0, y: 20 }}
@@ -270,26 +307,32 @@ export function SpringAccordion({
           <Link href="/contact">
             <motion.button
               className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow will-change-transform"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={isMobile ? {} : { scale: 1.02 }}
+              whileTap={isMobile ? {} : { scale: 0.98 }}
               style={{ transform: "translateZ(0)" }}
             >
-              {/* Background - 強化版 */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-primary via-[#5a7fe6] to-primary bg-[length:200%_100%]"
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              />
+              {/* Background - モバイルでは連続アニメーション無効 */}
+              {isMobile || prefersReducedMotion ? (
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-[#5a7fe6]" />
+              ) : (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-primary via-[#5a7fe6] to-primary bg-[length:200%_100%]"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                />
+              )}
 
-              {/* Shine Effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.6 }}
-              />
+              {/* Shine Effect - デスクトップのみ */}
+              {!isMobile && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6 }}
+                />
+              )}
 
               <MessageCircle className="relative z-10 w-5 h-5 text-white" />
               <span className="relative z-10 font-semibold text-white">

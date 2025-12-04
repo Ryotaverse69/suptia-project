@@ -6,11 +6,25 @@ import {
   useMotionValue,
   useTransform,
   useInView,
+  useReducedMotion,
   PanInfo,
 } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Award, TrendingUp, Star } from "lucide-react";
+
+// Apple式：モバイル検出
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
 
 interface Product {
   name: string;
@@ -375,7 +389,7 @@ export function Carousel3D({
   );
 }
 
-// FlatCarousel用のカードコンポーネント
+// FlatCarousel用のカードコンポーネント - Apple式モバイル最適化
 function ProductCardFlat({
   product,
   index,
@@ -386,6 +400,7 @@ function ProductCardFlat({
   isInView: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -393,11 +408,11 @@ function ProductCardFlat({
   return (
     <motion.div
       className="flex-shrink-0 w-[280px] sm:w-[320px] will-change-transform"
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: 0.5,
-        delay: 0.1 * index,
+        duration: isMobile ? 0.3 : 0.5,
+        delay: isMobile ? 0.05 * Math.min(index, 3) : 0.1 * index,
         ease: [0.22, 1, 0.36, 1],
       }}
       onMouseEnter={handleMouseEnter}
@@ -405,29 +420,31 @@ function ProductCardFlat({
       style={{ transform: "translateZ(0)" }}
     >
       <Link href={`/products/${product.slug.current}`}>
+        {/* Apple式：モバイルではアニメーションを簡略化 */}
         <motion.div
-          className="relative bg-white border border-slate-200 rounded-3xl overflow-hidden will-change-transform"
-          animate={{
-            y: isHovered ? -10 : 0,
-            scale: isHovered ? 1.02 : 1,
-            boxShadow: isHovered
-              ? "0 25px 50px -12px rgba(59, 102, 224, 0.25)"
-              : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
+          className="relative bg-white border border-slate-200 rounded-3xl overflow-hidden will-change-transform shadow-sm"
+          animate={
+            isMobile
+              ? {}
+              : {
+                  y: isHovered ? -10 : 0,
+                  scale: isHovered ? 1.02 : 1,
+                  boxShadow: isHovered
+                    ? "0 25px 50px -12px rgba(59, 102, 224, 0.25)"
+                    : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                }
+          }
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           style={{
             transform: "translateZ(0)",
-            borderColor: isHovered ? "rgba(59, 102, 224, 0.3)" : undefined,
+            borderColor:
+              !isMobile && isHovered ? "rgba(59, 102, 224, 0.3)" : undefined,
           }}
         >
-          {/* Image */}
+          {/* Image - モバイルではズーム無効 */}
           <div className="relative aspect-[4/3] overflow-hidden">
             {product.externalImageUrl ? (
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ scale: isHovered ? 1.1 : 1 }}
-                transition={{ duration: 0.5 }}
-              >
+              isMobile ? (
                 <Image
                   src={product.externalImageUrl}
                   alt={product.name}
@@ -435,37 +452,66 @@ function ProductCardFlat({
                   className="object-cover"
                   unoptimized
                 />
-              </motion.div>
+              ) : (
+                <motion.div
+                  className="relative w-full h-full"
+                  animate={{ scale: isHovered ? 1.1 : 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Image
+                    src={product.externalImageUrl}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </motion.div>
+              )
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                 <Award className="w-16 h-16 text-slate-300" strokeWidth={1} />
               </div>
             )}
 
-            {/* Tier Badge */}
-            {product.tierRatings?.overallRank && (
-              <motion.div
-                className="absolute top-3 left-3"
-                animate={{ scale: isHovered ? 1.1 : 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div
-                  className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br shadow-lg ${
-                    tierColors[product.tierRatings.overallRank] || tierColors.D
-                  }`}
-                >
-                  {product.tierRatings.overallRank}
+            {/* Tier Badge - モバイルでは静的 */}
+            {product.tierRatings?.overallRank &&
+              (isMobile ? (
+                <div className="absolute top-3 left-3">
+                  <div
+                    className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br shadow-lg ${
+                      tierColors[product.tierRatings.overallRank] ||
+                      tierColors.D
+                    }`}
+                  >
+                    {product.tierRatings.overallRank}
+                  </div>
                 </div>
-              </motion.div>
-            )}
+              ) : (
+                <motion.div
+                  className="absolute top-3 left-3"
+                  animate={{ scale: isHovered ? 1.1 : 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div
+                    className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br shadow-lg ${
+                      tierColors[product.tierRatings.overallRank] ||
+                      tierColors.D
+                    }`}
+                  >
+                    {product.tierRatings.overallRank}
+                  </div>
+                </motion.div>
+              ))}
 
-            {/* Hover Overlay */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
+            {/* Hover Overlay - デスクトップのみ */}
+            {!isMobile && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isHovered ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
           </div>
 
           {/* Content */}
@@ -482,26 +528,32 @@ function ProductCardFlat({
               </div>
               <div className="text-right">
                 <p className="text-[10px] text-slate-400">1日あたり</p>
-                <motion.p
-                  className="text-lg font-black text-primary"
-                  animate={{
-                    scale: isHovered ? 1.1 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
-                </motion.p>
+                {isMobile ? (
+                  <p className="text-lg font-black text-primary">
+                    ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
+                  </p>
+                ) : (
+                  <motion.p
+                    className="text-lg font-black text-primary"
+                    animate={{ scale: isHovered ? 1.1 : 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
+                  </motion.p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Bottom Accent */}
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-[#7a98ec]"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
+          {/* Bottom Accent - デスクトップのみ */}
+          {!isMobile && (
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-[#7a98ec]"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: isHovered ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          )}
         </motion.div>
       </Link>
     </motion.div>
@@ -511,6 +563,8 @@ function ProductCardFlat({
 export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section
@@ -518,22 +572,27 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
       className="relative py-24 bg-slate-50"
       style={{ contain: "layout paint" }}
     >
-      {/* Background subtle pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.02] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #3b66e0 1px, transparent 0)`,
-          backgroundSize: "32px 32px",
-        }}
-      />
+      {/* Background subtle pattern - モバイルでは非表示 */}
+      {!isMobile && (
+        <div
+          className="absolute inset-0 opacity-[0.02] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #3b66e0 1px, transparent 0)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
+      )}
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Header - 強化版 */}
+        {/* Header - Apple式：モバイルで簡略化 */}
         <motion.div
           className="flex items-center justify-between mb-10"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: isMobile ? 0.5 : 0.8,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         >
           <div>
             <motion.span
@@ -542,12 +601,17 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <motion.div
-                animate={{ rotate: [0, 15, -15, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-              >
+              {/* スターアニメーション - モバイル・reduced-motionでは無効 */}
+              {isMobile || prefersReducedMotion ? (
                 <Star className="w-4 h-4" />
-              </motion.div>
+              ) : (
+                <motion.div
+                  animate={{ rotate: [0, 15, -15, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                >
+                  <Star className="w-4 h-4" />
+                </motion.div>
+              )}
               Featured Products
             </motion.span>
             <motion.h2

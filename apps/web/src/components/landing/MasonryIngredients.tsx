@@ -1,9 +1,28 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useCallback, useEffect } from "react";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import Link from "next/link";
 import { TrendingUp, Sparkles, Beaker } from "lucide-react";
+
+// Apple式：モバイル検出
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
 
 interface IngredientWithStats {
   name: string;
@@ -53,7 +72,10 @@ function IngredientCard({
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
 
+  // Apple式：モバイルではパララックス無効
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -62,7 +84,9 @@ function IngredientCard({
   const y = useTransform(
     scrollYProgress,
     [0, 1],
-    [20 * (index % 2 === 0 ? 1 : -1), -20 * (index % 2 === 0 ? 1 : -1)],
+    isMobile
+      ? [0, 0]
+      : [20 * (index % 2 === 0 ? 1 : -1), -20 * (index % 2 === 0 ? 1 : -1)],
   );
 
   const sizeClasses = {
@@ -80,46 +104,33 @@ function IngredientCard({
   return (
     <motion.div
       ref={ref}
-      className="relative group will-change-transform"
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      className="will-change-transform"
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: 0.6,
-        delay: index * 0.08,
+        duration: isMobile ? 0.4 : 0.6,
+        delay: isMobile ? index * 0.05 : index * 0.1,
         ease: [0.22, 1, 0.36, 1],
-      }}
-      style={{
-        y,
-        perspective: 1200,
-        transform: "translateZ(0)",
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={{ transform: "translateZ(0)" }}
     >
-      {/* Floating Animation Wrapper - GPU最適化 */}
-      <motion.div
-        className="will-change-transform"
-        animate={{
-          y: [0, -6, 0],
-        }}
-        transition={{
-          duration: floatParam.duration,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: floatParam.delay,
-        }}
-        style={{ transform: "translateZ(0)" }}
-      >
+      <motion.div style={{ y }} className="will-change-transform">
         <Link href={`/search?q=${encodeURIComponent(ingredient.name)}`}>
           <motion.div
-            className={`relative ${sizeClasses[size]} rounded-2xl overflow-hidden cursor-pointer will-change-transform`}
-            animate={{
-              scale: isHovered ? 1.03 : 1,
-              y: isHovered ? -8 : 0,
-              boxShadow: isHovered
-                ? `0 20px 40px -10px ${color}40, 0 12px 24px -12px rgba(0,0,0,0.25)`
-                : `0 4px 20px -5px ${color}25, 0 8px 16px -8px rgba(0,0,0,0.15)`,
-            }}
+            className={`relative ${sizeClasses[size]} rounded-2xl overflow-hidden cursor-pointer will-change-transform shadow-md`}
+            animate={
+              isMobile
+                ? {}
+                : {
+                    scale: isHovered ? 1.03 : 1,
+                    y: isHovered ? -8 : 0,
+                    boxShadow: isHovered
+                      ? `0 20px 40px -10px ${color}40, 0 12px 24px -12px rgba(0,0,0,0.25)`
+                      : `0 4px 20px -5px ${color}25, 0 8px 16px -8px rgba(0,0,0,0.15)`,
+                  }
+            }
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             style={{ transform: "translateZ(0)" }}
           >
@@ -143,79 +154,88 @@ function IngredientCard({
                 }}
               />
 
-              {/* Decorative circles - GPU最適化版 */}
-              <motion.div
-                className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 will-change-transform"
-                style={{
-                  backgroundColor: color,
-                  transform: "translateZ(0)",
-                }}
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute bottom-0 -left-8 w-24 h-24 rounded-full opacity-10 will-change-transform"
-                style={{
-                  backgroundColor: color,
-                  transform: "translateZ(0)",
-                }}
-                animate={{ scale: [1, 1.15, 1] }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-              />
-
-              {/* Category Badge */}
-              <motion.div
-                className="absolute top-3 left-3 z-10"
-                animate={{ scale: isHovered ? 1.05 : 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <span
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                  style={{
-                    backgroundColor: `${color}20`,
-                    color: color,
-                  }}
-                >
-                  <Beaker className="w-2.5 h-2.5" />
-                  {ingredient.category}
-                </span>
-              </motion.div>
-
-              {/* Centered Icon - 強化版 */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  className="relative will-change-transform"
-                  animate={{
-                    scale: isHovered ? 1.1 : 1,
-                    rotate: isHovered ? 5 : 0,
-                  }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ transform: "translateZ(0)" }}
-                >
-                  {/* Icon Glow */}
-                  <motion.div
-                    className="absolute inset-0 rounded-2xl"
-                    style={{
-                      background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
-                      filter: "blur(10px)",
-                    }}
-                    animate={{
-                      opacity: isHovered ? 1 : 0,
-                      scale: isHovered ? 1.3 : 1,
-                    }}
-                    transition={{ duration: 0.3 }}
+              {/* Decorative circles - Apple式：モバイルでは静的 */}
+              {isMobile || prefersReducedMotion ? (
+                <>
+                  <div
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20"
+                    style={{ backgroundColor: color }}
                   />
                   <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative z-10"
+                    className="absolute bottom-0 -left-8 w-24 h-24 rounded-full opacity-10"
+                    style={{ backgroundColor: color }}
+                  />
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 will-change-transform"
+                    style={{
+                      backgroundColor: color,
+                      transform: "translateZ(0)",
+                    }}
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <motion.div
+                    className="absolute bottom-0 -left-8 w-24 h-24 rounded-full opacity-10 will-change-transform"
+                    style={{
+                      backgroundColor: color,
+                      transform: "translateZ(0)",
+                    }}
+                    animate={{ scale: [1, 1.15, 1] }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1,
+                    }}
+                  />
+                </>
+              )}
+
+              {/* Category Badge - モバイルでは静的 */}
+              {isMobile ? (
+                <div className="absolute top-3 left-3 z-10">
+                  <span
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                    style={{
+                      backgroundColor: `${color}20`,
+                      color: color,
+                    }}
+                  >
+                    <Beaker className="w-2.5 h-2.5" />
+                    {ingredient.category}
+                  </span>
+                </div>
+              ) : (
+                <motion.div
+                  className="absolute top-3 left-3 z-10"
+                  animate={{ scale: isHovered ? 1.05 : 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                    style={{
+                      backgroundColor: `${color}20`,
+                      color: color,
+                    }}
+                  >
+                    <Beaker className="w-2.5 h-2.5" />
+                    {ingredient.category}
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Centered Icon - Apple式：モバイルでは静的 */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {isMobile ? (
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
                     style={{
                       background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
                     }}
@@ -224,21 +244,61 @@ function IngredientCard({
                       {ingredient.name.charAt(0)}
                     </span>
                   </div>
-                </motion.div>
+                ) : (
+                  <motion.div
+                    className="relative will-change-transform"
+                    animate={{
+                      scale: isHovered ? 1.1 : 1,
+                      rotate: isHovered ? 5 : 0,
+                    }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ transform: "translateZ(0)" }}
+                  >
+                    {/* Icon Glow */}
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl"
+                      style={{
+                        background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
+                        filter: "blur(10px)",
+                      }}
+                      animate={{
+                        opacity: isHovered ? 1 : 0,
+                        scale: isHovered ? 1.3 : 1,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <div
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative z-10"
+                      style={{
+                        background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
+                      }}
+                    >
+                      <span className="text-white text-2xl font-bold">
+                        {ingredient.name.charAt(0)}
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
 
             {/* Bottom Section - Content */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%] p-4 flex flex-col justify-between bg-white">
-              {/* Name */}
+              {/* Name - モバイルでは静的 */}
               <div>
-                <motion.h3
-                  className="text-base font-bold text-slate-800 mb-0.5 line-clamp-1 transition-colors"
-                  animate={{ color: isHovered ? color : "#1e293b" }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {ingredient.name}
-                </motion.h3>
+                {isMobile ? (
+                  <h3 className="text-base font-bold text-slate-800 mb-0.5 line-clamp-1">
+                    {ingredient.name}
+                  </h3>
+                ) : (
+                  <motion.h3
+                    className="text-base font-bold text-slate-800 mb-0.5 line-clamp-1 transition-colors"
+                    animate={{ color: isHovered ? color : "#1e293b" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {ingredient.name}
+                  </motion.h3>
+                )}
                 <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
                   {ingredient.nameEn}
                 </p>
@@ -259,49 +319,62 @@ function IngredientCard({
                   <p className="text-[9px] text-slate-400 uppercase tracking-wider">
                     最安
                   </p>
-                  <motion.p
-                    className="text-sm font-bold"
-                    style={{ color }}
-                    animate={{ scale: isHovered ? 1.1 : 1 }}
+                  {isMobile ? (
+                    <p className="text-sm font-bold" style={{ color }}>
+                      ¥{ingredient.minPrice.toLocaleString()}
+                    </p>
+                  ) : (
+                    <motion.p
+                      className="text-sm font-bold"
+                      style={{ color }}
+                      animate={{ scale: isHovered ? 1.1 : 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      ¥{ingredient.minPrice.toLocaleString()}
+                    </motion.p>
+                  )}
+                </div>
+                {/* TrendingUp icon - デスクトップのみ */}
+                {!isMobile && (
+                  <motion.div
+                    className="w-8 h-8 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: `${color}15` }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: isHovered ? 1 : 0,
+                      scale: isHovered ? 1 : 0.8,
+                    }}
                     transition={{ duration: 0.3 }}
                   >
-                    ¥{ingredient.minPrice.toLocaleString()}
-                  </motion.p>
-                </div>
-                <motion.div
-                  className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: `${color}15` }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{
-                    opacity: isHovered ? 1 : 0,
-                    scale: isHovered ? 1 : 0.8,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TrendingUp className="w-4 h-4" style={{ color }} />
-                </motion.div>
+                    <TrendingUp className="w-4 h-4" style={{ color }} />
+                  </motion.div>
+                )}
               </div>
             </div>
 
-            {/* Hover Border Effect */}
-            <motion.div
-              className="absolute inset-0 rounded-2xl pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                boxShadow: `inset 0 0 0 2px ${color}30`,
-              }}
-            />
+            {/* Hover Border Effect - デスクトップのみ */}
+            {!isMobile && (
+              <motion.div
+                className="absolute inset-0 rounded-2xl pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isHovered ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  boxShadow: `inset 0 0 0 2px ${color}30`,
+                }}
+              />
+            )}
 
-            {/* Bottom Accent Line */}
-            <motion.div
-              className="absolute bottom-0 left-0 right-0 h-1"
-              style={{ backgroundColor: color }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
+            {/* Bottom Accent Line - デスクトップのみ */}
+            {!isMobile && (
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-1"
+                style={{ backgroundColor: color }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: isHovered ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
           </motion.div>
         </Link>
       </motion.div>

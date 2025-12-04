@@ -114,6 +114,73 @@ describe("structured-data", () => {
 
       expect(result.category).toBe("ミネラル");
     });
+
+    it("priceValidUntilを含む（Google推奨）", () => {
+      const result = generateProductStructuredData({
+        name: "テスト商品",
+        price: 1000,
+      });
+
+      expect(result.offers?.priceValidUntil).toBeDefined();
+      // 日付形式をチェック（YYYY-MM-DD）
+      expect(result.offers?.priceValidUntil).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+
+    it("hasMerchantReturnPolicyを含む（販売者リスティング必須）", () => {
+      const result = generateProductStructuredData({
+        name: "テスト商品",
+        price: 1000,
+      });
+
+      expect(result.offers?.hasMerchantReturnPolicy).toBeDefined();
+      expect(result.offers?.hasMerchantReturnPolicy?.["@type"]).toBe(
+        "MerchantReturnPolicy",
+      );
+      expect(result.offers?.hasMerchantReturnPolicy?.applicableCountry).toBe(
+        "JP",
+      );
+    });
+
+    it("shippingDetailsを含む（販売者リスティング必須）", () => {
+      const result = generateProductStructuredData({
+        name: "テスト商品",
+        price: 1000,
+      });
+
+      expect(result.offers?.shippingDetails).toBeDefined();
+      expect(result.offers?.shippingDetails?.["@type"]).toBe(
+        "OfferShippingDetails",
+      );
+      expect(
+        result.offers?.shippingDetails?.shippingDestination?.addressCountry,
+      ).toBe("JP");
+    });
+
+    it("aggregateRatingが常に含まれる（Google推奨）", () => {
+      const result = generateProductStructuredData({
+        name: "テスト商品",
+        price: 1000,
+      });
+
+      expect(result.aggregateRating).toBeDefined();
+      expect(result.aggregateRating?.["@type"]).toBe("AggregateRating");
+      expect(result.aggregateRating?.bestRating).toBe(5);
+      expect(result.aggregateRating?.worstRating).toBe(1);
+    });
+
+    it("reviewが常に含まれる（Google推奨）", () => {
+      const result = generateProductStructuredData({
+        name: "テスト商品",
+        price: 1000,
+        brand: "テストブランド",
+      });
+
+      expect(result.review).toBeDefined();
+      expect(result.review).toHaveLength(1);
+      expect(result.review?.[0]?.["@type"]).toBe("Review");
+      expect(result.review?.[0]?.author?.name).toBe("サプティア編集部");
+      expect(result.review?.[0]?.reviewBody).toContain("テストブランドの");
+    });
   });
 
   describe("generateItemListStructuredData", () => {

@@ -1,5 +1,20 @@
 import "@testing-library/jest-dom";
 
+// matchMedia mock for useIsMobile hook
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => true,
+  }),
+});
+
 // IntersectionObserver mock for framer-motion useInView
 class MockIntersectionObserver implements IntersectionObserver {
   readonly root: Element | Document | null = null;
