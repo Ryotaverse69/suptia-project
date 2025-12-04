@@ -81,9 +81,9 @@ interface Product {
   badges?: BadgeType[];
 }
 
-// 全商品を取得
+// 全商品を取得（在庫ありのみ）
 async function getAllProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc){
+  const query = `*[_type == "product" && availability == "in-stock"] | order(priceJPY asc){
     _id,
     name,
     priceJPY,

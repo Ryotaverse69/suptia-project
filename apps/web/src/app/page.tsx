@@ -62,7 +62,7 @@ interface IngredientWithStats extends Ingredient {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const query = `*[_type == "product"] | order(priceJPY asc)[0..29]{
+  const query = `*[_type == "product" && availability == "in-stock"] | order(priceJPY asc)[0..29]{
     _id,
     name,
     priceJPY,
@@ -117,7 +117,7 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getTotalProductCount(): Promise<number> {
-  const query = `count(*[_type == "product" && defined(priceJPY) && priceJPY > 0])`;
+  const query = `count(*[_type == "product" && availability == "in-stock" && defined(priceJPY) && priceJPY > 0])`;
 
   try {
     const count = await sanity.fetch(query);
@@ -293,9 +293,9 @@ async function getPopularIngredientsWithStats(): Promise<
         url
       }
     },
-    "productCount": count(*[_type == "product" && references(^._id)]),
-    "minPrice": math::min(*[_type == "product" && references(^._id)].priceJPY),
-    "sampleImageUrl": *[_type == "product" && references(^._id) && defined(externalImageUrl)][0].externalImageUrl
+    "productCount": count(*[_type == "product" && availability == "in-stock" && references(^._id)]),
+    "minPrice": math::min(*[_type == "product" && availability == "in-stock" && references(^._id)].priceJPY),
+    "sampleImageUrl": *[_type == "product" && availability == "in-stock" && references(^._id) && defined(externalImageUrl)][0].externalImageUrl
   }`;
 
   try {

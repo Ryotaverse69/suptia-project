@@ -29,6 +29,11 @@ const ingredientCategoryMapping = JSON.parse(
   readFileSync(join(__dirname, "../apps/web/src/data/ingredient-category-mapping.json"), "utf-8")
 );
 
+// 成分別推奨摂取量の読み込み
+const recommendedDailyIntake = JSON.parse(
+  readFileSync(join(__dirname, "../apps/web/src/data/recommended-daily-intake.json"), "utf-8")
+);
+
 // 成分名正規化関数のインポート
 import { normalizeIngredientName } from "./ingredient-normalizer.mjs";
 
@@ -130,6 +135,115 @@ function scoreToRank(score, reverse = false) {
   if (adjustedScore >= 70) return "B";
   if (adjustedScore >= 60) return "C";
   return "D";
+}
+
+/**
+ * ハイブリッド方式による含有量ランク計算
+ *
+ * 絶対評価（推奨摂取量に対する充足率）+ 相対評価（最高含有量ボーナス）
+ *
+ * @param {number} amountMgPerServing - 1回あたりの含有量（mg）
+ * @param {number} servingsPerDay - 1日あたりの摂取回数
+ * @param {string} ingredientName - 成分名（推奨量取得用）
+ * @param {number[]} allDailyAmounts - 同じ成分を持つ全商品の1日あたり含有量配列
+ * @returns {string} S/A/B/C/D
+ */
+function calculateContentRankHybrid(amountMgPerServing, servingsPerDay, ingredientName, allDailyAmounts) {
+  // 1日あたりの含有量を計算
+  const dailyAmount = amountMgPerServing * (servingsPerDay || 1);
+
+  // 推奨摂取量を取得（見つからない場合はnull）
+  const recommendedDose = getRecommendedDose(ingredientName);
+
+  // 推奨摂取量が設定されていない場合は従来の相対評価にフォールバック
+  if (!recommendedDose || recommendedDose <= 0) {
+    return calculateContentRankRelative(dailyAmount, allDailyAmounts);
+  }
+
+  // 推奨量に対する充足率を計算
+  const fulfillmentRatio = dailyAmount / recommendedDose;
+
+  // 絶対評価による基本ランク
+  let baseRank;
+  if (fulfillmentRatio >= 5.0) baseRank = 'S';       // 500%以上
+  else if (fulfillmentRatio >= 2.0) baseRank = 'A'; // 200%以上
+  else if (fulfillmentRatio >= 1.0) baseRank = 'B'; // 100%以上（推奨量を満たす）
+  else if (fulfillmentRatio >= 0.5) baseRank = 'C'; // 50%以上
+  else baseRank = 'D';                              // 50%未満
+
+  // 相対評価ボーナス: 同カテゴリ内で最高含有量なら1ランクアップ
+  if (allDailyAmounts && allDailyAmounts.length > 1) {
+    const maxAmount = Math.max(...allDailyAmounts);
+    // 最高含有量（許容誤差0.1%）かつSランク未満の場合
+    if (Math.abs(dailyAmount - maxAmount) / maxAmount < 0.001 && baseRank !== 'S') {
+      baseRank = upgradeRank(baseRank);
+    }
+  }
+
+  return baseRank;
+}
+
+/**
+ * 成分名から推奨摂取量を取得
+ * @param {string} ingredientName - 成分名
+ * @returns {number|null} 推奨摂取量（mg）または null
+ */
+function getRecommendedDose(ingredientName) {
+  if (!ingredientName) return null;
+
+  // 完全一致を試みる
+  if (recommendedDailyIntake[ingredientName]) {
+    return recommendedDailyIntake[ingredientName];
+  }
+
+  // 部分一致を試みる
+  for (const [name, dose] of Object.entries(recommendedDailyIntake)) {
+    if (name === '_comment' || name === '_note') continue;
+    if (ingredientName.includes(name) || name.includes(ingredientName)) {
+      return dose;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * ランクを1段階上げる
+ * @param {string} rank - 現在のランク
+ * @returns {string} 1段階上のランク
+ */
+function upgradeRank(rank) {
+  const rankOrder = ['D', 'C', 'B', 'A', 'S'];
+  const currentIndex = rankOrder.indexOf(rank);
+  if (currentIndex < rankOrder.length - 1) {
+    return rankOrder[currentIndex + 1];
+  }
+  return rank;
+}
+
+/**
+ * 従来の相対評価による含有量ランク計算（フォールバック用）
+ * @param {number} dailyAmount - 1日あたりの含有量
+ * @param {number[]} allDailyAmounts - 全商品の1日あたり含有量配列
+ * @returns {string} S/A/B/C/D
+ */
+function calculateContentRankRelative(dailyAmount, allDailyAmounts) {
+  if (!allDailyAmounts || allDailyAmounts.length === 0) return 'D';
+
+  const sortedAmounts = [...allDailyAmounts].sort((a, b) => a - b);
+  const n = sortedAmounts.length;
+
+  // 同値を考慮したパーセンタイル計算
+  const belowCount = sortedAmounts.filter(a => a < dailyAmount).length;
+  const sameCount = sortedAmounts.filter(a => a === dailyAmount).length;
+  const percentile = ((belowCount + sameCount / 2) / n) * 100;
+
+  // 含有量が多いほど高ランク
+  if (percentile >= 80) return 'S';
+  if (percentile >= 60) return 'A';
+  if (percentile >= 40) return 'B';
+  if (percentile >= 20) return 'C';
+  return 'D';
 }
 
 /**
@@ -444,6 +558,8 @@ async function calculateTierRanks() {
         costPerDay,
         costPerMg,
         amount: ing.amountMgPerServing,
+        servingsPerDay: product.servingsPerDay || 1,
+        ingredientName: ing.ingredient.name, // ハイブリッド方式用
         safetyScore: calculatedScores.safetyScore,
         evidenceScore: calculatedScores.evidenceScore,
         overallScore: calculatedScores.overall,
@@ -493,6 +609,7 @@ async function calculateTierRanks() {
       const prices = groupProducts.map(p => p.price);
       const costsPerMg = groupProducts.map(p => p.costPerMg);
       const amounts = groupProducts.map(p => p.amount);
+      const dailyAmounts = groupProducts.map(p => p.amount * p.servingsPerDay); // 1日あたりの含有量
       const safetyScores = groupProducts.map(p => p.safetyScore);
       const evidenceScores = groupProducts.map(p => p.evidenceScore);
 
@@ -517,16 +634,24 @@ async function calculateTierRanks() {
           console.log(`   コスパランク: ${costEffectivenessRank}`);
         }
 
-        // 3. 含有量ランク（多い方が良い）
-        const contentPercentile = calculatePercentile(productData.amount, amounts, false);
-        const contentRank = scoreToRank(contentPercentile);
+        // 3. 含有量ランク（ハイブリッド方式：絶対評価 + 相対評価）
+        const contentRank = calculateContentRankHybrid(
+          productData.amount,
+          productData.servingsPerDay,
+          productData.ingredientName,
+          dailyAmounts
+        );
 
         if (isTargetProduct) {
-          console.log(`   含有量: ${productData.amount}mg/回`);
-          console.log(`   amounts配列の要素数: ${amounts.length}件`);
-          console.log(`   amounts配列の最大値: ${Math.max(...amounts)}mg/回`);
-          console.log(`   含有量パーセンタイル: ${contentPercentile.toFixed(2)}%`);
-          console.log(`   含有量ランク: ${contentRank}\n`);
+          const dailyAmount = productData.amount * productData.servingsPerDay;
+          const recommendedDose = getRecommendedDose(productData.ingredientName);
+          console.log(`   含有量: ${productData.amount}mg/回 × ${productData.servingsPerDay}回/日 = ${dailyAmount}mg/日`);
+          console.log(`   成分名: ${productData.ingredientName}`);
+          console.log(`   推奨摂取量: ${recommendedDose ? recommendedDose + 'mg' : '未設定'}`);
+          if (recommendedDose) {
+            console.log(`   充足率: ${((dailyAmount / recommendedDose) * 100).toFixed(0)}%`);
+          }
+          console.log(`   含有量ランク: ${contentRank} (ハイブリッド方式)\n`);
         }
 
         // 4. エビデンスランク（絶対評価 + 参考文献数ボーナス）

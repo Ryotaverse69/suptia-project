@@ -58,40 +58,40 @@ export function IngredientComparison({
       bgColor: "bg-purple-50",
       borderColor: "border-purple-200",
       textColor: "text-purple-800",
-      label: "最高含有量",
-      description: "最も多くの成分を含んでいます",
+      label: "非常に高含有",
+      description: "推奨摂取量の5倍以上を含んでいます",
     },
     A: {
       color: "from-blue-500 to-blue-700",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-200",
       textColor: "text-blue-800",
-      label: "高含有量",
-      description: "豊富な成分量を含んでいます",
+      label: "高含有",
+      description: "推奨摂取量の2倍以上を含んでいます",
     },
     B: {
       color: "from-green-500 to-green-700",
       bgColor: "bg-green-50",
       borderColor: "border-green-200",
       textColor: "text-green-800",
-      label: "標準含有量",
-      description: "標準的な成分量です",
+      label: "推奨量充足",
+      description: "推奨摂取量を満たしています",
     },
     C: {
       color: "from-yellow-500 to-yellow-700",
       bgColor: "bg-yellow-50",
       borderColor: "border-yellow-200",
       textColor: "text-yellow-800",
-      label: "やや少なめ",
-      description: "成分量がやや少なめです",
+      label: "やや不足",
+      description: "推奨摂取量の50〜100%程度です",
     },
     D: {
       color: "from-red-500 to-red-700",
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
       textColor: "text-red-800",
-      label: "少なめ",
-      description: "成分量が少なめです",
+      label: "不足",
+      description: "推奨摂取量の50%未満です",
     },
   };
 
@@ -190,25 +190,46 @@ export function IngredientComparison({
         </div>
       )}
 
-      {/* ランクの意味の明確化（UL警告との関係） */}
+      {/* ランクの意味の明確化 */}
       {currentRankInfo && (
         <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-lg">
           <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
             <span>📌</span>
-            <span>ランクの意味について</span>
+            <span>ランクの判定基準</span>
           </h4>
           <p className="text-sm text-gray-700 leading-relaxed mb-2">
             この<strong className="text-gray-900">{contentRank}ランク</strong>
             は、
             <strong className="text-gray-900">
-              同じ成分を含む商品の中での含有量の相対的な位置
+              1日あたりの含有量が推奨摂取量に対してどれだけ充足しているか
             </strong>
-            を示しています。
+            を基準に評価しています。
           </p>
-          <p className="text-xs text-gray-600 leading-relaxed">
-            💡 <strong>重要:</strong>{" "}
-            含有量が多い（高ランク）ことが必ずしも「より良い」「より安全」を意味するわけではありません。
-            安全性やエビデンスの強さは別の評価軸で判断されます（エビデンススコア、安全性スコア、UL超過警告など）。
+          <div className="text-xs text-gray-600 leading-relaxed space-y-1 mt-2">
+            <p>
+              <span className="font-semibold text-purple-700">S:</span> 推奨量の
+              <strong>500%以上</strong>
+            </p>
+            <p>
+              <span className="font-semibold text-blue-700">A:</span> 推奨量の
+              <strong>200%以上</strong>
+            </p>
+            <p>
+              <span className="font-semibold text-green-700">B:</span> 推奨量の
+              <strong>100%以上</strong>（推奨量を満たす）
+            </p>
+            <p>
+              <span className="font-semibold text-yellow-700">C:</span> 推奨量の
+              <strong>50〜100%</strong>
+            </p>
+            <p>
+              <span className="font-semibold text-red-700">D:</span> 推奨量の
+              <strong>50%未満</strong>
+            </p>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed mt-3">
+            ※
+            含有量が多いほど良いわけではありません。過剰摂取にはご注意ください。
           </p>
         </div>
       )}
