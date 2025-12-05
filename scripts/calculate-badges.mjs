@@ -100,6 +100,10 @@ async function fetchProducts() {
 
 /**
  * 主要成分を取得
+ *
+ * 優先順位:
+ * 1. isPrimary: true が設定された成分
+ * 2. 配列の最初（0番目）の成分
  */
 function getPrimaryIngredient(product) {
   if (!product.ingredients || product.ingredients.length === 0) {
@@ -108,20 +112,21 @@ function getPrimaryIngredient(product) {
 
   // isPrimary=trueの成分を探す
   const primary = product.ingredients.find((ing) => ing.isPrimary);
-  if (primary) {
+  if (primary && primary.ingredient) {
     return {
       id: primary.ingredient._id,
       amount: primary.amountMgPerServing,
     };
   }
 
-  // isPrimaryがない場合は、最も含有量が多い成分を主成分とする
-  const sorted = [...product.ingredients].sort(
-    (a, b) => b.amountMgPerServing - a.amountMgPerServing
-  );
+  // isPrimaryがない場合は、配列の最初の要素を主成分とする
+  const first = product.ingredients[0];
+  if (!first || !first.ingredient) {
+    return null;
+  }
   return {
-    id: sorted[0].ingredient._id,
-    amount: sorted[0].amountMgPerServing,
+    id: first.ingredient._id,
+    amount: first.amountMgPerServing,
   };
 }
 

@@ -71,6 +71,27 @@ function isMultiVitamin(ingredients) {
 }
 
 /**
+ * 主成分を取得
+ *
+ * 優先順位:
+ * 1. isPrimary: true が設定された成分
+ * 2. 配列の最初（0番目）の成分
+ *
+ * @param {Array} ingredients - 成分配列
+ * @returns {Object|null} 主成分オブジェクト
+ */
+function getPrimaryIngredient(ingredients) {
+  if (!ingredients || ingredients.length === 0) return null;
+
+  // isPrimary: true が設定された成分を優先
+  const primaryMarked = ingredients.find((ing) => ing.isPrimary === true);
+  if (primaryMarked) return primaryMarked;
+
+  // なければ配列の最初の要素
+  return ingredients[0];
+}
+
+/**
  * 主要成分トップ5を取得
  *
  * mg量が多い順にソートして上位5件を返す
@@ -475,6 +496,7 @@ async function calculateTierRanks() {
         servingsPerContainer,
         ingredients[]{
           amountMgPerServing,
+          isPrimary,
           ingredient->{
             _id,
             name,
@@ -497,9 +519,11 @@ async function calculateTierRanks() {
     for (const product of products) {
       if (!product.ingredients || product.ingredients.length === 0) continue;
 
-      // ⚠️ 重要: 主成分（配列の最初の要素）のみでランク付け
+      // ⚠️ 重要: 主成分のみでランク付け
+      // 優先順位: 1. isPrimary: true  2. 配列の最初の要素
       // 複数成分を含む商品が重複して処理され、最後の成分でランクが上書きされるのを防ぐ
-      const primaryIngredient = product.ingredients[0];
+      const primaryIngredient = getPrimaryIngredient(product.ingredients);
+      if (!primaryIngredient) continue;
       if (!primaryIngredient.ingredient || !primaryIngredient.ingredient._id) continue;
       if (!primaryIngredient.amountMgPerServing || primaryIngredient.amountMgPerServing <= 0) continue;
 

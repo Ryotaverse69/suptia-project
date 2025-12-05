@@ -52,6 +52,10 @@ import {
   SeamlessModalContent,
 } from "@/components/SeamlessModal";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
+import {
+  getPrimaryIngredient,
+  getPrimaryIngredientId,
+} from "@/lib/primary-ingredient";
 
 // --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
@@ -312,13 +316,13 @@ async function getAllProducts(): Promise<Product[]> {
 
 async function getTotalProductsInCategory(productId: string): Promise<number> {
   try {
-    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ ingredient->{ _id } } }`;
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ isPrimary, ingredient->{ _id } } }`;
     const currentProduct = await sanityServer.fetch(currentProductQuery, {
       productId,
     });
     if (!currentProduct?.ingredients || currentProduct.ingredients.length === 0)
       return 0;
-    const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+    const mainIngredientId = getPrimaryIngredientId(currentProduct.ingredients);
     if (!mainIngredientId) return 0;
 
     const countQuery = `count(*[_type == "product" && availability == "in-stock" && $mainIngredientId in ingredients[].ingredient._ref])`;
@@ -334,13 +338,13 @@ async function getSimilarProducts(
   limit: number = 5,
 ): Promise<any[]> {
   try {
-    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ ingredient->{ _id } } }`;
+    const currentProductQuery = `*[_type == "product" && _id == $productId][0]{ ingredients[]{ isPrimary, ingredient->{ _id } } }`;
     const currentProduct = await sanityServer.fetch(currentProductQuery, {
       productId,
     });
     if (!currentProduct?.ingredients || currentProduct.ingredients.length === 0)
       return [];
-    const mainIngredientId = currentProduct.ingredients[0]?.ingredient?._id;
+    const mainIngredientId = getPrimaryIngredientId(currentProduct.ingredients);
     if (!mainIngredientId) return [];
 
     const similarProductsQuery = `*[_type == "product" && _id != $productId && availability == "in-stock" && $mainIngredientId in ingredients[].ingredient._ref]{
@@ -441,13 +445,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   let evidenceDetails: IngredientEvidenceDetail[] = [];
   let hasUnregisteredMainIngredient = false;
 
-  const mainIngredient = product.ingredients?.reduce(
-    (max, current) =>
-      !max || (current.amountMgPerServing || 0) > (max.amountMgPerServing || 0)
-        ? current
-        : max,
-    null as (typeof product.ingredients)[0] | null,
-  );
+  // isPrimaryフラグを優先し、なければ配列の最初の成分を主成分とする
+  const mainIngredient = getPrimaryIngredient(product.ingredients);
   const hasRegisteredMainIngredient =
     mainIngredient && mainIngredient.ingredient;
   if (!hasRegisteredMainIngredient) hasUnregisteredMainIngredient = true;
@@ -646,6 +645,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
     images: product.images?.map((img) => img.asset?.url).filter(Boolean),
     mainIngredient: mainIngredientInfo?.name,
     ingredientAmount: mainIngredientAmount,
+    // リッチスニペット用の実際のスコア
+    scores: finalScores,
+    // GTIN（JANコード）とSKU
+    janCode: product.janCode || undefined,
+    itemCode: product.itemCode,
   });
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "ホーム", url: "/" },

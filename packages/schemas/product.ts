@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { validateCompliance } from "./utils/compliance";
+import { validateIngredientAmount } from "./utils/ingredient-validation";
 
 export const product = defineType({
   name: "product",
@@ -160,7 +161,54 @@ export const product = defineType({
               name: "amountMgPerServing",
               title: "1回分あたりの含有量 (mg)",
               type: "number",
-              validation: (Rule) => Rule.required().min(0),
+              description:
+                "⚠️ 単位に注意: ビタミンDなどμg表記の成分は、mg変換後の値を入力（例: 25μg → 0.025mg）",
+              validation: (Rule) =>
+                Rule.required()
+                  .min(0)
+                  .custom((value, context) => {
+                    if (!value) return true;
+
+                    // 1000mg問題の検出
+                    if (value === 1000) {
+                      return "⚠️ 1000mgはデフォルト値の可能性があります。実際の含有量を確認してください。";
+                    }
+
+                    // 極端に大きい値の検出（5000mg以上で一般的でない成分）
+                    if (value > 5000) {
+                      return "⚠️ 含有量が5000mgを超えています。高用量製品でない場合は値を確認してください。";
+                    }
+
+                    // 親オブジェクトから成分参照を取得してより詳細なバリデーション
+                    const parent = context.parent as {
+                      ingredient?: { _ref?: string };
+                    };
+                    const ingredientRef = parent?.ingredient?._ref;
+
+                    // ビタミンD系の単位混同検出
+                    if (
+                      ingredientRef &&
+                      (ingredientRef.includes("vitamin-d") ||
+                        ingredientRef.includes("vitaminD"))
+                    ) {
+                      if (value > 0.2) {
+                        return `⚠️ ビタミンDの含有量${value}mgは高すぎます。μgをmgに変換しましたか？（例: 25μg = 0.025mg）`;
+                      }
+                    }
+
+                    // ビタミンB12の単位混同検出
+                    if (
+                      ingredientRef &&
+                      (ingredientRef.includes("vitamin-b12") ||
+                        ingredientRef.includes("vitaminB12"))
+                    ) {
+                      if (value > 1) {
+                        return `⚠️ ビタミンB12の含有量${value}mgは高すぎます。μgをmgに変換しましたか？（例: 500μg = 0.5mg）`;
+                      }
+                    }
+
+                    return true;
+                  }),
             },
             {
               name: "isPrimary",

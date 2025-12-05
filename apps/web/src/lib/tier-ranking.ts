@@ -7,6 +7,7 @@
 
 import { TierRank, scoreToTierRank, getTierScore } from "./tier-colors";
 import recommendedDailyIntake from "@/data/recommended-daily-intake.json";
+import { getPrimaryIngredient } from "./primary-ingredient";
 
 export interface ProductForTierEvaluation {
   _id: string;
@@ -15,6 +16,7 @@ export interface ProductForTierEvaluation {
   servingsPerDay?: number;
   ingredients?: Array<{
     amountMgPerServing: number;
+    isPrimary?: boolean;
     ingredient?: {
       name?: string;
     };
@@ -293,7 +295,7 @@ function calculateContentRanks(
 ): Map<string, TierRank> {
   const ranks = new Map<string, TierRank>();
 
-  // 主要成分（最初の成分）の1日あたり含有量を取得
+  // 主要成分（isPrimary優先、なければ最初の成分）の1日あたり含有量を取得
   interface ProductContentInfo {
     _id: string;
     dailyAmount: number;
@@ -303,7 +305,8 @@ function calculateContentRanks(
   const productsWithContent: ProductContentInfo[] = [];
 
   for (const p of products) {
-    const primaryIngredient = p.ingredients?.[0];
+    // isPrimaryフラグを優先し、なければ配列の最初の成分を使用
+    const primaryIngredient = getPrimaryIngredient(p.ingredients);
     if (!primaryIngredient || !primaryIngredient.amountMgPerServing) continue;
 
     const dailyAmount =
