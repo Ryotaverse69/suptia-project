@@ -78,6 +78,14 @@ export interface ProductSEOData {
   images?: string[];
   mainIngredient?: string; // 主成分
   ingredientAmount?: number; // 成分量（mg/日）
+  // リッチスニペット用スコア
+  scores?: {
+    evidence?: number; // エビデンススコア (0-100)
+    safety?: number; // 安全性スコア (0-100)
+    overall?: number; // 総合スコア (0-100)
+  };
+  janCode?: string; // JANコード（GTIN-13）
+  itemCode?: string; // SKU
 }
 
 export function generateProductMetadata(product: ProductSEOData): Metadata {
@@ -229,6 +237,16 @@ export function generateProductJsonLd(product: ProductSEOData) {
     url: `${siteUrl}/products/${product.slug}`,
   };
 
+  // GTIN（JANコード）- 13桁の場合のみ追加
+  if (product.janCode && /^\d{13}$/.test(product.janCode)) {
+    jsonLd.gtin13 = product.janCode;
+  }
+
+  // SKU（商品コード）
+  if (product.itemCode) {
+    jsonLd.sku = product.itemCode;
+  }
+
   let hasOffers = false;
 
   // オファー情報（複数価格対応）
@@ -293,35 +311,45 @@ export function generateProductJsonLd(product: ProductSEOData) {
     hasOffers = true;
   }
 
-  // aggregateRating を常に追加（Google推奨）
-  // サプティアの独自スコア（エビデンス・安全性・コスパの総合評価）を反映
-  // 将来的にはユーザーレビューシステムに置き換え予定
-  jsonLd.aggregateRating = {
-    "@type": "AggregateRating",
-    ratingValue: 4.2,
-    reviewCount: 1,
-    bestRating: 5,
-    worstRating: 1,
-  };
+  // aggregateRating - 実際のSuptiaスコアを5点満点に変換
+  // スコアがある場合のみ追加（Googleガイドライン準拠）
+  if (product.scores?.overall) {
+    // 0-100のスコアを1-5に変換
+    const ratingValue = Math.max(
+      1,
+      Math.min(5, (product.scores.overall / 100) * 4 + 1),
+    );
 
-  // review を追加（Google推奨 - 編集部レビューとして）
-  jsonLd.review = [
-    {
-      "@type": "Review",
-      author: {
-        "@type": "Organization",
-        name: "サプティア編集部",
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: Number(ratingValue.toFixed(1)),
+      ratingCount: 1, // Suptiaの科学的評価として1件
+      bestRating: 5,
+      worstRating: 1,
+      // スコアの根拠を明示
+      description: `サプティア独自評価（エビデンス${product.scores.evidence || 0}点・安全性${product.scores.safety || 0}点の総合スコア）`,
+    };
+
+    // review - Suptiaの科学的評価として
+    jsonLd.review = [
+      {
+        "@type": "Review",
+        author: {
+          "@type": "Organization",
+          name: "サプティア",
+          url: siteUrl,
+        },
+        datePublished: new Date().toISOString().split("T")[0],
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: Number(ratingValue.toFixed(1)),
+          bestRating: 5,
+          worstRating: 1,
+        },
+        reviewBody: `${product.brand}の${product.name}を科学的根拠に基づいて評価。エビデンススコア${product.scores.evidence || 0}/100点、安全性スコア${product.scores.safety || 0}/100点。成分量・価格・エビデンス・安全性を総合的に分析しています。`,
       },
-      datePublished: new Date().toISOString().split("T")[0],
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: 4,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      reviewBody: `${product.brand}の${product.name}を科学的根拠に基づいて評価しました。成分量、エビデンスレベル、安全性、コストパフォーマンスを総合的に分析しています。`,
-    },
-  ];
+    ];
+  }
 
   return jsonLd;
 }
