@@ -46,6 +46,7 @@ interface EvidenceSafetyDetailProps {
     ingredientName: string;
   }>;
   hasUnregisteredMainIngredient?: boolean; // 主要成分が未登録かどうか
+  additiveDeduction?: number; // 添加物による減点
   className?: string;
   visibleSection?: "evidence" | "safety" | "both";
 }
@@ -66,6 +67,7 @@ export function EvidenceSafetyDetail({
   allIngredients,
   allergyInfo = [],
   hasUnregisteredMainIngredient = false,
+  additiveDeduction = 0,
   className = "",
   visibleSection = "both",
 }: EvidenceSafetyDetailProps) {
@@ -636,6 +638,22 @@ export function EvidenceSafetyDetail({
                       警告（{warnings.length}件）:
                     </span>
                     <span className="font-mono font-semibold">考慮済み</span>
+                  </div>
+                )}
+                {additiveDeduction > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-red-700">
+                      <span className="flex items-center gap-1">
+                        <TrendingDown size={12} />
+                        添加物減点:
+                      </span>
+                      <span className="font-mono font-semibold">
+                        -{additiveDeduction}点
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-gray-500 ml-4">
+                      ※ 回避推奨: -15点/件、注意: -5点/件
+                    </p>
                   </div>
                 )}
                 <div className="border-t border-green-200 pt-2 mt-2 flex justify-between items-center font-semibold">

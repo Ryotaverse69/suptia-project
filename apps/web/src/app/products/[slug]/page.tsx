@@ -56,6 +56,14 @@ import {
   getPrimaryIngredient,
   getPrimaryIngredientId,
 } from "@/lib/primary-ingredient";
+import {
+  checkAdditives,
+  calculateAdditiveScoreDeduction,
+} from "@/lib/additives";
+import {
+  AdditivesSafetyCard,
+  AdditivesSafetyBadge,
+} from "@/components/AdditivesSafetyCard";
 
 // --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
@@ -456,6 +464,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
     product.ingredients.length > 0 &&
     product.ingredients.every((ing) => ing.ingredient);
 
+  // 添加物安全性チェック（早期計算 - スコア減点に使用）
+  const additiveCheckResult = product.allIngredients
+    ? checkAdditives(product.allIngredients)
+    : null;
+  const additiveDeduction = additiveCheckResult
+    ? calculateAdditiveScoreDeduction(additiveCheckResult)
+    : 0;
+
+  // Sanityスコアがある場合でも添加物減点を適用
+  if (hasSanityScores && additiveDeduction > 0) {
+    const adjustedSafety = Math.max(0, finalScores.safety - additiveDeduction);
+    finalScores = {
+      ...finalScores,
+      safety: adjustedSafety,
+      overall: Math.round((finalScores.evidence + adjustedSafety) / 2),
+    };
+  }
+
   // スコア内訳表示のため、常にsafetyDetailsを計算する
   if (hasValidIngredients && hasRegisteredMainIngredient) {
     const ingredientsWithAmount = product.ingredients!.map((ing) => ({
@@ -504,18 +530,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
         ratio: 1.0,
       },
     ];
+    // 添加物減点を適用した安全性スコア
+    const adjustedSafetyScore = Math.max(
+      0,
+      safetyResult.score - additiveDeduction,
+    );
     finalScores = {
       evidence: evidenceScore,
-      safety: safetyResult.score,
-      overall: Math.round((evidenceScore + safetyResult.score) / 2),
+      safety: adjustedSafetyScore,
+      overall: Math.round((evidenceScore + adjustedSafetyScore) / 2),
     };
     safetyDetails = safetyResult.details;
   } else if (!hasSanityScores) {
     const autoScores = calculateAutoScores(product.name, allIngredients);
+    // 添加物減点を適用した安全性スコア
+    const adjustedSafetyScore = Math.max(
+      0,
+      autoScores.safetyScore - additiveDeduction,
+    );
     finalScores = {
       evidence: autoScores.evidenceScore,
-      safety: autoScores.safetyScore,
-      overall: autoScores.overallScore,
+      safety: adjustedSafetyScore,
+      overall: Math.round((autoScores.evidenceScore + adjustedSafetyScore) / 2),
     };
     safetyDetails = autoScores.safetyDetails;
   }
@@ -597,6 +633,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const totalProductsInCategory = await getTotalProductsInCategory(product._id);
   const mainIngredientAmount = mainIngredient?.amountMgPerServing || 0;
   const mainIngredientInfo = mainIngredient?.ingredient;
+
+  // additiveCheckResult は上部で計算済み（スコア減点に使用）
   const ingredientName = mainIngredientInfo?.name;
   const ingredientEvidenceLevel = mainIngredientInfo?.evidenceLevel;
   const ingredientsForCostDetail =
@@ -1076,8 +1114,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-slate-500">
-                        添加物・副作用リスク評価
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-slate-500">
+                          添加物・副作用リスク評価
+                        </span>
+                        {/* 添加物安全性バッジ */}
+                        {additiveCheckResult && (
+                          <AdditivesSafetyBadge result={additiveCheckResult} />
+                        )}
                       </div>
                       <div className="flex items-center gap-3">
                         {updatedTierRatings?.safetyRank && (
@@ -1103,14 +1147,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </div>
                 </SeamlessModalTrigger>
                 <SeamlessModalContent>
-                  <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-6 text-slate-900">
+                  <div className="p-6 space-y-6">
+                    <h2 className="text-2xl font-bold text-slate-900">
                       安全性詳細
                     </h2>
+
+                    {/* 添加物安全性カード */}
+                    {additiveCheckResult && (
+                      <AdditivesSafetyCard
+                        result={additiveCheckResult}
+                        allIngredients={product.allIngredients}
+                      />
+                    )}
+
+                    {/* 成分の安全性詳細 */}
                     <EvidenceSafetyDetail
                       safetyScore={finalScores.safety}
                       evidenceDetails={[]} // Only show safety here
                       safetyDetails={safetyDetails}
+                      additiveDeduction={additiveDeduction}
                       visibleSection="safety"
                     />
                   </div>

@@ -3,9 +3,13 @@
  *
  * 商品の安全性を0-100点でスコアリングする
  * 各要素の影響が明確にわかるよう設計
+ *
+ * v2.0: 添加物安全性チェックを統合
  */
 
 import type { ContraindicationTag } from "./safety-checker";
+import type { AdditiveCheckResult } from "./additives";
+import { checkAdditives, calculateAdditiveScoreDeduction } from "./additives";
 
 /**
  * 安全性スコア計算の入力データ
@@ -35,6 +39,9 @@ export interface SafetyScoreInput {
   // 製造情報
   manufacturingCountry?: string;
   manufacturingYear?: number;
+
+  // 全原材料テキスト（添加物チェック用）
+  allIngredients?: string;
 }
 
 /**
@@ -50,10 +57,12 @@ export interface SafetyScoreResult {
     qualityBonus: number;
     interactionDeduction: number;
     manufacturingBonus: number;
+    additiveDeduction: number;
   };
   details: string[];
   recommendations: string[];
   confidence: number;
+  additiveCheckResult?: AdditiveCheckResult;
 }
 
 /**
@@ -138,11 +147,13 @@ export function calculateSafetyScore(
     qualityBonus: 0,
     interactionDeduction: 0,
     manufacturingBonus: 0,
+    additiveDeduction: 0,
   };
 
   const details: string[] = [];
   const recommendations: string[] = [];
   let confidence = 1.0;
+  let additiveCheckResult: AdditiveCheckResult | undefined;
 
   // 1. 禁忌タグによる減点
   if (input.contraindicationTags && input.contraindicationTags.length > 0) {
@@ -275,6 +286,31 @@ export function calculateSafetyScore(
     }
   }
 
+  // 8. 添加物安全性チェック
+  if (input.allIngredients && input.allIngredients.trim() !== "") {
+    additiveCheckResult = checkAdditives(input.allIngredients);
+    const deduction = calculateAdditiveScoreDeduction(additiveCheckResult);
+
+    if (deduction > 0) {
+      breakdown.additiveDeduction = deduction;
+      const { safeCount, cautionCount, avoidCount } =
+        additiveCheckResult.summary;
+      details.push(
+        `添加物チェック: -${deduction}点（安全${safeCount}件、注意${cautionCount}件、回避推奨${avoidCount}件）`,
+      );
+    }
+
+    // 添加物からの警告を追加
+    for (const warning of additiveCheckResult.warnings) {
+      recommendations.push(warning);
+    }
+
+    // 添加物からの推奨事項を追加
+    for (const rec of additiveCheckResult.recommendations) {
+      recommendations.push(rec);
+    }
+  }
+
   // 総合スコアの計算
   const totalScore = Math.max(
     0,
@@ -284,7 +320,8 @@ export function calculateSafetyScore(
         breakdown.contraindicationDeduction -
         breakdown.warningDeduction -
         breakdown.sideEffectDeduction -
-        breakdown.interactionDeduction +
+        breakdown.interactionDeduction -
+        breakdown.additiveDeduction +
         breakdown.qualityBonus +
         breakdown.manufacturingBonus,
     ),
@@ -309,6 +346,7 @@ export function calculateSafetyScore(
     details,
     recommendations,
     confidence,
+    additiveCheckResult,
   };
 }
 
