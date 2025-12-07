@@ -30,8 +30,8 @@ jobs:
         env:
           # Sanity
           SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
 
           # X (Twitter)
           X_API_KEY: ${{ secrets.X_API_KEY }}
