@@ -3,19 +3,33 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Heart, BookOpen } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Heart,
+  User,
+  LogOut,
+  Home,
+  History,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoginModal } from "@/components/auth/LoginModal";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
-  const [guideMenuOpen, setGuideMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const { user, isLoading: authLoading, signOut } = useAuth();
 
   // Close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setDesktopMenuOpen(false);
-    setGuideMenuOpen(false);
+    setUserMenuOpen(false);
   }, []);
 
   // Prevent body scroll when mobile menu is open
@@ -58,118 +72,12 @@ export function Header() {
             </Link>
 
             {/* Right: Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-4">
-              {/* Favorites Link */}
-              <Link
-                href="/favorites"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-primary-800 hover:text-primary transition-colors font-medium rounded-lg hover:bg-primary-50"
-              >
-                <Heart size={18} />
-                <span>お気に入り</span>
-              </Link>
-
-              {/* Guide Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setGuideMenuOpen(!guideMenuOpen)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-primary-800 hover:text-primary transition-colors font-medium rounded-lg hover:bg-primary-50"
-                >
-                  <BookOpen size={18} />
-                  <span>ガイド</span>
-                  <motion.div
-                    animate={{ rotate: guideMenuOpen ? 180 : 0 }}
-                    transition={{
-                      duration: 0.25,
-                      ease: [0.4, 0, 0.2, 1],
-                    }}
-                  >
-                    <ChevronDown size={16} />
-                  </motion.div>
-                </button>
-
-                {/* Guide Dropdown Menu */}
-                <AnimatePresence>
-                  {guideMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -20, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                      transition={{
-                        duration: 0.25,
-                        ease: [0.4, 0, 0.2, 1],
-                      }}
-                      className="absolute left-0 top-full mt-2 w-56 bg-white/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%)",
-                        boxShadow:
-                          "0 8px 32px 0 rgba(0, 102, 204, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
-                      }}
-                      onMouseLeave={() => setGuideMenuOpen(false)}
-                    >
-                      <Link
-                        href="/about"
-                        onClick={() => setGuideMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
-                      >
-                        サプティアとは
-                      </Link>
-                      <Link
-                        href="/why-suptia"
-                        onClick={() => setGuideMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
-                      >
-                        AI検索との違い
-                      </Link>
-                      <Link
-                        href="/how-to-use"
-                        onClick={() => setGuideMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
-                      >
-                        サプティアの使い方
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Diagnosis Link - Highlighted */}
-              <Link
-                href="/diagnosis"
-                className="group relative px-5 py-2.5 text-white rounded-xl transition-all duration-300 text-sm font-bold flex items-center gap-2 overflow-visible hover:scale-105"
-                style={{
-                  boxShadow:
-                    "0 4px 20px rgba(147, 51, 234, 0.4), 0 2px 10px rgba(219, 39, 119, 0.25)",
-                }}
-              >
-                {/* Glow effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-60 blur-sm group-hover:opacity-80 group-hover:blur-md transition-all duration-300" />
-
-                {/* Button background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] rounded-xl group-hover:bg-right transition-all duration-500" />
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
-                >
-                  <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                </svg>
-                <span className="relative z-10">診断する</span>
-              </Link>
-
+            <nav className="hidden md:flex items-center gap-3">
               {/* Menu Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setDesktopMenuOpen(!desktopMenuOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-all hover:shadow-lg text-sm font-medium"
+                  className="flex items-center gap-2 px-4 py-2 text-primary-800 hover:text-primary rounded-lg hover:bg-primary-50 transition-all text-sm font-medium"
                 >
                   <Menu size={18} />
                   <span>メニュー</span>
@@ -195,7 +103,7 @@ export function Header() {
                         duration: 0.25,
                         ease: [0.4, 0, 0.2, 1],
                       }}
-                      className="absolute right-0 top-full mt-2 w-56 bg-white/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
+                      className="absolute right-0 top-full mt-2 w-64 bg-white/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
                       style={{
                         background:
                           "linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%)",
@@ -204,13 +112,91 @@ export function Header() {
                       }}
                       onMouseLeave={() => setDesktopMenuOpen(false)}
                     >
+                      {/* Home */}
                       <Link
                         href="/"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
                       >
+                        <Home size={16} />
                         ホーム
                       </Link>
+
+                      {/* Diagnosis - Highlighted */}
+                      <Link
+                        href="/diagnosis"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="group relative block mx-2 my-2 px-4 py-3 text-white transition-all duration-300 font-bold rounded-lg overflow-visible"
+                        style={{
+                          background:
+                            "linear-gradient(to right, #9333ea, #db2777)",
+                          boxShadow: "0 2px 10px rgba(147, 51, 234, 0.3)",
+                        }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                          </svg>
+                          診断する
+                        </span>
+                      </Link>
+
+                      {/* Favorites */}
+                      <Link
+                        href="/favorites"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        <Heart size={16} />
+                        お気に入り
+                      </Link>
+
+                      {/* Diagnosis History */}
+                      <Link
+                        href="/diagnosis/history"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        <History size={16} />
+                        診断履歴
+                      </Link>
+
+                      <div className="border-t border-white/40 my-2"></div>
+                      <div className="px-3 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                        ガイド
+                      </div>
+                      <Link
+                        href="/about"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        サプティアとは
+                      </Link>
+                      <Link
+                        href="/why-suptia"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        AI検索との違い
+                      </Link>
+                      <Link
+                        href="/how-to-use"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                      >
+                        サプティアの使い方
+                      </Link>
+
                       <div className="border-t border-white/40 my-2"></div>
                       <div className="px-3 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
                         コンテンツ
@@ -247,6 +233,67 @@ export function Header() {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* User Menu / Login Button */}
+              {authLoading ? (
+                <div className="w-8 h-8 rounded-full bg-primary-100 animate-pulse" />
+              ) : user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-50 transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-medium">
+                      {user.email?.[0].toUpperCase() || <User size={16} />}
+                    </div>
+                    <ChevronDown
+                      size={16}
+                      className={`text-primary-600 transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute right-0 top-full mt-2 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
+                        style={{
+                          boxShadow:
+                            "0 8px 32px 0 rgba(0, 102, 204, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+                        }}
+                        onMouseLeave={() => setUserMenuOpen(false)}
+                      >
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-sm font-medium text-primary-900 truncate">
+                            {user.email}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            signOut();
+                            setUserMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut size={16} />
+                          ログアウト
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setLoginModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-all hover:shadow-lg text-sm font-medium"
+                >
+                  <User size={18} />
+                  <span>ログイン</span>
+                </button>
+              )}
             </nav>
 
             {/* Mobile Menu Button */}
@@ -279,14 +326,14 @@ export function Header() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {guideMenuOpen && (
+        {userMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="hidden md:block fixed inset-0 z-[45] bg-gradient-to-br from-primary-900/20 via-primary-500/10 to-transparent backdrop-blur-sm"
-            onClick={() => setGuideMenuOpen(false)}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="hidden md:block fixed inset-0 z-[45]"
+            onClick={() => setUserMenuOpen(false)}
           />
         )}
       </AnimatePresence>
@@ -375,6 +422,16 @@ export function Header() {
                   お気に入り
                 </Link>
 
+                {/* Diagnosis History - Mobile */}
+                <Link
+                  href="/diagnosis/history"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm flex items-center gap-2"
+                >
+                  <History size={18} />
+                  診断履歴
+                </Link>
+
                 {/* Guide Section Header */}
                 <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
                   ガイド
@@ -450,11 +507,65 @@ export function Header() {
                 >
                   対象者別ガイド
                 </Link>
+
+                {/* Divider */}
+                <div className="border-t border-white/40 my-3"></div>
+
+                {/* Account Section - Mobile */}
+                <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                  アカウント
+                </div>
+
+                {authLoading ? (
+                  <div className="px-4 py-3">
+                    <div className="w-full h-10 rounded-xl bg-primary-100 animate-pulse" />
+                  </div>
+                ) : user ? (
+                  <>
+                    <div className="px-4 py-3 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-medium">
+                        {user.email?.[0].toUpperCase() || <User size={18} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-primary-900 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 transition-all duration-150 font-medium rounded-xl"
+                    >
+                      <LogOut size={18} />
+                      ログアウト
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setLoginModalOpen(true);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-600 transition-colors active:scale-95"
+                  >
+                    <User size={18} />
+                    ログイン / 新規登録
+                  </button>
+                )}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+      />
     </>
   );
 }

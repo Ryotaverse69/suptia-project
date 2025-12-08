@@ -54,3 +54,19 @@ export interface OAuthParams {
   oauth_version: string;
   oauth_signature?: string;
 }
+
+// 画像生成結果
+export interface ImageGenerationResult {
+  success: boolean;
+  imageBase64?: string;
+  mimeType?: string;
+  error?: string;
+}
+
+// Cloudinaryアップロード結果
+export interface CloudinaryUploadResult {
+  success: boolean;
+  url?: string;
+  publicId?: string;
+  error?: string;
+}

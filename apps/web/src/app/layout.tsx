@@ -12,6 +12,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
 import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { DiagnosisHistoryProvider } from "@/contexts/DiagnosisHistoryContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { CookieSettingsModal } from "@/components/CookieSettingsModal";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
@@ -101,22 +103,26 @@ export default async function RootLayout({
           {JSON.stringify(localBusinessJsonLd)}
         </Script>
 
-        <CookieConsentProvider>
-          <FavoritesProvider>
-            {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
-            <GoogleAnalytics />
+        <AuthProvider>
+          <CookieConsentProvider>
+            <FavoritesProvider>
+              <DiagnosisHistoryProvider>
+                {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
+                <GoogleAnalytics />
 
-            <Header />
-            {children}
-            <Footer />
+                <Header />
+                {children}
+                <Footer />
 
-            {/* Cookie同意バナー */}
-            <CookieConsentBanner />
+                {/* Cookie同意バナー */}
+                <CookieConsentBanner />
 
-            {/* Cookie設定モーダル */}
-            <CookieSettingsModal />
-          </FavoritesProvider>
-        </CookieConsentProvider>
+                {/* Cookie設定モーダル */}
+                <CookieSettingsModal />
+              </DiagnosisHistoryProvider>
+            </FavoritesProvider>
+          </CookieConsentProvider>
+        </AuthProvider>
       </body>
     </html>
   );

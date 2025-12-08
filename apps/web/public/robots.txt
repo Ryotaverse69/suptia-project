@@ -1,6 +1,6 @@
 # Suptia - サプリメント比較サイト
 # AI検索エンジンおよび主要な検索エンジンのクローラーを許可
-# Last Updated: 2024-11-30
+# Last Updated: 2025-12-06
 
 # ===========================================
 # AI検索エンジン・LLMクローラー
@@ -112,5 +112,6 @@ Disallow: /studio/
 # ===========================================
 Sitemap: https://suptia.com/sitemap.xml
 
-# AI向けガイドライン（LLMsが参照可能）
-# https://suptia.com/llms.txt
+# AI向けガイドライン（LLMs/AIクローラー用ドキュメント）
+# 構造化データ、引用ガイドライン、許可される使用方法を記載
+LLMs-txt: https://suptia.com/llms.txt

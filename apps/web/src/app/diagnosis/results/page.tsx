@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ShareButtons } from "@/components/diagnosis/ShareButtons";
 import { DiagnosisConditionEditor } from "@/components/diagnosis/DiagnosisConditionEditor";
 import { RecommendedIngredients } from "@/components/diagnosis/RecommendedIngredients";
+import { DiagnosisHistorySaver } from "@/components/diagnosis/DiagnosisHistorySaver";
 import { headers } from "next/headers";
 import {
   recommendProducts,
@@ -149,8 +151,22 @@ export default async function DiagnosisResultsPage({
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
 
+  // 診断履歴保存用のデータを準備
+  const topRecommendationsForHistory = topThree.map((rec) => ({
+    productId: rec.product.id,
+    productName: rec.product.name,
+    rank: rec.rank,
+  }));
+
   return (
     <>
+      {/* 診断履歴の自動保存（ログインユーザーのみ） */}
+      <Suspense fallback={null}>
+        <DiagnosisHistorySaver
+          topRecommendations={topRecommendationsForHistory}
+        />
+      </Suspense>
+
       {/* JSON-LD構造化データ: Breadcrumb */}
       <script
         type="application/ld+json"

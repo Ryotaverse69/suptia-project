@@ -12,6 +12,10 @@ if (result.error) {
 import { getRandomContent } from './sanity-client';
 import { generateIngredientPost, generateProductPost } from './post-generator';
 import { postToX, checkXCredentials } from './platforms/x';
+import { postToInstagram, checkInstagramCredentials } from './platforms/instagram';
+import { postToThreads, checkThreadsCredentials } from './platforms/threads';
+import { generateImage, checkGoogleAICredentials } from './image-generator';
+import { uploadImageToCloudinary, checkCloudinaryCredentials } from './cloudinary-upload';
 import type { IngredientData, ProductData, PostResult } from './types';
 
 async function main() {
@@ -20,14 +24,23 @@ async function main() {
   // 認証情報チェック
   const platforms = {
     x: checkXCredentials(),
-    // threads: checkThreadsCredentials(), // 将来追加
-    // instagram: checkInstagramCredentials(), // 将来追加
+    instagram: checkInstagramCredentials(),
+    threads: checkThreadsCredentials(),
+  };
+
+  const imageServices = {
+    googleAI: checkGoogleAICredentials(),
+    cloudinary: checkCloudinaryCredentials(),
   };
 
   console.log('📋 プラットフォーム状態:');
   console.log(`  - X (Twitter): ${platforms.x ? '✅ 設定済み' : '❌ 未設定'}`);
-  console.log('  - Threads: ⏳ 未実装');
-  console.log('  - Instagram: ⏳ 未実装\n');
+  console.log(`  - Instagram: ${platforms.instagram ? '✅ 設定済み' : '❌ 未設定'}`);
+  console.log(`  - Threads: ${platforms.threads ? '✅ 設定済み' : '❌ 未設定'}`);
+  console.log('');
+  console.log('🖼️ 画像サービス状態:');
+  console.log(`  - Google AI (Imagen): ${imageServices.googleAI ? '✅ 設定済み' : '❌ 未設定'}`);
+  console.log(`  - Cloudinary: ${imageServices.cloudinary ? '✅ 設定済み' : '❌ 未設定'}\n`);
 
   // コンテンツ取得
   console.log('📥 Sanityからコンテンツを取得中...');
@@ -70,17 +83,67 @@ async function main() {
     }
   }
 
-  // Threads投稿（将来実装）
-  // if (platforms.threads) {
-  //   const threadsResult = await postToThreads(posts.threads);
-  //   results.push(threadsResult);
-  // }
+  // Instagram投稿（画像生成が必要）
+  if (platforms.instagram && imageServices.googleAI && imageServices.cloudinary) {
+    console.log('\n📸 Instagram投稿を準備中...');
 
-  // Instagram投稿（将来実装）
-  // if (platforms.instagram) {
-  //   const igResult = await postToInstagram(posts.instagram);
-  //   results.push(igResult);
-  // }
+    // 画像を生成
+    console.log('🎨 画像を生成中...');
+    const imageResult = await generateImage(content.data as IngredientData | ProductData, content.type);
+
+    if (imageResult.success && imageResult.imageBase64) {
+      // Cloudinaryにアップロード
+      const fileName = `${content.type}-${(content.data as IngredientData | ProductData).slug?.current || 'post'}-${Date.now()}`;
+      console.log('☁️ Cloudinaryにアップロード中...');
+      const uploadResult = await uploadImageToCloudinary(
+        imageResult.imageBase64,
+        imageResult.mimeType || 'image/png',
+        fileName
+      );
+
+      if (uploadResult.success && uploadResult.url) {
+        // Instagramに投稿
+        console.log('📤 Instagramに投稿中...');
+        const igResult = await postToInstagram(posts.instagram, uploadResult.url);
+        results.push(igResult);
+
+        if (igResult.success) {
+          console.log(`✅ Instagram投稿成功 (ID: ${igResult.postId})`);
+        } else {
+          console.error(`❌ Instagram投稿失敗: ${igResult.error}`);
+        }
+      } else {
+        console.error('❌ Cloudinaryアップロード失敗:', uploadResult.error);
+        results.push({
+          success: false,
+          platform: 'instagram',
+          error: `Cloudinary upload failed: ${uploadResult.error}`,
+        });
+      }
+    } else {
+      console.error('❌ 画像生成失敗:', imageResult.error);
+      results.push({
+        success: false,
+        platform: 'instagram',
+        error: `Image generation failed: ${imageResult.error}`,
+      });
+    }
+  } else if (platforms.instagram) {
+    console.log('⚠️ Instagram: 画像サービスが未設定のためスキップ');
+  }
+
+  // Threads投稿
+  if (platforms.threads) {
+    console.log('\n🧵 Threadsに投稿中...');
+    const threadsResult = await postToThreads(posts.threads);
+    results.push(threadsResult);
+
+    if (threadsResult.success) {
+      console.log(`✅ Threads投稿成功 (ID: ${threadsResult.postId})`);
+    } else {
+      console.error(`❌ Threads投稿失敗: ${threadsResult.error}`);
+    }
+  }
 
   // 結果サマリー
   console.log('\n📊 結果サマリー:');

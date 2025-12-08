@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { ProductListItem } from "@/components/ProductListItem";
 import { sanity } from "@/lib/sanity.client";
-import { Heart, AlertCircle } from "lucide-react";
+import { Heart, LogIn } from "lucide-react";
 import Link from "next/link";
+import { LoginModal } from "@/components/auth/LoginModal";
 
 interface Product {
   _id: string;
@@ -29,12 +30,21 @@ interface Product {
 }
 
 export default function FavoritesPage() {
-  const { favorites } = useFavorites();
+  const { favorites, isLoading: favoritesLoading, isLoggedIn } = useFavorites();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchFavoriteProducts = async () => {
+      if (!isLoggedIn) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
+
+      if (favoritesLoading) return;
+
       if (favorites.length === 0) {
         setProducts([]);
         setLoading(false);
@@ -76,7 +86,7 @@ export default function FavoritesPage() {
     };
 
     fetchFavoriteProducts();
-  }, [favorites]);
+  }, [favorites, favoritesLoading, isLoggedIn]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 sm:py-12 md:py-16">
@@ -95,53 +105,89 @@ export default function FavoritesPage() {
             </p>
           </div>
 
+          {/* Not Logged In State */}
+          {!isLoggedIn && !favoritesLoading && (
+            <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
+              <div className="text-primary-300 mb-6">
+                <LogIn size={64} className="mx-auto" />
+              </div>
+              <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                ログインが必要です
+              </h2>
+              <p className="text-primary-700 mb-8 max-w-md mx-auto">
+                お気に入り機能を使うにはログインしてください。
+                <br />
+                ログインすると、複数のデバイスでお気に入りを同期できます。
+              </p>
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg font-semibold"
+              >
+                <LogIn size={20} />
+                ログイン / 新規登録
+              </button>
+            </div>
+          )}
+
           {/* Loading State */}
-          {loading && (
+          {isLoggedIn && (loading || favoritesLoading) && (
             <div className="text-center py-20">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
               <p className="mt-4 text-primary-700">読み込み中...</p>
             </div>
           )}
 
-          {/* Empty State */}
-          {!loading && products.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
-              <div className="text-primary-300 mb-6">
-                <Heart size={64} className="mx-auto" />
+          {/* Empty State (Logged In) */}
+          {isLoggedIn &&
+            !loading &&
+            !favoritesLoading &&
+            products.length === 0 && (
+              <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
+                <div className="text-primary-300 mb-6">
+                  <Heart size={64} className="mx-auto" />
+                </div>
+                <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                  お気に入りがまだありません
+                </h2>
+                <p className="text-primary-700 mb-8 max-w-md mx-auto">
+                  商品ページでハートアイコンをクリックすると、お気に入りに追加できます
+                </p>
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg font-semibold"
+                >
+                  商品を探す
+                </Link>
               </div>
-              <h2 className="text-2xl font-bold text-primary-900 mb-4">
-                お気に入りがまだありません
-              </h2>
-              <p className="text-primary-700 mb-8 max-w-md mx-auto">
-                商品ページでハートアイコンをクリックすると、お気に入りに追加できます
-              </p>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg font-semibold"
-              >
-                商品を探す
-              </Link>
-            </div>
-          )}
+            )}
 
           {/* Favorites List */}
-          {!loading && products.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm sm:text-base text-primary-700">
-                  {products.length}件のお気に入り
-                </p>
-              </div>
+          {isLoggedIn &&
+            !loading &&
+            !favoritesLoading &&
+            products.length > 0 && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-sm sm:text-base text-primary-700">
+                    {products.length}件のお気に入り
+                  </p>
+                </div>
 
-              <div className="space-y-4">
-                {products.map((product) => (
-                  <ProductListItem key={product._id} product={product} />
-                ))}
+                <div className="space-y-4">
+                  {products.map((product) => (
+                    <ProductListItem key={product._id} product={product} />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }

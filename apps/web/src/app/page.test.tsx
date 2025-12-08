@@ -1,8 +1,10 @@
+import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "./page";
 import { sanity } from "@/lib/sanity.client";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Mock Next.js headers
 vi.mock("next/headers", () => ({
@@ -27,6 +29,27 @@ vi.mock("@/lib/sanity.client", () => ({
   sanity: {
     fetch: vi.fn(),
   },
+}));
+
+// Mock Supabase client
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: vi.fn(() => ({
+    auth: {
+      getSession: vi
+        .fn()
+        .mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      })),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          order: vi.fn().mockResolvedValue({ data: [], error: null }),
+        })),
+      })),
+    })),
+  })),
 }));
 
 // モックデータと環境変数のセットアップ
@@ -102,10 +125,17 @@ beforeEach(() => {
   mockFetch.mockResolvedValue([] as any);
 });
 
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <AuthProvider>
+    <FavoritesProvider>{children}</FavoritesProvider>
+  </AuthProvider>
+);
+
 describe("Home Page", () => {
   it("renders the main heading", async () => {
     const HomeComponent = await Home();
-    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
+    render(<TestWrapper>{HomeComponent}</TestWrapper>);
     const heading = screen.getByRole("heading", { level: 1 });
     // The heading text is split across multiple spans
     expect(heading).toHaveTextContent(/あなたに最適な/);
@@ -114,7 +144,7 @@ describe("Home Page", () => {
 
   it("renders the recommended products section", async () => {
     const HomeComponent = await Home();
-    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
+    render(<TestWrapper>{HomeComponent}</TestWrapper>);
     const heading = screen.getByRole("heading", {
       name: "おすすめのサプリメント",
     });
@@ -123,7 +153,7 @@ describe("Home Page", () => {
 
   it("renders product cards when products are available", async () => {
     const HomeComponent = await Home();
-    render(<FavoritesProvider>{HomeComponent}</FavoritesProvider>);
+    render(<TestWrapper>{HomeComponent}</TestWrapper>);
 
     await waitFor(() => {
       expect(screen.getAllByText("Test Product")).not.toHaveLength(0);

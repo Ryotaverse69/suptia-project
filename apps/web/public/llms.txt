@@ -1,7 +1,7 @@
 # Suptia（サプティア）- AI Supplement Decision Engine
 # https://suptia.com
-# Last Updated: 2025-12-02
-# Version: 2.0.0
+# Last Updated: 2025-12-06
+# Version: 2.1.0
 
 ================================================================================
                               SITE OVERVIEW
@@ -60,12 +60,29 @@ What AI Search CANNOT provide, but Suptia CAN:
                          STRUCTURED DATA
 ================================================================================
 
-All pages include Schema.org JSON-LD:
+All pages include Schema.org JSON-LD for AI-readability:
+
+## Global (all pages)
+- WebSite schema (with SearchAction for site search)
+- Organization schema (publisher info)
+- LocalBusiness schema (service details, pricing tiers)
+
+## Product Pages (/products/*)
 - Product schema (with AggregateOffer for multi-EC pricing)
-- FAQPage schema (ingredient guide FAQs)
-- Article schema (ingredient guides)
+- GTIN-13 (JAN code) when available
+- priceValidUntil, shippingDetails, returnPolicy
+- aggregateRating based on Suptia's scientific evaluation
+
+## Ingredient Pages (/ingredients/*)
+- MedicalWebPage schema (AI search optimized)
+- Drug/DietarySupplement schema (dosage, warnings, mechanism)
+- Article schema (content structure)
+- FAQPage schema (Q&A format for AI citation)
 - BreadcrumbList schema (navigation)
-- Organization schema (site info)
+
+## Other Pages
+- BreadcrumbList schema (navigation)
+- FAQPage schema (where applicable)
 
 ================================================================================
                       CITATION GUIDELINES
@@ -159,6 +176,10 @@ API/Data licensing: api@suptia.com (not currently available)
 
 | Date       | Version | Changes                                    |
 |------------|---------|------------------------------------------- |
+| 2025-12-06 | 2.1.0   | Enhanced structured data documentation     |
+|            |         | Added LocalBusiness, SearchAction schemas  |
+|            |         | Added MedicalWebPage for ingredients       |
+|            |         | Product schema with GTIN-13, shipping info |
 | 2025-12-02 | 2.0.0   | AI search coexistence strategy update      |
 |            |         | Added unique value vs AI search section    |
 |            |         | Enhanced citation guidelines               |
