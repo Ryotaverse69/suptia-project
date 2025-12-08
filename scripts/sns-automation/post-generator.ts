@@ -161,7 +161,7 @@ ${benefit}といわれています。
 エビデンスレベル: ${ingredient.evidenceLevel || '調査中'}
 
 ※効果には個人差があります
-詳しくは @suptia_jp のプロフィールから`;
+詳しくは @suptia_official のプロフィールから`;
 
   const instagram = `💊 ${ingredient.name}（${ingredient.nameEn || ''}）について
 
@@ -198,7 +198,7 @@ ${brandName}の人気サプリメントです。
 💰 参考価格: ¥${lowestPrice.toLocaleString()}〜
 
 複数のECサイトで価格比較できます。
-詳しくは @suptia_jp のプロフィールから`;
+詳しくは @suptia_official のプロフィールから`;
 
   const instagram = `🛒 ${product.name}
 
