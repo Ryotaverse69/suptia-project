@@ -50,7 +50,7 @@
     },
     {
       "path": "/api/cron/price-alerts",
-      "schedule": "0 9,18 * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
