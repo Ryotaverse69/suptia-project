@@ -115,3 +115,6 @@ dha-article.json
 
 # ユーザー固有のMCP設定
 claude_desktop_config.json
+
+# Generated Instagram images (local only)
+apps/web/public/instagram/

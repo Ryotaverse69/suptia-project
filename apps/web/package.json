@@ -25,6 +25,7 @@
     "perf:cleanup": "node ../../scripts/performance-optimizer.mjs --cleanup"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@sanity/client": "^7.11.2",
     "@sanity/vision": "^4.10.1",
     "@supabase/ssr": "^0.8.0",

@@ -161,6 +161,93 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    // ガイドページ（目的別）
+    {
+      url: `${siteUrl}/guide/purposes`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/guide/purposes/beauty`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/purposes/energy`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/purposes/immunity`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/purposes/muscle`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/purposes/sleep`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    // ガイドページ（対象者別）
+    {
+      url: `${siteUrl}/guide/audiences`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/athletes`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/business-professionals`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/menopause`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/pregnant-nursing`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/seniors`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    {
+      url: `${siteUrl}/guide/audiences/students`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+    // 安全性ガイド
+    {
+      url: `${siteUrl}/guide/dangerous-ingredients`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
   ];
 
   // 商品ページ（動的）

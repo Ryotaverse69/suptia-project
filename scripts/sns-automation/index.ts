@@ -3,10 +3,10 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
-// .env.local を明示的に読み込み（全ての環境変数）
-const result = dotenv.config({ path: resolve(process.cwd(), '.env.local') });
+// .env.local を明示的に読み込み（apps/web/.env.localに統一）
+const result = dotenv.config({ path: resolve(process.cwd(), 'apps/web/.env.local') });
 if (result.error) {
-  console.error('Failed to load .env.local:', result.error);
+  console.error('Failed to load apps/web/.env.local:', result.error);
 }
 
 import { getRandomContent } from './sanity-client';

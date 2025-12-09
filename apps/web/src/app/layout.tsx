@@ -12,6 +12,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
 import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { PriceAlertsProvider } from "@/contexts/PriceAlertsContext";
 import { DiagnosisHistoryProvider } from "@/contexts/DiagnosisHistoryContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
@@ -106,20 +107,22 @@ export default async function RootLayout({
         <AuthProvider>
           <CookieConsentProvider>
             <FavoritesProvider>
-              <DiagnosisHistoryProvider>
-                {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
-                <GoogleAnalytics />
+              <PriceAlertsProvider>
+                <DiagnosisHistoryProvider>
+                  {/* Google Analytics 4 - Cookie同意が得られた場合のみ実行 */}
+                  <GoogleAnalytics />
 
-                <Header />
-                {children}
-                <Footer />
+                  <Header />
+                  {children}
+                  <Footer />
 
-                {/* Cookie同意バナー */}
-                <CookieConsentBanner />
+                  {/* Cookie同意バナー */}
+                  <CookieConsentBanner />
 
-                {/* Cookie設定モーダル */}
-                <CookieSettingsModal />
-              </DiagnosisHistoryProvider>
+                  {/* Cookie設定モーダル */}
+                  <CookieSettingsModal />
+                </DiagnosisHistoryProvider>
+              </PriceAlertsProvider>
             </FavoritesProvider>
           </CookieConsentProvider>
         </AuthProvider>

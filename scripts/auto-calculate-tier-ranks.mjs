@@ -59,6 +59,48 @@ const shouldFix = process.argv.includes("--fix");
 const isDryRun = !shouldFix;
 
 /**
+ * 添加物チェック用データ（フロントエンドと同期）
+ * safetyGrade: "safe" = 減点なし, "caution" = -5点, "avoid" = -10点
+ */
+const ADDITIVES_SIMPLE = [
+  // 注意が必要な添加物 (caution)
+  { keywords: ["二酸化チタン", "酸化チタン", "E171"], deduction: 5 },
+  { keywords: ["カラメル色素", "カラメル"], deduction: 5 },
+  { keywords: ["ステアリン酸マグネシウム"], deduction: 5 },
+  { keywords: ["タルク", "E553b"], deduction: 5 },
+  { keywords: ["人工甘味料", "アスパルテーム", "スクラロース", "アセスルファムK"], deduction: 5 },
+  { keywords: ["着色料", "赤色", "黄色", "青色"], deduction: 5 },
+  // 回避推奨の添加物 (avoid)
+  { keywords: ["BHA", "BHT", "ブチルヒドロキシアニソール", "ブチルヒドロキシトルエン"], deduction: 10 },
+  { keywords: ["亜硫酸", "亜硫酸塩"], deduction: 10 },
+  { keywords: ["安息香酸", "安息香酸ナトリウム"], deduction: 10 },
+];
+
+/**
+ * 添加物チェックによる安全性スコア減点を計算
+ * @param {string} allIngredients - 原材料一覧テキスト
+ * @returns {number} 減点値（0-30）
+ */
+function calculateAdditiveDeduction(allIngredients) {
+  if (!allIngredients || typeof allIngredients !== 'string') return 0;
+
+  const text = allIngredients.toLowerCase();
+  let totalDeduction = 0;
+
+  for (const additive of ADDITIVES_SIMPLE) {
+    for (const keyword of additive.keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        totalDeduction += additive.deduction;
+        break; // 同じ添加物は1回だけカウント
+      }
+    }
+  }
+
+  // 最大減点は30点
+  return Math.min(totalDeduction, 30);
+}
+
+/**
  * マルチビタミン判定
  *
  * 成分数が3より多い場合、マルチビタミンとみなす
@@ -494,6 +536,7 @@ async function calculateTierRanks() {
         priceJPY,
         servingsPerDay,
         servingsPerContainer,
+        allIngredients,
         ingredients[]{
           amountMgPerServing,
           isPrimary,
@@ -589,6 +632,7 @@ async function calculateTierRanks() {
         overallScore: calculatedScores.overall,
         referenceCount: product.references?.length || 0,
         warningCount: product.warnings?.length || 0,
+        allIngredients: product.allIngredients, // 添加物チェック用
         currentTierRatings: product.tierRatings,
         currentScores: product.scores, // 現在のスコアを保持
         // スコア計算結果を保持（後でSanityに保存）
@@ -687,36 +731,55 @@ async function calculateTierRanks() {
         }
         const evidenceRank = scoreToRank(evidenceScore);
 
-        // 5. 安全性ランク（絶対評価 - 警告数ペナルティ）
+        // 5. 安全性ランク（絶対評価 - 警告数ペナルティ - 添加物減点）
         // 安全性は相対評価ではなく、成分のsafetyLevelから算出したスコアの絶対評価
         let safetyScore = productData.safetyScore;
         // 警告が3件以上ある場合、-10点ペナルティ
         if (productData.warningCount >= 3) {
           safetyScore = Math.max(0, safetyScore - 10);
         }
+        // 添加物チェックによる減点（フロントエンドと同期）
+        const additiveDeduction = calculateAdditiveDeduction(productData.allIngredients);
+        if (additiveDeduction > 0) {
+          safetyScore = Math.max(0, safetyScore - additiveDeduction);
+        }
         const safetyRank = scoreToRank(safetyScore);
 
-        // 6. 総合評価ランク（カテゴリ別重み付け）
-        const overallScore = calculateWeightedOverallScore(
-          {
-            priceRank,
-            costEffectivenessRank,
-            contentRank,
-            evidenceRank,
-            safetyRank,
-          },
-          group.name // 成分名からカテゴリを判定
-        );
+        // 6. 総合評価ランク（フロントエンドと同じロジック）
+        // 失格条件: 安全性またはエビデンスがDランク → 即座に総合評価D
+        // S+条件: すべての評価軸がSランク（5冠達成）
+        // 上記以外 → 重み付け平均で計算
+        let overallRank;
 
-        // 5冠達成の場合はS+
-        const isFiveCrown =
-          priceRank === "S" &&
-          costEffectivenessRank === "S" &&
-          contentRank === "S" &&
-          evidenceRank === "S" &&
-          safetyRank === "S";
+        if (safetyRank === "D" || evidenceRank === "D") {
+          // 失格条件: 安全性またはエビデンスがDなら総合もD
+          overallRank = "D";
+        } else {
+          // 5冠達成の場合はS+
+          const isFiveCrown =
+            priceRank === "S" &&
+            costEffectivenessRank === "S" &&
+            contentRank === "S" &&
+            evidenceRank === "S" &&
+            safetyRank === "S";
 
-        const overallRank = isFiveCrown ? "S+" : scoreToRank(overallScore);
+          if (isFiveCrown) {
+            overallRank = "S+";
+          } else {
+            // 重み付け平均で計算
+            const overallScore = calculateWeightedOverallScore(
+              {
+                priceRank,
+                costEffectivenessRank,
+                contentRank,
+                evidenceRank,
+                safetyRank,
+              },
+              group.name // 成分名からカテゴリを判定
+            );
+            overallRank = scoreToRank(overallScore);
+          }
+        }
 
         const newTierRatings = {
           priceRank,

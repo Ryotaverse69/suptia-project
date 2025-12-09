@@ -48,6 +48,33 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/", "/_next/", "/studio/"],
       },
+      // AI検索エンジン向けのルール
+      // GPTBot (OpenAI), Claude-Web (Anthropic), Google-Extended (Bard)
+      {
+        userAgent: "GPTBot",
+        allow: ["/", "/llms.txt", "/ingredients/", "/products/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
+      {
+        userAgent: "Claude-Web",
+        allow: ["/", "/llms.txt", "/ingredients/", "/products/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
+      {
+        userAgent: "Google-Extended",
+        allow: ["/", "/llms.txt", "/ingredients/", "/products/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
+      {
+        userAgent: "anthropic-ai",
+        allow: ["/", "/llms.txt", "/ingredients/", "/products/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
+      {
+        userAgent: "PerplexityBot",
+        allow: ["/", "/llms.txt", "/ingredients/", "/products/"],
+        disallow: ["/api/", "/_next/", "/studio/"],
+      },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,

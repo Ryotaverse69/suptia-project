@@ -9,14 +9,14 @@ import { EvidenceSafetyDetail } from "@/components/EvidenceSafetyDetail";
 import { RelatedIngredients } from "@/components/RelatedIngredients";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { ShareButton } from "@/components/ShareButton";
-import { TierRatings } from "@/lib/tier-ranking";
+import { TierRatings, calculateOverallRank } from "@/lib/tier-ranking";
+import { scoreToTierRank } from "@/lib/tier-colors";
 import { NutritionScoreCard } from "@/components/NutritionScoreBadge";
 import {
   RdaFulfillmentHeatmap,
   RdaFulfillmentModal,
 } from "@/components/RdaFulfillmentHeatmap";
 import { IngredientCostChart } from "@/components/IngredientCostChart";
-import { scoreToTierRank } from "@/lib/tier-colors";
 import { ProductIdentitySection } from "@/components/ProductIdentitySection";
 import {
   generateProductMetadata,
@@ -64,6 +64,7 @@ import {
   AdditivesSafetyCard,
   AdditivesSafetyBadge,
 } from "@/components/AdditivesSafetyCard";
+import { PriceAlertButton } from "@/components/PriceAlertButton";
 
 // --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
@@ -556,6 +557,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     safetyDetails = autoScores.safetyDetails;
   }
 
+  // 現在の商品のtierRatingsを添加物減点を反映して更新
   const updatedTierRatings = product.tierRatings
     ? { ...product.tierRatings }
     : undefined;
@@ -563,6 +565,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     updatedTierRatings.evidenceRank = scoreToTierRank(finalScores.evidence);
   if (updatedTierRatings && finalScores.safety)
     updatedTierRatings.safetyRank = scoreToTierRank(finalScores.safety);
+  // 総合ランクを再計算（evidenceRank/safetyRankの変更を反映）
+  if (updatedTierRatings) {
+    updatedTierRatings.overallRank = calculateOverallRank(updatedTierRatings);
+  }
 
   const allProducts = await getAllProducts();
   const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(
@@ -628,6 +634,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const badges = currentProductForEvaluation
     ? evaluateBadges(currentProductForEvaluation, productsForEvaluation)
     : [];
+
+  // 市場全体分析用: SanityのtierRatingsをそのまま使用（商品一覧ページと一致させる）
+  const allProductsForTierStats = allProducts.map((p) => ({
+    _id: p._id,
+    tierRatings: p.tierRatings,
+  }));
 
   const similarProducts = await getSimilarProducts(product._id, 5);
   const totalProductsInCategory = await getTotalProductsInCategory(product._id);
@@ -789,7 +801,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 badges={badges}
                 updatedTierRatings={updatedTierRatings}
                 description={description}
-                allProductsWithTierRatings={allProducts}
+                allProductsWithTierRatings={allProductsForTierStats}
               />
             </div>
 
@@ -803,23 +815,31 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     <Database className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                     価格比較
                   </h3>
-                  {updatedTierRatings?.priceRank && (
+                  {product.tierRatings?.priceRank && (
                     <div
-                      className={`flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.priceRank === "S" || updatedTierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                      className={`flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${product.tierRatings.priceRank === "S" || product.tierRatings.priceRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                     >
                       <span className="text-[10px] sm:text-xs font-bold">
                         RANK
                       </span>
                       <span className="text-lg sm:text-2xl font-black leading-none">
-                        {updatedTierRatings.priceRank}
+                        {product.tierRatings.priceRank}
                       </span>
                     </div>
                   )}
                 </div>
                 <PriceComparison
                   priceData={mergedPriceData}
-                  priceRank={updatedTierRatings?.priceRank}
+                  priceRank={product.tierRatings?.priceRank}
                 />
+                {/* 価格アラートボタン */}
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <PriceAlertButton
+                    productId={product._id}
+                    productName={product.name}
+                    currentPrice={product.priceJPY}
+                  />
+                </div>
               </div>
 
               {/* Nutrition Performance Module - 含有量比較 */}
@@ -877,15 +897,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         </div>
                       </div>
 
-                      {updatedTierRatings?.contentRank && (
+                      {product.tierRatings?.contentRank && (
                         <div
-                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${product.tierRatings.contentRank === "S" || product.tierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                         >
                           <span className="text-[10px] sm:text-xs font-bold">
                             RANK
                           </span>
                           <span className="text-lg sm:text-2xl font-black leading-none">
-                            {updatedTierRatings.contentRank}
+                            {product.tierRatings.contentRank}
                           </span>
                         </div>
                       )}
@@ -898,13 +918,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       <h2 className="text-2xl font-bold text-slate-900">
                         含有量比較詳細
                       </h2>
-                      {updatedTierRatings?.contentRank && (
+                      {product.tierRatings?.contentRank && (
                         <div
-                          className={`flex items-center gap-1 px-2 py-0.5 rounded border ${updatedTierRatings.contentRank === "S" || updatedTierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          className={`flex items-center gap-1 px-2 py-0.5 rounded border ${product.tierRatings.contentRank === "S" || product.tierRatings.contentRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                         >
                           <span className="text-[10px] font-bold">RANK</span>
                           <span className="text-lg font-black leading-none">
-                            {updatedTierRatings.contentRank}
+                            {product.tierRatings.contentRank}
                           </span>
                         </div>
                       )}
@@ -923,7 +943,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       }}
                       similarProducts={similarProducts}
                       contentRank={
-                        updatedTierRatings?.contentRank as
+                        product.tierRatings?.contentRank as
                           | "S"
                           | "A"
                           | "B"
@@ -997,15 +1017,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         </div>
                       </div>
 
-                      {updatedTierRatings?.costEffectivenessRank && (
+                      {product.tierRatings?.costEffectivenessRank && (
                         <div
-                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${updatedTierRatings.costEffectivenessRank === "S" || updatedTierRatings.costEffectivenessRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
+                          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg border ${product.tierRatings.costEffectivenessRank === "S" || product.tierRatings.costEffectivenessRank === "S+" ? "bg-purple-50 border-purple-200 text-purple-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
                         >
                           <span className="text-[10px] sm:text-xs font-bold">
                             RANK
                           </span>
                           <span className="text-lg sm:text-2xl font-black leading-none">
-                            {updatedTierRatings.costEffectivenessRank}
+                            {product.tierRatings.costEffectivenessRank}
                           </span>
                         </div>
                       )}
@@ -1032,7 +1052,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       }}
                       similarProducts={similarProducts}
                       costEffectivenessRank={
-                        updatedTierRatings?.costEffectivenessRank
+                        product.tierRatings?.costEffectivenessRank
                       }
                       totalProductsInCategory={totalProductsInCategory}
                     />

@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronUp,
   Package,
+  Clock,
 } from "lucide-react";
 
 // 折りたたみ表示の閾値
@@ -47,6 +48,10 @@ interface PriceComparisonProps {
   priceData?: PriceData[];
   priceRank?: TierRank;
   className?: string;
+  /** 価格データがキャッシュ（古いデータ）かどうか */
+  isStalePrice?: boolean;
+  /** 最終更新日時 */
+  lastUpdated?: string;
 }
 
 /**
@@ -57,6 +62,8 @@ export function PriceComparison({
   priceData,
   priceRank,
   className = "",
+  isStalePrice = false,
+  lastUpdated,
 }: PriceComparisonProps) {
   const [showBulkPrices, setShowBulkPrices] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -166,9 +173,10 @@ export function PriceComparison({
 
   // 折りたたみ表示の制御
   const shouldCollapse = sortedPrices.length >= COLLAPSE_THRESHOLD;
-  const visiblePrices = shouldCollapse && !isExpanded
-    ? sortedPrices.slice(0, INITIAL_DISPLAY_COUNT)
-    : sortedPrices;
+  const visiblePrices =
+    shouldCollapse && !isExpanded
+      ? sortedPrices.slice(0, INITIAL_DISPLAY_COUNT)
+      : sortedPrices;
   const hiddenCount = sortedPrices.length - INITIAL_DISPLAY_COUNT;
 
   const getSourceName = (source: string) => {
@@ -193,9 +201,15 @@ export function PriceComparison({
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-900">最安値チェック</h2>
-            <p className="text-xs text-slate-500">
-              各ショップの価格を比較
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-slate-500">各ショップの価格を比較</p>
+              {isStalePrice && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-full">
+                  <Clock className="w-3 h-3" />
+                  キャッシュ
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -298,7 +312,9 @@ export function PriceComparison({
                   {isBulk && (
                     <div className="mt-1 text-xs text-slate-500">
                       <span className="font-medium">単価: </span>
-                      <span className="text-slate-700 font-bold">¥{unitPrice.toLocaleString()}</span>
+                      <span className="text-slate-700 font-bold">
+                        ¥{unitPrice.toLocaleString()}
+                      </span>
                       <span className="text-slate-400">/個</span>
                     </div>
                   )}
@@ -361,8 +377,8 @@ export function PriceComparison({
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4" />
-                他{hiddenCount}件のショップを表示
+                <ChevronDown className="w-4 h-4" />他{hiddenCount}
+                件のショップを表示
               </>
             )}
           </button>
