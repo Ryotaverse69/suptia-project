@@ -207,10 +207,6 @@ export default function MyPage() {
     },
   ];
 
-  // デバッグ用ログ（本番で確認後に削除）
-  console.log("[MyPage] profile:", profile);
-  console.log("[MyPage] profile?.plan:", profile?.plan);
-
   const planConfig = PLAN_BADGES[profile?.plan || "free"];
   const PlanIcon = planConfig.icon;
   const bgConfig = PLAN_BACKGROUNDS[profile?.plan || "free"];
