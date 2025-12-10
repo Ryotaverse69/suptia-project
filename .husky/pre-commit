@@ -1,5 +1,2 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # 最適化されたpre-commitチェックを実行
 node scripts/pre-commit-check.mjs

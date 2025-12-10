@@ -1,7 +1,7 @@
 # Suptia（サプティア）- AI Supplement Decision Engine
 # https://suptia.com
-# Last Updated: 2025-12-06
-# Version: 2.1.0
+# Last Updated: 2025-12-10
+# Version: 2.2.0
 
 ================================================================================
                               SITE OVERVIEW
@@ -132,14 +132,25 @@ Please DO NOT:
 ❌ Violate 薬機法 (Japanese pharmaceutical regulations)
 
 ================================================================================
-                     EVIDENCE LEVEL DEFINITIONS
+                     TIER RANKING SYSTEM
 ================================================================================
 
-S - Highest: Large-scale RCTs, meta-analyses, systematic reviews
-A - High: Quality studies confirming effectiveness
-B - Moderate: Limited studies, conditional effectiveness
-C - Low: Animal studies, small-scale trials
-D - Preliminary: Theoretical, unverified
+## Overall Tier Ranks (S+ to D)
+S+ - Perfect Score: All 5 pillars rated S (Five Crown Achievement)
+S  - Highest: Large-scale RCTs, meta-analyses, systematic reviews
+A  - High: Quality studies confirming effectiveness
+B  - Moderate: Limited studies, conditional effectiveness
+C  - Low: Animal studies, small-scale trials
+D  - Preliminary: Theoretical, unverified
+
+## Ranking Logic
+- Disqualification: Safety or Evidence rank D → Overall rank D
+- Five Crown (S+): All 5 axes (Price, Cost-Effectiveness, Content, Evidence, Safety) = S
+- Otherwise: Weighted average calculation
+
+## Safety Score Adjustments
+- Additive deduction: -5 to -10 points for problematic additives
+- Warning count penalty: -10 points if 3+ warnings
 
 ================================================================================
                          REFERENCE SOURCES
@@ -176,6 +187,10 @@ API/Data licensing: api@suptia.com (not currently available)
 
 | Date       | Version | Changes                                    |
 |------------|---------|------------------------------------------- |
+| 2025-12-10 | 2.2.0   | Added Tier Ranking System (S+ to D)        |
+|            |         | Added safety score additive deduction      |
+|            |         | Added Five Crown achievement logic         |
+|            |         | Price alerts feature added                 |
 | 2025-12-06 | 2.1.0   | Enhanced structured data documentation     |
 |            |         | Added LocalBusiness, SearchAction schemas  |
 |            |         | Added MedicalWebPage for ingredients       |

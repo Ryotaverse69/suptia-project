@@ -8,13 +8,20 @@ interface SlideContent {
   content: string;
 }
 
+interface ImageItem {
+  type: string;
+  url: string | null;
+  filename: string | null;
+  status: "pending" | "generating" | "done" | "error";
+  error?: string;
+}
+
 interface GeneratedContent {
   title: string | null;
   slides: SlideContent[];
   caption: string | null;
   hashtags: string[];
   category: string | null;
-  images: { type: string; url: string; filename: string }[];
 }
 
 const CATEGORIES = [
@@ -51,15 +58,16 @@ export default function InstagramDashboard() {
   const [aspectRatio, setAspectRatio] = useState("square");
   const [slideCount, setSlideCount] = useState(5);
 
-  const [loading, setLoading] = useState({ content: false, images: false });
+  const [loading, setLoading] = useState({ content: false });
   const [content, setContent] = useState<GeneratedContent>({
     title: null,
     slides: [],
     caption: null,
     hashtags: [],
     category: null,
-    images: [],
   });
+  const [images, setImages] = useState<ImageItem[]>([]);
+  const [timestamp, setTimestamp] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -83,14 +91,28 @@ export default function InstagramDashboard() {
       const data = await response.json();
 
       if (data.success) {
-        setContent((prev) => ({
-          ...prev,
+        setContent({
           title: data.title,
           slides: data.slides || [],
           caption: data.caption,
           hashtags: data.hashtags || [],
           category: data.category,
-        }));
+        });
+
+        // 画像リストを初期化
+        const newTimestamp = Date.now();
+        setTimestamp(newTimestamp);
+        const imageList: ImageItem[] = [
+          { type: "cover", url: null, filename: null, status: "pending" },
+          ...(data.slides || []).map((_: SlideContent, i: number) => ({
+            type: `slide${i + 1}`,
+            url: null,
+            filename: null,
+            status: "pending" as const,
+          })),
+        ];
+        setImages(imageList);
+        setCurrentImageIndex(0);
       } else {
         setError(data.error || "コンテンツ生成に失敗しました");
       }
@@ -101,44 +123,93 @@ export default function InstagramDashboard() {
     }
   };
 
-  // Step 2: 画像を生成（コンテンツに基づいて）
-  const generateImages = async () => {
-    if (!content.title || content.slides.length === 0) {
-      setError("先にコンテンツを生成してください");
-      return;
-    }
+  // 1枚の画像を生成
+  const generateSingleImage = async (index: number) => {
+    if (!content.title) return;
 
-    setLoading((prev) => ({ ...prev, images: true }));
+    // ステータスを更新
+    setImages((prev) =>
+      prev.map((img, i) =>
+        i === index ? { ...img, status: "generating", error: undefined } : img,
+      ),
+    );
     setError(null);
 
     try {
-      const response = await fetch("/api/instagram/generate-image", {
+      const imageItem = images[index];
+      const iscover = imageItem.type === "cover";
+
+      const body = iscover
+        ? {
+            type: "cover",
+            title: content.title,
+            style: imageStyle === "random" ? null : imageStyle,
+            aspectRatio,
+            timestamp,
+          }
+        : {
+            type: "slide",
+            index: index - 1, // 表紙分を引く
+            slideHeading: content.slides[index - 1]?.heading,
+            slideContent: content.slides[index - 1]?.content,
+            style: imageStyle === "random" ? null : imageStyle,
+            aspectRatio,
+            timestamp,
+          };
+
+      const response = await fetch("/api/instagram/generate-single-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          style: imageStyle === "random" ? null : imageStyle,
-          aspectRatio,
-          title: content.title,
-          slides: content.slides,
-          generateCover: true,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setContent((prev) => ({
-          ...prev,
-          images: data.images || [],
-        }));
-        setCurrentImageIndex(0);
+        setImages((prev) =>
+          prev.map((img, i) =>
+            i === index
+              ? {
+                  ...img,
+                  url: data.image.url,
+                  filename: data.image.filename,
+                  status: "done",
+                }
+              : img,
+          ),
+        );
+        setCurrentImageIndex(index);
       } else {
-        setError(data.error || "画像生成に失敗しました");
+        setImages((prev) =>
+          prev.map((img, i) =>
+            i === index ? { ...img, status: "error", error: data.error } : img,
+          ),
+        );
+        if (data.retryable) {
+          setError(data.error);
+        }
       }
     } catch (err) {
-      setError("エラーが発生しました: " + (err as Error).message);
-    } finally {
-      setLoading((prev) => ({ ...prev, images: false }));
+      setImages((prev) =>
+        prev.map((img, i) =>
+          i === index
+            ? { ...img, status: "error", error: (err as Error).message }
+            : img,
+        ),
+      );
+    }
+  };
+
+  // 全ての未生成画像を順番に生成
+  const generateAllPending = async () => {
+    for (let i = 0; i < images.length; i++) {
+      if (images[i].status === "pending" || images[i].status === "error") {
+        await generateSingleImage(i);
+        // 次の画像まで少し待つ（過負荷対策）
+        if (i < images.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+      }
     }
   };
 
@@ -158,8 +229,9 @@ export default function InstagramDashboard() {
   };
 
   const downloadAllImages = () => {
-    content.images.forEach((img, index) => {
-      setTimeout(() => downloadImage(img.url, img.filename), index * 500);
+    const doneImages = images.filter((img) => img.status === "done" && img.url);
+    doneImages.forEach((img, index) => {
+      setTimeout(() => downloadImage(img.url!, img.filename!), index * 500);
     });
   };
 
@@ -181,6 +253,9 @@ export default function InstagramDashboard() {
     ? `${content.caption}\n\n${content.hashtags.map((h) => `#${h}`).join(" ")}`
     : "";
 
+  const completedCount = images.filter((img) => img.status === "done").length;
+  const isGenerating = images.some((img) => img.status === "generating");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-8">
       <div className="mx-auto max-w-7xl px-4">
@@ -190,14 +265,14 @@ export default function InstagramDashboard() {
             Instagram カルーセル投稿ジェネレーター
           </h1>
           <p className="mt-2 text-gray-600">
-            表紙 + 内容スライド + キャプションを自動生成
+            表紙 + 内容スライド + キャプションを自動生成（1枚ずつ生成モード）
           </p>
         </div>
 
         {/* Error Display */}
         {error && (
           <div className="mx-auto mb-6 max-w-2xl rounded-lg bg-red-50 p-4 text-red-700">
-            {error}
+            <pre className="whitespace-pre-wrap">{error}</pre>
           </div>
         )}
 
@@ -282,74 +357,132 @@ export default function InstagramDashboard() {
               </div>
             </div>
 
-            {/* Step 2: Image Settings */}
+            {/* Step 2: Image Settings & Generation */}
             <div className="rounded-xl bg-white p-6 shadow-lg">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-800">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                   2
                 </span>
-                画像設定
+                画像生成（1枚ずつ）
+                {images.length > 0 && (
+                  <span className="ml-2 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
+                    {completedCount} / {images.length} 完了
+                  </span>
+                )}
               </h2>
 
               <div className="space-y-4">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    スタイル
-                  </label>
-                  <select
-                    value={imageStyle}
-                    onChange={(e) => setImageStyle(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  >
-                    {IMAGE_STYLES.map((style) => (
-                      <option key={style.id} value={style.id}>
-                        {style.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    アスペクト比
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {ASPECT_RATIOS.map((ratio) => (
-                      <button
-                        key={ratio.id}
-                        type="button"
-                        onClick={() => setAspectRatio(ratio.id)}
-                        className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
-                          aspectRatio === ratio.id
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
-                            : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                        }`}
-                      >
-                        <div>{ratio.name}</div>
-                        <div className="mt-1 text-xs text-gray-500">
-                          {ratio.description}
-                        </div>
-                      </button>
-                    ))}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      スタイル
+                    </label>
+                    <select
+                      value={imageStyle}
+                      onChange={(e) => setImageStyle(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    >
+                      {IMAGE_STYLES.map((style) => (
+                        <option key={style.id} value={style.id}>
+                          {style.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      アスペクト比
+                    </label>
+                    <select
+                      value={aspectRatio}
+                      onChange={(e) => setAspectRatio(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    >
+                      {ASPECT_RATIOS.map((ratio) => (
+                        <option key={ratio.id} value={ratio.id}>
+                          {ratio.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <button
-                  onClick={generateImages}
-                  disabled={loading.images || !content.title}
-                  className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-3 font-semibold text-white transition-all hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50"
-                >
-                  {loading.images ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <LoadingSpinner /> 画像生成中（{content.slides.length + 1}
-                      枚）...
-                    </span>
-                  ) : (
-                    `画像を生成（表紙 + ${content.slides.length}枚）`
-                  )}
-                </button>
-                {!content.title && (
-                  <p className="text-center text-sm text-gray-500">
+                {/* Image List */}
+                {images.length > 0 ? (
+                  <div className="space-y-2">
+                    {images.map((img, index) => (
+                      <div
+                        key={img.type}
+                        className={`flex items-center justify-between rounded-lg border p-3 ${
+                          img.status === "done"
+                            ? "border-green-200 bg-green-50"
+                            : img.status === "error"
+                              ? "border-red-200 bg-red-50"
+                              : img.status === "generating"
+                                ? "border-blue-200 bg-blue-50"
+                                : "border-gray-200 bg-gray-50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium text-gray-700">
+                            {img.type === "cover"
+                              ? "表紙"
+                              : `スライド ${index}`}
+                          </span>
+                          {img.status === "done" && (
+                            <span className="text-green-600">✓</span>
+                          )}
+                          {img.status === "generating" && (
+                            <LoadingSpinner small />
+                          )}
+                          {img.status === "error" && (
+                            <span className="text-xs text-red-600">
+                              {img.error?.slice(0, 30)}...
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => generateSingleImage(index)}
+                          disabled={img.status === "generating" || isGenerating}
+                          className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+                            img.status === "done"
+                              ? "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                              : img.status === "error"
+                                ? "bg-red-600 text-white hover:bg-red-700"
+                                : img.status === "generating"
+                                  ? "cursor-not-allowed bg-blue-300 text-white"
+                                  : "bg-blue-600 text-white hover:bg-blue-700"
+                          } disabled:opacity-50`}
+                        >
+                          {img.status === "generating"
+                            ? "生成中..."
+                            : img.status === "done"
+                              ? "再生成"
+                              : img.status === "error"
+                                ? "リトライ"
+                                : "生成"}
+                        </button>
+                      </div>
+                    ))}
+
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        onClick={generateAllPending}
+                        disabled={
+                          isGenerating || completedCount === images.length
+                        }
+                        className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 font-semibold text-white transition-all hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50"
+                      >
+                        {isGenerating
+                          ? "生成中..."
+                          : completedCount === images.length
+                            ? "全て完了"
+                            : `残り${images.length - completedCount}枚を順番に生成`}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="py-4 text-center text-sm text-gray-500">
                     先にコンテンツを生成してください
                   </p>
                 )}
@@ -364,38 +497,38 @@ export default function InstagramDashboard() {
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
                   画像プレビュー
-                  {content.images.length > 0 && (
+                  {completedCount > 0 && (
                     <span className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
-                      {currentImageIndex + 1} / {content.images.length}
+                      {currentImageIndex + 1} / {images.length}
                     </span>
                   )}
                 </h2>
-                {content.images.length > 0 && (
+                {completedCount > 0 && (
                   <button
                     onClick={downloadAllImages}
                     className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
                   >
-                    全画像をダウンロード
+                    完了画像をDL ({completedCount}枚)
                   </button>
                 )}
               </div>
 
               <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                {content.images.length > 0 ? (
+                {images[currentImageIndex]?.url ? (
                   <>
                     <Image
-                      src={content.images[currentImageIndex].url}
+                      src={images[currentImageIndex].url}
                       alt={`Slide ${currentImageIndex + 1}`}
                       fill
                       className="object-cover"
                       unoptimized
                     />
-                    {content.images.length > 1 && (
+                    {images.length > 1 && (
                       <>
                         <button
                           onClick={() =>
                             setCurrentImageIndex((prev) =>
-                              prev === 0 ? content.images.length - 1 : prev - 1,
+                              prev === 0 ? images.length - 1 : prev - 1,
                             )
                           }
                           className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-lg hover:bg-white"
@@ -405,7 +538,7 @@ export default function InstagramDashboard() {
                         <button
                           onClick={() =>
                             setCurrentImageIndex((prev) =>
-                              prev === content.images.length - 1 ? 0 : prev + 1,
+                              prev === images.length - 1 ? 0 : prev + 1,
                             )
                           }
                           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-lg hover:bg-white"
@@ -415,9 +548,9 @@ export default function InstagramDashboard() {
                       </>
                     )}
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
-                      {content.images[currentImageIndex].type === "cover"
+                      {images[currentImageIndex].type === "cover"
                         ? "表紙"
-                        : content.images[currentImageIndex].type}
+                        : images[currentImageIndex].type}
                     </div>
                   </>
                 ) : (
@@ -431,25 +564,37 @@ export default function InstagramDashboard() {
               </div>
 
               {/* Image Thumbnails */}
-              {content.images.length > 0 && (
+              {images.length > 0 && (
                 <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
-                  {content.images.map((img, index) => (
+                  {images.map((img, index) => (
                     <button
-                      key={img.filename}
+                      key={img.type}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 ${
                         currentImageIndex === index
                           ? "border-blue-500"
                           : "border-transparent"
-                      }`}
+                      } ${!img.url ? "bg-gray-200" : ""}`}
                     >
-                      <Image
-                        src={img.url}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
+                      {img.url ? (
+                        <Image
+                          src={img.url}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-xs text-gray-500">
+                          {img.status === "generating" ? (
+                            <LoadingSpinner small />
+                          ) : img.status === "error" ? (
+                            "!"
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -577,9 +722,12 @@ export default function InstagramDashboard() {
   );
 }
 
-function LoadingSpinner() {
+function LoadingSpinner({ small }: { small?: boolean }) {
   return (
-    <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
+    <svg
+      className={`animate-spin ${small ? "h-4 w-4" : "h-5 w-5"}`}
+      viewBox="0 0 24 24"
+    >
       <circle
         className="opacity-25"
         cx="12"
