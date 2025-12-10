@@ -201,6 +201,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) {
       setState((prev) => ({ ...prev, error, isLoading: false }));
+    } else {
+      // ログアウト成功時、ステートをリセット
+      setState({
+        user: null,
+        session: null,
+        isLoading: false,
+        error: null,
+      });
     }
   }, [supabase.auth]);
 
