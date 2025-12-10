@@ -271,6 +271,14 @@ export function Header() {
                             {user.email}
                           </p>
                         </div>
+                        <Link
+                          href="/mypage"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-primary-50 transition-colors"
+                        >
+                          <User size={16} />
+                          マイページ
+                        </Link>
                         <button
                           onClick={() => {
                             signOut();
@@ -532,6 +540,14 @@ export function Header() {
                         </p>
                       </div>
                     </div>
+                    <Link
+                      href="/mypage"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                    >
+                      <User size={18} />
+                      マイページ
+                    </Link>
                     <button
                       onClick={() => {
                         signOut();
