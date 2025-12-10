@@ -197,9 +197,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: "local" });
 
     if (error) {
+      console.error("[AuthContext] SignOut error:", error);
       setState((prev) => ({ ...prev, error, isLoading: false }));
     } else {
       // ログアウト成功時、ステートをリセット
@@ -209,6 +210,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading: false,
         error: null,
       });
+      // ページをリロードしてキャッシュをクリア
+      window.location.href = "/";
     }
   }, [supabase.auth]);
 

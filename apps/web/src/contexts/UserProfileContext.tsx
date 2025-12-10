@@ -128,9 +128,24 @@ export function UserProfileProvider({
 
       if (fetchError && fetchError.code !== "PGRST116") {
         // PGRST116 = "no rows returned" は新規ユーザーなので無視
-        console.error("[UserProfileContext] Fetch error:", fetchError);
-        setError("プロフィールの取得に失敗しました");
-        setProfile(null);
+        console.error("[UserProfileContext] Fetch error:", fetchError.message, fetchError.code, fetchError.details);
+        // エラーでもデフォルトプロフィールを設定（UIが壊れないように）
+        setProfile({
+          id: "",
+          userId: user.id,
+          displayName: null,
+          ageRange: null,
+          gender: null,
+          healthGoals: [],
+          allergies: [],
+          conditions: [],
+          medications: [],
+          concerns: [],
+          plan: "free",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        setError(`プロフィールの取得に失敗: ${fetchError.message}`);
         setIsLoading(false);
         return;
       }

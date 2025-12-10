@@ -130,7 +130,7 @@ export default function MyPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const { user, isLoading: authLoading } = useAuth();
-  const { profile, isLoading: profileLoading } = useUserProfile();
+  const { profile, isLoading: profileLoading, error: profileError } = useUserProfile();
   const { favorites, isLoading: favoritesLoading } = useFavorites();
   const { history, isLoading: historyLoading } = useDiagnosisHistory();
   const { alerts, isLoading: alertsLoading } = usePriceAlerts();
@@ -341,6 +341,17 @@ export default function MyPage() {
               animate="visible"
               className="space-y-6"
             >
+              {/* Profile Error Display */}
+              {profileError && (
+                <motion.div
+                  variants={itemVariants}
+                  className="p-4 bg-red-500/20 border border-red-400/30 rounded-2xl text-red-300 text-sm"
+                >
+                  <p className="font-medium">⚠️ プロフィールの読み込みエラー</p>
+                  <p className="text-red-400/80 mt-1">{profileError}</p>
+                </motion.div>
+              )}
+
               {/* User Info Card - Premium Dark Design */}
               <motion.div
                 variants={itemVariants}
