@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 interface SlideContent {
   heading: string;
@@ -33,10 +34,10 @@ const CATEGORIES = [
 
 const IMAGE_STYLES = [
   { id: "random", name: "ランダム" },
-  { id: "modern-minimal", name: "モダンミニマル" },
-  { id: "natural-wellness", name: "ナチュラルウェルネス" },
-  { id: "scientific", name: "サイエンティフィック" },
-  { id: "lifestyle", name: "ライフスタイル" },
+  { id: "flat-minimal", name: "フラットミニマル" },
+  { id: "modern-infographic", name: "モダンインフォグラフィック" },
+  { id: "organic-wellness", name: "オーガニックウェルネス" },
+  { id: "gradient-modern", name: "グラデーションモダン" },
 ];
 
 const ASPECT_RATIOS = [
@@ -51,7 +52,20 @@ const ASPECT_RATIOS = [
 
 const SLIDE_COUNTS = [3, 4, 5, 6, 7];
 
+// シークレットキー（環境変数から取得、フォールバックあり）
+const ADMIN_SECRET_KEY =
+  process.env.NEXT_PUBLIC_INSTAGRAM_ADMIN_KEY || "suptia-instagram-2024";
+
 export default function InstagramDashboard() {
+  const searchParams = useSearchParams();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
+  // 認証チェック
+  useEffect(() => {
+    const key = searchParams.get("key");
+    setIsAuthorized(key === ADMIN_SECRET_KEY);
+  }, [searchParams]);
+
   const [category, setCategory] = useState("random");
   const [customTopic, setCustomTopic] = useState("");
   const [imageStyle, setImageStyle] = useState("random");
@@ -71,6 +85,7 @@ export default function InstagramDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showPostGuide, setShowPostGuide] = useState(false);
 
   // Step 1: コンテンツ（テキスト）を生成
   const generateContent = async () => {
@@ -99,7 +114,6 @@ export default function InstagramDashboard() {
           category: data.category,
         });
 
-        // 画像リストを初期化
         const newTimestamp = Date.now();
         setTimestamp(newTimestamp);
         const imageList: ImageItem[] = [
@@ -113,6 +127,7 @@ export default function InstagramDashboard() {
         ];
         setImages(imageList);
         setCurrentImageIndex(0);
+        setShowPostGuide(false);
       } else {
         setError(data.error || "コンテンツ生成に失敗しました");
       }
@@ -123,11 +138,9 @@ export default function InstagramDashboard() {
     }
   };
 
-  // 1枚の画像を生成
   const generateSingleImage = async (index: number) => {
     if (!content.title) return;
 
-    // ステータスを更新
     setImages((prev) =>
       prev.map((img, i) =>
         i === index ? { ...img, status: "generating", error: undefined } : img,
@@ -149,7 +162,7 @@ export default function InstagramDashboard() {
           }
         : {
             type: "slide",
-            index: index - 1, // 表紙分を引く
+            index: index - 1,
             slideHeading: content.slides[index - 1]?.heading,
             slideContent: content.slides[index - 1]?.content,
             style: imageStyle === "random" ? null : imageStyle,
@@ -200,12 +213,10 @@ export default function InstagramDashboard() {
     }
   };
 
-  // 全ての未生成画像を順番に生成
   const generateAllPending = async () => {
     for (let i = 0; i < images.length; i++) {
       if (images[i].status === "pending" || images[i].status === "error") {
         await generateSingleImage(i);
-        // 次の画像まで少し待つ（過負荷対策）
         if (i < images.length - 1) {
           await new Promise((resolve) => setTimeout(resolve, 2000));
         }
@@ -217,22 +228,6 @@ export default function InstagramDashboard() {
     await navigator.clipboard.writeText(text);
     setCopied(type);
     setTimeout(() => setCopied(null), 2000);
-  };
-
-  const downloadImage = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const downloadAllImages = () => {
-    const doneImages = images.filter((img) => img.status === "done" && img.url);
-    doneImages.forEach((img, index) => {
-      setTimeout(() => downloadImage(img.url!, img.filename!), index * 500);
-    });
   };
 
   const openFolder = async () => {
@@ -253,8 +248,33 @@ export default function InstagramDashboard() {
     ? `${content.caption}\n\n${content.hashtags.map((h) => `#${h}`).join(" ")}`
     : "";
 
+  const hashtagsOnly = content.hashtags.map((h) => `#${h}`).join(" ");
+
   const completedCount = images.filter((img) => img.status === "done").length;
   const isGenerating = images.some((img) => img.status === "generating");
+  const allImagesReady = completedCount === images.length && images.length > 0;
+
+  // 認証チェック中
+  if (isAuthorized === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <div className="text-gray-500">読み込み中...</div>
+      </div>
+    );
+  }
+
+  // 未認証の場合は404風のページを表示
+  if (!isAuthorized) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+        <h1 className="text-6xl font-bold text-gray-300">404</h1>
+        <p className="mt-4 text-gray-500">ページが見つかりません</p>
+        <a href="/" className="mt-6 text-blue-500 hover:underline">
+          ホームに戻る
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-8">
@@ -262,12 +282,79 @@ export default function InstagramDashboard() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
-            Instagram カルーセル投稿ジェネレーター
+            Suptia Instagram 投稿システム
           </h1>
           <p className="mt-2 text-gray-600">
-            表紙 + 内容スライド + キャプションを自動生成（1枚ずつ生成モード）
+            カルーセル投稿を簡単作成 → そのままInstagramへ
           </p>
         </div>
+
+        {/* Ready to Post Banner */}
+        {allImagesReady && content.caption && (
+          <div className="mx-auto mb-6 max-w-4xl rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-2xl">
+                  ✅
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">投稿準備完了！</h2>
+                  <p className="text-green-100">
+                    画像{completedCount}枚 + キャプション生成済み
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPostGuide(!showPostGuide)}
+                className="rounded-lg bg-white px-6 py-3 font-bold text-green-600 transition-colors hover:bg-green-50"
+              >
+                {showPostGuide ? "閉じる" : "投稿ガイドを見る"}
+              </button>
+            </div>
+
+            {/* Posting Guide */}
+            {showPostGuide && (
+              <div className="mt-6 rounded-lg bg-white/10 p-4">
+                <h3 className="mb-3 font-bold">📱 Instagramへの投稿手順</h3>
+                <ol className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-xs">
+                      1
+                    </span>
+                    <span>
+                      「フォルダを開く」で画像を確認 →
+                      AirDropまたは写真アプリでiPhoneに転送
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-xs">
+                      2
+                    </span>
+                    <span>
+                      Instagramアプリで「+」→「投稿」→
+                      複数選択で画像を順番に選択
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-xs">
+                      3
+                    </span>
+                    <span>
+                      下の「キャプションをコピー」→
+                      Instagramのキャプション欄にペースト
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-xs">
+                      4
+                    </span>
+                    <span>投稿！ 🎉</span>
+                  </li>
+                </ol>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Error Display */}
         {error && (
@@ -363,10 +450,13 @@ export default function InstagramDashboard() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                   2
                 </span>
-                画像生成（1枚ずつ）
+                画像生成
                 {images.length > 0 && (
-                  <span className="ml-2 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
-                    {completedCount} / {images.length} 完了
+                  <span
+                    className={`ml-2 rounded-full px-3 py-1 text-sm ${allImagesReady ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}
+                  >
+                    {completedCount} / {images.length}{" "}
+                    {allImagesReady ? "✓" : ""}
                   </span>
                 )}
               </h2>
@@ -407,7 +497,6 @@ export default function InstagramDashboard() {
                   </div>
                 </div>
 
-                {/* Image List */}
                 {images.length > 0 ? (
                   <div className="space-y-2">
                     {images.map((img, index) => (
@@ -424,6 +513,9 @@ export default function InstagramDashboard() {
                         }`}
                       >
                         <div className="flex items-center gap-3">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-bold">
+                            {index + 1}
+                          </span>
                           <span className="text-sm font-medium text-gray-700">
                             {img.type === "cover"
                               ? "表紙"
@@ -434,11 +526,6 @@ export default function InstagramDashboard() {
                           )}
                           {img.status === "generating" && (
                             <LoadingSpinner small />
-                          )}
-                          {img.status === "error" && (
-                            <span className="text-xs text-red-600">
-                              {img.error?.slice(0, 30)}...
-                            </span>
                           )}
                         </div>
                         <button
@@ -465,21 +552,17 @@ export default function InstagramDashboard() {
                       </div>
                     ))}
 
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        onClick={generateAllPending}
-                        disabled={
-                          isGenerating || completedCount === images.length
-                        }
-                        className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 font-semibold text-white transition-all hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50"
-                      >
-                        {isGenerating
-                          ? "生成中..."
-                          : completedCount === images.length
-                            ? "全て完了"
-                            : `残り${images.length - completedCount}枚を順番に生成`}
-                      </button>
-                    </div>
+                    <button
+                      onClick={generateAllPending}
+                      disabled={isGenerating || allImagesReady}
+                      className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 font-semibold text-white transition-all hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50"
+                    >
+                      {isGenerating
+                        ? "生成中..."
+                        : allImagesReady
+                          ? "✓ 全画像完了"
+                          : `残り${images.length - completedCount}枚を一括生成`}
+                    </button>
                   </div>
                 ) : (
                   <p className="py-4 text-center text-sm text-gray-500">
@@ -488,6 +571,107 @@ export default function InstagramDashboard() {
                 )}
               </div>
             </div>
+
+            {/* Step 3: Post to Instagram */}
+            {allImagesReady && content.caption && (
+              <div className="rounded-xl border-2 border-green-500 bg-white p-6 shadow-lg">
+                <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-800">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
+                    3
+                  </span>
+                  Instagram投稿
+                </h2>
+
+                <div className="space-y-3">
+                  {/* Open Folder & Instagram Buttons */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={openFolder}
+                      className="flex items-center justify-center gap-2 rounded-lg bg-gray-800 px-4 py-3 font-semibold text-white hover:bg-gray-900"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      フォルダを開く
+                    </button>
+                    <a
+                      href="https://www.instagram.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 px-4 py-3 font-semibold text-white hover:from-purple-700 hover:via-pink-700 hover:to-orange-600"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                      Instagramを開く
+                    </a>
+                  </div>
+
+                  {/* Copy Caption */}
+                  <button
+                    onClick={() => copyToClipboard(fullCaption, "caption")}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-semibold transition-colors ${
+                      copied === "caption"
+                        ? "bg-green-600 text-white"
+                        : "bg-gradient-to-r from-pink-500 to-orange-500 text-white hover:from-pink-600 hover:to-orange-600"
+                    }`}
+                  >
+                    {copied === "caption" ? (
+                      <>✓ コピー済み！</>
+                    ) : (
+                      <>
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                          />
+                        </svg>
+                        キャプション + ハッシュタグをコピー
+                      </>
+                    )}
+                  </button>
+
+                  {/* Copy Hashtags Only */}
+                  <button
+                    onClick={() => copyToClipboard(hashtagsOnly, "hashtags")}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                      copied === "hashtags"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                    }`}
+                  >
+                    {copied === "hashtags"
+                      ? "✓ コピー済み"
+                      : `ハッシュタグのみコピー（${content.hashtags.length}個）`}
+                  </button>
+                </div>
+
+                <p className="mt-4 text-center text-xs text-gray-500">
+                  💡 画像をAirDropでiPhoneに転送 → Instagramアプリで投稿
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Preview */}
@@ -496,21 +680,13 @@ export default function InstagramDashboard() {
             <div className="rounded-xl bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
-                  画像プレビュー
+                  プレビュー
                   {completedCount > 0 && (
                     <span className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
                       {currentImageIndex + 1} / {images.length}
                     </span>
                   )}
                 </h2>
-                {completedCount > 0 && (
-                  <button
-                    onClick={downloadAllImages}
-                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
-                  >
-                    完了画像をDL ({completedCount}枚)
-                  </button>
-                )}
               </div>
 
               <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
@@ -548,6 +724,7 @@ export default function InstagramDashboard() {
                       </>
                     )}
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
+                      {currentImageIndex + 1}.{" "}
                       {images[currentImageIndex].type === "cover"
                         ? "表紙"
                         : images[currentImageIndex].type}
@@ -563,48 +740,56 @@ export default function InstagramDashboard() {
                 )}
               </div>
 
-              {/* Image Thumbnails */}
+              {/* Image Thumbnails with Order */}
               {images.length > 0 && (
-                <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
-                  {images.map((img, index) => (
-                    <button
-                      key={img.type}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 ${
-                        currentImageIndex === index
-                          ? "border-blue-500"
-                          : "border-transparent"
-                      } ${!img.url ? "bg-gray-200" : ""}`}
-                    >
-                      {img.url ? (
-                        <Image
-                          src={img.url}
-                          alt={`Thumbnail ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-xs text-gray-500">
-                          {img.status === "generating" ? (
-                            <LoadingSpinner small />
-                          ) : img.status === "error" ? (
-                            "!"
-                          ) : (
-                            index + 1
-                          )}
+                <div className="mt-4">
+                  <p className="mb-2 text-xs text-gray-500">
+                    投稿順序（左から右）
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {images.map((img, index) => (
+                      <button
+                        key={img.type}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 ${
+                          currentImageIndex === index
+                            ? "border-blue-500"
+                            : "border-transparent"
+                        } ${!img.url ? "bg-gray-200" : ""}`}
+                      >
+                        {img.url ? (
+                          <Image
+                            src={img.url}
+                            alt={`Thumbnail ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-xs text-gray-500">
+                            {img.status === "generating" ? (
+                              <LoadingSpinner small />
+                            ) : img.status === "error" ? (
+                              "!"
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/50 py-0.5 text-center text-xs text-white">
+                          {index + 1}
                         </div>
-                      )}
-                    </button>
-                  ))}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Content Preview */}
+            {/* Caption Preview */}
             <div className="rounded-xl bg-white p-6 shadow-lg">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-800">
-                コンテンツプレビュー
+                キャプション
                 {content.category && (
                   <span className="rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-700">
                     {content.category}
@@ -612,59 +797,13 @@ export default function InstagramDashboard() {
                 )}
               </h2>
 
-              {content.title ? (
+              {content.caption ? (
                 <div className="space-y-4">
-                  {/* Title */}
-                  <div className="rounded-lg bg-purple-50 p-4">
-                    <div className="mb-1 text-xs font-medium text-purple-600">
-                      表紙タイトル
-                    </div>
-                    <div className="text-lg font-bold text-gray-900">
-                      {content.title}
-                    </div>
-                  </div>
-
-                  {/* Slides */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-gray-700">
-                      スライド内容
-                    </div>
-                    {content.slides.map((slide, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg border border-gray-200 p-3"
-                      >
-                        <div className="font-semibold text-gray-800">
-                          {index + 1}. {slide.heading}
-                        </div>
-                        <div className="mt-1 text-sm text-gray-600">
-                          {slide.content}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Caption */}
                   <div className="rounded-lg bg-gray-50 p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="text-sm font-medium text-gray-700">
-                        キャプション + ハッシュタグ
-                      </div>
-                      <button
-                        onClick={() => copyToClipboard(fullCaption, "caption")}
-                        className={`rounded px-3 py-1 text-sm font-medium ${
-                          copied === "caption"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-purple-100 text-purple-700 hover:bg-purple-200"
-                        }`}
-                      >
-                        {copied === "caption" ? "✓ コピー済み" : "コピー"}
-                      </button>
-                    </div>
                     <div className="whitespace-pre-wrap text-sm text-gray-800">
                       {content.caption}
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <div className="mt-3 flex flex-wrap gap-1 border-t border-gray-200 pt-3">
                       {content.hashtags.map((tag) => (
                         <span
                           key={tag}
@@ -677,45 +816,35 @@ export default function InstagramDashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="flex min-h-[200px] items-center justify-center text-gray-400">
-                  <div className="text-center">
-                    <span className="text-4xl">✍️</span>
-                    <p className="mt-2">コンテンツがここに表示されます</p>
-                  </div>
+                <div className="flex min-h-[100px] items-center justify-center text-gray-400">
+                  <p>コンテンツを生成するとキャプションが表示されます</p>
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <button
-            onClick={openFolder}
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-gray-800"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"
-              />
-            </svg>
-            保存フォルダを開く
-          </button>
-          <p className="mt-3 text-sm text-gray-500">
-            画像は{" "}
-            <code className="rounded bg-gray-200 px-2 py-1">
-              public/instagram/
-            </code>{" "}
-            に保存されます
-          </p>
+            {/* Slide Content Reference */}
+            {content.slides.length > 0 && (
+              <div className="rounded-xl bg-white p-6 shadow-lg">
+                <h2 className="mb-4 text-xl font-semibold text-gray-800">
+                  スライド内容（参考）
+                </h2>
+                <div className="space-y-2 text-sm">
+                  <div className="rounded-lg bg-purple-50 p-3">
+                    <span className="font-bold text-purple-700">表紙:</span>{" "}
+                    {content.title}
+                  </div>
+                  {content.slides.map((slide, index) => (
+                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                      <span className="font-bold text-gray-700">
+                        {index + 1}. {slide.heading}
+                      </span>
+                      <p className="mt-1 text-gray-600">{slide.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

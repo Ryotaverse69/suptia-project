@@ -557,18 +557,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
     safetyDetails = autoScores.safetyDetails;
   }
 
-  // 現在の商品のtierRatingsを添加物減点を反映して更新
+  // SanityのtierRatingsをそのまま使用
+  // 注意: 以前はscoresから再計算していたが、これにより
+  // Sanityで正しく計算されたランクと異なる結果になっていた
+  // （例: safetyRankがAなのにscoresからSに変わりS+になる問題）
+  // 同期スクリプト(auto-calculate-tier-ranks.mjs)で添加物減点を含めた
+  // 正確なランクが計算されているため、そのまま使用する
   const updatedTierRatings = product.tierRatings
     ? { ...product.tierRatings }
     : undefined;
-  if (updatedTierRatings && finalScores.evidence)
-    updatedTierRatings.evidenceRank = scoreToTierRank(finalScores.evidence);
-  if (updatedTierRatings && finalScores.safety)
-    updatedTierRatings.safetyRank = scoreToTierRank(finalScores.safety);
-  // 総合ランクを再計算（evidenceRank/safetyRankの変更を反映）
-  if (updatedTierRatings) {
-    updatedTierRatings.overallRank = calculateOverallRank(updatedTierRatings);
-  }
 
   const allProducts = await getAllProducts();
   const productsForEvaluation: ProductForBadgeEvaluation[] = allProducts.map(

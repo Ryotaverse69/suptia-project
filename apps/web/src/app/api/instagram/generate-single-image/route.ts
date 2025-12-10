@@ -4,15 +4,35 @@ import path from "path";
 
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY;
 
-const IMAGE_STYLES: Record<string, string> = {
-  "modern-minimal":
-    "Modern minimalist style, clean white background, soft shadows, professional aesthetic",
-  "natural-wellness":
-    "Natural wellness aesthetic, soft natural lighting, botanical elements, earth tones",
-  scientific:
-    "Scientific and professional, clean laboratory aesthetic, blue and white color scheme",
-  lifestyle:
-    "Lifestyle photography, morning routine aesthetic, cozy home setting, warm natural light",
+// イラスト/図解スタイル（統一感重視）
+const IMAGE_STYLES: Record<
+  string,
+  { style: string; colorPalette: string; elements: string }
+> = {
+  "flat-minimal": {
+    style: "Flat design illustration, minimal 2D vector art style",
+    colorPalette:
+      "Soft pastel colors with mint green, light blue, and cream white",
+    elements: "Simple geometric shapes, clean icons, subtle gradients",
+  },
+  "modern-infographic": {
+    style: "Modern infographic illustration, clean data visualization style",
+    colorPalette: "Professional blue, teal, and white color scheme",
+    elements:
+      "Charts, icons, connecting lines, organized layout with visual hierarchy",
+  },
+  "organic-wellness": {
+    style: "Organic hand-drawn illustration style, soft and friendly",
+    colorPalette: "Earth tones with sage green, warm beige, and soft coral",
+    elements: "Botanical elements, leaves, natural shapes, gentle curved lines",
+  },
+  "gradient-modern": {
+    style: "Modern gradient illustration, smooth colorful transitions",
+    colorPalette:
+      "Vibrant gradient from purple to pink to orange, with white accents",
+    elements:
+      "Abstract shapes, floating elements, glass morphism effects, soft shadows",
+  },
 };
 
 const ASPECT_RATIOS = {
@@ -31,17 +51,17 @@ async function generateSingleImage(
   aspectRatio: { ratio: string; width: number; height: number },
   maxRetries = 3,
 ): Promise<string> {
-  const fullPrompt = `Create a high-quality Instagram carousel slide image.
+  const fullPrompt = `${prompt}
 
-${prompt}
-
-Image specifications:
+CRITICAL STYLE REQUIREMENTS:
+- MUST be a flat illustration or infographic style (NOT a photograph)
+- MUST be 2D vector art style with clean edges
+- NO photorealistic elements, NO 3D renders, NO photographs
+- Clean, minimal design suitable for Instagram carousel
 - Aspect ratio: ${aspectRatio.ratio} (${aspectRatio.width}x${aspectRatio.height} pixels)
-- Professional, clean composition
-- Suitable for health and wellness brand
-- No text, watermarks, or logos in the image
-- High resolution, Instagram-ready quality
-- Vibrant but natural colors`;
+- Professional quality, Instagram-ready
+- Text must be in JAPANESE (日本語)
+- Text should be clearly readable with good contrast`;
 
   let lastError: Error | null = null;
 
@@ -73,7 +93,7 @@ Image specifications:
         // 503 (overloaded) の場合はリトライ
         if (errorJson.error?.code === 503) {
           console.log(`Model overloaded, waiting before retry...`);
-          await sleep(3000 * attempt); // 指数バックオフ（少し長め）
+          await sleep(3000 * attempt);
           lastError = new Error("モデルが過負荷状態です。リトライ中...");
           continue;
         }
@@ -141,23 +161,49 @@ export async function POST(request: NextRequest) {
     let filename: string;
     let imageType: string;
 
+    // 共通のスタイル指定
+    const styleSpec = `
+Art Style: ${selectedStyle.style}
+Color Palette: ${selectedStyle.colorPalette}
+Visual Elements: ${selectedStyle.elements}
+Design: Flat 2D illustration, vector art style, clean and modern`;
+
     if (type === "cover") {
-      prompt = `Cover image for Instagram carousel about supplements.
-Topic: ${title}
-Style: ${selectedStyle}
-Make it eye-catching and inviting to swipe through.
-Background should be visually appealing with supplement-related imagery.`;
+      prompt = `Create an eye-catching COVER illustration for an Instagram carousel about supplements.
+
+MAIN TITLE TEXT TO DISPLAY: "${title}"
+
+${styleSpec}
+
+Cover-specific requirements:
+- Display the MAIN TITLE prominently in Japanese: "${title}"
+- Title should be large, bold, and easy to read
+- Central visual element representing the topic with relevant icons/illustrations
+- Eye-catching composition that invites viewers to swipe
+- Supplement/health/wellness themed iconography around the title
+- This is slide 1 of a carousel series
+- Add visual hint to swipe (arrow or dots at bottom)`;
       filename = `carousel_${imageTimestamp}_cover.png`;
       imageType = "cover";
     } else {
-      prompt = `Content slide ${(index || 0) + 1} for Instagram carousel about supplements.
-Heading: ${slideHeading}
-Content theme: ${slideContent}
-Style: ${selectedStyle}
-Create a clean, informative background that complements text overlay.
-Should feel cohesive with other slides in the series.`;
-      filename = `carousel_${imageTimestamp}_slide${(index || 0) + 1}.png`;
-      imageType = `slide${(index || 0) + 1}`;
+      const slideNum = (index || 0) + 1;
+      prompt = `Create a content SLIDE illustration for an Instagram carousel about supplements.
+
+HEADING TEXT TO DISPLAY: "${slideHeading}"
+CONTENT TO ILLUSTRATE: "${slideContent}"
+
+${styleSpec}
+
+Slide-specific requirements:
+- Display the HEADING prominently in Japanese: "${slideHeading}"
+- Create infographic/diagram that visually explains: "${slideContent}"
+- Use icons, simple diagrams, and visual elements to illustrate the content
+- Heading at top, infographic/diagram in the center/bottom
+- Consistent style with other slides in the series
+- Make the information visually understandable at a glance
+- This is slide ${slideNum} of a carousel series`;
+      filename = `carousel_${imageTimestamp}_slide${slideNum}.png`;
+      imageType = `slide${slideNum}`;
     }
 
     console.log(`Generating ${imageType}...`);
@@ -177,12 +223,12 @@ Should feel cohesive with other slides in the series.`;
         filename,
       },
       timestamp: imageTimestamp,
+      style: selectedStyleKey,
     });
   } catch (error) {
     console.error("Single image generation error:", error);
     const errorMessage = (error as Error).message;
 
-    // 過負荷エラーの場合は専用メッセージ
     if (errorMessage.includes("過負荷") || errorMessage.includes("503")) {
       return NextResponse.json(
         {

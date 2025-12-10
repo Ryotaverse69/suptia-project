@@ -6,11 +6,11 @@
  * 2. 重複商品の登録を防ぐ
  */
 
-// サプリメント関連のポジティブキーワード
+// サプリメント・プロテイン関連のポジティブキーワード
 const SUPPLEMENT_KEYWORDS = [
   'サプリメント', 'サプリ', '栄養補助食品', '健康食品', '栄養機能食品',
   'ビタミン', 'マルチビタミン', 'ミネラル', 'カルシウム', 'マグネシウム',
-  '鉄', '亜鉛', 'プロテイン', 'アミノ酸', 'BCAA',
+  '鉄', '亜鉛', 'アミノ酸', 'BCAA',
   'オメガ3', 'オメガ-3', 'DHA', 'EPA', 'DPA',
   'フィッシュオイル', '魚油', 'クリルオイル',
   'コラーゲン', 'グルコサミン', 'コンドロイチン',
@@ -21,9 +21,16 @@ const SUPPLEMENT_KEYWORDS = [
   'ハードカプセル', 'ソフトカプセル', 'カプセル',
   'タブレット', '錠', '粒',
   '30日分', '60日分', '90日分', '180日分',
+  // プロテイン関連
+  'プロテイン', 'ホエイ', 'ホエイプロテイン', 'WPI', 'WPC',
+  'ソイプロテイン', 'カゼイン', 'カゼインプロテイン',
+  'HMB', 'EAA', 'クレアチン', 'グルタミン',
+  'ウェイトゲイナー', 'マスゲイナー', 'ウエイトゲイナー',
+  'VALX', 'マイプロテイン', 'MYPROTEIN', 'ザバス', 'SAVAS',
+  'ビーレジェンド', 'be LEGEND', 'ゴールドスタンダード', 'オプティマム',
 ];
 
-// サプリメントとして許可する例外キーワード
+// サプリメント・プロテインとして許可する例外キーワード
 const SUPPLEMENT_WHITELIST_EXCEPTIONS = [
   'DHA', 'EPA', 'DPA', 'オメガ3', 'オメガ-3',
   'フィッシュオイル', '魚油', 'クリルオイル', '青魚',
@@ -32,9 +39,35 @@ const SUPPLEMENT_WHITELIST_EXCEPTIONS = [
   'カロリミット', 'ダイエットサプリ',
   'リキッド', '液体',
   'ビタミンC', 'ビタミンD', 'ビタミンE', // ビタミンサプリと美容液の併用を許可
+  // プロテイン関連
+  'プロテイン', 'ホエイ', 'WPI', 'WPC', 'ソイプロテイン',
+  'BCAA', 'EAA', 'HMB', 'クレアチン', 'グルタミン',
 ];
 
-// 非サプリメント商品のネガティブキーワード（厳格版）
+// 絶対除外キーワード（ホワイトリスト例外があっても必ず除外）
+const ABSOLUTE_BLACKLIST = [
+  // 化粧品ブランド（ビタミンC等のサプリ成分名が含まれていても化粧品）
+  'COSRX', 'コスアールエックス',
+  'ロクシタン', 'シャネル', 'ディオール', 'ランコム',
+  'イニスフリー', 'innisfree', 'エチュード', 'ETUDE',
+  'ミシャ', 'MISSHA', 'トニーモリー', 'TONYMOLY',
+  'ラネージュ', 'LANEIGE', 'スキンフード', 'SKINFOOD',
+  'ドクタージャルト', 'Dr.Jart', 'クレドポー',
+  'SK-II', 'SKII', 'エスケーツー',
+  'KOSE', 'コーセー', 'POLA', 'ポーラ',
+  '資生堂', 'SHISEIDO', 'カネボウ', 'KANEBO',
+  '雪肌精', 'ルナソル', 'LUNASOL',
+
+  // 明確な化粧品カテゴリ
+  '美容液', 'セラム', '化粧水', '乳液',
+  'ファンデーション', 'コンシーラー', 'BBクリーム', 'CCクリーム',
+  '口紅', 'マスカラ', 'アイライナー', 'アイシャドウ',
+  'シャンプー', 'コンディショナー', 'ヘアトリートメント',
+  '洗顔料', 'クレンジング', 'メイク落とし',
+  '韓国コスメ',
+];
+
+// 非サプリメント商品のネガティブキーワード（ホワイトリスト例外でスキップ可能）
 const NON_SUPPLEMENT_KEYWORDS = [
   // 家電製品
   'iPhone', 'iPad', 'Android', 'スマホ本体', 'パソコン本体',
@@ -44,8 +77,16 @@ const NON_SUPPLEMENT_KEYWORDS = [
   'ウォッチ バンド', 'アップルウォッチ バンド',
   '靴', 'スニーカー', 'バッグ', '財布',
 
-  // 化粧品（飲用ではない）
-  '美容液', 'セラム', '化粧水', '乳液',
+  // 化粧品・スキンケア（飲用ではない）
+  'ローション', 'トナー', 'エッセンス', 'アンプル',
+  'フェイスマスク', 'シートマスク', 'フェイスパック',
+  'リップクリーム', 'リップグロス',
+  '基礎化粧品', 'コスメティック',
+  'ボディクリーム', 'ボディローション', 'ハンドクリーム', 'フェイスクリーム',
+  'ヘアオイル',
+  '日焼け止め', 'UVケア', 'サンスクリーン',
+  'ピーリングジェル', 'スクラブ洗顔',
+  'ホワイトニングクリーム', 'ブライトニングクリーム',
 
   // 調理器具
   'ケーキ型', 'シフォンケーキ型', '鍋', 'フライパン',
@@ -59,6 +100,9 @@ const NON_SUPPLEMENT_KEYWORDS = [
 
   // 保護フィルム
   'ガラスフィルム', '保護フィルム', '液晶保護',
+
+  // 医薬部外品・医薬品
+  '医薬部外品', '第1類医薬品', '第2類医薬品', '第3類医薬品',
 ];
 
 // プロモーション文字列を除去
@@ -90,12 +134,38 @@ export function isSupplement(productName) {
   const cleanedName = removePromotionalText(productName);
   const cleanedNameLower = cleanedName.toLowerCase();
 
-  // ホワイトリスト例外チェック（最優先）
+  // 明示的なサプリメント・プロテイン表記があるかチェック
+  const hasExplicitSupplementLabel =
+    cleanedNameLower.includes('サプリメント') ||
+    cleanedNameLower.includes('サプリ') ||
+    cleanedNameLower.includes('栄養補助食品') ||
+    cleanedNameLower.includes('健康食品') ||
+    cleanedNameLower.includes('プロテイン') ||
+    cleanedNameLower.includes('ホエイ') ||
+    cleanedNameLower.includes('bcaa') ||
+    cleanedNameLower.includes('eaa');
+
+  // 絶対除外チェック（最優先 - ただし明示的サプリ表記がある場合は除外しない）
+  for (const keyword of ABSOLUTE_BLACKLIST) {
+    if (cleanedNameLower.includes(keyword.toLowerCase())) {
+      // 商品名に「サプリ」等が含まれる場合、説明文として使われている可能性があるのでスキップ
+      if (hasExplicitSupplementLabel) {
+        continue;
+      }
+      return {
+        isSupplement: false,
+        score: -100,
+        reason: `絶対除外キーワード検出: "${keyword}"`,
+      };
+    }
+  }
+
+  // ホワイトリスト例外チェック
   const hasWhitelistException = SUPPLEMENT_WHITELIST_EXCEPTIONS.some(keyword =>
     cleanedNameLower.includes(keyword.toLowerCase())
   );
 
-  // ブラックリストチェック
+  // ブラックリストチェック（ホワイトリスト例外がある場合はスキップ可能）
   for (const keyword of NON_SUPPLEMENT_KEYWORDS) {
     if (cleanedNameLower.includes(keyword.toLowerCase())) {
       if (hasWhitelistException) {
@@ -212,6 +282,19 @@ function generateProductKey(name) {
     [/(Pure Encapsulations)/i, 'pure-encapsulations'],
     [/(Nordic Naturals)/i, 'nordic-naturals'],
     [/(Garden of Life)/i, 'garden-of-life'],
+    // プロテインブランド
+    [/(VALX|バルクス)/i, 'valx'],
+    [/(マイプロテイン|MYPROTEIN|Myprotein)/i, 'myprotein'],
+    [/(ザバス|SAVAS)/i, 'savas'],
+    [/(ビーレジェンド|be LEGEND)/i, 'belegend'],
+    [/(ゴールドスタンダード|Gold Standard)/i, 'gold-standard'],
+    [/(オプティマム|Optimum)/i, 'optimum'],
+    [/(DNS)/i, 'dns'],
+    [/(グロング|GronG)/i, 'grong'],
+    [/(ハイクリア|HIGH CLEAR)/i, 'high-clear'],
+    [/(ウイダー|weider)/i, 'weider'],
+    [/(ケンタイ|Kentai)/i, 'kentai'],
+    [/(ゴールドジム|GOLD'S GYM)/i, 'golds-gym'],
   ];
 
   let brand = '';
@@ -283,6 +366,12 @@ function generateProductKey(name) {
     [/コエンザイム\s*Q10|CoQ10/gi, 'coq10'],
     [/BCAA/gi, 'bcaa'],
     [/HMB/gi, 'hmb'],
+    [/EAA/gi, 'eaa'],
+    [/クレアチン/gi, 'creatine'],
+    [/グルタミン/gi, 'glutamine'],
+    [/ホエイ|WPI|WPC|Whey/gi, 'whey-protein'],
+    [/ソイプロテイン|大豆プロテイン/gi, 'soy-protein'],
+    [/カゼイン/gi, 'casein-protein'],
     [/プロテイン/gi, 'protein'],
     [/アスタキサンチン/gi, 'astaxanthin'],
     [/セサミン/gi, 'sesamin'],
