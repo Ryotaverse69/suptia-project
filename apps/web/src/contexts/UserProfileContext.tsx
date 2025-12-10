@@ -136,7 +136,12 @@ export function UserProfileProvider({
       }
 
       if (data) {
-        setProfile(mapDbToProfile(data));
+        // デバッグ用ログ（本番で確認後に削除）
+        console.log("[UserProfileContext] Raw data from Supabase:", data);
+        console.log("[UserProfileContext] data.plan:", data.plan);
+        const mapped = mapDbToProfile(data);
+        console.log("[UserProfileContext] Mapped profile:", mapped);
+        setProfile(mapped);
       } else {
         // プロフィールが存在しない場合は新規作成
         const { data: newData, error: insertError } = await supabase
