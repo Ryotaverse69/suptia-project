@@ -7,7 +7,7 @@
  * Google、Apple、LINE、メール認証をサポート
  */
 
-import {
+import React, {
   createContext,
   useContext,
   useEffect,
@@ -61,11 +61,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: true,
     error: null,
   });
+  const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
-  const supabase = createClient();
+  // Supabaseクライアントを安全に作成
+  const supabase = React.useMemo(() => {
+    try {
+      return createClient();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Supabase接続エラー";
+      console.error("[AuthContext] Supabase client error:", message);
+      setSupabaseError(message);
+      return null;
+    }
+  }, []);
 
   // 初期化時にセッションを取得
   useEffect(() => {
+    if (!supabase) {
+      setState((prev) => ({ ...prev, isLoading: false }));
+      return;
+    }
+
     const getInitialSession = async () => {
       try {
         const {
@@ -74,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } = await supabase.auth.getSession();
 
         if (error) {
+          console.error("[AuthContext] getSession error:", error);
           setState((prev) => ({ ...prev, error, isLoading: false }));
           return;
         }
@@ -84,7 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           isLoading: false,
           error: null,
         });
-      } catch {
+      } catch (err) {
+        console.error("[AuthContext] Unexpected error:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
       }
     };
@@ -108,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase]);
 
   /**
    * OAuth認証（Google、Apple）
@@ -116,6 +135,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithOAuth = useCallback(
     async (provider: AuthProvider) => {
       if (provider === "email") return;
+      if (!supabase) {
+        console.error("[AuthContext] Supabase not available");
+        return;
+      }
 
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
@@ -138,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }));
       }
     },
-    [supabase.auth],
+    [supabase],
   );
 
   /**
@@ -146,6 +169,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const sendOtp = useCallback(
     async (email: string): Promise<boolean> => {
+      if (!supabase) {
+        console.error("[AuthContext] Supabase not available");
+        return false;
+      }
+
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       const { error } = await supabase.auth.signInWithOtp({
@@ -164,7 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: false }));
       return true;
     },
-    [supabase.auth],
+    [supabase],
   );
 
   /**
@@ -172,6 +200,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const verifyOtp = useCallback(
     async (email: string, token: string): Promise<boolean> => {
+      if (!supabase) {
+        console.error("[AuthContext] Supabase not available");
+        return false;
+      }
+
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       const { error } = await supabase.auth.verifyOtp({
@@ -188,13 +221,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: false }));
       return true;
     },
-    [supabase.auth],
+    [supabase],
   );
 
   /**
    * サインアウト
    */
   const signOut = useCallback(async () => {
+    if (!supabase) {
+      console.error("[AuthContext] Supabase not available for signOut");
+      // Supabaseがなくてもローカルステートはリセット
+      setState({
+        user: null,
+        session: null,
+        isLoading: false,
+        error: null,
+      });
+      window.location.href = "/";
+      return;
+    }
+
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     const { error } = await supabase.auth.signOut({ scope: "local" });
@@ -213,7 +259,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // ページをリロードしてキャッシュをクリア
       window.location.href = "/";
     }
-  }, [supabase.auth]);
+  }, [supabase]);
 
   /**
    * エラーをクリア
