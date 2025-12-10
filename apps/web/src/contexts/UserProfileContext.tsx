@@ -97,9 +97,22 @@ export function UserProfileProvider({
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
   const { user, isLoading: authLoading } = useAuth();
-  const supabase = createClient();
+
+  // Supabaseクライアントを安全に作成
+  const supabase = React.useMemo(() => {
+    try {
+      return createClient();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Supabase接続エラー";
+      console.error("[UserProfileContext] Supabase client error:", message);
+      setSupabaseError(message);
+      return null;
+    }
+  }, []);
 
   const isLoggedIn = !!user;
 
@@ -111,6 +124,13 @@ export function UserProfileProvider({
 
     if (!user) {
       setProfile(null);
+      setIsLoading(false);
+      return;
+    }
+
+    // Supabaseクライアントがない場合はエラー
+    if (!supabase) {
+      setError(supabaseError || "Supabase接続が設定されていません");
       setIsLoading(false);
       return;
     }
@@ -183,7 +203,7 @@ export function UserProfileProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [user, authLoading, supabase]);
+  }, [user, authLoading, supabase, supabaseError]);
 
   // ユーザーがログインしたらプロフィールを取得
   useEffect(() => {
@@ -197,6 +217,11 @@ export function UserProfileProvider({
     async (data: ProfileUpdateData): Promise<boolean> => {
       if (!user || !profile) {
         console.warn("[UserProfileContext] User not logged in or no profile");
+        return false;
+      }
+
+      if (!supabase) {
+        setError("Supabase接続が設定されていません");
         return false;
       }
 

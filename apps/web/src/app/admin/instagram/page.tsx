@@ -184,7 +184,7 @@ export default function InstagramDashboard() {
             i === index
               ? {
                   ...img,
-                  url: data.image.url,
+                  url: `${data.image.url}?t=${Date.now()}`,
                   filename: data.image.filename,
                   status: "done",
                 }
