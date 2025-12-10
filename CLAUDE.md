@@ -241,14 +241,17 @@ NEXT_PUBLIC_GA_ID=
 ## 🎯 ロードマップ（2025年12月〜2026年）
 
 ```
-2025年12月（現在）
+2025年12月（現在: 12/10更新）
 ├─ CJ Affiliate登録完了 ✅
 │   ├─ W-8BEN税務書式 ✅
 │   └─ Wise支払い設定 ✅（手数料0.5%）
 ├─ iHerb申請 → 拒否（トラフィック不足）
 ├─ Amazon 3件売上達成を継続中
-├─ 価格アラートUI着手
-└─ llms.txt・サイトマップ最適化
+├─ 価格アラートUI ✅（Vercel Cron連携）
+├─ llms.txt v2.2.0 ✅（Tierランキングシステム追加）
+├─ Tierランク添加物減点同期 ✅
+├─ Instagram投稿管理ページ ✅（/admin/instagram）
+└─ husky v10対応 ✅
 
 2026年1月
 ├─ 診断履歴UI
@@ -358,5 +361,5 @@ npx tsx .claude/skills/sanity-ingredient-validator/index.ts [file].json
 
 ---
 
-**最終更新日**: 2025-12-05
-**バージョン**: 2.2.0（CJ Affiliate/iHerb統合、再申請戦略追加）
+**最終更新日**: 2025-12-10
+**バージョン**: 2.3.0（価格アラート・llms.txt v2.2.0・Instagram管理・Tier添加物減点同期）
