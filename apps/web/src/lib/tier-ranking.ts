@@ -99,30 +99,23 @@ export function calculateTierRankings(
 
 /**
  * 価格ランク計算（安いほど高ランク）
+ *
+ * Bessel補正パーセンタイル方式:
+ * - 外れ値（超高額商品など）の影響を排除
+ * - 統計学的に正確な順位計算
  */
 function calculatePriceRanks(
   products: ProductForTierEvaluation[],
 ): Map<string, TierRank> {
   const ranks = new Map<string, TierRank>();
-  const prices = products.map((p) => p.priceJPY).sort((a, b) => a - b);
+  const prices = products.map((p) => p.priceJPY);
 
   if (prices.length === 0) return ranks;
 
-  // 5分位点を計算
-  const quintiles = calculateQuintiles(prices);
-
   products.forEach((product) => {
-    const price = product.priceJPY;
-    let rank: TierRank = "D";
-
-    // 安いほど高ランク（逆順）
-    if (price <= quintiles[0]) rank = "S";
-    else if (price <= quintiles[1]) rank = "A";
-    else if (price <= quintiles[2]) rank = "B";
-    else if (price <= quintiles[3]) rank = "C";
-    else rank = "D";
-
-    ranks.set(product._id, rank);
+    // 安いほど高ランク（lowerIsBetter = true）
+    const percentile = calculatePercentile(product.priceJPY, prices, true);
+    ranks.set(product._id, percentileToRank(percentile));
   });
 
   return ranks;
@@ -130,6 +123,10 @@ function calculatePriceRanks(
 
 /**
  * コスパランク計算（成分量あたり価格、低いほど高ランク）
+ *
+ * Bessel補正パーセンタイル方式:
+ * - 外れ値（異常なコスパ値）の影響を排除
+ * - マルチビタミン商品はトップ5成分で計算
  */
 function calculateCostEffectivenessRanks(
   products: ProductForTierEvaluation[],
@@ -153,20 +150,12 @@ function calculateCostEffectivenessRanks(
     return ranks;
   }
 
-  const costs = productsWithCost.map((p) => p.costPerMg).sort((a, b) => a - b);
-  const quintiles = calculateQuintiles(costs);
+  const costs = productsWithCost.map((p) => p.costPerMg);
 
   productsWithCost.forEach(({ _id, costPerMg }) => {
-    let rank: TierRank = "D";
-
-    // コストが低いほど高ランク（逆順）
-    if (costPerMg <= quintiles[0]) rank = "S";
-    else if (costPerMg <= quintiles[1]) rank = "A";
-    else if (costPerMg <= quintiles[2]) rank = "B";
-    else if (costPerMg <= quintiles[3]) rank = "C";
-    else rank = "D";
-
-    ranks.set(_id, rank);
+    // コストが低いほど高ランク（lowerIsBetter = true）
+    const percentile = calculatePercentile(costPerMg, costs, true);
+    ranks.set(_id, percentileToRank(percentile));
   });
 
   // コスパ計算不可の商品はDランク
@@ -384,7 +373,46 @@ function calculateSafetyRanks(
 }
 
 /**
+ * マルチビタミン判定（成分数 > 3）
+ *
+ * マルチビタミン商品は微量成分も多く含むため、
+ * コスパ計算では主要成分トップ5のみを使用する
+ */
+function isMultiVitamin(
+  ingredients: ProductForTierEvaluation["ingredients"],
+): boolean {
+  return !!ingredients && ingredients.length > 3;
+}
+
+/**
+ * 主要成分トップ5を取得（mg量が多い順）
+ *
+ * マルチビタミン商品のコスパ計算で使用
+ * 微量成分を除外し、実質的な価値を反映
+ */
+function getTop5MajorIngredients(
+  ingredients: ProductForTierEvaluation["ingredients"],
+): NonNullable<ProductForTierEvaluation["ingredients"]> {
+  if (!ingredients || ingredients.length === 0) return [];
+
+  // mg量でソート（降順）
+  const sorted = [...ingredients].sort(
+    (a, b) => (b.amountMgPerServing || 0) - (a.amountMgPerServing || 0),
+  );
+
+  // トップ5を返す（5件未満の場合は全件）
+  return sorted.slice(0, 5);
+}
+
+/**
  * 1mgあたりのコストを計算
+ *
+ * マルチビタミン商品（成分数 > 3）の場合:
+ *   - 主要成分トップ5のみで計算（微量成分を除外）
+ *   - auto-calculate-tier-ranks.mjs と同じロジック
+ *
+ * 単一成分系の場合:
+ *   - 全成分の合計mgで計算
  */
 function calculateCostPerMg(product: ProductForTierEvaluation): number | null {
   if (
@@ -396,9 +424,14 @@ function calculateCostPerMg(product: ProductForTierEvaluation): number | null {
     return null;
   }
 
+  // マルチビタミンの場合はトップ5成分のみ使用
+  const targetIngredients = isMultiVitamin(product.ingredients)
+    ? getTop5MajorIngredients(product.ingredients)
+    : product.ingredients;
+
   // 1回分あたりの総成分量
-  const totalMgPerServing = product.ingredients.reduce(
-    (sum, ing) => sum + ing.amountMgPerServing,
+  const totalMgPerServing = targetIngredients.reduce(
+    (sum, ing) => sum + (ing.amountMgPerServing || 0),
     0,
   );
 
@@ -412,7 +445,69 @@ function calculateCostPerMg(product: ProductForTierEvaluation): number | null {
 }
 
 /**
+ * パーセンタイルを計算（Bessel補正 + 外れ値除外）
+ *
+ * auto-calculate-tier-ranks.mjs と同じ統計学的に正確なアルゴリズム:
+ * - 外れ値除外（Trimmed Percentile）: データ数10件以上で上下5%を除外
+ * - Bessel補正: 同値を考慮した平均順位方式
+ *
+ * @param value 評価する値
+ * @param values 比較対象の値の配列（ソート不要）
+ * @param lowerIsBetter trueの場合、低い方が良い（価格、コスパなど）
+ * @param trimPercent 除外する割合（%）デフォルト5%
+ * @returns 0-100のパーセンタイル
+ */
+function calculatePercentile(
+  value: number,
+  values: number[],
+  lowerIsBetter = false,
+  trimPercent = 5,
+): number {
+  if (values.length === 0) return 50;
+
+  const sortedValues = [...values].sort((a, b) => a - b);
+
+  // 外れ値除外（データ数が10件以上の場合のみ）
+  let trimmedValues = sortedValues;
+  if (sortedValues.length >= 10) {
+    const trimCount = Math.floor(sortedValues.length * (trimPercent / 100));
+    if (trimCount > 0) {
+      trimmedValues = sortedValues.slice(
+        trimCount,
+        sortedValues.length - trimCount,
+      );
+    }
+  }
+
+  const N = trimmedValues.length;
+
+  // 厳密な順位計算（平均順位方式 - Bessel補正）
+  const lowerCount = trimmedValues.filter((v) => v < value).length;
+  const sameCount = trimmedValues.filter((v) => v === value).length;
+
+  // 同じ値がある場合、その範囲の中央順位を使用
+  const rank = lowerCount + (sameCount + 1) / 2;
+
+  // Bessel補正: (R - 1) / (N - 1) * 100
+  const percentile = N === 1 ? 50 : ((rank - 1) / (N - 1)) * 100;
+
+  return lowerIsBetter ? 100 - percentile : percentile;
+}
+
+/**
+ * パーセンタイルからランクに変換
+ */
+function percentileToRank(percentile: number): TierRank {
+  if (percentile >= 80) return "S";
+  if (percentile >= 60) return "A";
+  if (percentile >= 40) return "B";
+  if (percentile >= 20) return "C";
+  return "D";
+}
+
+/**
  * 5分位点を計算（20%, 40%, 60%, 80%）
+ * @deprecated calculatePercentile を使用してください
  */
 function calculateQuintiles(
   sortedValues: number[],

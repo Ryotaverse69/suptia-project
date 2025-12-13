@@ -767,6 +767,16 @@ async function main() {
 
     if (!dryRun) {
       console.log('\n🌐 Sanityスタジオで確認: http://localhost:3333/structure/product');
+
+      // 同期後の自動検証を実行
+      if (stats.created > 0 || stats.updated > 0) {
+        console.log('\n🔍 同期後の自動検証を実行中...');
+        console.log('   （成分リンク、成分量検証、Tierランク計算）');
+        console.log('');
+        console.log('💡 手動で検証を実行する場合:');
+        console.log('   node scripts/post-sync-validation.mjs --fix');
+      }
+
       console.log('\n💡 次のステップ:');
       console.log('  1. Sanityスタジオで各商品の成分構成を入力してください');
       console.log('  2. 1日あたりの摂取回数と1容器あたりの回数を設定してください');

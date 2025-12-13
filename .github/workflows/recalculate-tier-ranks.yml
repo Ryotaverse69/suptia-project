@@ -1,0 +1,98 @@
+name: Recalculate Tier Ranks
+
+on:
+  # 手動実行
+  workflow_dispatch:
+    inputs:
+      ingredient_id:
+        description: 'Updated ingredient ID (for logging)'
+        required: false
+        type: string
+      ingredient_name:
+        description: 'Updated ingredient name (for logging)'
+        required: false
+        type: string
+      trigger:
+        description: 'Trigger source (webhook/manual)'
+        required: false
+        type: string
+        default: 'manual'
+
+  # data-quality-check ワークフローからの呼び出し
+  workflow_call:
+
+jobs:
+  recalculate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Log trigger information
+        run: |
+          echo "🔧 Tier Rank Recalculation Triggered"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Trigger: ${{ inputs.trigger || 'scheduled' }}"
+          echo "Ingredient ID: ${{ inputs.ingredient_id || 'N/A' }}"
+          echo "Ingredient Name: ${{ inputs.ingredient_name || 'N/A' }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Recalculate Tier Ranks
+        id: recalculate
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          echo "📊 Recalculating tier ranks..."
+          node scripts/auto-calculate-tier-ranks.mjs --fix 2>&1 | tee recalculate-output.txt
+
+          # 更新件数を抽出
+          UPDATE_COUNT=$(grep -o '更新完了: [0-9]*件成功' recalculate-output.txt | grep -o '[0-9]*' || echo "0")
+          echo "update_count=$UPDATE_COUNT" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Tier rank recalculation completed"
+          echo "   Updated products: $UPDATE_COUNT"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Trigger ISR Revalidation
+        if: steps.recalculate.outputs.update_count != '0'
+        env:
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          VERCEL_DEPLOY_URL: ${{ secrets.VERCEL_DEPLOY_URL }}
+        run: |
+          if [ -n "$REVALIDATE_SECRET" ] && [ -n "$VERCEL_DEPLOY_URL" ]; then
+            echo "🔄 Triggering ISR revalidation for product pages..."
+            curl -X POST "${VERCEL_DEPLOY_URL}/api/revalidate?secret=${REVALIDATE_SECRET}" \
+              -H "Content-Type: application/json" \
+              -d '{"path": "/products"}' \
+              --silent --show-error || echo "ISR revalidation request sent (may fail if URL not reachable)"
+            echo "✅ ISR revalidation triggered"
+          else
+            echo "⚠️ ISR revalidation skipped (REVALIDATE_SECRET or VERCEL_DEPLOY_URL not set)"
+          fi
+
+      - name: Create summary
+        run: |
+          echo "## 📊 Tier Rank Recalculation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Trigger | ${{ inputs.trigger || 'scheduled' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Ingredient | ${{ inputs.ingredient_name || 'All' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Updated Products | ${{ steps.recalculate.outputs.update_count || '0' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | $(date -u +"%Y-%m-%dT%H:%M:%SZ") |" >> $GITHUB_STEP_SUMMARY

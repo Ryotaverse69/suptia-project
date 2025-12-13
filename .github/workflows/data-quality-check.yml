@@ -1,0 +1,193 @@
+name: Data Quality Check
+
+on:
+  schedule:
+    # 毎週月曜日 9:00 JST (0:00 UTC)
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  check-data-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      # 1. 成分量チェック
+      - name: Check ingredient amounts
+        id: amount_check
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          node scripts/check-ingredient-amounts.mjs > reports/amount-check.txt 2>&1
+          cat reports/amount-check.txt
+
+          # 0mg問題があれば警告
+          if grep -q "0mg（データ未入力）: [1-9]" reports/amount-check.txt; then
+            echo "has_amount_issues=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 2. 成分データ品質チェック
+      - name: Validate ingredient quality
+        id: quality_check
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          node scripts/validate-ingredient-quality.mjs --json > reports/quality-check.txt 2>&1 || true
+          cat reports/quality-check.txt
+
+          # 品質スコアが80未満なら警告
+          if grep -q "品質スコア: [0-7][0-9]/" reports/quality-check.txt; then
+            echo "has_quality_issues=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 3. Tierランクの一貫性チェック
+      - name: Check tier rank consistency
+        id: tier_check
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          node scripts/check-product-scores.mjs > reports/tier-check.txt 2>&1
+          cat reports/tier-check.txt
+
+          # Tierランク未設定が5件以上あれば警告
+          if grep -q "Tierランク未設定: [5-9]\|Tierランク未設定: [1-9][0-9]" reports/tier-check.txt; then
+            echo "has_tier_issues=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 4. 価格・コスパ計算の整合性チェック
+      - name: Check price and cost-effectiveness
+        id: price_check
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          node scripts/check-price-costperformance.mjs > reports/price-check.txt 2>&1
+          cat reports/price-check.txt
+
+          # 成分データなしが5件以上あれば警告
+          if grep -q "成分データなし: [5-9]\|成分データなし: [1-9][0-9]" reports/price-check.txt; then
+            echo "has_price_issues=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 5. 成分量の異常値チェック・自動修正
+      - name: Validate and fix ingredient amounts
+        id: ingredient_validation
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          echo "🔍 成分量の異常値をチェック中..."
+          node scripts/validate-and-fix-ingredient-amounts.mjs --fix > reports/ingredient-validation.txt 2>&1
+          cat reports/ingredient-validation.txt
+
+          # 修正が行われた場合
+          if grep -q "修正完了: [1-9]" reports/ingredient-validation.txt; then
+            echo "ingredients_fixed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 6. 問題があればIssue作成
+      - name: Create Issue if problems found
+        if: steps.amount_check.outputs.has_amount_issues == 'true' || steps.quality_check.outputs.has_quality_issues == 'true' || steps.tier_check.outputs.has_tier_issues == 'true' || steps.price_check.outputs.has_price_issues == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let body = '## 📊 週次データ品質チェック結果\n\n';
+            body += `実行日時: ${new Date().toISOString()}\n\n`;
+
+            // 成分量チェック結果
+            if (fs.existsSync('reports/amount-check.txt')) {
+              const amountResult = fs.readFileSync('reports/amount-check.txt', 'utf8');
+              body += '### 1. 成分量チェック\n\n';
+              body += '```\n' + amountResult.substring(0, 10000) + '\n```\n\n';
+            }
+
+            // 品質チェック結果
+            if (fs.existsSync('reports/quality-check.txt')) {
+              const qualityResult = fs.readFileSync('reports/quality-check.txt', 'utf8');
+              body += '### 2. 成分データ品質\n\n';
+              body += '```\n' + qualityResult.substring(0, 10000) + '\n```\n\n';
+            }
+
+            // Tierランクチェック結果
+            if (fs.existsSync('reports/tier-check.txt')) {
+              const tierResult = fs.readFileSync('reports/tier-check.txt', 'utf8');
+              body += '### 3. Tierランク一貫性\n\n';
+              body += '```\n' + tierResult.substring(0, 10000) + '\n```\n\n';
+            }
+
+            // 価格・コスパチェック結果
+            if (fs.existsSync('reports/price-check.txt')) {
+              const priceResult = fs.readFileSync('reports/price-check.txt', 'utf8');
+              body += '### 4. 価格・コスパ計算\n\n';
+              body += '```\n' + priceResult.substring(0, 10000) + '\n```\n\n';
+            }
+
+            // 成分量検証結果
+            if (fs.existsSync('reports/ingredient-validation.txt')) {
+              const validationResult = fs.readFileSync('reports/ingredient-validation.txt', 'utf8');
+              body += '### 5. 成分量異常値チェック（自動修正済み）\n\n';
+              body += '```\n' + validationResult.substring(0, 10000) + '\n```\n\n';
+            }
+
+            body += '---\n';
+            body += '### 🔧 自動修正済み\n\n';
+            body += '- ✅ 成分量の異常値\n';
+            body += '- ✅ Tierランク未設定\n\n';
+            body += '### 📋 手動対応が必要\n\n';
+            body += '1. 成分データなし: Sanityで成分を手動追加\n';
+            body += '2. エビデンスランク不一致: `node scripts/fix-ingredient-ranks.mjs`\n';
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ 週次データ品質チェックで問題が検出されました',
+              body: body.substring(0, 65000),
+              labels: ['data-quality', 'automated']
+            });
+
+      # 7. Tierランク問題があれば自動修正
+      - name: Auto-fix tier ranks if issues found
+        if: steps.tier_check.outputs.has_tier_issues == 'true'
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: |
+          echo "🔧 Tierランクの自動修正を実行中..."
+          node scripts/auto-calculate-tier-ranks.mjs --fix
+          echo "✅ Tierランク修正完了"
+
+      # 8. レポートをアーティファクトとして保存
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-quality-reports
+          path: reports/
+          retention-days: 30

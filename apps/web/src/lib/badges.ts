@@ -79,6 +79,10 @@ export interface ProductForBadgeEvaluation {
     source: string;
     amount: number;
   }>;
+  // マルチビタミン対応: 全成分の配列（コスパ計算用）
+  ingredients?: Array<{
+    amountMgPerServing: number;
+  }>;
 }
 
 /**
@@ -276,20 +280,64 @@ function isBestValue(
 }
 
 /**
+ * マルチビタミン判定（成分数 > 3）
+ */
+function isMultiVitamin(
+  ingredients: ProductForBadgeEvaluation["ingredients"],
+): boolean {
+  return !!ingredients && ingredients.length > 3;
+}
+
+/**
+ * 主要成分トップ5を取得（mg量が多い順）
+ */
+function getTop5MajorIngredients(
+  ingredients: ProductForBadgeEvaluation["ingredients"],
+): NonNullable<ProductForBadgeEvaluation["ingredients"]> {
+  if (!ingredients || ingredients.length === 0) return [];
+  const sorted = [...ingredients].sort(
+    (a, b) => (b.amountMgPerServing || 0) - (a.amountMgPerServing || 0),
+  );
+  return sorted.slice(0, 5);
+}
+
+/**
  * 1mgあたりのコストを計算
+ *
+ * マルチビタミン対応:
+ * - ingredients 配列がある場合はそれを使用
+ * - 成分数 > 3 の場合はトップ5成分のみで計算
+ * - それ以外は従来通り ingredientAmount を使用
  */
 function calculateCostPerMg(product: ProductForBadgeEvaluation): number | null {
-  if (!product.ingredientAmount || product.ingredientAmount === 0) {
-    return null;
-  }
-
   if (!product.servingsPerContainer || product.servingsPerContainer === 0) {
     return null;
   }
 
+  let totalMgPerServing: number;
+
+  // ingredients 配列がある場合（マルチビタミン対応）
+  if (product.ingredients && product.ingredients.length > 0) {
+    // マルチビタミンの場合はトップ5成分のみ使用
+    const targetIngredients = isMultiVitamin(product.ingredients)
+      ? getTop5MajorIngredients(product.ingredients)
+      : product.ingredients;
+
+    totalMgPerServing = targetIngredients.reduce(
+      (sum, ing) => sum + (ing.amountMgPerServing || 0),
+      0,
+    );
+  } else if (product.ingredientAmount && product.ingredientAmount > 0) {
+    // 従来方式（主成分のみ）
+    totalMgPerServing = product.ingredientAmount;
+  } else {
+    return null;
+  }
+
+  if (totalMgPerServing === 0) return null;
+
   // 総成分量（mg）
-  const totalIngredientMg =
-    product.ingredientAmount * product.servingsPerContainer;
+  const totalIngredientMg = totalMgPerServing * product.servingsPerContainer;
 
   // 1mgあたりの価格
   return product.priceJPY / totalIngredientMg;

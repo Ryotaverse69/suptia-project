@@ -128,6 +128,21 @@ const ingredientMapping = {
   "ビフィズス菌": "ingredient-probiotics",
   "probiotics": "ingredient-probiotics",
 
+  "オリゴ糖": "ingredient-oligosaccharide",
+  "フラクトオリゴ糖": "ingredient-oligosaccharide",
+  "oligosaccharide": "ingredient-oligosaccharide",
+
+  "活性炭": "ingredient-charcoal",
+  "チャコール": "ingredient-charcoal",
+  "炭": "ingredient-charcoal",
+  "charcoal": "ingredient-charcoal",
+
+  "サラシア": "ingredient-salacia",
+  "salacia": "ingredient-salacia",
+
+  "マカ": "ingredient-maca",
+  "maca": "ingredient-maca",
+
   "クレアチン": "ingredient-creatine",
   "creatine": "ingredient-creatine",
 
@@ -156,14 +171,35 @@ const ingredientMapping = {
 
   "メラトニン": "ingredient-melatonin",
   "melatonin": "ingredient-melatonin",
+
+  "GABA": "ingredient-gaba",
+  "ギャバ": "ingredient-gaba",
+  "gaba": "ingredient-gaba",
+
+  "HMB": "ingredient-hmb",
+  "hmb": "ingredient-hmb",
+
+  "オルニチン": "ingredient-ornithine",
+  "ornithine": "ingredient-ornithine",
+  "しじみ": "ingredient-ornithine",
+  "シジミ": "ingredient-ornithine",
+
+  "プラセンタ": "ingredient-placenta",
+  "placenta": "ingredient-placenta",
+
+  "NMN": "ingredient-nmn",
+  "nmn": "ingredient-nmn",
+
+  "アスタキサンチン": "ingredient-astaxanthin",
+  "astaxanthin": "ingredient-astaxanthin",
 };
 
 async function autoLinkIngredients() {
   console.log(`🔗 成分の自動紐付け${isDryRun ? '（プレビューモード）' : ''}...\n`);
 
   try {
-    // 主要成分未登録の商品を取得
-    const products = await client.fetch(
+    // 成分データがある商品を取得（未リンクの成分を持つもの）
+    const productsWithIngredients = await client.fetch(
       `*[_type == "product" && defined(ingredients) && count(ingredients) > 0] {
         _id,
         name,
@@ -172,15 +208,34 @@ async function autoLinkIngredients() {
       }`
     );
 
-    console.log(`📊 全商品数: ${products.length}件\n`);
+    // 成分データがない商品を取得（空配列またはundefined）
+    const productsWithoutIngredients = await client.fetch(
+      `*[_type == "product" && (!defined(ingredients) || count(ingredients) == 0)] {
+        _id,
+        name,
+        slug,
+        ingredients
+      }`
+    );
+
+    console.log(`📊 成分あり: ${productsWithIngredients.length}件`);
+    console.log(`📊 成分なし: ${productsWithoutIngredients.length}件\n`);
 
     const results = {
       linked: [],
+      created: [],      // 成分データを新規作成した商品
       alreadyLinked: [],
       notFound: [],
     };
 
-    for (const product of products) {
+    // =====================================
+    // Part 1: 成分データがある商品の処理
+    // =====================================
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📋 Part 1: 既存成分のリンク処理");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+    for (const product of productsWithIngredients) {
       // データ構造エラーの商品をスキップ（referenceが直接配列に入っている）
       const hasStructureError = product.ingredients.some(
         (ing) => ing._type === "reference" && ing._ref && !ing.amountMgPerServing
@@ -260,15 +315,77 @@ async function autoLinkIngredients() {
       }
     }
 
+    // =====================================
+    // Part 2: 成分データがない商品の処理
+    // =====================================
+    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📋 Part 2: 成分データの新規作成");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+    for (const product of productsWithoutIngredients) {
+      // 商品名から成分を推定
+      const productNameLower = product.name.toLowerCase();
+      const matchedIngredients = [];
+      const seenIds = new Set(); // 重複を防ぐ
+
+      for (const [keyword, ingredientId] of Object.entries(ingredientMapping)) {
+        if (productNameLower.includes(keyword.toLowerCase()) && !seenIds.has(ingredientId)) {
+          matchedIngredients.push({
+            keyword,
+            ingredientId,
+          });
+          seenIds.add(ingredientId);
+        }
+      }
+
+      if (matchedIngredients.length === 0) {
+        console.log(`⚠️  成分推定不可: ${product.name.substring(0, 50)}...`);
+        results.notFound.push(product);
+        continue;
+      }
+
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.log(`📦 ${product.name.substring(0, 60)}...`);
+      console.log(`   推定成分: ${matchedIngredients.map((m) => m.keyword).join(", ")}`);
+      console.log(`   成分数: ${matchedIngredients.length}件\n`);
+
+      if (!isDryRun) {
+        // 新しい成分データを作成（含有量は0mgで初期化、後で手動入力が必要）
+        const newIngredients = matchedIngredients.map((matched, index) => ({
+          _key: `ingredient-${Date.now()}-${index}`,
+          ingredient: {
+            _type: "reference",
+            _ref: matched.ingredientId,
+          },
+          amountMgPerServing: 0, // 含有量は手動入力が必要
+        }));
+
+        await client.patch(product._id).set({ ingredients: newIngredients }).commit();
+
+        console.log(`   ✅ 成分データを作成しました（含有量は手動入力が必要）\n`);
+        results.created.push(product);
+      } else {
+        console.log(`   ✅ 成分データ作成予定\n`);
+        results.created.push(product);
+      }
+    }
+
     // サマリーレポート
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    const totalProducts = productsWithIngredients.length + productsWithoutIngredients.length;
+    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     console.log("📊 紐付け結果サマリー");
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
-    console.log(`全商品数: ${products.length}件`);
+    console.log(`全商品数: ${totalProducts}件`);
     console.log(`✅ 紐付け済み: ${results.alreadyLinked.length}件`);
     console.log(`🔗 紐付け実行: ${results.linked.length}件`);
+    console.log(`🆕 成分新規作成: ${results.created.length}件`);
     console.log(`⚠️  成分不明: ${results.notFound.length}件\n`);
+
+    if (results.created.length > 0) {
+      console.log("⚠️  注意: 成分を新規作成した商品は含有量が0mgで初期化されています。");
+      console.log("   Sanity Studioで含有量を手動入力してください。\n");
+    }
 
     if (isDryRun) {
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
