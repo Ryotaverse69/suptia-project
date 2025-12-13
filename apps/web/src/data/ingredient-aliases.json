@@ -619,17 +619,18 @@
       "coenzyme q10",
       "ユビキノン",
       "Ubiquinone",
-      "ubiquinone"
+      "ubiquinone",
+      "CoQ10（コエンザイムQ10）"
     ],
     "category": "その他"
   },
   "ルテイン": {
-    "aliases": ["Lutein", "lutein"],
-    "category": "その他"
+    "aliases": ["Lutein", "lutein", "フリールテイン", "free lutein"],
+    "category": "カロテノイド"
   },
   "アスタキサンチン": {
     "aliases": ["Astaxanthin", "astaxanthin"],
-    "category": "その他"
+    "category": "カロテノイド"
   },
   "リコピン": {
     "aliases": ["Lycopene", "lycopene"],
@@ -661,29 +662,6 @@
       "複合ビタミンB"
     ],
     "category": "ビタミン"
-  },
-  "コエンザイムQ10": {
-    "aliases": [
-      "CoQ10",
-      "coq10",
-      "Co-Q10",
-      "co-q10",
-      "Coenzyme Q10",
-      "coenzyme q10",
-      "ユビキノン",
-      "Ubiquinone",
-      "ubiquinone",
-      "CoQ10（コエンザイムQ10）"
-    ],
-    "category": "その他"
-  },
-  "ルテイン": {
-    "aliases": ["Lutein", "lutein", "フリールテイン", "free lutein"],
-    "category": "カロテノイド"
-  },
-  "アスタキサンチン": {
-    "aliases": ["Astaxanthin", "astaxanthin"],
-    "category": "カロテノイド"
   },
   "プロバイオティクス": {
     "aliases": [
@@ -786,5 +764,75 @@
       "アントシアニン"
     ],
     "category": "植物エキス"
+  },
+  "フォルスコリン": {
+    "aliases": [
+      "Forskolin",
+      "forskolin",
+      "コレウスフォルスコリ",
+      "コレウスフォルスコリエキス",
+      "Coleus Forskohlii",
+      "coleus forskohlii",
+      "コレウスフォルスコリエキス（フォルスコリン）"
+    ],
+    "category": "ハーブ"
+  },
+  "コンブチャ": {
+    "aliases": [
+      "Kombucha",
+      "kombucha",
+      "紅茶キノコ",
+      "昆布茶",
+      "紅茶キノコ（コンブチャ）"
+    ],
+    "category": "発酵食品"
+  },
+  "HMB": {
+    "aliases": [
+      "hmb",
+      "β-ヒドロキシ-β-メチル酪酸",
+      "ベータヒドロキシベータメチル酪酸",
+      "HMB（ベータヒドロキシベータメチル酪酸）",
+      "HMB（β-ヒドロキシ-β-メチル酪酸）",
+      "Beta-Hydroxy Beta-Methylbutyrate",
+      "beta-hydroxy beta-methylbutyrate"
+    ],
+    "category": "アミノ酸誘導体"
+  },
+  "スクワレン": {
+    "aliases": [
+      "Squalene",
+      "squalene",
+      "深海鮫エキス",
+      "スクワレン（深海鮫エキス）",
+      "鮫肝油",
+      "Shark Liver Oil",
+      "shark liver oil"
+    ],
+    "category": "脂質"
+  },
+  "活性炭": {
+    "aliases": [
+      "チャコール",
+      "Charcoal",
+      "charcoal",
+      "活性炭（チャコール）",
+      "Activated Charcoal",
+      "activated charcoal",
+      "活性化炭素"
+    ],
+    "category": "その他"
+  },
+  "NMN": {
+    "aliases": [
+      "nmn",
+      "ニコチンアミドモノヌクレオチド",
+      "NMN（ニコチンアミドモノヌクレオチド）",
+      "Nicotinamide Mononucleotide",
+      "nicotinamide mononucleotide",
+      "β-NMN",
+      "beta-NMN"
+    ],
+    "category": "補酵素"
   }
 }
