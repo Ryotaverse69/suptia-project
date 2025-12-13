@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  typography,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 interface FAQItem {
   category: string;
@@ -35,106 +42,202 @@ export default function FAQClient({ faqData }: FAQClientProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">よくある質問（FAQ）</h1>
-        <p className="text-xl text-muted-foreground">
-          サプティアに関するよくある質問と回答
-        </p>
-      </div>
-
-      {/* 検索バー */}
-      <div className="mb-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="質問を検索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-      </div>
-
-      {/* カテゴリフィルター */}
-      <div className="mb-8">
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              selectedCategory === null
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted hover:bg-muted/80"
-            }`}
+    <div
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+        minHeight: "100vh",
+      }}
+    >
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1
+            className={`${typography.largeTitle} mb-3`}
+            style={{ color: appleWebColors.textPrimary }}
           >
-            すべて
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedCategory === category
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted hover:bg-muted/80"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+            よくある質問
+          </h1>
+          <p
+            className={typography.body}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            サプティアに関するよくある質問と回答
+          </p>
         </div>
-      </div>
 
-      {/* FAQ一覧 */}
-      <div className="space-y-4">
-        {filteredFAQs.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            該当する質問が見つかりませんでした
+        {/* Search Bar - Glassmorphism */}
+        <div className="mb-8">
+          <div
+            className={`relative rounded-[16px] overflow-hidden ${liquidGlassClasses.light}`}
+          >
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+              style={{ color: appleWebColors.textSecondary }}
+            />
+            <input
+              type="text"
+              placeholder="質問を検索..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`w-full pl-12 pr-4 py-3 bg-transparent focus:outline-none ${typography.body}`}
+              style={{
+                color: appleWebColors.textPrimary,
+                minHeight: "48px",
+              }}
+            />
           </div>
-        ) : (
-          filteredFAQs.map((item, index) => (
-            <div key={index} className="border rounded-lg overflow-hidden">
-              <button
-                onClick={() => toggleFAQ(index)}
-                className="w-full px-6 py-4 flex items-center justify-between hover:bg-muted/50 transition-colors text-left"
-              >
-                <div className="flex-1">
-                  <div className="text-xs text-primary mb-1">
-                    {item.category}
-                  </div>
-                  <div className="font-semibold">{item.question}</div>
-                </div>
-                <div className="ml-4">
-                  {openIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  )}
-                </div>
-              </button>
-              {openIndex === index && (
-                <div className="px-6 py-4 bg-muted/30 border-t">
-                  <p className="text-muted-foreground">{item.answer}</p>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
+        </div>
 
-      {/* お問い合わせ誘導 */}
-      <div className="mt-16 text-center border-t pt-12">
-        <h2 className="text-2xl font-bold mb-4">解決しない場合は</h2>
-        <p className="text-muted-foreground mb-6">
-          上記で解決しない場合は、お問い合わせフォームからご連絡ください
-        </p>
-        <a
-          href="/contact"
-          className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-primary/90 transition-colors font-semibold"
+        {/* Category Filter Pills */}
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`px-4 rounded-[20px] transition-all duration-200 ${typography.subhead} font-medium`}
+              style={{
+                minHeight: "48px",
+                backgroundColor:
+                  selectedCategory === null
+                    ? systemColors.blue
+                    : appleWebColors.sectionBackground,
+                color:
+                  selectedCategory === null
+                    ? "#FFFFFF"
+                    : appleWebColors.textPrimary,
+                border: `1px solid ${selectedCategory === null ? systemColors.blue : appleWebColors.borderSubtle}`,
+              }}
+            >
+              すべて
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 rounded-[20px] transition-all duration-200 ${typography.subhead} font-medium`}
+                style={{
+                  minHeight: "48px",
+                  backgroundColor:
+                    selectedCategory === category
+                      ? systemColors.blue
+                      : appleWebColors.sectionBackground,
+                  color:
+                    selectedCategory === category
+                      ? "#FFFFFF"
+                      : appleWebColors.textPrimary,
+                  border: `1px solid ${selectedCategory === category ? systemColors.blue : appleWebColors.borderSubtle}`,
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ List */}
+        <div className="space-y-3">
+          {filteredFAQs.length === 0 ? (
+            <div
+              className={`text-center py-12 ${typography.body}`}
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              該当する質問が見つかりませんでした
+            </div>
+          ) : (
+            filteredFAQs.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-[16px] overflow-hidden transition-all duration-200"
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full px-5 py-4 flex items-center justify-between transition-colors text-left"
+                  style={{
+                    minHeight: "48px",
+                  }}
+                >
+                  <div className="flex-1">
+                    <div
+                      className={`${typography.caption1} mb-1 font-medium`}
+                      style={{ color: systemColors.blue }}
+                    >
+                      {item.category}
+                    </div>
+                    <div
+                      className={`${typography.headline}`}
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {item.question}
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    {openIndex === index ? (
+                      <ChevronUp
+                        className="w-5 h-5"
+                        style={{ color: appleWebColors.textSecondary }}
+                      />
+                    ) : (
+                      <ChevronDown
+                        className="w-5 h-5"
+                        style={{ color: appleWebColors.textSecondary }}
+                      />
+                    )}
+                  </div>
+                </button>
+                {openIndex === index && (
+                  <div
+                    className="px-5 py-4"
+                    style={{
+                      backgroundColor: appleWebColors.sectionBackground,
+                      borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                    }}
+                  >
+                    <p
+                      className={typography.body}
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {item.answer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Contact CTA */}
+        <div
+          className="mt-16 text-center pt-12"
+          style={{ borderTop: `1px solid ${appleWebColors.borderSubtle}` }}
         >
-          お問い合わせフォームへ
-        </a>
+          <h2
+            className={`${typography.title2} mb-3`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            解決しない場合は
+          </h2>
+          <p
+            className={`${typography.body} mb-6`}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            上記で解決しない場合は、お問い合わせフォームからご連絡ください
+          </p>
+          <a
+            href="/contact"
+            className={`inline-block px-8 py-3 rounded-[16px] transition-all duration-200 ${typography.headline} font-semibold`}
+            style={{
+              backgroundColor: systemColors.blue,
+              color: "#FFFFFF",
+              minHeight: "48px",
+            }}
+          >
+            お問い合わせフォームへ
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,12 @@ import { sanity } from "@/lib/sanity.client";
 import { ProductCard } from "@/components/ProductCard";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import { ChevronRight, TrendingUp, Award } from "lucide-react";
+import {
+  appleWebColors,
+  systemColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const dynamic = "force-dynamic";
 
@@ -126,20 +132,49 @@ export default async function IngredientComparePage({ params }: Props) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-pastel">
-      {/* パンくずリスト */}
-      <div className="bg-white border-b border-primary-200">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
+      {/* パンくずリスト - Sticky with glassmorphism */}
+      <div
+        className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
+        style={{
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
         <div className="mx-auto px-6 lg:px-12 xl:px-16 py-4 max-w-[1440px]">
-          <nav className="flex items-center gap-2 text-sm text-primary-700">
-            <Link href="/" className="hover:text-primary">
+          <nav
+            className="flex items-center gap-2 text-[13px]"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <Link
+              href="/"
+              className="transition-colors hover:text-[#007AFF]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
+            >
               ホーム
             </Link>
-            <ChevronRight size={16} />
-            <Link href="/products" className="hover:text-primary">
+            <ChevronRight size={14} />
+            <Link
+              href="/products"
+              className="transition-colors hover:text-[#007AFF]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
+            >
               商品一覧
             </Link>
-            <ChevronRight size={16} />
-            <span className="text-primary-900 font-medium">
+            <ChevronRight size={14} />
+            <span
+              className="font-medium"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               {ingredient.name}の比較
             </span>
           </nav>
@@ -148,37 +183,70 @@ export default async function IngredientComparePage({ params }: Props) {
 
       {/* ヘッダー */}
       <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1440px]">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <TrendingUp className="text-primary" size={32} />
+        <div className="mb-12">
+          <div className="flex items-center gap-4 mb-6">
+            <div
+              className="p-3 rounded-[16px]"
+              style={{
+                backgroundColor: `${systemColors.blue}15`,
+              }}
+            >
+              <TrendingUp style={{ color: systemColors.blue }} size={32} />
             </div>
             <div>
-              <p className="text-sm text-primary-700 mb-1">
+              <p
+                className="text-[13px] mb-1"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 {ingredient.category}
               </p>
-              <h1 className="text-4xl font-bold text-primary-900">
+              <h1
+                className="text-[34px] font-bold leading-[41px] tracking-[0.37px]"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 {ingredient.name}を含むサプリメント
               </h1>
-              <p className="text-xl text-primary-700 mt-2">
+              <p
+                className="text-[17px] mt-2"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 {ingredient.nameEn}
               </p>
             </div>
           </div>
 
-          <p className="text-primary-800 leading-relaxed max-w-3xl">
+          <p
+            className="text-[17px] leading-[25px] max-w-3xl"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             {ingredient.description}
           </p>
 
-          <div className="mt-6 flex items-center gap-4">
-            <div className="px-4 py-2 bg-primary-100 rounded-lg">
-              <span className="text-sm font-semibold text-primary-900">
+          <div className="mt-8 flex items-center gap-4 flex-wrap">
+            <div
+              className="px-4 py-2 rounded-[16px]"
+              style={{
+                backgroundColor: appleWebColors.sectionBackground,
+              }}
+            >
+              <span
+                className="text-[15px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 {productsWithCost.length}種類の商品
               </span>
             </div>
             {productsWithCost.length > 0 && (
-              <div className="px-4 py-2 bg-accent-mint/10 rounded-lg">
-                <span className="text-sm text-primary-900">
+              <div
+                className="px-4 py-2 rounded-[16px]"
+                style={{
+                  backgroundColor: `${systemColors.green}15`,
+                }}
+              >
+                <span
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   最安値:{" "}
                   <span className="font-bold">
                     ¥
@@ -200,16 +268,32 @@ export default async function IngredientComparePage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 glass rounded-3xl shadow-glass">
-            <div className="text-primary-300 mb-4">
-              <Award size={64} className="mx-auto" />
+          <div
+            className={`text-center py-20 rounded-[20px] border ${liquidGlassClasses.light}`}
+            style={{
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
+            <div className="mb-4">
+              <Award
+                size={64}
+                className="mx-auto"
+                style={{ color: appleWebColors.textSecondary, opacity: 0.5 }}
+              />
             </div>
-            <p className="text-primary-700 font-light mb-4">
+            <p
+              className="text-[17px] mb-6"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               現在この成分を含む商品はありません
             </p>
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-[12px] font-semibold text-[17px] transition-all hover:bg-[#0051d5]"
+              style={{
+                backgroundColor: systemColors.blue,
+                color: "#FFFFFF",
+              }}
             >
               すべての商品を見る
               <TrendingUp size={16} />
@@ -218,17 +302,32 @@ export default async function IngredientComparePage({ params }: Props) {
         )}
 
         {/* 成分ガイドへのリンク */}
-        <div className="mt-12 p-8 glass-blue rounded-xl shadow-soft">
-          <h2 className="text-xl font-bold text-primary-900 mb-4">
+        <div
+          className={`mt-12 p-8 rounded-[20px] border hover:-translate-y-1 transition-all duration-300 ${liquidGlassClasses.light}`}
+          style={{
+            borderColor: appleWebColors.borderSubtle,
+          }}
+        >
+          <h2
+            className="text-[22px] font-bold leading-[28px] tracking-[0.35px] mb-4"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             {ingredient.name}についてもっと知る
           </h2>
-          <p className="text-primary-700 mb-6">
+          <p
+            className="text-[17px] leading-[25px] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             {ingredient.name}
             の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
           </p>
           <Link
             href={`/ingredients/${slug}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-[12px] font-semibold text-[17px] transition-all hover:bg-[#0051d5]"
+            style={{
+              backgroundColor: systemColors.blue,
+              color: "#FFFFFF",
+            }}
           >
             {ingredient.name}の詳細ガイドを見る
             <ChevronRight size={16} />

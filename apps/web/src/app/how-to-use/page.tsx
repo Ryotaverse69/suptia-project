@@ -9,7 +9,7 @@ import {
   Award,
   ArrowRight,
   CheckCircle2,
-  Sparkles,
+  Star,
   BarChart3,
   Shield,
   Microscope,
@@ -23,6 +23,12 @@ import {
   generateBreadcrumbStructuredData,
   generateFAQStructuredData,
 } from "@/lib/structured-data";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://suptia.com";
 
@@ -124,70 +130,67 @@ export default function HowToUsePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <div className="min-h-screen bg-slate-50 relative overflow-hidden">
+      <div
+        className="min-h-screen relative overflow-hidden"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         {/* Global Background */}
-        <div className="absolute inset-0 bg-slate-50 -z-50" />
+        <div
+          className="absolute inset-0 -z-50"
+          style={{ backgroundColor: appleWebColors.pageBackground }}
+        />
 
         {/* ヒーローセクション */}
-        <section className="relative overflow-hidden bg-[#3b66e0] py-24 lg:py-32">
-          {/* Background Animation */}
+        <section className="relative overflow-hidden py-20 lg:py-32">
+          {/* Light Gradient Background */}
           <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#f1faf9] to-[#3b66e0] -z-20 opacity-90"
-            style={{ animationDuration: "15s" }}
-          />
-          <div
-            className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-[#f1faf9]/40 to-transparent -z-19 mix-blend-overlay"
+            className="absolute inset-0 -z-20"
             style={{
-              animationDuration: "20s",
-              animationDirection: "reverse",
-              backgroundSize: "200% 200%",
+              background: `linear-gradient(135deg, ${systemColors.blue}15 0%, ${systemColors.purple}10 50%, ${systemColors.cyan}15 100%)`,
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20 -z-15 pointer-events-none" />
-
-          {/* Mist Layers */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-            <div
-              className="absolute top-[-30%] left-[-10%] w-[80vw] h-[80vw] bg-white/20 blur-[120px] rounded-full animate-mist-flow"
-              style={{ animationDuration: "45s" }}
-            />
-            <div
-              className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-[#f1faf9]/30 blur-[100px] rounded-full animate-mist-flow"
-              style={{
-                animationDuration: "35s",
-                animationDirection: "reverse",
-              }}
-            />
-          </div>
 
           <div className="relative mx-auto max-w-7xl px-6 lg:px-12 text-center">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 backdrop-blur-md border border-white/30 shadow-lg animate-fade-in">
-              <Sparkles size={18} className="text-yellow-300 animate-pulse" />
-              <span className="text-sm font-bold text-white tracking-wide">
+            <div
+              className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
+              <Star size={16} style={{ color: systemColors.orange }} />
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 初心者でも簡単
               </span>
             </div>
 
             <h1
-              className="mb-8 text-4xl font-black leading-tight lg:text-7xl text-white drop-shadow-lg animate-fade-in"
-              style={{ animationDelay: "0.1s" }}
+              className="mb-6 text-[34px] lg:text-[56px] font-bold leading-tight"
+              style={{ color: appleWebColors.textPrimary }}
             >
               サプティアの使い方
             </h1>
 
             <p
-              className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/90 lg:text-2xl font-medium animate-fade-in"
-              style={{ animationDelay: "0.2s" }}
+              className="mx-auto mb-10 max-w-3xl text-[17px] lg:text-[22px] leading-relaxed"
+              style={{ color: appleWebColors.textSecondary }}
             >
               たった3ステップで、あなたにぴったりのサプリメントが見つかります。
               <br className="hidden sm:block" />
               科学的根拠・価格・安全性を比較して、納得の選択を。
             </p>
 
-            <div className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <div>
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-2 rounded-full bg-white px-10 py-5 font-bold text-[#3b66e0] shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+                className="group inline-flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
+                style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
               >
                 今すぐ商品を探す
                 <ArrowRight
@@ -199,10 +202,10 @@ export default function HowToUsePage() {
           </div>
         </section>
 
-        {/* 3ステップの概要 - Interactive Glass Cards */}
-        <section className="relative z-10 -mt-16 px-6 lg:px-12 pb-24">
+        {/* 3ステップの概要 */}
+        <section className="relative z-10 -mt-12 px-6 lg:px-12 pb-20">
           <div className="mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 {
                   step: "STEP 1",
@@ -210,9 +213,7 @@ export default function HowToUsePage() {
                   title: "検索する",
                   description:
                     "成分名や目的から、欲しいサプリメントを検索します。",
-                  color: "text-blue-500",
-                  bg: "bg-blue-50",
-                  delay: "0s",
+                  color: systemColors.blue,
                 },
                 {
                   step: "STEP 2",
@@ -220,9 +221,7 @@ export default function HowToUsePage() {
                   title: "比較する",
                   description:
                     "フィルターやランクで絞り込み、最適な商品を見つけます。",
-                  color: "text-purple-500",
-                  bg: "bg-purple-50",
-                  delay: "0.2s",
+                  color: systemColors.purple,
                 },
                 {
                   step: "STEP 3",
@@ -230,38 +229,50 @@ export default function HowToUsePage() {
                   title: "購入する",
                   description:
                     "最安値のECサイトを確認して、そのまま購入ページへ。",
-                  color: "text-green-500",
-                  bg: "bg-green-50",
-                  delay: "0.4s",
+                  color: systemColors.green,
                 },
               ].map((step, index) => {
                 const Icon = step.icon;
                 return (
-                  <div
-                    key={index}
-                    className="relative group animate-fade-in"
-                    style={{ animationDelay: step.delay }}
-                  >
+                  <div key={index} className="relative group">
                     {index < 2 && (
-                      <div className="absolute top-1/2 -right-4 z-0 hidden w-8 h-8 text-slate-300 md:block transform -translate-y-1/2 translate-x-1/2">
-                        <ChevronRight size={32} />
+                      <div className="absolute top-1/2 -right-3 z-0 hidden md:block transform -translate-y-1/2 translate-x-1/2">
+                        <ChevronRight
+                          size={24}
+                          style={{ color: appleWebColors.textTertiary }}
+                        />
                       </div>
                     )}
-                    <div className="relative z-10 rounded-3xl bg-white/90 p-8 shadow-xl backdrop-blur-md border border-white/50 transition-all hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
-                      <div className="mb-6 flex items-center justify-between">
-                        <span className="text-sm font-black tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                    <div
+                      className={`relative z-10 rounded-2xl p-6 transition-all hover:-translate-y-1 h-full flex flex-col ${liquidGlassClasses.light}`}
+                    >
+                      <div className="mb-5 flex items-center justify-between">
+                        <span
+                          className="text-[11px] font-semibold tracking-wider px-3 py-1 rounded-full"
+                          style={{
+                            backgroundColor: appleWebColors.pageBackground,
+                            color: appleWebColors.textTertiary,
+                          }}
+                        >
                           {step.step}
                         </span>
                         <div
-                          className={`p-3 rounded-2xl ${step.bg} ${step.color}`}
+                          className="p-3 rounded-xl"
+                          style={{ backgroundColor: `${step.color}15` }}
                         >
-                          <Icon size={28} />
+                          <Icon size={24} style={{ color: step.color }} />
                         </div>
                       </div>
-                      <h3 className="mb-4 text-2xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                      <h3
+                        className="mb-3 text-[19px] font-semibold"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         {step.title}
                       </h3>
-                      <p className="text-slate-600 leading-relaxed font-medium">
+                      <p
+                        className="text-[15px] leading-relaxed"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         {step.description}
                       </p>
                     </div>
@@ -273,47 +284,86 @@ export default function HowToUsePage() {
         </section>
 
         {/* STEP 1: 検索する */}
-        <section className="py-24 px-6 lg:px-12 bg-white">
+        <section
+          className="py-20 px-6 lg:px-12"
+          style={{ backgroundColor: "#FFFFFF" }}
+        >
           <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="lg:w-1/2">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-blue-800 font-bold">
-                  <Search size={18} />
+                <div
+                  className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-[13px]"
+                  style={{
+                    backgroundColor: `${systemColors.blue}15`,
+                    color: systemColors.blue,
+                  }}
+                >
+                  <Search size={16} />
                   <span>STEP 1</span>
                 </div>
-                <h2 className="mb-6 text-4xl font-black text-slate-900 leading-tight">
-                  まずは、
-                  <br />
-                  気になる成分や悩みで
-                  <span className="text-blue-600">検索</span>
+                <h2
+                  className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  まずは、気になる成分や悩みで
+                  <span style={{ color: systemColors.blue }}>検索</span>
                 </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                <p
+                  className="text-[17px] mb-6 leading-relaxed"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   「ビタミンC」「亜鉛」などの成分名はもちろん、「美肌」「疲労回復」などの悩みや目的からも検索できます。
                 </p>
 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-                    <div className="p-2 bg-white rounded-full text-blue-600 shadow-sm">
-                      <CheckCircle2 size={20} />
-                    </div>
+                <div className="space-y-3">
+                  <div
+                    className="flex items-start gap-4 p-4 rounded-xl"
+                    style={{
+                      backgroundColor: `${systemColors.blue}08`,
+                      border: `1px solid ${systemColors.blue}15`,
+                    }}
+                  >
+                    <CheckCircle2
+                      size={20}
+                      style={{ color: systemColors.blue, marginTop: 2 }}
+                    />
                     <div>
-                      <p className="font-bold text-slate-900 text-lg">
+                      <p
+                        className="font-semibold text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         日本語・英語の両方に対応
                       </p>
-                      <p className="text-slate-600">
+                      <p
+                        className="text-[14px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         「ビタミンC」でも「Vitamin C」でもOK
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-                    <div className="p-2 bg-white rounded-full text-blue-600 shadow-sm">
-                      <CheckCircle2 size={20} />
-                    </div>
+                  <div
+                    className="flex items-start gap-4 p-4 rounded-xl"
+                    style={{
+                      backgroundColor: `${systemColors.blue}08`,
+                      border: `1px solid ${systemColors.blue}15`,
+                    }}
+                  >
+                    <CheckCircle2
+                      size={20}
+                      style={{ color: systemColors.blue, marginTop: 2 }}
+                    />
                     <div>
-                      <p className="font-bold text-slate-900 text-lg">
+                      <p
+                        className="font-semibold text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         部分一致で検索可能
                       </p>
-                      <p className="text-slate-600">
+                      <p
+                        className="text-[14px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         「ビタミン」だけでも関連成分を表示します
                       </p>
                     </div>
@@ -323,40 +373,69 @@ export default function HowToUsePage() {
 
               <div className="lg:w-1/2 w-full">
                 {/* Mock Search UI */}
-                <div className="relative rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 p-8 shadow-inner border border-white">
-                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+                <div
+                  className="relative rounded-2xl p-6"
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-4 mb-5 p-3 rounded-xl"
+                    style={{
+                      backgroundColor: appleWebColors.pageBackground,
+                      border: `1px solid ${appleWebColors.borderSubtle}`,
+                    }}
+                  >
+                    <Search
+                      size={20}
+                      style={{ color: appleWebColors.textTertiary }}
+                    />
+                    <span
+                      className="text-[15px]"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      ビタミンC...
+                    </span>
+                    <span
+                      className="ml-auto text-[11px] font-medium px-2 py-1 rounded"
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        color: appleWebColors.textTertiary,
+                        border: `1px solid ${appleWebColors.borderSubtle}`,
+                      }}
+                    >
+                      Enter
+                    </span>
+                  </div>
 
-                  <div className="relative bg-white rounded-2xl shadow-xl p-6 border border-slate-100">
-                    <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-inner">
-                      <Search size={24} className="text-slate-400" />
-                      <span className="text-slate-400 text-lg font-medium">
-                        ビタミンC...
-                      </span>
-                      <span className="ml-auto text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded border border-slate-200">
-                        Enter
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                        Popular Categories
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {[
-                          "ビタミン",
-                          "ミネラル",
-                          "アミノ酸",
-                          "美容",
-                          "疲労回復",
-                        ].map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-bold border border-blue-100"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                  <div className="space-y-2">
+                    <p
+                      className="text-[11px] font-semibold tracking-wider"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      人気のカテゴリ
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        "ビタミン",
+                        "ミネラル",
+                        "アミノ酸",
+                        "美容",
+                        "疲労回復",
+                      ].map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1.5 rounded-full text-[13px] font-medium"
+                          style={{
+                            backgroundColor: `${systemColors.blue}10`,
+                            color: systemColors.blue,
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -366,24 +445,38 @@ export default function HowToUsePage() {
         </section>
 
         {/* STEP 2: 比較する */}
-        <section className="py-24 px-6 lg:px-12 bg-slate-50">
+        <section
+          className="py-20 px-6 lg:px-12"
+          style={{ backgroundColor: appleWebColors.pageBackground }}
+        >
           <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-12">
               <div className="lg:w-1/2">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-purple-800 font-bold">
-                  <Filter size={18} />
+                <div
+                  className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-[13px]"
+                  style={{
+                    backgroundColor: `${systemColors.purple}15`,
+                    color: systemColors.purple,
+                  }}
+                >
+                  <Filter size={16} />
                   <span>STEP 2</span>
                 </div>
-                <h2 className="mb-6 text-4xl font-black text-slate-900 leading-tight">
+                <h2
+                  className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   ランクとデータで
-                  <br />
-                  <span className="text-purple-600">徹底比較</span>
+                  <span style={{ color: systemColors.purple }}>徹底比較</span>
                 </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                <p
+                  className="text-[17px] mb-6 leading-relaxed"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   価格、成分量、コスパ、エビデンス、安全性。5つの指標をS〜Dのランクで評価。直感的に「良い商品」が見つかります。
                 </p>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {[
                     { title: "価格帯", icon: DollarSign },
                     { title: "ランク", icon: Award },
@@ -392,12 +485,25 @@ export default function HowToUsePage() {
                   ].map((filter, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
+                      className="flex items-center gap-3 p-3 rounded-xl"
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        border: `1px solid ${appleWebColors.borderSubtle}`,
+                      }}
                     >
-                      <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-                        <filter.icon size={20} />
+                      <div
+                        className="p-2 rounded-lg"
+                        style={{ backgroundColor: `${systemColors.purple}10` }}
+                      >
+                        <filter.icon
+                          size={18}
+                          style={{ color: systemColors.purple }}
+                        />
                       </div>
-                      <span className="font-bold text-slate-700">
+                      <span
+                        className="font-medium text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         {filter.title}
                       </span>
                     </div>
@@ -407,42 +513,81 @@ export default function HowToUsePage() {
 
               <div className="lg:w-1/2 w-full">
                 {/* Mock Rank UI */}
-                <div className="relative rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-8 shadow-2xl border border-slate-700 overflow-hidden group">
-                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px]" />
-
+                <div
+                  className="relative rounded-2xl p-6 overflow-hidden"
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
                   <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-8">
-                      <h3 className="text-white font-bold text-xl">総合評価</h3>
-                      <div className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-sm font-bold">
-                        S Rank
+                    <div className="flex items-center justify-between mb-6">
+                      <h3
+                        className="font-semibold text-[17px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        総合評価
+                      </h3>
+                      <div
+                        className="px-3 py-1 rounded-full text-[13px] font-semibold"
+                        style={{
+                          backgroundColor: `${systemColors.purple}15`,
+                          color: systemColors.purple,
+                        }}
+                      >
+                        Sランク
                       </div>
                     </div>
 
                     <div className="grid grid-cols-5 gap-2">
                       {[
-                        { label: "価格", rank: "S", color: "bg-emerald-500" },
-                        { label: "含有量", rank: "A", color: "bg-blue-500" },
-                        { label: "コスパ", rank: "S", color: "bg-purple-500" },
-                        { label: "根拠", rank: "S", color: "bg-indigo-500" },
-                        { label: "安全", rank: "A", color: "bg-rose-500" },
+                        { label: "価格", rank: "S", color: systemColors.green },
+                        {
+                          label: "含有量",
+                          rank: "A",
+                          color: systemColors.blue,
+                        },
+                        {
+                          label: "コスパ",
+                          rank: "S",
+                          color: systemColors.purple,
+                        },
+                        {
+                          label: "根拠",
+                          rank: "S",
+                          color: systemColors.indigo,
+                        },
+                        { label: "安全", rank: "A", color: systemColors.pink },
                       ].map((stat, i) => (
                         <div
                           key={i}
                           className="flex flex-col items-center gap-2"
                         >
-                          <div className="w-full h-24 bg-white/5 rounded-lg relative overflow-hidden flex items-end justify-center pb-2">
+                          <div
+                            className="w-full h-20 rounded-lg relative overflow-hidden flex items-end justify-center pb-2"
+                            style={{
+                              backgroundColor: appleWebColors.pageBackground,
+                            }}
+                          >
                             <div
-                              className={`w-2/3 ${stat.color} rounded-t-sm transition-all duration-1000`}
+                              className="w-2/3 rounded-t-sm transition-all duration-1000"
                               style={{
-                                height: stat.rank === "S" ? "90%" : "70%",
+                                backgroundColor: stat.color,
+                                height: stat.rank === "S" ? "85%" : "65%",
                               }}
                             />
                           </div>
-                          <span className="text-xs font-bold text-slate-400">
+                          <span
+                            className="text-[11px] font-medium"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
                             {stat.label}
                           </span>
-                          <span className="text-lg font-black text-white">
+                          <span
+                            className="text-[17px] font-bold"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
                             {stat.rank}
                           </span>
                         </div>
@@ -456,45 +601,89 @@ export default function HowToUsePage() {
         </section>
 
         {/* STEP 3: 購入する */}
-        <section className="py-24 px-6 lg:px-12 bg-white">
+        <section
+          className="py-20 px-6 lg:px-12"
+          style={{ backgroundColor: "#FFFFFF" }}
+        >
           <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="lg:w-1/2">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-800 font-bold">
-                  <MousePointerClick size={18} />
+                <div
+                  className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-[13px]"
+                  style={{
+                    backgroundColor: `${systemColors.green}15`,
+                    color: systemColors.green,
+                  }}
+                >
+                  <MousePointerClick size={16} />
                   <span>STEP 3</span>
                 </div>
-                <h2 className="mb-6 text-4xl font-black text-slate-900 leading-tight">
-                  最安値を<span className="text-green-600">ワンクリック</span>
+                <h2
+                  className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  最安値を
+                  <span style={{ color: systemColors.green }}>
+                    ワンクリック
+                  </span>
                   で購入
                 </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                <p
+                  className="text-[17px] mb-6 leading-relaxed"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   楽天・Amazon・Yahoo!など、主要ECサイトの価格を自動比較。その日の最安値がすぐに分かります。
                 </p>
 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4 p-4 rounded-2xl bg-green-50 border border-green-100">
-                    <div className="p-2 bg-white rounded-full text-green-600 shadow-sm">
-                      <CheckCircle2 size={20} />
-                    </div>
+                <div className="space-y-3">
+                  <div
+                    className="flex items-start gap-4 p-4 rounded-xl"
+                    style={{
+                      backgroundColor: `${systemColors.green}08`,
+                      border: `1px solid ${systemColors.green}15`,
+                    }}
+                  >
+                    <CheckCircle2
+                      size={20}
+                      style={{ color: systemColors.green, marginTop: 2 }}
+                    />
                     <div>
-                      <p className="font-bold text-slate-900 text-lg">
+                      <p
+                        className="font-semibold text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         価格は毎日自動更新
                       </p>
-                      <p className="text-slate-600">
+                      <p
+                        className="text-[14px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         常に最新の価格情報を表示しています
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 p-4 rounded-2xl bg-green-50 border border-green-100">
-                    <div className="p-2 bg-white rounded-full text-green-600 shadow-sm">
-                      <CheckCircle2 size={20} />
-                    </div>
+                  <div
+                    className="flex items-start gap-4 p-4 rounded-xl"
+                    style={{
+                      backgroundColor: `${systemColors.green}08`,
+                      border: `1px solid ${systemColors.green}15`,
+                    }}
+                  >
+                    <CheckCircle2
+                      size={20}
+                      style={{ color: systemColors.green, marginTop: 2 }}
+                    />
                     <div>
-                      <p className="font-bold text-slate-900 text-lg">
+                      <p
+                        className="font-semibold text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         ワンクリックで商品ページへ
                       </p>
-                      <p className="text-slate-600">
+                      <p
+                        className="text-[14px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         面倒な検索は不要。そのまま購入できます
                       </p>
                     </div>
@@ -504,54 +693,91 @@ export default function HowToUsePage() {
 
               <div className="lg:w-1/2 w-full">
                 {/* Mock Price UI */}
-                <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-100">
-                  <h3 className="text-xl font-bold text-slate-900 mb-6">
+                <div
+                  className="rounded-2xl p-6"
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
+                  <h3
+                    className="text-[17px] font-semibold mb-5"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     価格比較
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {[
                       {
                         site: "楽天市場",
                         price: "¥3,980",
                         badge: "最安値",
-                        color: "text-red-600",
                         highlight: true,
                       },
                       {
                         site: "Amazon",
                         price: "¥4,200",
                         badge: null,
-                        color: "text-slate-900",
                         highlight: false,
                       },
                       {
                         site: "Yahoo!",
                         price: "¥4,150",
                         badge: null,
-                        color: "text-slate-900",
                         highlight: false,
                       },
                     ].map((item, index) => (
                       <div
                         key={index}
-                        className={`flex items-center justify-between p-4 rounded-xl border ${item.highlight ? "border-red-200 bg-red-50" : "border-slate-100 bg-white"} transition-all hover:shadow-md`}
+                        className="flex items-center justify-between p-3 rounded-xl transition-all"
+                        style={{
+                          backgroundColor: item.highlight
+                            ? `${systemColors.green}08`
+                            : "#FFFFFF",
+                          border: `1px solid ${item.highlight ? `${systemColors.green}20` : appleWebColors.borderSubtle}`,
+                        }}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="font-bold text-slate-700">
+                          <span
+                            className="font-medium text-[15px]"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
                             {item.site}
                           </span>
                           {item.badge && (
-                            <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-600">
+                            <span
+                              className="px-2 py-0.5 rounded text-[11px] font-semibold"
+                              style={{
+                                backgroundColor: `${systemColors.green}15`,
+                                color: systemColors.green,
+                              }}
+                            >
                               {item.badge}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`text-lg font-bold ${item.color}`}>
+                        <div className="flex items-center gap-3">
+                          <span
+                            className="text-[17px] font-bold"
+                            style={{
+                              color: item.highlight
+                                ? systemColors.green
+                                : appleWebColors.textPrimary,
+                            }}
+                          >
                             {item.price}
                           </span>
-                          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                            <ChevronRight size={16} />
+                          <div
+                            className="w-7 h-7 rounded-full flex items-center justify-center"
+                            style={{
+                              backgroundColor: appleWebColors.pageBackground,
+                            }}
+                          >
+                            <ChevronRight
+                              size={14}
+                              style={{ color: appleWebColors.textTertiary }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -563,16 +789,22 @@ export default function HowToUsePage() {
           </div>
         </section>
 
-        {/* よくある質問 - Glass Details */}
-        <section className="py-24 px-6 lg:px-12 bg-slate-50">
+        {/* よくある質問 */}
+        <section
+          className="py-20 px-6 lg:px-12"
+          style={{ backgroundColor: appleWebColors.pageBackground }}
+        >
           <div className="mx-auto max-w-4xl">
-            <div className="mb-16 text-center">
-              <h2 className="mb-6 text-3xl font-black text-slate-900 lg:text-4xl">
+            <div className="mb-12 text-center">
+              <h2
+                className="text-[28px] lg:text-[34px] font-bold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 よくある質問
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[
                 {
                   q: "利用料金はかかりますか？",
@@ -597,23 +829,48 @@ export default function HowToUsePage() {
               ].map((faq, index) => (
                 <details
                   key={index}
-                  className="group rounded-2xl border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-lg open:shadow-md open:border-blue-200"
+                  className={`group rounded-2xl transition-all ${liquidGlassClasses.light}`}
+                  style={{ border: `1px solid ${appleWebColors.borderSubtle}` }}
                 >
-                  <summary className="flex cursor-pointer items-center justify-between p-6 font-bold text-slate-800 transition-all hover:text-blue-600">
+                  <summary
+                    className="flex cursor-pointer items-center justify-between p-5 font-semibold text-[15px] transition-all"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     <span className="flex items-center gap-3">
-                      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs">
+                      <span
+                        className="flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold"
+                        style={{
+                          backgroundColor: `${systemColors.blue}15`,
+                          color: systemColors.blue,
+                        }}
+                      >
                         Q
                       </span>
                       {faq.q}
                     </span>
                     <ChevronRight
-                      size={20}
-                      className="transition-transform group-open:rotate-90 text-slate-400"
+                      size={18}
+                      className="transition-transform group-open:rotate-90"
+                      style={{ color: appleWebColors.textTertiary }}
                     />
                   </summary>
-                  <div className="border-t border-slate-100 p-6 pt-0 text-slate-600 leading-relaxed">
-                    <div className="mt-4 flex items-start gap-3">
-                      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs mt-0.5">
+                  <div
+                    className="p-5 pt-0"
+                    style={{
+                      borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                    }}
+                  >
+                    <div
+                      className="mt-4 flex items-start gap-3 text-[15px] leading-relaxed"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      <span
+                        className="flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold mt-0.5"
+                        style={{
+                          backgroundColor: appleWebColors.pageBackground,
+                          color: appleWebColors.textTertiary,
+                        }}
+                      >
                         A
                       </span>
                       {faq.a}
@@ -626,20 +883,27 @@ export default function HowToUsePage() {
         </section>
 
         {/* CTAセクション */}
-        <section className="relative overflow-hidden py-24 bg-[#3b66e0]">
-          <div className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-[#3b66e0] via-[#2d55c9] to-[#3b66e0] opacity-90" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-
+        <section
+          className="relative overflow-hidden py-24"
+          style={{ backgroundColor: appleWebColors.pageBackground }}
+        >
           <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-12">
-            <h2 className="mb-6 text-3xl font-black text-white lg:text-5xl">
+            <h2
+              className="mb-4 text-[28px] lg:text-[40px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               さあ、サプティアを使ってみましょう
             </h2>
-            <p className="mb-10 text-xl text-blue-100 font-medium">
+            <p
+              className="mb-8 text-[17px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               3ステップで、あなたにぴったりのサプリメントが見つかります。
             </p>
             <Link
               href="/products"
-              className="group inline-flex items-center gap-2 rounded-full bg-white px-10 py-5 font-bold text-[#3b66e0] shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+              className="group inline-flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
+              style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
             >
               商品を探す
               <ArrowRight

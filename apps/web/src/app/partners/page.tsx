@@ -17,6 +17,12 @@ import {
   BadgePercent,
   Info,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "提携パートナー - サプティア",
@@ -26,33 +32,87 @@ export const metadata: Metadata = {
 
 export default function PartnersPage() {
   return (
-    <>
+    <div
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* ヒーローセクション */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <section className="relative overflow-hidden">
+        {/* Light gradient background */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(135deg, rgba(0, 122, 255, 0.03) 0%, rgba(88, 86, 214, 0.03) 100%)`,
+          }}
+        />
 
         <div className="relative container mx-auto px-4 py-16 md:py-20">
           {/* パンくずリスト */}
-          <nav className="flex items-center space-x-2 text-sm text-blue-100 mb-8">
-            <Link href="/" className="hover:text-white transition-colors">
+          <nav
+            className="flex items-center space-x-2 mb-8"
+            style={{
+              fontSize: "15px",
+              color: appleWebColors.textSecondary,
+            }}
+          >
+            <Link
+              href="/"
+              className="transition-colors hover:text-[#1d1d1f]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
+            >
               ホーム
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white font-medium">提携パートナー</span>
+            <span
+              className="font-medium"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              提携パートナー
+            </span>
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-              <Handshake className="w-5 h-5" />
-              <span className="text-sm font-medium">パートナーシップ</span>
+            <div
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 ${liquidGlassClasses.light}`}
+            >
+              <Handshake
+                className="w-5 h-5"
+                style={{ color: systemColors.blue }}
+              />
+              <span
+                className="font-medium"
+                style={{
+                  fontSize: "15px",
+                  color: appleWebColors.textPrimary,
+                }}
+              >
+                パートナーシップ
+              </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1
+              className="font-bold mb-6"
+              style={{
+                fontSize: "34px",
+                lineHeight: "1.2",
+                letterSpacing: "-0.5px",
+                color: appleWebColors.textPrimary,
+              }}
+            >
               提携パートナー
             </h1>
-            <p className="text-xl text-blue-100 leading-relaxed">
+            <p
+              className="leading-relaxed"
+              style={{
+                fontSize: "17px",
+                color: appleWebColors.textSecondary,
+                lineHeight: "1.5",
+              }}
+            >
               サプティアは、信頼性の高いECサイトと提携し、
               <br className="hidden md:block" />
               最適なサプリメント選びをサポートしています。
@@ -65,16 +125,39 @@ export default function PartnersPage() {
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         {/* アフィリエイト開示 */}
         <section className="mb-12">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 md:p-8">
+          <div
+            className={`rounded-[20px] p-6 md:p-8 ${liquidGlassClasses.light}`}
+          >
             <div className="flex items-start gap-4 mb-6">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Info className="w-6 h-6 text-blue-600" />
+              <div
+                className="p-3 rounded-[16px]"
+                style={{
+                  backgroundColor: `${systemColors.blue}15`,
+                }}
+              >
+                <Info
+                  className="w-6 h-6"
+                  style={{ color: systemColors.blue }}
+                />
               </div>
               <div>
-                <h2 className="font-bold text-xl text-gray-800 mb-2">
+                <h2
+                  className="font-bold mb-2"
+                  style={{
+                    fontSize: "22px",
+                    color: appleWebColors.textPrimary,
+                    letterSpacing: "-0.3px",
+                  }}
+                >
                   アフィリエイトプログラムについて
                 </h2>
-                <p className="text-gray-600">
+                <p
+                  style={{
+                    fontSize: "15px",
+                    color: appleWebColors.textSecondary,
+                    lineHeight: "1.5",
+                  }}
+                >
                   当サイトは、以下の提携パートナーのアフィリエイトプログラムに参加しています。
                   商品リンクを経由して購入された場合、当サイトは各プログラムから紹介料を受け取ることがあります。
                 </p>
@@ -82,22 +165,64 @@ export default function PartnersPage() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl p-4 flex items-start space-x-3 shadow-sm">
-                <Shield className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+              <div
+                className="rounded-[16px] p-4 flex items-start space-x-3"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  border: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
+                <Shield
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
                 <div>
-                  <p className="font-semibold text-gray-800">
+                  <p
+                    className="font-semibold"
+                    style={{
+                      fontSize: "15px",
+                      color: appleWebColors.textPrimary,
+                    }}
+                  >
                     価格への影響なし
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      color: appleWebColors.textSecondary,
+                    }}
+                  >
                     アフィリエイトリンク経由でも、商品価格は変わりません
                   </p>
                 </div>
               </div>
-              <div className="bg-white rounded-xl p-4 flex items-start space-x-3 shadow-sm">
-                <TrendingUp className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+              <div
+                className="rounded-[16px] p-4 flex items-start space-x-3"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  border: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
+                <TrendingUp
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.blue }}
+                />
                 <div>
-                  <p className="font-semibold text-gray-800">中立的な評価</p>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="font-semibold"
+                    style={{
+                      fontSize: "15px",
+                      color: appleWebColors.textPrimary,
+                    }}
+                  >
+                    中立的な評価
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      color: appleWebColors.textSecondary,
+                    }}
+                  >
                     紹介料の有無は製品評価に一切影響しません
                   </p>
                 </div>
@@ -109,10 +234,22 @@ export default function PartnersPage() {
         {/* 主要提携パートナー */}
         <section className="mb-16">
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Star className="w-5 h-5 text-blue-600" />
+            <div
+              className="p-2 rounded-[12px]"
+              style={{
+                backgroundColor: `${systemColors.blue}15`,
+              }}
+            >
+              <Star className="w-5 h-5" style={{ color: systemColors.blue }} />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+            <h2
+              className="font-bold"
+              style={{
+                fontSize: "28px",
+                color: appleWebColors.textPrimary,
+                letterSpacing: "-0.4px",
+              }}
+            >
               主要提携パートナー
             </h2>
           </div>
@@ -540,6 +677,6 @@ export default function PartnersPage() {
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }

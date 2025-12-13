@@ -4,7 +4,6 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
 import {
-  Search,
   Filter,
   BookOpen,
   TrendingUp,
@@ -17,6 +16,13 @@ import { CategoryNav } from "@/components/CategoryNav";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
+import {
+  systemColors,
+  appleWebColors,
+  tierColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // ISR: 1時間ごとにページを再生成
 export const revalidate = 3600;
@@ -141,31 +147,64 @@ export default async function IngredientsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
-      <div className="min-h-screen bg-background">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         {/* パンくずリスト */}
-        <div className="bg-white border-b border-primary-200">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
-            <nav className="flex items-center gap-2 text-sm text-primary-700">
-              <Link href="/" className="hover:text-primary">
+        <div
+          className={`border-b ${liquidGlassClasses.light}`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
+            <nav
+              className="flex items-center gap-2 text-[14px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              <Link
+                href="/"
+                className="hover:opacity-70 transition-opacity"
+                style={{ color: appleWebColors.blue }}
+              >
                 ホーム
               </Link>
               <ChevronRight size={16} />
-              <span className="text-primary-900 font-medium">成分ガイド</span>
+              <span
+                className="font-medium"
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                成分ガイド
+              </span>
             </nav>
           </div>
         </div>
 
         {/* ヒーローセクション */}
-        <div className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-16 max-w-[1200px]">
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+          }}
+        >
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-16 max-w-[1200px]">
             <div className="max-w-3xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-white/10 rounded-lg">
-                  <BookOpen size={32} />
+              <div className="flex items-center gap-4 mb-5">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                >
+                  <BookOpen className="w-7 h-7 text-white" />
                 </div>
-                <h1 className="text-4xl md:text-5xl font-bold">成分ガイド</h1>
+                <h1 className="text-[34px] md:text-[48px] font-bold text-white leading-tight tracking-[-0.015em]">
+                  成分ガイド
+                </h1>
               </div>
-              <p className="text-xl text-primary-100 mb-8">
+              <p
+                className="text-[17px] md:text-[20px] mb-8 leading-relaxed"
+                style={{ color: "rgba(255, 255, 255, 0.85)" }}
+              >
                 サプリメントに含まれる成分の効果、推奨摂取量、科学的根拠を徹底解説。
                 <br />
                 あなたに最適なサプリメント選びをサポートします。
@@ -178,42 +217,77 @@ export default async function IngredientsPage() {
         </div>
 
         {/* 統計情報 */}
-        <div className="bg-white border-b border-primary-200">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-8 max-w-[1200px]">
+        <div
+          className={`border-b ${liquidGlassClasses.light}`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8 max-w-[1200px]">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-primary-100 rounded-lg">
-                  <Pill className="text-primary" size={24} />
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: `${systemColors.blue}15` }}
+                >
+                  <Pill style={{ color: systemColors.blue }} size={24} />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary-900">
+                  <div
+                    className="text-[22px] font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     {ingredients.length}+
                   </div>
-                  <div className="text-sm text-primary-700">解説済み成分</div>
+                  <div
+                    className="text-[14px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    解説済み成分
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-accent-mint/20 rounded-lg">
-                  <Shield className="text-accent-mint" size={24} />
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: `${systemColors.green}15` }}
+                >
+                  <Shield style={{ color: systemColors.green }} size={24} />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary-900">
+                  <div
+                    className="text-[22px] font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     科学的根拠
                   </div>
-                  <div className="text-sm text-primary-700">
+                  <div
+                    className="text-[14px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     エビデンスベースの情報
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-accent-purple/20 rounded-lg">
-                  <TrendingUp className="text-accent-purple" size={24} />
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: `${systemColors.indigo}15` }}
+                >
+                  <TrendingUp
+                    style={{ color: systemColors.indigo }}
+                    size={24}
+                  />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary-900">
+                  <div
+                    className="text-[22px] font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     定期更新
                   </div>
-                  <div className="text-sm text-primary-700">
+                  <div
+                    className="text-[14px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     最新の研究を反映
                   </div>
                 </div>
@@ -223,18 +297,31 @@ export default async function IngredientsPage() {
         </div>
 
         {/* Compliance Info Banner */}
-        <div className="bg-white border-b border-primary-200">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-green-50/50 rounded-xl p-4 border border-green-100">
+        <div
+          className={`border-b ${liquidGlassClasses.light}`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
+            <div
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[16px] p-4 border"
+              style={{
+                backgroundColor: `${systemColors.green}08`,
+                borderColor: `${systemColors.green}20`,
+              }}
+            >
               <div className="flex items-center gap-3">
                 <ComplianceBadge variant="compact" />
-                <p className="text-sm text-gray-600">
+                <p
+                  className="text-[14px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   すべての成分情報は薬機法に準拠して解説されています
                 </p>
               </div>
               <Link
                 href="/why-suptia"
-                className="text-sm text-primary hover:text-primary-700 font-medium whitespace-nowrap"
+                className="text-[14px] font-medium whitespace-nowrap hover:opacity-70 transition-opacity"
+                style={{ color: appleWebColors.blue }}
               >
                 AI検索との違いを見る →
               </Link>
@@ -254,10 +341,10 @@ export default async function IngredientsPage() {
         )}
 
         {/* メインコンテンツ */}
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1200px]">
+        <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-12 max-w-[1200px]">
           {ingredients.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-primary-700">
+              <p style={{ color: appleWebColors.textSecondary }}>
                 成分データを読み込み中...
                 <br />
                 Sanity Studioで成分を追加してください。
@@ -266,10 +353,16 @@ export default async function IngredientsPage() {
           ) : (
             <>
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-primary-900 mb-2">
+                <h2
+                  className="text-[28px] md:text-[32px] font-bold leading-tight tracking-[-0.015em] mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   カテゴリー別成分一覧
                 </h2>
-                <p className="text-primary-700">
+                <p
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   気になる成分をクリックして、詳しい情報をご覧ください
                 </p>
               </div>
@@ -285,18 +378,35 @@ export default async function IngredientsPage() {
                         className="scroll-mt-20"
                       >
                         <div className="flex items-center gap-3 mb-6">
-                          <div className="p-2 bg-primary-100 rounded-lg">
-                            <Filter className="text-primary" size={20} />
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style={{
+                              backgroundColor: `${systemColors.blue}15`,
+                            }}
+                          >
+                            <Filter
+                              style={{ color: systemColors.blue }}
+                              size={20}
+                            />
                           </div>
-                          <h3 className="text-2xl font-bold text-primary-900">
+                          <h3
+                            className="text-[22px] font-bold"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
                             {category}
                           </h3>
-                          <span className="text-sm text-primary-600 bg-primary-100 px-3 py-1 rounded-full">
+                          <span
+                            className="text-[13px] font-medium px-3 py-1 rounded-full"
+                            style={{
+                              backgroundColor: appleWebColors.sectionBackground,
+                              color: appleWebColors.textSecondary,
+                            }}
+                          >
                             {ingredients.length}件
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           {ingredients
                             .filter(
                               (ingredient) =>
@@ -306,21 +416,44 @@ export default async function IngredientsPage() {
                               <Link
                                 key={ingredient.slug.current}
                                 href={`/ingredients/${ingredient.slug.current}`}
-                                className="group bg-white border border-primary-200 rounded-lg p-6 hover:border-primary hover:shadow-lg transition-all"
+                                className={`group rounded-[16px] p-5 border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                                style={{
+                                  borderColor: appleWebColors.borderSubtle,
+                                }}
                               >
                                 <div className="flex items-start justify-between mb-3">
                                   <div className="flex-1">
-                                    <h4 className="text-lg font-bold text-primary-900 group-hover:text-primary transition-colors mb-1">
+                                    <h4
+                                      className="text-[17px] font-semibold group-hover:opacity-70 transition-opacity mb-1"
+                                      style={{
+                                        color: appleWebColors.textPrimary,
+                                      }}
+                                    >
                                       {ingredient.name}
                                     </h4>
-                                    <p className="text-sm text-primary-600">
+                                    <p
+                                      className="text-[13px]"
+                                      style={{
+                                        color: appleWebColors.textSecondary,
+                                      }}
+                                    >
                                       {ingredient.nameEn}
                                     </p>
                                   </div>
-                                  <ChevronRight className="text-primary-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                  <ChevronRight
+                                    className="group-hover:translate-x-1 transition-all flex-shrink-0"
+                                    style={{
+                                      color: appleWebColors.textTertiary,
+                                    }}
+                                  />
                                 </div>
 
-                                <p className="text-sm text-primary-700 line-clamp-2 mb-4">
+                                <p
+                                  className="text-[14px] line-clamp-2 mb-4"
+                                  style={{
+                                    color: appleWebColors.textSecondary,
+                                  }}
+                                >
                                   {ingredient.description}
                                 </p>
 
@@ -329,49 +462,22 @@ export default async function IngredientsPage() {
                                   {/* エビデンスランクバッジ */}
                                   {ingredient.evidenceLevel &&
                                     (() => {
-                                      const evidenceRankInfo: Record<
-                                        string,
-                                        { color: string; label: string }
-                                      > = {
-                                        S: {
-                                          color:
-                                            "from-purple-500 to-purple-700",
-                                          label: "S",
-                                        },
-                                        A: {
-                                          color: "from-blue-500 to-blue-700",
-                                          label: "A",
-                                        },
-                                        B: {
-                                          color: "from-green-500 to-green-700",
-                                          label: "B",
-                                        },
-                                        C: {
-                                          color:
-                                            "from-yellow-500 to-yellow-700",
-                                          label: "C",
-                                        },
-                                        D: {
-                                          color: "from-red-500 to-red-700",
-                                          label: "D",
-                                        },
-                                      };
-                                      const info =
-                                        evidenceRankInfo[
-                                          ingredient.evidenceLevel
-                                        ];
-                                      // evidenceLevelが無効な値の場合は何も表示しない
-                                      if (!info) return null;
+                                      const level = ingredient.evidenceLevel as
+                                        | "S"
+                                        | "A"
+                                        | "B"
+                                        | "C"
+                                        | "D";
+                                      const tierColor = tierColors[level];
+                                      if (!tierColor) return null;
                                       return (
                                         <div
-                                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${info.color}`}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-white"
+                                          style={{ background: tierColor.bg }}
                                         >
-                                          <Shield
-                                            className="text-white"
-                                            size={12}
-                                          />
-                                          <span className="text-xs font-semibold text-white">
-                                            エビデンス{info.label}ランク
+                                          <Shield size={12} />
+                                          <span className="text-[11px] font-semibold">
+                                            エビデンス{level}
                                           </span>
                                         </div>
                                       );
@@ -381,46 +487,25 @@ export default async function IngredientsPage() {
                                   {ingredient.safetyScore !== undefined &&
                                     (() => {
                                       const score = ingredient.safetyScore;
-                                      const getSafetyRank = (score: number) => {
-                                        if (score >= 90)
-                                          return {
-                                            grade: "S",
-                                            color:
-                                              "from-purple-500 to-purple-700",
-                                          };
-                                        if (score >= 80)
-                                          return {
-                                            grade: "A",
-                                            color: "from-blue-500 to-blue-700",
-                                          };
-                                        if (score >= 70)
-                                          return {
-                                            grade: "B",
-                                            color:
-                                              "from-green-500 to-green-700",
-                                          };
-                                        if (score >= 60)
-                                          return {
-                                            grade: "C",
-                                            color:
-                                              "from-yellow-500 to-yellow-700",
-                                          };
-                                        return {
-                                          grade: "D",
-                                          color: "from-red-500 to-red-700",
-                                        };
+                                      const getSafetyRank = (
+                                        score: number,
+                                      ): "S" | "A" | "B" | "C" | "D" => {
+                                        if (score >= 90) return "S";
+                                        if (score >= 80) return "A";
+                                        if (score >= 70) return "B";
+                                        if (score >= 60) return "C";
+                                        return "D";
                                       };
-                                      const safetyInfo = getSafetyRank(score);
+                                      const grade = getSafetyRank(score);
+                                      const tierColor = tierColors[grade];
                                       return (
                                         <div
-                                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${safetyInfo.color}`}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-white"
+                                          style={{ background: tierColor.bg }}
                                         >
-                                          <Shield
-                                            className="text-white"
-                                            size={12}
-                                          />
-                                          <span className="text-xs font-semibold text-white">
-                                            安全性{safetyInfo.grade}ランク
+                                          <Shield size={12} />
+                                          <span className="text-[11px] font-semibold">
+                                            安全性{grade}
                                           </span>
                                         </div>
                                       );
@@ -435,8 +520,14 @@ export default async function IngredientsPage() {
               </div>
 
               {/* 全成分アルファベット順（オプション） */}
-              <section className="mt-16 pt-12 border-t border-primary-200">
-                <h3 className="text-2xl font-bold text-primary-900 mb-6">
+              <section
+                className="mt-16 pt-12 border-t"
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
+                <h3
+                  className="text-[22px] font-bold mb-6"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   全成分一覧（アルファベット順）
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -451,12 +542,19 @@ export default async function IngredientsPage() {
                       <Link
                         key={ingredient.slug.current}
                         href={`/ingredients/${ingredient.slug.current}`}
-                        className="px-4 py-3 bg-white border border-primary-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-colors text-sm"
+                        className={`px-4 py-3 rounded-xl border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${liquidGlassClasses.light}`}
+                        style={{ borderColor: appleWebColors.borderSubtle }}
                       >
-                        <div className="font-medium text-primary-900">
+                        <div
+                          className="text-[15px] font-medium"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
                           {ingredient.name}
                         </div>
-                        <div className="text-xs text-primary-600">
+                        <div
+                          className="text-[12px]"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
                           {ingredient.nameEn}
                         </div>
                       </Link>
@@ -467,17 +565,30 @@ export default async function IngredientsPage() {
           )}
 
           {/* CTA */}
-          <div className="mt-16 p-8 bg-gradient-to-br from-primary-50 to-accent-mint/10 border border-primary-200 rounded-xl">
+          <div
+            className={`mt-16 p-8 rounded-[20px] border ${liquidGlassClasses.light}`}
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.blue}08 0%, ${systemColors.green}08 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
             <div className="max-w-2xl mx-auto text-center">
-              <h3 className="text-2xl font-bold text-primary-900 mb-3">
+              <h3
+                className="text-[22px] font-bold mb-3"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 あなたに最適なサプリメントを見つけよう
               </h3>
-              <p className="text-primary-700 mb-6">
+              <p
+                className="text-[15px] mb-6"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 成分の知識を活かして、科学的根拠に基づいたサプリメント選びを始めましょう
               </p>
               <Link
                 href="/"
-                className="inline-block px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+                className="inline-block px-8 py-4 rounded-full text-[15px] font-semibold text-white transition-all duration-300 min-h-[44px]"
+                style={{ backgroundColor: systemColors.blue }}
               >
                 サプリメントを探す
               </Link>

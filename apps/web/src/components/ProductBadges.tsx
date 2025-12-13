@@ -3,7 +3,7 @@
  */
 
 import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Award, TrendingUp } from "lucide-react";
 
 interface ProductBadgesProps {
   badges: BadgeType[];
@@ -25,11 +25,10 @@ export function ProductBadges({ badges, className = "" }: ProductBadgesProps) {
       {isPerfect && (
         <div className="mb-6 p-6 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-2xl shadow-2xl">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Sparkles className="text-white animate-spin" size={32} />
+            <Award className="text-white" size={32} />
             <h2 className="text-3xl font-bold text-white">
               🏆 5冠達成！完璧なサプリメント
             </h2>
-            <Sparkles className="text-white animate-spin" size={32} />
           </div>
           <p className="text-center text-white text-lg font-medium">
             価格・成分量・コスパ・エビデンス・安全性のすべてにおいて最高レベルです
@@ -121,7 +120,7 @@ export function BadgeSummary({ badges, className = "" }: BadgeSummaryProps) {
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {isPerfect && (
         <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full font-bold text-sm">
-          <Sparkles size={16} />
+          <Award size={16} />
           <span>5冠達成</span>
         </div>
       )}

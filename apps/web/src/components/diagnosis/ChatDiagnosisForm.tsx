@@ -8,7 +8,6 @@ import {
   Check,
   Shield,
   Zap,
-  Sparkles,
   Heart,
   Activity,
   Brain,
@@ -18,6 +17,12 @@ import {
   TrendingUp,
   AlertCircle,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // 質問の型定義
 type QuestionType = "single" | "multiple" | "slider" | "text";
@@ -74,7 +79,7 @@ const QUESTIONS: QuestionWithIcon[] = [
       {
         value: "skin-health",
         label: "美肌・肌の健康",
-        icon: Sparkles,
+        icon: Heart,
         gradient: "from-pink-400 to-rose-600",
       },
       {
@@ -223,7 +228,7 @@ const QUESTIONS: QuestionWithIcon[] = [
       {
         value: "excellent",
         label: "非常に良い",
-        icon: Sparkles,
+        icon: Activity,
         gradient: "from-green-400 to-green-600",
       },
       {
@@ -415,7 +420,7 @@ const QUESTIONS: QuestionWithIcon[] = [
       {
         value: "appearance",
         label: "肌荒れ・美容面",
-        icon: Sparkles,
+        icon: Heart,
         gradient: "from-pink-400 to-rose-600",
       },
       {
@@ -438,7 +443,7 @@ const QUESTIONS: QuestionWithIcon[] = [
     text: "現在使用しているサプリメントはありますか？（複数選択可）",
     options: [
       { value: "multivitamin", label: "マルチビタミン", icon: Award },
-      { value: "vitamin-c", label: "ビタミンC", icon: Sparkles },
+      { value: "vitamin-c", label: "ビタミンC", icon: Activity },
       { value: "vitamin-d", label: "ビタミンD", icon: Activity },
       { value: "omega-3", label: "オメガ3（DHA/EPA）", icon: Heart },
       { value: "protein", label: "プロテイン", icon: Zap },
@@ -467,7 +472,7 @@ const QUESTIONS: QuestionWithIcon[] = [
       {
         value: "skin-health",
         label: "美肌・肌の健康",
-        icon: Sparkles,
+        icon: Heart,
         gradient: "from-pink-400 to-rose-600",
       },
       {
@@ -541,20 +546,22 @@ function MessageWithTyping({
 
   return (
     <div
-      className={`flex gap-3 animate-fade-in ${message.role === "user" ? "flex-row-reverse" : ""}`}
+      className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
     >
       {/* アバター */}
       <div
-        className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 ${
-          message.role === "bot"
-            ? "bg-gradient-to-br from-purple-500 to-pink-500"
-            : "bg-gradient-to-br from-blue-500 to-cyan-500"
-        }`}
+        className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+        style={{
+          background:
+            message.role === "bot"
+              ? `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`
+              : `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+        }}
       >
         {message.role === "bot" ? (
-          <Bot size={24} className="text-white" />
+          <Bot size={20} className="text-white" />
         ) : (
-          <User size={24} className="text-white" />
+          <User size={20} className="text-white" />
         )}
       </div>
 
@@ -565,16 +572,23 @@ function MessageWithTyping({
         }`}
       >
         <div
-          className={`inline-block px-5 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-md transition-all hover:shadow-lg ${
-            message.role === "bot"
-              ? "bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900"
-              : "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
-          }`}
+          className="inline-block px-4 py-3 rounded-[16px]"
+          style={{
+            backgroundColor:
+              message.role === "bot"
+                ? appleWebColors.sectionBackground
+                : systemColors.blue,
+            color:
+              message.role === "bot" ? appleWebColors.textPrimary : "white",
+          }}
         >
-          <p className="text-sm sm:text-base leading-relaxed">
+          <p className="text-[14px] sm:text-[15px] leading-relaxed">
             {isLatestBot ? displayedText : message.content}
             {isLatestBot && (
-              <span className="inline-block w-1 h-4 ml-1 bg-purple-500 animate-pulse" />
+              <span
+                className="inline-block w-0.5 h-4 ml-1 animate-pulse"
+                style={{ backgroundColor: systemColors.purple }}
+              />
             )}
           </p>
         </div>
@@ -805,18 +819,18 @@ export function ChatDiagnosisForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto" style={{ fontFamily: fontStack }}>
       {/* チャット全体コンテナ */}
       <div
-        className="bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-2xl border border-purple-100 flex flex-col"
+        className={`${liquidGlassClasses.light} flex flex-col`}
         style={{
-          height: "calc(100dvh - 180px)",
+          height: "calc(100dvh - 200px)",
           minHeight: "500px",
-          maxHeight: "800px",
+          maxHeight: "780px",
         }}
       >
         {/* メッセージ表示エリア（スクロール可能） */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
           {messages.map((message, index) => (
             <MessageWithTyping
               key={index}
@@ -830,44 +844,75 @@ export function ChatDiagnosisForm() {
 
         {/* 回答エリア（固定位置・スクロール可能） */}
         {!answers[currentQuestion.id] && (
-          <div className="border-t border-purple-200 bg-white/90 backdrop-blur-sm p-3 sm:p-4 max-h-[50vh] overflow-y-auto">
+          <div
+            className="border-t border-white/80 p-4 max-h-[50vh] overflow-y-auto"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+            }}
+          >
             <div className="space-y-3">
               {currentQuestion.type === "single" && (
                 <div className="space-y-2">
                   {currentQuestion.options?.map((option) => {
                     const Icon = option.icon;
+                    const gradientMap: Record<string, string> = {
+                      "from-green-400 to-emerald-600": `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                      "from-yellow-400 to-orange-600": `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`,
+                      "from-pink-400 to-rose-600": `linear-gradient(135deg, ${systemColors.pink} 0%, ${systemColors.red} 100%)`,
+                      "from-blue-400 to-cyan-600": `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+                      "from-blue-400 to-blue-600": `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                      "from-cyan-400 to-cyan-600": `linear-gradient(135deg, ${systemColors.teal} 0%, ${systemColors.blue} 100%)`,
+                      "from-teal-400 to-teal-600": `linear-gradient(135deg, ${systemColors.teal} 0%, ${systemColors.green} 100%)`,
+                      "from-emerald-400 to-emerald-600": `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                      "from-green-400 to-green-600": `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                      "from-red-400 to-pink-600": `linear-gradient(135deg, ${systemColors.red} 0%, ${systemColors.pink} 100%)`,
+                      "from-purple-400 to-indigo-600": `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.indigo} 100%)`,
+                      "from-purple-400 to-purple-600": `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.indigo} 100%)`,
+                      "from-orange-400 to-red-600": `linear-gradient(135deg, ${systemColors.orange} 0%, ${systemColors.red} 100%)`,
+                      "from-purple-400 to-pink-600": `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                      "from-blue-500 to-blue-700": `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                      "from-green-500 to-green-700": `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                      "from-yellow-500 to-yellow-700": `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`,
+                      "from-purple-500 to-purple-700": `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.indigo} 100%)`,
+                      "from-indigo-500 to-indigo-700": `linear-gradient(135deg, ${systemColors.indigo} 0%, ${systemColors.purple} 100%)`,
+                      "from-gray-400 to-gray-600": `linear-gradient(135deg, ${systemColors.gray[2]} 0%, ${systemColors.gray[3]} 100%)`,
+                    };
+                    const gradient = option.gradient
+                      ? gradientMap[option.gradient] ||
+                        `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`
+                      : `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`;
+
                     return (
                       <button
                         key={option.value}
                         onClick={() => handleSingleSelect(option.value)}
-                        className="group relative overflow-hidden w-full p-3 sm:p-3.5 rounded-lg border-2 border-gray-200 hover:border-transparent text-left transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md bg-white flex items-center gap-2.5"
+                        className="group w-full p-3 rounded-xl border text-left transition-all duration-200 flex items-center gap-3 min-h-[52px]"
+                        style={{
+                          borderColor: appleWebColors.borderSubtle,
+                          backgroundColor: "white",
+                        }}
                       >
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-r ${option.gradient || "from-purple-400 to-pink-600"} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                        {Icon && (
+                          <div
+                            className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+                            style={{ background: gradient }}
+                          >
+                            <Icon className="text-white" size={18} />
+                          </div>
+                        )}
+
+                        <span
+                          className="flex-1 text-[14px] font-medium"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          {option.label}
+                        </span>
+
+                        <Check
+                          size={16}
+                          style={{ color: appleWebColors.textTertiary }}
+                          className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                         />
-
-                        <div className="relative z-10 flex items-center gap-2.5 w-full">
-                          {Icon && (
-                            <div
-                              className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br ${option.gradient || "from-purple-400 to-pink-600"} flex items-center justify-center group-hover:bg-white/20 transition-all`}
-                            >
-                              <Icon
-                                className="text-white"
-                                size={16}
-                                strokeWidth={2.5}
-                              />
-                            </div>
-                          )}
-
-                          <span className="flex-1 text-sm font-medium text-gray-900 group-hover:text-white transition-colors">
-                            {option.label}
-                          </span>
-
-                          <Check
-                            className="flex-shrink-0 text-transparent group-hover:text-white transition-colors"
-                            size={16}
-                          />
-                        </div>
                       </button>
                     );
                   })}
@@ -884,42 +929,65 @@ export function ChatDiagnosisForm() {
                         <button
                           key={option.value}
                           onClick={() => handleMultipleSelect(option.value)}
-                          className={`w-full p-3 sm:p-3.5 rounded-lg border-2 text-left font-medium transition-all duration-300 flex items-center gap-2.5 ${
-                            isSelected
-                              ? "border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 shadow-md"
-                              : "border-gray-200 hover:border-purple-300 bg-white"
-                          }`}
+                          className="w-full p-3 rounded-xl border text-left transition-all duration-200 flex items-center gap-3 min-h-[48px]"
+                          style={{
+                            borderColor: isSelected
+                              ? systemColors.purple
+                              : appleWebColors.borderSubtle,
+                            backgroundColor: isSelected
+                              ? `${systemColors.purple}10`
+                              : "white",
+                          }}
                         >
                           {Icon && (
                             <div
-                              className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-                                isSelected
-                                  ? "bg-gradient-to-br from-purple-500 to-pink-500"
-                                  : "bg-gray-100"
-                              }`}
+                              className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                              style={{
+                                backgroundColor: isSelected
+                                  ? systemColors.purple
+                                  : appleWebColors.sectionBackground,
+                              }}
                             >
                               <Icon
-                                className={`${isSelected ? "text-white" : "text-gray-600"}`}
-                                size={14}
+                                size={16}
+                                style={{
+                                  color: isSelected
+                                    ? "white"
+                                    : appleWebColors.textTertiary,
+                                }}
                               />
                             </div>
                           )}
 
                           <span
-                            className={`flex-1 text-xs sm:text-sm ${isSelected ? "text-purple-700 font-semibold" : "text-gray-700"}`}
+                            className="flex-1 text-[13px] sm:text-[14px]"
+                            style={{
+                              color: isSelected
+                                ? systemColors.purple
+                                : appleWebColors.textPrimary,
+                              fontWeight: isSelected ? 600 : 500,
+                            }}
                           >
                             {option.label}
                           </span>
 
                           <div
-                            className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
-                              isSelected
-                                ? "border-purple-500 bg-purple-500"
-                                : "border-gray-300"
-                            }`}
+                            className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center border-2"
+                            style={{
+                              borderColor: isSelected
+                                ? systemColors.purple
+                                : appleWebColors.borderSubtle,
+                              backgroundColor: isSelected
+                                ? systemColors.purple
+                                : "transparent",
+                            }}
                           >
                             {isSelected && (
-                              <Check size={10} className="text-white" />
+                              <Check
+                                size={12}
+                                className="text-white"
+                                strokeWidth={3}
+                              />
                             )}
                           </div>
                         </button>
@@ -930,11 +998,21 @@ export function ChatDiagnosisForm() {
                   <button
                     onClick={handleMultipleSubmit}
                     disabled={selectedOptions.length === 0}
-                    className={`w-full py-3 rounded-xl text-white font-semibold transition-all duration-300 ${
-                      selectedOptions.length === 0
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-md hover:shadow-lg"
-                    }`}
+                    className="w-full py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 min-h-[48px]"
+                    style={{
+                      background:
+                        selectedOptions.length === 0
+                          ? appleWebColors.sectionBackground
+                          : `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                      color:
+                        selectedOptions.length === 0
+                          ? appleWebColors.textTertiary
+                          : "white",
+                      cursor:
+                        selectedOptions.length === 0
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
                   >
                     {selectedOptions.length > 0
                       ? `${selectedOptions.length}件選択 - 決定`
@@ -945,16 +1023,30 @@ export function ChatDiagnosisForm() {
 
               {currentQuestion.type === "slider" && (
                 <div className="space-y-4">
-                  <div className="text-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5">
+                  <div
+                    className="text-center rounded-[16px] p-5"
+                    style={{
+                      background: `linear-gradient(135deg, ${systemColors.purple}15 0%, ${systemColors.pink}15 100%)`,
+                    }}
+                  >
                     <DollarSign
-                      className="mx-auto mb-2 text-purple-600"
+                      className="mx-auto mb-2"
                       size={28}
                       strokeWidth={2.5}
+                      style={{ color: systemColors.purple }}
                     />
-                    <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1">
+                    <div
+                      className="text-[34px] sm:text-[40px] font-bold mb-1"
+                      style={{
+                        color: systemColors.purple,
+                      }}
+                    >
                       ¥{sliderValue.toLocaleString()}
                     </div>
-                    <div className="text-xs text-gray-600 font-medium">
+                    <div
+                      className="text-[12px] font-medium"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
                       1日あたり
                     </div>
                   </div>
@@ -967,12 +1059,15 @@ export function ChatDiagnosisForm() {
                       step={currentQuestion.step}
                       value={sliderValue}
                       onChange={(e) => setSliderValue(Number(e.target.value))}
-                      className="w-full h-2 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full appearance-none cursor-pointer"
+                      className="w-full h-2 rounded-full appearance-none cursor-pointer"
                       style={{
-                        background: `linear-gradient(to right, rgb(147 51 234) 0%, rgb(219 39 119) ${((sliderValue - (currentQuestion.min || 0)) / ((currentQuestion.max || 2000) - (currentQuestion.min || 0))) * 100}%, rgb(229 231 235) ${((sliderValue - (currentQuestion.min || 0)) / ((currentQuestion.max || 2000) - (currentQuestion.min || 0))) * 100}%, rgb(229 231 235) 100%)`,
+                        background: `linear-gradient(to right, ${systemColors.purple} 0%, ${systemColors.pink} ${((sliderValue - (currentQuestion.min || 0)) / ((currentQuestion.max || 2000) - (currentQuestion.min || 0))) * 100}%, ${appleWebColors.sectionBackground} ${((sliderValue - (currentQuestion.min || 0)) / ((currentQuestion.max || 2000) - (currentQuestion.min || 0))) * 100}%, ${appleWebColors.sectionBackground} 100%)`,
                       }}
                     />
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div
+                      className="flex justify-between text-[11px] mt-1"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
                       <span>¥{currentQuestion.min?.toLocaleString()}</span>
                       <span>¥{currentQuestion.max?.toLocaleString()}</span>
                     </div>
@@ -983,11 +1078,25 @@ export function ChatDiagnosisForm() {
                       <button
                         key={amount}
                         onClick={() => setSliderValue(amount)}
-                        className={`py-2 rounded-lg text-xs font-semibold transition-all ${
-                          sliderValue === amount
-                            ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
-                            : "bg-white border border-gray-200 text-gray-700"
-                        }`}
+                        className="py-2 rounded-xl text-[12px] font-semibold transition-all duration-200 min-h-[36px]"
+                        style={{
+                          background:
+                            sliderValue === amount
+                              ? `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`
+                              : "white",
+                          color:
+                            sliderValue === amount
+                              ? "white"
+                              : appleWebColors.textSecondary,
+                          border:
+                            sliderValue === amount
+                              ? "none"
+                              : `1px solid ${appleWebColors.borderSubtle}`,
+                          boxShadow:
+                            sliderValue === amount
+                              ? "0 4px 12px rgba(0, 0, 0, 0.15)"
+                              : "none",
+                        }}
                       >
                         ¥{amount.toLocaleString()}
                       </button>
@@ -996,7 +1105,12 @@ export function ChatDiagnosisForm() {
 
                   <button
                     onClick={handleSliderSubmit}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold transition-all shadow-md hover:shadow-lg"
+                    className="w-full py-3 rounded-xl text-[15px] font-semibold transition-all duration-200 min-h-[48px]"
+                    style={{
+                      background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                      color: "white",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                    }}
                   >
                     決定する
                   </button>
@@ -1007,21 +1121,40 @@ export function ChatDiagnosisForm() {
         )}
 
         {/* プログレスバー - チャット下部に固定 */}
-        <div className="border-t border-purple-200 bg-white/95 backdrop-blur-sm rounded-b-2xl p-3 sm:p-4">
-          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-            <span className="flex items-center gap-1">
-              <Activity size={14} className="text-purple-600" />
+        <div
+          className="rounded-b-[24px] p-3 sm:p-4 border-t border-white/80"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            backdropFilter: "blur(20px)",
+          }}
+        >
+          <div
+            className="flex items-center justify-between text-[12px] mb-1.5"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <span className="flex items-center gap-1.5">
+              <Activity size={14} style={{ color: systemColors.purple }} />
               進捗
             </span>
-            <span className="bg-purple-100 px-2 py-0.5 rounded-full text-purple-700 font-semibold text-xs">
+            <span
+              className="px-2 py-0.5 rounded-full text-[11px] font-semibold"
+              style={{
+                backgroundColor: `${systemColors.purple}15`,
+                color: systemColors.purple,
+              }}
+            >
               {Object.keys(answers).length}/{QUESTIONS.length}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div
+            className="w-full rounded-full h-2 overflow-hidden"
+            style={{ backgroundColor: appleWebColors.sectionBackground }}
+          >
             <div
-              className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
+              className="h-2 rounded-full transition-all duration-500"
               style={{
                 width: `${(Object.keys(answers).length / QUESTIONS.length) * 100}%`,
+                background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
               }}
             />
           </div>

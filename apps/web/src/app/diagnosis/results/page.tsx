@@ -19,12 +19,18 @@ import {
   type DetailedDiagnosisProfile,
 } from "@/lib/detailed-recommendation-engine";
 import type { ContraindicationTag } from "@/lib/safety-checker";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { fetchProductsForDiagnosis } from "../actions";
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
 import { getSiteUrl } from "@/lib/runtimeConfig";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // 健康状態の日本語ラベル
 const CONDITION_LABELS: Record<ContraindicationTag, string> = {
@@ -174,9 +180,20 @@ export default async function DiagnosisResultsPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
-      <div className="min-h-screen bg-gray-50">
+      <div
+        className="min-h-screen pb-20"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         {/* ヘッダー */}
-        <div className="bg-white border-b border-gray-200">
+        <div
+          className={`border-b ${liquidGlassClasses.light}`}
+          style={{
+            borderColor: appleWebColors.borderSubtle,
+          }}
+        >
           <div className="container mx-auto px-4 py-4">
             <Breadcrumbs
               items={[{ name: "診断", href: "/diagnosis" }, { name: "結果" }]}
@@ -187,12 +204,20 @@ export default async function DiagnosisResultsPage({
         {/* メインコンテンツ */}
         <div className="container mx-auto px-4 py-8">
           {/* タイトルセクション */}
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-full p-2.5 sm:p-3 w-fit">
-                <Sparkles className="text-white" size={20} />
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                }}
+              >
+                <CheckCircle2 className="text-white" size={22} />
               </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+              <h1
+                className="text-[22px] sm:text-[28px] font-bold tracking-tight"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 あなたにおすすめのサプリメント
               </h1>
             </div>
@@ -221,13 +246,17 @@ export default async function DiagnosisResultsPage({
 
           {/* 結果が0件の場合 */}
           {recommendations.length === 0 && (
-            <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
-              <p className="text-gray-600 mb-4">
+            <div className={`p-12 text-center ${liquidGlassClasses.light}`}>
+              <p
+                className="text-[15px] mb-5"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 条件に合う商品が見つかりませんでした。
               </p>
               <Link
                 href="/diagnosis"
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                className="inline-flex items-center gap-2 text-[15px] font-medium min-h-[44px]"
+                style={{ color: systemColors.blue }}
               >
                 <ArrowLeft size={16} />
                 診断をやり直す
@@ -238,11 +267,17 @@ export default async function DiagnosisResultsPage({
           {/* 推薦結果 */}
           {recommendations.length > 0 && (
             <>
-              <div className="mb-4 sm:mb-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              <div className="mb-6">
+                <h2
+                  className="text-[17px] sm:text-[20px] font-bold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   トップ3推薦商品
                 </h2>
-                <p className="text-sm sm:text-base text-gray-600">
+                <p
+                  className="text-[13px] sm:text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   あなたの条件に最も適した商品を、科学的根拠に基づいて評価しました。
                 </p>
               </div>
@@ -255,47 +290,66 @@ export default async function DiagnosisResultsPage({
 
               {/* その他の推薦商品 */}
               {otherRecommendations.length > 0 && (
-                <div className="mt-8 sm:mt-12">
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+                <div className="mt-10 sm:mt-14">
+                  <h2
+                    className="text-[17px] sm:text-[20px] font-bold mb-5"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     他のおすすめ商品
                   </h2>
 
-                  <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
-                    <div className="space-y-3 sm:space-y-4">
+                  <div
+                    className={`p-4 sm:p-6 ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
+                  >
+                    <div className="space-y-3">
                       {otherRecommendations.map((rec) => (
                         <Link
                           key={rec.product.id}
                           href={`/products/${rec.product.slug || rec.product.id}`}
-                          className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer group"
+                          className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 rounded-[12px] transition-colors cursor-pointer group min-h-[60px]"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
                         >
                           {/* 上段: 順位・画像・商品名 */}
                           <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                             {/* ランキング順位 */}
                             <div className="flex-shrink-0">
-                              <div className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-bold text-white bg-blue-500 text-sm sm:text-base">
+                              <div
+                                className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-[13px] font-bold text-white"
+                                style={{ backgroundColor: systemColors.blue }}
+                              >
                                 {rec.rank}
                               </div>
                             </div>
 
                             {/* 商品画像 */}
                             {rec.product.imageUrl && (
-                              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 relative">
+                              <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 relative rounded-lg overflow-hidden">
                                 <Image
                                   src={rec.product.imageUrl}
                                   alt={rec.product.name}
                                   fill
-                                  className="object-cover rounded-lg"
+                                  className="object-cover"
                                 />
                               </div>
                             )}
 
                             {/* 商品名・ブランド */}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-sm sm:text-base line-clamp-2">
+                              <h3
+                                className="font-semibold text-[13px] sm:text-[15px] line-clamp-2 transition-colors"
+                                style={{ color: appleWebColors.textPrimary }}
+                              >
                                 {rec.product.name}
                               </h3>
                               {rec.product.brand && (
-                                <div className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 truncate">
+                                <div
+                                  className="text-[11px] sm:text-[12px] mt-0.5 truncate"
+                                  style={{
+                                    color: appleWebColors.textSecondary,
+                                  }}
+                                >
                                   {rec.product.brand}
                                 </div>
                               )}
@@ -304,39 +358,40 @@ export default async function DiagnosisResultsPage({
 
                           {/* 下段（モバイル）/ 右側（PC）: 価格情報 */}
                           <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-11 sm:pl-0">
-                            <div className="text-left sm:text-right space-y-0.5 sm:space-y-1">
+                            <div className="text-left sm:text-right space-y-0.5">
                               {/* 1日あたりの価格 */}
-                              <div className="text-base sm:text-lg font-bold text-gray-900">
+                              <div
+                                className="text-[15px] sm:text-[17px] font-bold"
+                                style={{ color: appleWebColors.textPrimary }}
+                              >
                                 ¥
                                 {Math.round(
                                   rec.scores.costDetails.costPerDayJPY,
                                 )}
-                                <span className="text-xs sm:text-sm text-gray-500 ml-1">
+                                <span
+                                  className="text-[11px] sm:text-[12px] ml-0.5 font-normal"
+                                  style={{
+                                    color: appleWebColors.textSecondary,
+                                  }}
+                                >
                                   /日
                                 </span>
                               </div>
                               {/* 商品価格 */}
-                              <div className="text-xs text-gray-500">
-                                商品価格: ¥
-                                {rec.product.priceJPY?.toLocaleString() || "—"}
+                              <div
+                                className="text-[11px]"
+                                style={{ color: appleWebColors.textTertiary }}
+                              >
+                                ¥{rec.product.priceJPY?.toLocaleString() || "—"}
                               </div>
                             </div>
 
                             {/* 詳細を見るアイコン */}
-                            <div className="flex-shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
+                            <div className="flex-shrink-0 transition-colors">
+                              <ChevronRight
+                                size={18}
+                                style={{ color: appleWebColors.textTertiary }}
+                              />
                             </div>
                           </div>
                         </Link>
@@ -347,10 +402,13 @@ export default async function DiagnosisResultsPage({
               )}
 
               {/* アクション */}
-              <div className="mt-8 flex justify-center gap-4">
+              <div className="mt-10 flex justify-center gap-4">
                 <Link
                   href="/diagnosis"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all min-h-[48px] hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                  style={{
+                    color: appleWebColors.textPrimary,
+                  }}
                 >
                   <ArrowLeft size={16} />
                   条件を変更

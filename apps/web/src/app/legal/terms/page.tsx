@@ -12,6 +12,12 @@ import {
   Copyright,
   RefreshCw,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "利用規約 - サプティア",
@@ -20,47 +26,87 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* ヒーローセクション */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-        <div className="container mx-auto px-4 max-w-4xl relative">
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
           {/* パンくず */}
-          <nav className="flex items-center gap-2 text-blue-200 text-sm mb-6">
-            <Link href="/" className="hover:text-white transition-colors">
+          <nav
+            className="flex items-center gap-2 text-[13px] mb-8"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <Link
+              href="/"
+              className="transition-colors"
+              style={{ color: systemColors.blue }}
+            >
               ホーム
             </Link>
-            <ChevronRight size={14} />
-            <span className="text-white">利用規約</span>
+            <ChevronRight size={12} />
+            <span style={{ color: appleWebColors.textPrimary }}>利用規約</span>
           </nav>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-              <FileText className="w-10 h-10 text-white" />
+          <div className="flex items-center gap-4 mb-6">
+            <div
+              className="p-3 rounded-[16px]"
+              style={{
+                backgroundColor: "rgba(0, 122, 255, 0.1)",
+              }}
+            >
+              <FileText
+                className="w-8 h-8"
+                style={{ color: systemColors.blue }}
+              />
             </div>
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-white">
+              <h1
+                className="text-[34px] font-bold leading-tight"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 利用規約
               </h1>
-              <p className="text-blue-200 mt-1">Terms of Service</p>
+              <p
+                className="text-[15px] mt-1"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                Terms of Service
+              </p>
             </div>
           </div>
-          <p className="text-blue-100 mt-4">
+          <p
+            className="text-[17px] leading-relaxed"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             サプティアのサービスをご利用いただくにあたっての規約です
           </p>
-          <p className="text-blue-200 text-sm mt-4">
+          <p
+            className="text-[13px] mt-4"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             最終更新日: 2025年10月30日
           </p>
         </div>
       </section>
 
       {/* クイックナビゲーション */}
-      <section className="bg-white border-b sticky top-0 z-40 shadow-sm">
+      <section
+        className={`sticky top-0 z-40 ${liquidGlassClasses.light}`}
+        style={{
+          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+        }}
+      >
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
-            <span className="text-sm text-slate-500 whitespace-nowrap">
+            <span
+              className="text-[13px] whitespace-nowrap"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               移動:
             </span>
             {[
@@ -72,7 +118,11 @@ export default function TermsPage() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 hover:bg-blue-100 hover:text-blue-700 rounded-full whitespace-nowrap transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-full whitespace-nowrap transition-all hover:bg-[#007AFF]/10 hover:text-[#007AFF]"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  color: appleWebColors.textPrimary,
+                }}
               >
                 <item.icon size={14} />
                 {item.label}
@@ -84,27 +134,60 @@ export default function TermsPage() {
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* 適用 */}
-        <section className="mb-10 bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+        <section
+          className={`mb-10 rounded-[20px] p-8 ${liquidGlassClasses.light}`}
+          style={{
+            border: `1px solid ${appleWebColors.borderSubtle}`,
+          }}
+        >
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+            <div
+              className="p-2 rounded-[12px]"
+              style={{ backgroundColor: "rgba(0, 122, 255, 0.1)" }}
+            >
+              <BookOpen
+                className="w-5 h-5"
+                style={{ color: systemColors.blue }}
+              />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">第1条（適用）</h2>
+            <h2
+              className="text-[22px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              第1条（適用）
+            </h2>
           </div>
-          <p className="text-slate-700 mb-4 leading-relaxed">
+          <p
+            className="text-[17px] mb-4 leading-relaxed"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             本利用規約（以下「本規約」といいます）は、サプティア（以下「当サイト」といいます）が提供するサプリメント比較・検索サービス（以下「本サービス」といいます）の利用条件を定めるものです。
           </p>
-          <p className="text-slate-700 leading-relaxed">
+          <p
+            className="text-[17px] leading-relaxed"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             利用者の皆様（以下「ユーザー」といいます）には、本規約に従って本サービスをご利用いただきます。
           </p>
         </section>
 
         {/* サービス内容 */}
-        <section className="mb-10 bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+        <section
+          className={`mb-10 rounded-[20px] p-8 ${liquidGlassClasses.light}`}
+          style={{
+            border: `1px solid ${appleWebColors.borderSubtle}`,
+          }}
+        >
+          <h2
+            className="text-[22px] font-bold mb-4"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             第2条（サービス内容）
           </h2>
-          <p className="text-slate-700 mb-4">
+          <p
+            className="text-[17px] mb-4"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             本サービスは以下の機能を提供します：
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -117,12 +200,24 @@ export default function TermsPage() {
             ].map((item, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg"
+                className="flex items-center gap-2 p-3 rounded-[12px]"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
               >
-                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center flex-shrink-0">
+                <div
+                  className="w-6 h-6 rounded-full text-[13px] font-bold flex items-center justify-center flex-shrink-0"
+                  style={{
+                    backgroundColor: "rgba(0, 122, 255, 0.1)",
+                    color: systemColors.blue,
+                  }}
+                >
                   {index + 1}
                 </div>
-                <span className="text-slate-700 text-sm">{item}</span>
+                <span
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  {item}
+                </span>
               </div>
             ))}
           </div>

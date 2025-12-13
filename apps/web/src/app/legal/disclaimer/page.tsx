@@ -20,6 +20,12 @@ import {
   FileText,
   Gavel,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "免責事項 - サプティア",
@@ -36,16 +42,28 @@ export default function DisclaimerPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-red-600 via-red-700 to-orange-700 py-16 relative overflow-hidden">
+      <section
+        className="py-16 relative overflow-hidden"
+        style={{ backgroundColor: systemColors.orange }}
+      >
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
 
         <div className="container mx-auto px-4 max-w-4xl relative">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-red-100 text-sm mb-6">
+          <nav
+            className="flex items-center gap-2 mb-6 text-[15px]"
+            style={{ color: "rgba(255, 255, 255, 0.8)" }}
+          >
             <Link href="/" className="hover:text-white transition-colors">
               ホーム
             </Link>
@@ -61,22 +79,30 @@ export default function DisclaimerPage() {
           </nav>
 
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+            <div className="p-3 bg-white/20 rounded-[16px] backdrop-blur-sm">
               <ShieldAlert className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">
+              <h1 className="text-[34px] md:text-[40px] font-bold text-white leading-tight">
                 免責事項
               </h1>
-              <p className="text-red-100 mt-1">Disclaimer</p>
+              <p
+                className="mt-1 text-[15px]"
+                style={{ color: "rgba(255, 255, 255, 0.8)" }}
+              >
+                Disclaimer
+              </p>
             </div>
           </div>
 
-          <p className="text-red-100 text-lg max-w-2xl">
+          <p
+            className="text-[17px] max-w-2xl"
+            style={{ color: "rgba(255, 255, 255, 0.9)" }}
+          >
             サプティアのサービス利用にあたっての重要な免責事項をご確認ください
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm">
+          <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white text-[13px]">
             <RefreshCw size={14} />
             最終更新日: 2025年10月30日
           </div>
@@ -84,17 +110,27 @@ export default function DisclaimerPage() {
       </section>
 
       {/* Quick Navigation */}
-      <section className="bg-white border-b sticky top-0 z-40 shadow-sm">
+      <section
+        className={`sticky top-0 z-40 ${liquidGlassClasses.light}`}
+        style={{ borderBottom: `1px solid ${appleWebColors.borderSubtle}` }}
+      >
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-2 py-3 overflow-x-auto">
-            <span className="text-sm text-slate-500 whitespace-nowrap">
+            <span
+              className="text-[13px] whitespace-nowrap"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               クイックアクセス:
             </span>
             {sections.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 hover:bg-red-100 hover:text-red-700 rounded-full transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-full transition-colors whitespace-nowrap hover:bg-[#FF9500] hover:text-white"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  color: appleWebColors.textPrimary,
+                }}
               >
                 <item.icon size={14} />
                 {item.label}
@@ -108,16 +144,34 @@ export default function DisclaimerPage() {
       <main className="container mx-auto px-4 max-w-4xl py-12">
         {/* Important Disclaimer Banner */}
         <section className="mb-10">
-          <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-6">
+          <div
+            className="rounded-[20px] p-6"
+            style={{
+              backgroundColor: "rgba(255, 149, 0, 0.08)",
+              border: `2px solid ${systemColors.orange}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-red-100 rounded-xl">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
+              <div
+                className="p-3 rounded-[16px]"
+                style={{ backgroundColor: "rgba(255, 149, 0, 0.15)" }}
+              >
+                <AlertTriangle
+                  className="w-8 h-8"
+                  style={{ color: systemColors.orange }}
+                />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-red-900 mb-3">
+                <h2
+                  className="text-[22px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   重要な免責事項
                 </h2>
-                <p className="text-red-800 font-semibold mb-4">
+                <p
+                  className="font-semibold mb-4 text-[17px]"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   サプティアは医療・診断・治療・予防を目的としたサービスではありません。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -129,13 +183,22 @@ export default function DisclaimerPage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-2 p-3 bg-white rounded-lg border border-red-100"
+                      className={`flex items-start gap-2 p-3 rounded-[16px] ${liquidGlassClasses.light}`}
+                      style={{
+                        border: `1px solid ${appleWebColors.borderSubtle}`,
+                      }}
                     >
                       <CheckCircle
                         size={18}
-                        className="text-red-600 flex-shrink-0 mt-0.5"
+                        className="flex-shrink-0 mt-0.5"
+                        style={{ color: systemColors.orange }}
                       />
-                      <span className="text-sm text-red-800">{item}</span>
+                      <span
+                        className="text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>

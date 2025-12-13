@@ -181,7 +181,6 @@ Cover-specific requirements:
 - Central visual element representing the topic with relevant icons/illustrations
 - Eye-catching composition that invites viewers to swipe
 - Supplement/health/wellness themed iconography around the title
-- This is slide 1 of a carousel series
 - Add visual hint to swipe (arrow or dots at bottom)`;
       filename = `carousel_${imageTimestamp}_cover.png`;
       imageType = "cover";
@@ -200,8 +199,7 @@ Slide-specific requirements:
 - Use icons, simple diagrams, and visual elements to illustrate the content
 - Heading at top, infographic/diagram in the center/bottom
 - Consistent style with other slides in the series
-- Make the information visually understandable at a glance
-- This is slide ${slideNum} of a carousel series`;
+- Make the information visually understandable at a glance`;
       filename = `carousel_${imageTimestamp}_slide${slideNum}.png`;
       imageType = `slide${slideNum}`;
     }

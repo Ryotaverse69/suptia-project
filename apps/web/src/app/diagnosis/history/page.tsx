@@ -10,7 +10,7 @@ import {
   Target,
   DollarSign,
   Shield,
-  Sparkles,
+  ClipboardCheck,
   Trophy,
   Medal,
   Award,
@@ -18,6 +18,12 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // 健康目標のラベル（DiagnosisFormのHEALTH_GOALSと同期）
 const HEALTH_GOAL_LABELS: Record<string, string> = {
@@ -109,18 +115,35 @@ export default function DiagnosisHistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 sm:py-12 md:py-16">
+    <div
+      className="min-h-screen py-10 sm:py-14 md:py-20"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full mb-4 sm:mb-6">
-              <History size={32} className="text-white sm:w-10 sm:h-10" />
+          <div className="text-center mb-10 sm:mb-14">
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mb-5"
+              style={{
+                background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+              }}
+            >
+              <History size={32} className="text-white" />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-900 mb-3 sm:mb-4">
+            <h1
+              className="text-[28px] sm:text-[34px] md:text-[40px] font-bold mb-3 tracking-tight"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               診断履歴
             </h1>
-            <p className="text-base sm:text-lg text-primary-700">
+            <p
+              className="text-[15px] sm:text-[17px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               過去の診断結果を確認できます
             </p>
           </div>
@@ -128,30 +151,56 @@ export default function DiagnosisHistoryPage() {
           {/* Loading State (Auth) */}
           {isAuthLoading && (
             <div className="text-center py-20">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-              <p className="mt-4 text-primary-700">読み込み中...</p>
+              <div
+                className="inline-block animate-spin rounded-full h-10 w-10 border-3"
+                style={{
+                  borderColor: `${systemColors.blue}20`,
+                  borderTopColor: systemColors.blue,
+                }}
+              />
+              <p
+                className="mt-4 text-[15px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                読み込み中...
+              </p>
             </div>
           )}
 
           {/* Not Logged In State */}
           {!isAuthLoading && !isLoggedIn && (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
-              <div className="text-primary-300 mb-6">
-                <LogIn size={64} className="mx-auto" />
+            <div className={`text-center py-16 ${liquidGlassClasses.light}`}>
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <LogIn
+                  size={28}
+                  style={{ color: appleWebColors.textTertiary }}
+                />
               </div>
-              <h2 className="text-2xl font-bold text-primary-900 mb-4">
+              <h2
+                className="text-[20px] font-bold mb-3"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 ログインが必要です
               </h2>
-              <p className="text-primary-700 mb-8 max-w-md mx-auto">
+              <p
+                className="text-[15px] mb-8 max-w-sm mx-auto leading-relaxed"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 診断履歴を見るにはログインしてください。
                 <br />
                 ログインすると、過去の診断結果を確認できます。
               </p>
               <button
                 onClick={() => setShowLoginModal(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg font-semibold"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[15px] font-semibold text-white transition-all duration-300 hover:opacity-90 min-h-[48px]"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                }}
               >
-                <LogIn size={20} />
+                <LogIn size={18} />
                 ログイン / 新規登録
               </button>
             </div>
@@ -160,8 +209,19 @@ export default function DiagnosisHistoryPage() {
           {/* Loading State (History) */}
           {!isAuthLoading && isLoggedIn && isLoading && (
             <div className="text-center py-20">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-              <p className="mt-4 text-primary-700">読み込み中...</p>
+              <div
+                className="inline-block animate-spin rounded-full h-10 w-10 border-3"
+                style={{
+                  borderColor: `${systemColors.blue}20`,
+                  borderTopColor: systemColors.blue,
+                }}
+              />
+              <p
+                className="mt-4 text-[15px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                読み込み中...
+              </p>
             </div>
           )}
 
@@ -170,19 +230,34 @@ export default function DiagnosisHistoryPage() {
             isLoggedIn &&
             !isLoading &&
             history.length === 0 && (
-              <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
-                <div className="text-primary-300 mb-6">
-                  <History size={64} className="mx-auto" />
+              <div className={`text-center py-16 ${liquidGlassClasses.light}`}>
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
+                  style={{ backgroundColor: appleWebColors.sectionBackground }}
+                >
+                  <History
+                    size={28}
+                    style={{ color: appleWebColors.textTertiary }}
+                  />
                 </div>
-                <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                <h2
+                  className="text-[20px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   診断履歴がありません
                 </h2>
-                <p className="text-primary-700 mb-8 max-w-md mx-auto">
+                <p
+                  className="text-[15px] mb-8 max-w-sm mx-auto"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   診断を行うと、結果がここに保存されます
                 </p>
                 <Link
                   href="/diagnosis"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:shadow-lg font-semibold"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[15px] font-semibold text-white transition-all duration-300 hover:opacity-90 min-h-[48px]"
+                  style={{
+                    background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                  }}
                 >
                   診断を始める
                 </Link>
@@ -191,44 +266,60 @@ export default function DiagnosisHistoryPage() {
 
           {/* History List */}
           {!isAuthLoading && isLoggedIn && !isLoading && history.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-primary-600 font-medium">
-                  {history.length}件の診断履歴
-                </p>
-              </div>
+            <div className="space-y-5">
+              <p
+                className="text-[13px] font-medium"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                {history.length}件の診断履歴
+              </p>
 
               {history.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-purple-200"
+                  className={`group relative overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
                 >
                   {/* Gradient accent bar */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-purple-500 via-pink-500 to-orange-400" />
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1"
+                    style={{
+                      background: `linear-gradient(180deg, ${systemColors.purple} 0%, ${systemColors.pink} 50%, ${systemColors.orange} 100%)`,
+                    }}
+                  />
 
-                  <div className="p-5 sm:p-6 pl-6 sm:pl-8">
+                  <div className="p-5 pl-6">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
-                          <Sparkles className="text-white" size={24} />
+                        <div
+                          className="w-11 h-11 rounded-xl flex items-center justify-center"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                          }}
+                        >
+                          <ClipboardCheck className="text-white" size={20} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                item.diagnosisType === "detailed"
-                                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                                  : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                              }`}
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white"
+                              style={{
+                                background:
+                                  item.diagnosisType === "detailed"
+                                    ? `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`
+                                    : `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+                              }}
                             >
                               {item.diagnosisType === "detailed"
                                 ? "詳細診断"
-                                : "シンプル診断"}
+                                : "かんたん診断"}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                            <Calendar size={14} />
+                          <div
+                            className="flex items-center gap-1.5 text-[13px]"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <Calendar size={12} />
                             <span>{formatDate(item.createdAt)}</span>
                           </div>
                         </div>
@@ -239,17 +330,21 @@ export default function DiagnosisHistoryPage() {
                         <button
                           onClick={() => handleDelete(item.id)}
                           disabled={deletingId === item.id}
-                          className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 disabled:opacity-50"
+                          className="p-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          style={{ color: appleWebColors.textTertiary }}
                           title="削除"
                         >
                           <Trash2 size={18} />
                         </button>
                         <Link
                           href={buildResultsUrl(item)}
-                          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg"
+                          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all duration-200 min-h-[44px]"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                          }}
                         >
                           結果を見る
-                          <ChevronRight size={16} />
+                          <ChevronRight size={14} />
                         </Link>
                       </div>
                     </div>
@@ -257,8 +352,14 @@ export default function DiagnosisHistoryPage() {
                     {/* Goals */}
                     <div className="mb-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <Target size={14} className="text-blue-500" />
-                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                        <Target
+                          size={12}
+                          style={{ color: systemColors.blue }}
+                        />
+                        <span
+                          className="text-[11px] font-semibold uppercase tracking-wider"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
                           健康目標
                         </span>
                       </div>
@@ -266,7 +367,11 @@ export default function DiagnosisHistoryPage() {
                         {item.goals.map((goal) => (
                           <span
                             key={goal}
-                            className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-100"
+                            className="px-2.5 py-1.5 rounded-lg text-[12px] font-medium"
+                            style={{
+                              backgroundColor: `${systemColors.blue}10`,
+                              color: systemColors.blue,
+                            }}
                           >
                             {HEALTH_GOAL_LABELS[goal] || goal}
                           </span>
@@ -277,30 +382,56 @@ export default function DiagnosisHistoryPage() {
                     {/* Budget & Priority Cards */}
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       {item.budget && (
-                        <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                          <div className="w-9 h-9 rounded-lg bg-green-500 flex items-center justify-center">
-                            <DollarSign size={18} className="text-white" />
+                        <div
+                          className="flex items-center gap-3 p-3 rounded-xl"
+                          style={{ backgroundColor: `${systemColors.green}10` }}
+                        >
+                          <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: systemColors.green }}
+                          >
+                            <DollarSign size={16} className="text-white" />
                           </div>
                           <div>
-                            <p className="text-xs text-green-600 font-medium">
+                            <p
+                              className="text-[11px] font-medium"
+                              style={{ color: systemColors.green }}
+                            >
                               1日の予算
                             </p>
-                            <p className="text-lg font-bold text-green-700">
+                            <p
+                              className="text-[15px] font-bold"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
                               ¥{item.budget.toLocaleString()}
                             </p>
                           </div>
                         </div>
                       )}
                       {item.priority && (
-                        <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                          <div className="w-9 h-9 rounded-lg bg-purple-500 flex items-center justify-center">
-                            <Shield size={18} className="text-white" />
+                        <div
+                          className="flex items-center gap-3 p-3 rounded-xl"
+                          style={{
+                            backgroundColor: `${systemColors.purple}10`,
+                          }}
+                        >
+                          <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: systemColors.purple }}
+                          >
+                            <Shield size={16} className="text-white" />
                           </div>
                           <div>
-                            <p className="text-xs text-purple-600 font-medium">
+                            <p
+                              className="text-[11px] font-medium"
+                              style={{ color: systemColors.purple }}
+                            >
                               優先事項
                             </p>
-                            <p className="text-base font-bold text-purple-700">
+                            <p
+                              className="text-[13px] font-bold"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
                               {PRIORITY_LABELS[item.priority] || item.priority}
                             </p>
                           </div>
@@ -312,15 +443,27 @@ export default function DiagnosisHistoryPage() {
                     {item.conditions &&
                       item.conditions.length > 0 &&
                       item.conditions[0] !== "none" && (
-                        <div className="mb-4 p-3 bg-orange-50/50 rounded-xl border border-orange-100">
-                          <p className="text-xs font-semibold text-orange-600 mb-2">
+                        <div
+                          className="mb-4 p-3 rounded-xl"
+                          style={{
+                            backgroundColor: `${systemColors.orange}10`,
+                          }}
+                        >
+                          <p
+                            className="text-[11px] font-semibold mb-2"
+                            style={{ color: systemColors.orange }}
+                          >
                             考慮した健康状態
                           </p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5">
                             {item.conditions.map((condition) => (
                               <span
                                 key={condition}
-                                className="px-2.5 py-1 bg-white text-orange-700 rounded-lg text-xs font-medium border border-orange-200"
+                                className="px-2 py-1 rounded-lg text-[11px] font-medium"
+                                style={{
+                                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                  color: systemColors.orange,
+                                }}
                               >
                                 {HEALTH_CONDITION_LABELS[condition] ||
                                   condition}
@@ -333,10 +476,21 @@ export default function DiagnosisHistoryPage() {
                     {/* Top Recommendations */}
                     {item.topRecommendations &&
                       item.topRecommendations.length > 0 && (
-                        <div className="p-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-100">
+                        <div
+                          className="p-4 rounded-xl"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
+                        >
                           <div className="flex items-center gap-2 mb-3">
-                            <Trophy size={16} className="text-yellow-500" />
-                            <span className="text-sm font-bold text-gray-700">
+                            <Trophy
+                              size={14}
+                              style={{ color: systemColors.yellow }}
+                            />
+                            <span
+                              className="text-[12px] font-bold"
+                              style={{ color: appleWebColors.textSecondary }}
+                            >
                               おすすめTOP3
                             </span>
                           </div>
@@ -350,26 +504,44 @@ export default function DiagnosisHistoryPage() {
                                     : idx === 1
                                       ? Medal
                                       : Award;
-                                const rankColors =
+                                const rankBg =
                                   idx === 0
-                                    ? "from-yellow-400 to-amber-500 text-white"
+                                    ? `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`
                                     : idx === 1
-                                      ? "from-gray-300 to-gray-400 text-white"
-                                      : "from-orange-300 to-orange-400 text-white";
+                                      ? `linear-gradient(135deg, ${systemColors.gray[2]} 0%, ${systemColors.gray[3]} 100%)`
+                                      : `linear-gradient(135deg, ${systemColors.orange} 0%, ${systemColors.red} 100%)`;
                                 return (
                                   <div
                                     key={rec.productId}
-                                    className="flex items-center gap-3 p-2 bg-white rounded-lg border border-gray-100"
+                                    className="flex items-center gap-2.5 p-2 rounded-lg"
+                                    style={{
+                                      backgroundColor:
+                                        "rgba(255, 255, 255, 0.8)",
+                                    }}
                                   >
                                     <div
-                                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${rankColors} flex items-center justify-center shadow-sm`}
+                                      className="w-7 h-7 rounded-lg flex items-center justify-center"
+                                      style={{ background: rankBg }}
                                     >
-                                      <RankIcon size={16} />
+                                      <RankIcon
+                                        size={14}
+                                        className="text-white"
+                                      />
                                     </div>
-                                    <span className="text-sm font-medium text-gray-700 flex-1">
+                                    <span
+                                      className="text-[13px] font-medium flex-1"
+                                      style={{
+                                        color: appleWebColors.textPrimary,
+                                      }}
+                                    >
                                       {rec.productName}
                                     </span>
-                                    <span className="text-xs text-gray-400">
+                                    <span
+                                      className="text-[11px]"
+                                      style={{
+                                        color: appleWebColors.textTertiary,
+                                      }}
+                                    >
                                       #{idx + 1}
                                     </span>
                                   </div>
@@ -386,14 +558,17 @@ export default function DiagnosisHistoryPage() {
 
           {/* Back to Diagnosis */}
           {!isAuthLoading && isLoggedIn && !isLoading && (
-            <div className="mt-10 text-center">
+            <div className="mt-12 text-center">
               <Link
                 href="/diagnosis"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-2xl hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105"
+                className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl text-[15px] font-semibold text-white transition-all duration-300 hover:opacity-90 min-h-[52px]"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.purple} 50%, ${systemColors.pink} 100%)`,
+                }}
               >
-                <Sparkles size={24} />
+                <ClipboardCheck size={20} />
                 新しい診断を始める
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </Link>
             </div>
           )}

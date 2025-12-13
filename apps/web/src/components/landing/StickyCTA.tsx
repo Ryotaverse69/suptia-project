@@ -8,7 +8,17 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, ArrowRight, X } from "lucide-react";
+import { ArrowRight, X, Zap } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  appleEase,
+  subtleSpring,
+  liquidGlass,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // Apple式：モバイル検出
 const useIsMobile = () => {
@@ -67,97 +77,52 @@ export function StickyCTA({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-4 sm:pb-6 pointer-events-none will-change-transform"
+          className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-4 sm:pb-6 pointer-events-none"
+          style={{ fontFamily: fontStack }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          style={{ transform: "translateZ(0)" }}
+          transition={subtleSpring}
         >
           <div className="max-w-2xl mx-auto pointer-events-auto">
             <motion.div
-              className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/50 shadow-xl shadow-slate-900/5 will-change-transform"
+              className="relative overflow-hidden rounded-[24px] border"
+              style={{
+                ...liquidGlass.light,
+              }}
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.1, ease: appleEase }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              style={{ transform: "translateZ(0)" }}
             >
-              {/* Liquid Glass Background - Apple式モバイル最適化 */}
-              <div className="absolute inset-0 bg-white/30" />
-              {isMobile || prefersReducedMotion ? (
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-[#7a98ec]/10 to-primary/5" />
-              ) : (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-primary/5 via-[#7a98ec]/10 to-primary/5 bg-[length:200%_100%] will-change-transform"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{
-                    duration: 10,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                  style={{ transform: "translateZ(0)" }}
-                />
-              )}
-
-              {/* Gradient Border Effect - デスクトップのみホバー連動 */}
-              <div
-                className="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none opacity-50"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(122,152,236,0.3) 0%, transparent 50%, rgba(100,229,179,0.3) 100%)",
-                }}
-              />
-
-              {/* Hover Glow Effect - デスクトップのみ */}
-              {!isMobile && (
-                <motion.div
-                  className="absolute -inset-1 rounded-2xl sm:rounded-3xl pointer-events-none will-change-transform"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #7a98ec40 0%, transparent 50%, #64e5b340 100%)",
-                    filter: "blur(20px)",
-                    transform: "translateZ(0)",
-                  }}
-                  animate={{ opacity: isHovered ? 1 : 0 }}
-                  transition={{ duration: 0.4 }}
-                />
-              )}
-
               {/* Content */}
               <div className="relative p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-4">
                   {/* Left Content */}
                   <div className="flex items-center gap-3 sm:gap-4">
-                    {/* Apple式：モバイルでは連続アニメーション無効 */}
-                    {isMobile || prefersReducedMotion ? (
-                      <div className="hidden sm:flex w-12 h-12 rounded-xl bg-gradient-to-br from-[#7a98ec] to-primary items-center justify-center shadow-lg shadow-primary/20">
-                        <Sparkles className="w-6 h-6 text-white" />
-                      </div>
-                    ) : (
-                      <motion.div
-                        className="hidden sm:flex w-12 h-12 rounded-xl bg-gradient-to-br from-[#7a98ec] to-primary items-center justify-center shadow-lg shadow-primary/20 will-change-transform"
-                        animate={{
-                          rotate: [0, 10, -10, 0],
-                          scale: isHovered ? 1.1 : 1,
-                        }}
-                        transition={{
-                          rotate: { duration: 2, repeat: Infinity, delay: 1 },
-                          scale: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
-                        }}
-                        style={{ transform: "translateZ(0)" }}
-                      >
-                        <Sparkles className="w-6 h-6 text-white" />
-                      </motion.div>
-                    )}
+                    {/* Icon */}
+                    <motion.div
+                      className="hidden sm:flex w-12 h-12 rounded-2xl items-center justify-center"
+                      style={{
+                        background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                      }}
+                      animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
+                      transition={{ duration: 0.3, ease: appleEase }}
+                    >
+                      <Zap className="w-6 h-6 text-white" aria-hidden="true" />
+                    </motion.div>
                     <div>
-                      <p className="text-xs sm:text-base font-semibold text-slate-800 leading-tight">
+                      <p
+                        className={`${typography.headline} leading-tight`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         {text}
                       </p>
-                      <p className="text-[10px] sm:text-xs text-slate-500">
+                      <p
+                        className="text-[13px] mt-0.5"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         {subtext}
                       </p>
                     </div>
@@ -167,111 +132,58 @@ export function StickyCTA({
                   <div className="flex items-center gap-2">
                     <Link href={href}>
                       <motion.button
-                        className="group relative px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl overflow-hidden will-change-transform"
-                        whileHover={isMobile ? {} : { scale: 1.05 }}
-                        whileTap={isMobile ? {} : { scale: 0.95 }}
-                        style={{ transform: "translateZ(0)" }}
+                        className="relative px-5 sm:px-6 py-2.5 sm:py-3 rounded-full min-h-[44px] overflow-hidden"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                        }}
+                        whileHover={isMobile ? {} : { scale: 1.03 }}
+                        whileTap={isMobile ? {} : { scale: 0.97 }}
+                        transition={subtleSpring}
                       >
-                        {/* Button Background - Apple式モバイル最適化 */}
-                        {isMobile || prefersReducedMotion ? (
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#64e5b3] to-primary" />
-                        ) : (
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-[#64e5b3] via-primary to-[#64e5b3] bg-[length:200%_100%] will-change-transform"
-                            animate={{
-                              backgroundPosition: [
-                                "0% 50%",
-                                "100% 50%",
-                                "0% 50%",
-                              ],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "linear",
-                            }}
-                            style={{ transform: "translateZ(0)" }}
-                          />
-                        )}
-
-                        {/* Button Glow - デスクトップのみ */}
-                        {!isMobile && (
-                          <motion.div
-                            className="absolute inset-0 will-change-transform"
-                            style={{
-                              background:
-                                "radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)",
-                              transform: "translateZ(0)",
-                            }}
-                            initial={{ opacity: 0 }}
-                            whileHover={{ opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        )}
-
-                        <span className="relative z-10 flex items-center gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm text-white">
+                        <span className="relative z-10 flex items-center gap-2 font-semibold text-[15px] text-white">
                           診断する
-                          {/* Apple式：モバイルではアロー連続アニメーション無効 */}
-                          {isMobile || prefersReducedMotion ? (
-                            <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                          ) : (
-                            <motion.span
-                              animate={{ x: [0, 4, 0] }}
-                              transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                              }}
-                            >
-                              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                            </motion.span>
-                          )}
+                          <ArrowRight className="w-4 h-4" aria-hidden="true" />
                         </span>
                       </motion.button>
                     </Link>
 
-                    {/* Dismiss Button - Apple式モバイル最適化 */}
+                    {/* Dismiss Button */}
                     <motion.button
-                      className="p-1.5 sm:p-2 rounded-lg hover:bg-slate-100 transition-colors will-change-transform"
+                      className="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center"
+                      style={{ backgroundColor: "transparent" }}
                       onClick={handleDismiss}
-                      whileHover={isMobile ? {} : { scale: 1.1, rotate: 90 }}
-                      whileTap={isMobile ? {} : { scale: 0.9 }}
-                      style={{ transform: "translateZ(0)" }}
+                      whileHover={
+                        isMobile
+                          ? {}
+                          : {
+                              backgroundColor: appleWebColors.sectionBackground,
+                            }
+                      }
+                      whileTap={isMobile ? {} : { scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: appleEase }}
+                      aria-label="閉じる"
                     >
-                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+                      <X
+                        className="w-5 h-5"
+                        style={{ color: appleWebColors.textSecondary }}
+                        aria-hidden="true"
+                      />
                     </motion.button>
                   </div>
                 </div>
               </div>
 
-              {/* Shine Effect - モバイルでは無効 */}
-              {!isMobile && !prefersReducedMotion && (
-                <motion.div
-                  className="absolute inset-0 pointer-events-none will-change-transform"
-                  style={{
-                    background:
-                      "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.4) 50%, transparent 55%)",
-                    transform: "translateZ(0)",
-                  }}
-                  initial={{ x: "-100%" }}
-                  animate={{ x: ["100%", "-100%"] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatDelay: 2,
-                    ease: "easeInOut",
-                  }}
-                />
-              )}
-
-              {/* Bottom Accent Line - デスクトップのみ */}
+              {/* Bottom Accent Line */}
               {!isMobile && (
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#7a98ec] via-primary to-[#64e5b3]"
+                  className="absolute bottom-0 left-0 right-0 h-[3px]"
+                  style={{
+                    background: `linear-gradient(90deg, ${systemColors.blue}, ${systemColors.indigo}, ${systemColors.green})`,
+                    transformOrigin: "left",
+                  }}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: isHovered ? 1 : 0 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ transformOrigin: "left" }}
+                  transition={{ duration: 0.4, ease: appleEase }}
                 />
               )}
             </motion.div>
@@ -372,7 +284,7 @@ export function FloatingCTA({
               {/* Button - Apple式モバイル最適化 */}
               {isMobile || prefersReducedMotion ? (
                 <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#7a98ec] to-primary flex items-center justify-center shadow-2xl">
-                  <Sparkles className="w-7 h-7 text-white" />
+                  <Zap className="w-7 h-7 text-white" />
                 </div>
               ) : (
                 <motion.div
@@ -396,7 +308,7 @@ export function FloatingCTA({
                     }}
                     transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <Sparkles className="w-7 h-7 text-white" />
+                    <Zap className="w-7 h-7 text-white" />
                   </motion.div>
                 </motion.div>
               )}

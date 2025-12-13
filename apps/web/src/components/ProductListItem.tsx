@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, Package } from "lucide-react";
 import { formatCostJPY } from "@/lib/cost";
 import { calculateComprehensiveCost } from "@/lib/cost-calculator";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { BadgeType, getBadgeInfo, isPerfectSupplement } from "@/lib/badges";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 interface ProductListItemProps {
   product: {
@@ -84,44 +91,63 @@ export function ProductListItem({ product }: ProductListItemProps) {
 
   return (
     <Link href={`/products/${productSlug}`}>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-primary-300 transition-all duration-200 group">
-        <div className="flex h-[200px] sm:h-[220px]">
+      <div
+        className={`group cursor-pointer overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1`}
+        style={{
+          fontFamily: fontStack,
+        }}
+      >
+        <div className="flex h-[180px] sm:h-[200px]">
           {/* 左: 画像 */}
-          <div className="relative w-[200px] sm:w-[220px] flex-shrink-0">
+          <div className="relative w-[180px] sm:w-[200px] flex-shrink-0 overflow-hidden rounded-l-[16px]">
             {displayImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={displayImageUrl}
                 alt={name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                <span className="text-2xl opacity-40">📦</span>
+              <div
+                className="w-full h-full flex items-center justify-center"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <Package
+                  className="w-10 h-10"
+                  style={{ color: appleWebColors.borderSubtle }}
+                  aria-hidden="true"
+                />
               </div>
             )}
 
             {/* バッジ（左上） */}
             {(isPerfect || safeBadges.length > 0) && (
-              <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-0.5 max-w-[90px]">
+              <div className="absolute top-2 left-2 flex flex-wrap gap-1 max-w-[100px]">
                 {isPerfect ? (
                   <div
-                    className="bg-yellow-400 p-0.5 rounded shadow"
+                    className="p-1.5 rounded-lg shadow-lg"
+                    style={{
+                      background: `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`,
+                    }}
                     title="5冠達成"
                   >
-                    <span className="text-[11px]">🏆</span>
+                    <span className="text-xs">🏆</span>
                   </div>
                 ) : (
-                  safeBadges.map((badgeType) => {
+                  safeBadges.slice(0, 3).map((badgeType) => {
                     const badgeInfo = getBadgeInfo(badgeType);
                     return (
                       <div
                         key={badgeType}
-                        className="bg-white/95 p-0.5 rounded shadow border border-gray-200"
+                        className="p-1 rounded-lg shadow-md"
+                        style={{
+                          backgroundColor: "rgba(255, 255, 255, 0.9)",
+                          backdropFilter: "blur(10px)",
+                        }}
                         title={badgeInfo.label}
                       >
-                        <span className="text-[11px]">{badgeInfo.icon}</span>
+                        <span className="text-xs">{badgeInfo.icon}</span>
                       </div>
                     );
                   })
@@ -136,52 +162,100 @@ export function ProductListItem({ product }: ProductListItemProps) {
                 e.stopPropagation();
                 toggleFavorite(_id);
               }}
-              className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all ${
-                favorite
-                  ? "bg-pink-500 text-white"
-                  : "bg-white/90 text-gray-500 hover:text-pink-500"
-              } shadow-md`}
+              className="absolute bottom-2 right-2 p-2 rounded-full min-w-[36px] min-h-[36px] flex items-center justify-center transition-all duration-300"
+              style={{
+                backgroundColor: favorite
+                  ? systemColors.pink
+                  : "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(10px)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
               aria-label={favorite ? "お気に入りから削除" : "お気に入りに追加"}
             >
-              <Heart size={16} className={favorite ? "fill-white" : ""} />
+              <Heart
+                size={16}
+                className={`transition-all duration-300 ${
+                  favorite ? "fill-white text-white" : ""
+                }`}
+                style={{
+                  color: favorite ? "white" : appleWebColors.textSecondary,
+                }}
+              />
             </button>
           </div>
 
           {/* 中央: 商品情報 */}
           <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
             {/* 商品名 */}
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 line-clamp-3 group-hover:text-primary transition-colors leading-snug">
+            <h3
+              className={`${typography.headline} line-clamp-3 group-hover:opacity-80 transition-opacity leading-tight`}
+              style={{ color: appleWebColors.textPrimary }}
+            >
               {name}
             </h3>
 
-            {/* 成分タグ */}
-            {mainIngredient && (
-              <div className="mt-2">
-                <span className="inline-block px-2.5 py-1 bg-blue-50 text-blue-700 text-sm rounded-md">
-                  {mainIngredient}
-                </span>
-              </div>
-            )}
+            <div className="mt-auto">
+              {/* 成分タグ */}
+              {mainIngredient && (
+                <div className="mb-2">
+                  <span
+                    className="inline-block px-2.5 py-1 rounded-full text-[12px] font-semibold"
+                    style={{
+                      backgroundColor: `${systemColors.blue}15`,
+                      color: systemColors.blue,
+                    }}
+                  >
+                    {mainIngredient}
+                  </span>
+                </div>
+              )}
 
-            {/* 内容量 */}
-            {servingsPerContainer && (
-              <p className="text-sm text-gray-500 mt-2">
-                {servingsPerContainer}回分
-              </p>
-            )}
+              {/* 内容量 */}
+              {servingsPerContainer && (
+                <p
+                  className="text-[13px]"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
+                  {servingsPerContainer}回分
+                </p>
+              )}
+            </div>
           </div>
 
           {/* 右: 価格 */}
-          <div className="w-[120px] sm:w-[145px] flex-shrink-0 p-4 sm:p-5 flex flex-col justify-center items-end border-l border-gray-100 bg-gray-50">
+          <div
+            className="w-[130px] sm:w-[150px] flex-shrink-0 p-4 sm:p-5 flex flex-col justify-center items-end border-l"
+            style={{
+              borderColor: appleWebColors.borderSubtle,
+              backgroundColor: appleWebColors.sectionBackground,
+            }}
+          >
             {safePriceJPY > 0 && (
               <div className="text-right">
-                <div className="text-lg sm:text-xl font-bold text-gray-900">
+                <p
+                  className="text-[11px] font-medium uppercase tracking-wider mb-0.5"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
+                  価格
+                </p>
+                <div
+                  className="text-[17px] font-semibold"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   {formatCostJPY(safePriceJPY)}
                 </div>
                 {effectiveCostPerDay && effectiveCostPerDay > 0 && (
-                  <div className="mt-1.5">
-                    <span className="text-xs text-gray-500">1日</span>
-                    <span className="text-base sm:text-lg font-bold text-green-600 ml-1">
+                  <div className="mt-2">
+                    <p
+                      className="text-[11px] font-medium uppercase tracking-wider mb-0.5"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      1日あたり
+                    </p>
+                    <span
+                      className="text-[20px] font-bold"
+                      style={{ color: systemColors.green }}
+                    >
                       {formatCostJPY(effectiveCostPerDay)}
                     </span>
                   </div>

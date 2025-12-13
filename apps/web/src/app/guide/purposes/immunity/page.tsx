@@ -12,6 +12,13 @@ import {
   ChevronRight,
   Heart,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  tierColors,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title:
@@ -32,8 +39,7 @@ export const metadata: Metadata = {
 const ingredients = [
   {
     name: "ビタミンD",
-    evidenceLevel: "S",
-    evidenceColor: "from-purple-500 to-pink-500",
+    evidenceLevel: "S" as const,
     description:
       "免疫調節に最も重要な栄養素。白血球の機能を強化し、呼吸器感染症のリスクを25%減少させることが大規模研究で確認されています。",
     dosage: "1日 1000〜4000IU（血中濃度30ng/mL以上を維持）",
@@ -41,8 +47,7 @@ const ingredients = [
   },
   {
     name: "ビタミンC",
-    evidenceLevel: "S",
-    evidenceColor: "from-purple-500 to-pink-500",
+    evidenceLevel: "S" as const,
     description:
       "強力な抗酸化作用と免疫細胞の機能強化。風邪の予防効果は限定的ですが、風邪の期間を8%短縮し、症状を軽減する効果が確認されています。",
     dosage: "1日 500〜2000mg（風邪予防は1000mg以上推奨）",
@@ -50,8 +55,7 @@ const ingredients = [
   },
   {
     name: "亜鉛",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "免疫細胞の発達と機能に不可欠。風邪の初期症状（24時間以内）に摂取すると、症状の期間を約33%短縮する効果があります。",
     dosage: "予防：1日 15〜30mg / 風邪時：75mg以上（トローチ推奨）",
@@ -59,8 +63,7 @@ const ingredients = [
   },
   {
     name: "エルダーベリー",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "強力な抗ウイルス作用を持つベリー。風邪やインフルエンザの症状を2〜4日短縮し、重症度を軽減することが複数の研究で確認されています。",
     dosage: "予防：1日 300〜500mg / 風邪時：1日 4回 175mg",
@@ -68,8 +71,7 @@ const ingredients = [
   },
   {
     name: "プロバイオティクス",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "腸内の善玉菌を増やし、免疫システムの70%が集中する腸の健康を改善。呼吸器感染症のリスクを約40%減少させます。",
     dosage: "1日 10〜100億CFU（Lactobacillus + Bifidobacterium推奨）",
@@ -77,8 +79,7 @@ const ingredients = [
   },
   {
     name: "エキナセア",
-    evidenceLevel: "B",
-    evidenceColor: "from-green-500 to-emerald-500",
+    evidenceLevel: "B" as const,
     description:
       "伝統的な免疫ハーブ。風邪の発症リスクを約15%減少させ、症状を1〜2日短縮する可能性がありますが、個人差が大きい。",
     dosage: "風邪初期に300〜500mg、1日3回（最大10日間）",
@@ -231,7 +232,8 @@ export default function ImmunityGuidePage() {
             {ingredients.map((ingredient) => (
               <div
                 key={ingredient.slug}
-                className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:border-emerald-200 transition-all duration-300"
+                className={`group rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -241,7 +243,11 @@ export default function ImmunityGuidePage() {
                     </h3>
                   </div>
                   <span
-                    className={`px-3 py-1 bg-gradient-to-r ${ingredient.evidenceColor} text-white text-sm font-bold rounded-full`}
+                    className="px-3 py-1 text-sm font-bold rounded-full"
+                    style={{
+                      backgroundColor: tierColors[ingredient.evidenceLevel].bg,
+                      color: tierColors[ingredient.evidenceLevel].text,
+                    }}
                   >
                     {ingredient.evidenceLevel}ランク
                   </span>
@@ -296,7 +302,8 @@ export default function ImmunityGuidePage() {
               {combinations.map((combo, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                  className={`rounded-xl p-5 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                  style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="text-2xl mb-3">{combo.icon}</div>
                   <h4 className="font-bold text-gray-900 mb-2">

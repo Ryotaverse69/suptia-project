@@ -6,7 +6,7 @@ import Script from "next/script";
 import {
   ArrowRight,
   ExternalLink,
-  Sparkles,
+  Beaker,
   Pill,
   AlertTriangle,
   Zap,
@@ -32,6 +32,13 @@ import {
   generateBreadcrumbStructuredData,
   generateIngredientStructuredData,
 } from "@/lib/structured-data";
+import {
+  systemColors,
+  appleWebColors,
+  tierColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 interface IngredientPageProps {
   params: {
@@ -253,7 +260,13 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
         />
       )}
 
-      <div className="min-h-screen bg-gray-50">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
           {/* ヘッダー */}
           <IngredientHeader
@@ -284,7 +297,7 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                 <IngredientSection
                   id="benefits"
                   title="期待される効果"
-                  icon={<Sparkles size={20} />}
+                  icon={<Beaker size={20} />}
                   variant="success"
                 >
                   <BenefitList benefits={ingredient.benefits} />
@@ -367,17 +380,31 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                             href={ref.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group flex items-start gap-3 p-3 sm:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                            className={`group flex items-start gap-3 p-4 rounded-[16px] border transition-all hover:bg-white hover:-translate-y-0.5 ${liquidGlassClasses.light}`}
+                            style={{
+                              borderColor: appleWebColors.borderSubtle,
+                            }}
                           >
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-medium">
+                            <span
+                              className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium"
+                              style={{
+                                backgroundColor:
+                                  appleWebColors.sectionBackground,
+                                color: appleWebColors.textSecondary,
+                              }}
+                            >
                               {index + 1}
                             </span>
-                            <span className="text-primary group-hover:underline text-sm sm:text-base flex-1">
+                            <span
+                              className="text-[15px] flex-1"
+                              style={{ color: systemColors.blue }}
+                            >
                               {ref.title}
                             </span>
                             <ExternalLink
                               size={16}
-                              className="flex-shrink-0 text-gray-400 group-hover:text-primary transition-colors mt-0.5"
+                              className="flex-shrink-0 mt-0.5 transition-opacity group-hover:opacity-100 opacity-60"
+                              style={{ color: systemColors.blue }}
                             />
                           </a>
                         </li>
@@ -400,24 +427,41 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                         <Link
                           key={related._id}
                           href={`/ingredients/${related.slug.current}`}
-                          className="group flex items-center gap-4 p-4 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-primary rounded-xl transition-all hover:shadow-md"
+                          className={`group flex items-center gap-4 p-4 rounded-[16px] border transition-all hover:bg-white hover:border-[#007AFF] hover:-translate-y-0.5 ${liquidGlassClasses.light}`}
+                          style={{
+                            borderColor: appleWebColors.borderSubtle,
+                          }}
                         >
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm sm:text-base truncate">
+                            <h3
+                              className="font-semibold text-[15px] sm:text-[17px] truncate transition-colors"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
                               {related.name}
                             </h3>
-                            <p className="text-xs text-gray-500 truncate">
+                            <p
+                              className="text-[13px] truncate"
+                              style={{ color: appleWebColors.textSecondary }}
+                            >
                               {related.nameEn}
                             </p>
                             {related.category && (
-                              <span className="inline-block mt-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">
+                              <span
+                                className="inline-block mt-2 px-2 py-0.5 rounded-full text-[12px]"
+                                style={{
+                                  backgroundColor:
+                                    appleWebColors.sectionBackground,
+                                  color: appleWebColors.textSecondary,
+                                }}
+                              >
                                 {related.category}
                               </span>
                             )}
                           </div>
                           <ArrowRight
                             size={18}
-                            className="flex-shrink-0 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all"
+                            className="flex-shrink-0 transition-all group-hover:translate-x-1"
+                            style={{ color: systemColors.blue }}
                           />
                         </Link>
                       ))}
@@ -437,10 +481,19 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                       <Link
                         key={product._id}
                         href={`/products/${product.slug.current}`}
-                        className="group flex gap-4 p-3 sm:p-4 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-primary rounded-xl transition-all hover:shadow-md"
+                        className={`group flex gap-4 p-4 rounded-[16px] border transition-all hover:bg-white hover:border-[#007AFF] hover:-translate-y-0.5 ${liquidGlassClasses.light}`}
+                        style={{
+                          borderColor: appleWebColors.borderSubtle,
+                        }}
                       >
                         {product.imageUrl && (
-                          <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-lg overflow-hidden border border-gray-200">
+                          <div
+                            className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-[12px] overflow-hidden border"
+                            style={{
+                              backgroundColor: "white",
+                              borderColor: appleWebColors.borderSubtle,
+                            }}
+                          >
                             <Image
                               src={product.imageUrl}
                               alt={product.name}
@@ -451,22 +504,34 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm sm:text-base line-clamp-2 mb-1">
+                          <h3
+                            className="font-semibold text-[15px] sm:text-[17px] line-clamp-2 mb-1 transition-colors"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
                             {product.name}
                           </h3>
                           {product.brand && (
-                            <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                            <p
+                              className="text-[13px] sm:text-[15px] mb-1"
+                              style={{ color: appleWebColors.textSecondary }}
+                            >
                               {product.brand.name}
                             </p>
                           )}
                           {product.ingredients?.[0]?.amountMgPerServing && (
-                            <p className="text-xs text-primary font-medium mb-2">
+                            <p
+                              className="text-[13px] font-medium mb-2"
+                              style={{ color: systemColors.blue }}
+                            >
                               {ingredient.name}:{" "}
                               {product.ingredients[0].amountMgPerServing}mg
                             </p>
                           )}
                           {product.priceJpy && (
-                            <p className="text-base sm:text-lg font-bold text-gray-900">
+                            <p
+                              className="text-[17px] sm:text-[20px] font-bold"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
                               ¥{product.priceJpy.toLocaleString()}
                             </p>
                           )}
@@ -478,7 +543,10 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
                   <div className="mt-6 text-center">
                     <Link
                       href={`/products?ingredient=${ingredient.name}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-[12px] font-semibold text-[17px] text-white transition-all hover:bg-[#5856D6] hover:-translate-y-0.5"
+                      style={{
+                        backgroundColor: systemColors.blue,
+                      }}
                     >
                       {ingredient.name}を含む商品をもっと見る
                       <ArrowRight size={18} />

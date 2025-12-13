@@ -1,8 +1,36 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
-import { motion, useScroll, useSpring, useInView } from "framer-motion";
-import { Search, BarChart3, CheckCircle2, Sparkles } from "lucide-react";
+import { useRef, useCallback, useState, useEffect } from "react";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
+import { Search, BarChart3, CheckCircle2 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  appleEase,
+  subtleSpring,
+  liquidGlassClasses,
+} from "@/lib/design-system";
+
+// Apple式：モバイル検出
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
 
 interface Step {
   number: string;
@@ -20,8 +48,8 @@ const steps: Step[] = [
     description:
       "Tierランク（S+〜D）で瞬時にサプリの実力を把握。科学的根拠に基づいた評価で、本当に価値のある商品を見つけられます。",
     icon: Search,
-    color: "#3b66e0",
-    gradient: "from-[#3b66e0] to-[#7a98ec]",
+    color: systemColors.blue,
+    gradient: `from-[${systemColors.blue}] to-[${systemColors.teal}]`,
   },
   {
     number: "02",
@@ -29,8 +57,8 @@ const steps: Step[] = [
     description:
       "成分・コスパ・安全性を5軸チャートで徹底比較。複数のECサイトから最安値を自動取得し、賢い選択をサポートします。",
     icon: BarChart3,
-    color: "#5a7fe6",
-    gradient: "from-[#5a7fe6] to-[#3b66e0]",
+    color: systemColors.indigo,
+    gradient: `from-[${systemColors.indigo}] to-[${systemColors.blue}]`,
   },
   {
     number: "03",
@@ -38,8 +66,8 @@ const steps: Step[] = [
     description:
       "最適なサプリを見つけて最安値で購入。あなたの健康目標に合った、理由を理解した選択ができます。",
     icon: CheckCircle2,
-    color: "#64e5b3",
-    gradient: "from-[#64e5b3] to-[#3b66e0]",
+    color: systemColors.green,
+    gradient: `from-[${systemColors.green}] to-[${systemColors.teal}]`,
   },
 ];
 
@@ -257,6 +285,8 @@ function CompactStepCard({
   isInView: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   const Icon = step.icon;
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
@@ -264,151 +294,105 @@ function CompactStepCard({
 
   return (
     <motion.div
-      className="relative group will-change-transform"
-      initial={{ opacity: 0, y: 40 }}
+      className="relative group"
+      initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
         duration: 0.6,
-        delay: 0.2 + index * 0.15,
-        ease: [0.22, 1, 0.36, 1],
+        delay: 0.2 + index * 0.12,
+        ease: appleEase,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ transform: "translateZ(0)" }}
     >
-      {/* Connector Line - 強化版 */}
+      {/* Connector Line */}
       {index < steps.length - 1 && (
         <motion.div
           className="hidden md:block absolute top-16 left-[60%] w-[80%] h-px"
           style={{
-            background: `linear-gradient(90deg, ${step.color}30, transparent)`,
+            background: `linear-gradient(90deg, ${step.color}25, transparent)`,
           }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 + index * 0.15 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.4 + index * 0.12,
+            ease: appleEase,
+          }}
         />
       )}
 
-      {/* Card */}
+      {/* Glass Card */}
       <motion.div
-        className="relative p-8 rounded-3xl bg-white border border-slate-200 shadow-lg overflow-hidden will-change-transform"
-        animate={{
-          y: isHovered ? -10 : 0,
-          boxShadow: isHovered
-            ? `0 25px 50px -12px ${step.color}25`
-            : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-        }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className={`relative p-8 overflow-hidden ${liquidGlassClasses.light}`}
         style={{
-          transform: "translateZ(0)",
-          borderColor: isHovered ? `${step.color}40` : undefined,
+          borderColor: isHovered
+            ? `${step.color}30`
+            : "rgba(255, 255, 255, 0.8)",
+          boxShadow: isHovered
+            ? `0 12px 40px rgba(0, 0, 0, 0.12)`
+            : "0 4px 24px rgba(0, 0, 0, 0.06)",
         }}
+        animate={isMobile ? {} : { y: isHovered ? -6 : 0 }}
+        transition={subtleSpring}
       >
-        {/* Hover Glow - 強化版 */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.4 }}
+        {/* Number Badge */}
+        <div
+          className="absolute top-4 right-4 text-6xl font-bold pointer-events-none"
           style={{
-            background: `
-              radial-gradient(circle at 50% 0%, ${step.color}20 0%, transparent 50%),
-              radial-gradient(circle at 0% 100%, ${step.color}10 0%, transparent 40%)
-            `,
-          }}
-        />
-
-        {/* Floating Particles in Card */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {CARD_PARTICLES.map((particle, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full will-change-transform"
-              style={{
-                backgroundColor: `${step.color}20`,
-                left: `${particle.x}%`,
-                top: `${particle.y}%`,
-                width: particle.size,
-                height: particle.size,
-                transform: "translateZ(0)",
-              }}
-              animate={{
-                y: [0, -15, 0],
-                opacity: [0, 0.5, 0],
-              }}
-              transition={{
-                duration: particle.duration,
-                repeat: Infinity,
-                delay: particle.delay,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Number Badge - 強化版 */}
-        <motion.div
-          className="absolute top-4 right-4 text-7xl font-black pointer-events-none"
-          style={{
-            color: isHovered ? `${step.color}15` : "#f1f5f9",
+            color: isHovered
+              ? `${step.color}15`
+              : appleWebColors.sectionBackground,
             transition: "color 0.3s ease",
           }}
         >
           {step.number}
-        </motion.div>
+        </div>
 
-        {/* Icon - 強化版 */}
+        {/* Icon */}
         <motion.div
-          className="relative w-16 h-16 rounded-2xl flex items-center justify-center mb-6 will-change-transform"
+          className="relative w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
           style={{
-            backgroundColor: `${step.color}15`,
-            transform: "translateZ(0)",
+            background: `linear-gradient(135deg, ${step.color} 0%, ${step.color}cc 100%)`,
           }}
-          animate={{
-            scale: isHovered ? 1.1 : 1,
-            rotate: isHovered ? 5 : 0,
-          }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
+          transition={{ duration: 0.3, ease: appleEase }}
         >
-          {/* Icon Glow */}
-          <motion.div
-            className="absolute inset-0 rounded-2xl"
-            style={{
-              background: `radial-gradient(circle, ${step.color}30 0%, transparent 70%)`,
-              filter: "blur(8px)",
-            }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
           <Icon
-            className="relative z-10 w-8 h-8"
-            style={{ color: step.color }}
+            className="w-7 h-7 text-white"
             strokeWidth={1.5}
+            aria-hidden="true"
           />
         </motion.div>
 
         {/* Content */}
-        <motion.h3
-          className="text-xl font-semibold text-slate-800 mb-3"
-          animate={{
-            color: isHovered ? step.color : "#1e293b",
+        <h3
+          className={typography.headline}
+          style={{
+            color: isHovered ? step.color : appleWebColors.textPrimary,
+            transition: "color 0.3s ease",
+            marginBottom: "12px",
           }}
-          transition={{ duration: 0.3 }}
         >
           {step.title}
-        </motion.h3>
-        <p className="text-sm text-slate-500 leading-relaxed relative z-10">
+        </h3>
+        <p
+          className={typography.subhead}
+          style={{ color: appleWebColors.textSecondary }}
+        >
           {step.description}
         </p>
 
         {/* Bottom Accent Line */}
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 h-1"
-          style={{ backgroundColor: step.color }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        />
+        {!isMobile && (
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-[3px]"
+            style={{ backgroundColor: step.color }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: appleEase }}
+          />
+        )}
       </motion.div>
     </motion.div>
   );
@@ -417,60 +401,49 @@ function CompactStepCard({
 export function CompactSteps() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section
       ref={ref}
-      className="relative py-24 bg-white"
-      style={{ contain: "layout paint" }}
+      className="relative py-24 md:py-32"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+        contain: "layout paint",
+      }}
     >
-      {/* Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #3b66e0 1px, transparent 0)`,
-          backgroundSize: "40px 40px",
-        }}
-      />
-
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Header - 強化版 */}
+        {/* Section Header */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: appleEase }}
         >
           <motion.span
-            className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.3em] uppercase text-slate-400 mb-4"
+            className="inline-block text-[13px] font-semibold tracking-[0.2em] uppercase mb-4"
+            style={{ color: appleWebColors.textTertiary }}
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
           >
-            <motion.div
-              animate={{ rotate: [0, 15, -15, 0] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-            >
-              <Sparkles className="w-4 h-4" />
-            </motion.div>
-            How It Works
+            使い方
           </motion.span>
           <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-800"
+            className="text-[32px] md:text-[48px] font-bold leading-[1.05] tracking-[-0.015em]"
+            style={{ color: appleWebColors.textPrimary }}
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
           >
-            3ステップで
-            <span className="bg-gradient-to-r from-[#7a98ec] to-[#3b66e0] bg-clip-text text-transparent ml-2">
-              最適なサプリ
-            </span>
-            を発見
+            3ステップで完了
           </motion.h2>
         </motion.div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {steps.map((step, index) => (
             <CompactStepCard
               key={index}

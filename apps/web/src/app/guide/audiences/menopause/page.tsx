@@ -6,7 +6,7 @@ import {
   AlertTriangle,
   Bone,
   Heart,
-  Sparkles,
+  Shield,
   Clock,
   Activity,
   Pill,
@@ -14,6 +14,12 @@ import {
   Stethoscope,
   ArrowRight,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "更年期の方向けサプリメントガイド | Suptia",
@@ -116,7 +122,7 @@ const cardiovascularIngredients = [
 
 const healthCategories = [
   {
-    icon: Sparkles,
+    icon: Flower2,
     name: "ホルモンバランス",
     description: "ほてり・発汗の緩和",
     color: "from-rose-400 to-pink-500",
@@ -187,26 +193,50 @@ const getEvidenceBadgeStyle = (level: string) => {
 
 export default function MenopausePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50 via-white to-pink-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Sticky Breadcrumb */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-200">
+      <div
+        className={`sticky top-0 z-40 ${liquidGlassClasses.light}`}
+        style={{
+          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+        }}
+      >
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-[15px]">
             <Link
               href="/"
-              className="text-neutral-500 hover:text-rose-600 transition-colors"
+              className="transition-colors"
+              style={{ color: appleWebColors.textSecondary }}
             >
               ホーム
             </Link>
-            <ChevronRight className="w-4 h-4 text-neutral-400" />
+            <ChevronRight
+              className="w-4 h-4"
+              style={{ color: appleWebColors.textTertiary }}
+            />
             <Link
               href="/guide/audiences"
-              className="text-neutral-500 hover:text-rose-600 transition-colors"
+              className="transition-colors"
+              style={{ color: appleWebColors.textSecondary }}
             >
               対象者別ガイド
             </Link>
-            <ChevronRight className="w-4 h-4 text-neutral-400" />
-            <span className="text-neutral-900 font-medium">更年期の方向け</span>
+            <ChevronRight
+              className="w-4 h-4"
+              style={{ color: appleWebColors.textTertiary }}
+            />
+            <span
+              className="font-medium"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              更年期の方向け
+            </span>
           </div>
         </div>
       </div>
@@ -222,7 +252,6 @@ export default function MenopausePage() {
           {/* Floating Icons */}
           <Flower2 className="absolute top-20 right-[15%] w-8 h-8 text-white/20 animate-bounce" />
           <Heart className="absolute bottom-32 left-[20%] w-6 h-6 text-white/15 animate-bounce delay-300" />
-          <Sparkles className="absolute top-40 left-[10%] w-7 h-7 text-white/20 animate-bounce delay-500" />
           <Activity className="absolute bottom-20 right-[25%] w-6 h-6 text-white/15 animate-bounce delay-700" />
         </div>
 
@@ -254,7 +283,7 @@ export default function MenopausePage() {
               {healthCategories.map((category, index) => (
                 <div
                   key={index}
-                  className="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                  className={`rounded-xl p-4 border border-white/20 ${liquidGlassClasses.light}`}
                 >
                   <div
                     className={`w-10 h-10 mx-auto mb-2 rounded-lg bg-gradient-to-br ${category.color} flex items-center justify-center`}
@@ -311,7 +340,7 @@ export default function MenopausePage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 text-white mb-4 shadow-lg">
-                <Sparkles className="w-8 h-8" />
+                <Flower2 className="w-8 h-8" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                 ホルモンバランスサポート成分
@@ -326,7 +355,7 @@ export default function MenopausePage() {
                 <Link
                   key={ingredient.slug}
                   href={`/ingredients/${ingredient.slug}`}
-                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-rose-200 transition-all duration-300 overflow-hidden"
+                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-rose-200 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 >
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -399,7 +428,7 @@ export default function MenopausePage() {
                 <Link
                   key={ingredient.slug}
                   href={`/ingredients/${ingredient.slug}`}
-                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-amber-200 transition-all duration-300 overflow-hidden"
+                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-amber-200 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 >
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -472,7 +501,7 @@ export default function MenopausePage() {
                 <Link
                   key={ingredient.slug}
                   href={`/ingredients/${ingredient.slug}`}
-                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-red-200 transition-all duration-300 overflow-hidden"
+                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-red-200 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 >
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -544,7 +573,7 @@ export default function MenopausePage() {
               {tips.map((tip, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl p-6 shadow-md border border-neutral-100 hover:shadow-lg transition-shadow"
+                  className="bg-white rounded-2xl p-6 shadow-md border border-neutral-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 >
                   <div
                     className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${tip.color} text-white mb-4 shadow-md`}

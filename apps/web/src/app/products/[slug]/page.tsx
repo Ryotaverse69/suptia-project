@@ -65,6 +65,11 @@ import {
   AdditivesSafetyBadge,
 } from "@/components/AdditivesSafetyCard";
 import { PriceAlertButton } from "@/components/PriceAlertButton";
+import {
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // --- Interfaces (Keep existing interfaces) ---
 interface PriceData {
@@ -721,33 +726,64 @@ export default async function ProductDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* Futuristic Dashboard Container */}
-      <div className="min-h-screen bg-slate-50 pb-20">
+      {/* Apple HIG Container */}
+      <div
+        className="min-h-screen pb-20"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         {/* Top Navigation / Breadcrumbs */}
-        <div className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-md bg-white/80">
+        <div
+          className={`border-b sticky top-0 z-50 ${liquidGlassClasses.light}`}
+          style={{
+            borderColor: appleWebColors.borderSubtle,
+          }}
+        >
           <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-            <nav className="text-xs font-medium text-slate-500">
+            <nav
+              className="text-[12px] font-medium"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               <ol className="flex items-center space-x-2">
                 <li>
-                  <a href="/" className="hover:text-blue-600 transition-colors">
+                  <a
+                    href="/"
+                    className="hover:opacity-70 transition-opacity"
+                    style={{ color: appleWebColors.blue }}
+                  >
                     HOME
                   </a>
                 </li>
                 <li>/</li>
-                <li className="text-slate-900 truncate max-w-[200px]">
+                <li
+                  className="truncate max-w-[200px]"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   {product.name}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mt-1">
                     {product.ingredients &&
                       product.ingredients.slice(0, 3).map((ing, i) => (
                         <span
                           key={i}
-                          className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md"
+                          className="px-2 py-1 text-[11px] rounded-lg"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                            color: appleWebColors.textSecondary,
+                          }}
                         >
                           {ing.ingredient?.name}
                         </span>
                       ))}
                     {product.ingredients && product.ingredients.length > 3 && (
-                      <span className="px-2 py-1 bg-slate-100 text-slate-400 text-xs rounded-md">
+                      <span
+                        className="px-2 py-1 text-[11px] rounded-lg"
+                        style={{
+                          backgroundColor: appleWebColors.sectionBackground,
+                          color: appleWebColors.textTertiary,
+                        }}
+                      >
                         +{product.ingredients.length - 3}
                       </span>
                     )}
@@ -805,7 +841,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {/* Right Column: Data Modules (8 cols) */}
             <div className="lg:col-span-8 space-y-8">
               {/* Price Comparison Module (Direct Display) */}
-              <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 relative overflow-hidden">
+              <div
+                className={`p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden ${liquidGlassClasses.light}`}
+              >
                 <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500" />
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
@@ -842,7 +880,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Nutrition Performance Module - 含有量比較 */}
               <SeamlessModal layoutId="composition-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div
+                    className={`p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group relative overflow-hidden ${liquidGlassClasses.light}`}
+                  >
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-400 to-pink-500" />
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
@@ -955,7 +995,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Cost Efficiency Module */}
               <SeamlessModal layoutId="cost-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div
+                    className={`p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group relative overflow-hidden ${liquidGlassClasses.light}`}
+                  >
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-400 to-orange-500" />
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base sm:text-lg">
@@ -1060,7 +1102,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Evidence Level Module (New Minimal Card) */}
               <SeamlessModal layoutId="evidence-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div
+                    className={`p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group relative overflow-hidden ${liquidGlassClasses.light}`}
+                  >
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-cyan-500" />
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">
@@ -1119,7 +1163,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Safety Level Module (New Minimal Card) */}
               <SeamlessModal layoutId="safety-modal">
                 <SeamlessModalTrigger className="w-full">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 cursor-pointer group relative overflow-hidden">
+                  <div
+                    className={`p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group relative overflow-hidden ${liquidGlassClasses.light}`}
+                  >
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-green-400 to-emerald-500" />
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2 text-lg">

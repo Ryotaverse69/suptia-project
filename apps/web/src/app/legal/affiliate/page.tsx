@@ -17,6 +17,12 @@ import {
   CheckCircle2,
   Info,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "アフィリエイト開示 - サプティア",
@@ -33,44 +39,80 @@ export default function AffiliatePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-300/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-
-        <div className="container mx-auto px-4 max-w-4xl relative">
+      <section className="py-16 md:py-20">
+        <div className="container mx-auto px-4 max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-violet-200 text-sm mb-6">
-            <Link href="/" className="hover:text-white transition-colors">
+          <nav
+            className="flex items-center gap-2 text-[15px] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <Link
+              href="/"
+              className="transition-colors"
+              style={{
+                color: systemColors.blue,
+              }}
+            >
               ホーム
             </Link>
             <ChevronRight size={16} />
             <Link
               href="/legal/terms"
-              className="hover:text-white transition-colors"
+              className="transition-colors"
+              style={{
+                color: systemColors.blue,
+              }}
             >
               法的情報
             </Link>
             <ChevronRight size={16} />
-            <span className="text-white">アフィリエイト開示</span>
+            <span style={{ color: appleWebColors.textPrimary }}>
+              アフィリエイト開示
+            </span>
           </nav>
 
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <Handshake className="w-8 h-8 text-white" />
+            <div
+              className="p-3 rounded-[16px]"
+              style={{
+                backgroundColor: "rgba(0, 122, 255, 0.1)",
+              }}
+            >
+              <Handshake
+                className="w-8 h-8"
+                style={{ color: systemColors.blue }}
+              />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
+            <h1
+              className="text-[28px] md:text-[34px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               アフィリエイト開示
             </h1>
           </div>
 
-          <p className="text-violet-100 text-lg max-w-2xl">
+          <p
+            className="text-[17px] max-w-2xl mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             サプティアの収益モデルと透明性へのコミットメント
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
+            style={{
+              backgroundColor: appleWebColors.sectionBackground,
+              color: appleWebColors.textSecondary,
+            }}
+          >
             <RefreshCw size={14} />
             最終更新日: 2025年10月30日
           </div>
@@ -78,17 +120,29 @@ export default function AffiliatePage() {
       </section>
 
       {/* Quick Navigation */}
-      <section className="bg-white border-b sticky top-0 z-40 shadow-sm">
+      <section
+        className={`sticky top-0 z-40 ${liquidGlassClasses.light}`}
+        style={{
+          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+        }}
+      >
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-2 py-3 overflow-x-auto">
-            <span className="text-sm text-slate-500 whitespace-nowrap">
+            <span
+              className="text-[13px] whitespace-nowrap"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               クイックアクセス:
             </span>
             {sections.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 hover:bg-violet-100 hover:text-violet-700 rounded-full transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-full transition-colors whitespace-nowrap"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  color: appleWebColors.textPrimary,
+                }}
               >
                 <item.icon size={14} />
                 {item.label}
@@ -102,16 +156,33 @@ export default function AffiliatePage() {
       <main className="container mx-auto px-4 max-w-4xl py-12">
         {/* Transparency Principle */}
         <section className="mb-10">
-          <div className="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-2xl p-6">
+          <div
+            className="rounded-[20px] p-6"
+            style={{
+              backgroundColor: "rgba(0, 122, 255, 0.05)",
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-violet-100 rounded-lg">
-                <Eye className="w-6 h-6 text-violet-600" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{
+                  backgroundColor: "rgba(0, 122, 255, 0.1)",
+                }}
+              >
+                <Eye className="w-6 h-6" style={{ color: systemColors.blue }} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-violet-900 mb-3">
+                <h2
+                  className="text-[20px] font-semibold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   透明性の原則
                 </h2>
-                <p className="text-violet-800 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   サプティアは、ユーザーの皆様に対して透明性を保つことを最優先としています。当サイトがどのように運営され、収益を得ているかを明確にお伝えします。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2">
@@ -123,10 +194,21 @@ export default function AffiliatePage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-white/60 rounded-lg"
+                      className="flex items-center gap-2 p-2 rounded-[12px]"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.6)",
+                      }}
                     >
-                      <CheckCircle2 className="w-4 h-4 text-violet-600 flex-shrink-0" />
-                      <span className="text-sm text-violet-800">{item}</span>
+                      <CheckCircle2
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: systemColors.blue }}
+                      />
+                      <span
+                        className="text-[13px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -137,17 +219,34 @@ export default function AffiliatePage() {
 
         {/* What is Affiliate */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <Info className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <Info
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 アフィリエイトプログラムとは
               </h2>
             </div>
-            <p className="text-slate-600 mb-4">
+            <p
+              className="text-[15px] mb-4"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               アフィリエイトプログラムとは、当サイトが商品リンクを通じて紹介した商品が購入された場合、販売元のECサイトから紹介料を受け取る仕組みです。
             </p>
-            <p className="text-slate-600">
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               これはインターネット上で広く利用されている一般的なビジネスモデルであり、多くの比較サイトやレビューサイトが採用しています。
             </p>
           </div>
@@ -155,18 +254,31 @@ export default function AffiliatePage() {
 
         {/* Affiliate Programs */}
         <section id="programs" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                backgroundColor: systemColors.blue,
+              }}
+            >
               <div className="flex items-center gap-3">
                 <Handshake className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-[20px] font-semibold text-white">
                   参加しているアフィリエイトプログラム
                 </h2>
               </div>
             </div>
 
             <div className="p-6">
-              <p className="text-slate-600 mb-6">
+              <p
+                className="text-[15px] mb-6"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 サプティアは、以下の企業・サービスのアフィリエイトプログラムに参加しています：
               </p>
 
@@ -176,41 +288,46 @@ export default function AffiliatePage() {
                     name: "Amazon.co.jp",
                     description:
                       "Amazonアソシエイト・プログラムに参加しています。当サイトからAmazon.co.jpへのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。",
-                    color: "amber",
                   },
                   {
                     name: "楽天市場",
                     description:
                       "楽天アフィリエイトに参加しています。当サイトから楽天市場へのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。",
-                    color: "red",
                   },
                   {
                     name: "Yahoo!ショッピング",
                     description:
                       "Yahoo!ショッピングのアフィリエイトプログラムに参加しています。当サイトからYahoo!ショッピングへのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。",
-                    color: "red",
                   },
                   {
                     name: "iHerb",
                     description:
                       "iHerbのアフィリエイトプログラムに参加しています。当サイトからiHerbへのリンクを経由して商品が購入された場合、紹介料を受け取ることがあります。",
-                    color: "green",
                   },
                   {
                     name: "その他の提携企業",
                     description:
                       "上記以外にも、サプリメント・健康食品関連のECサイトや企業のアフィリエイトプログラムに参加する場合があります。新たな提携が発生した場合は、本ページを更新してお知らせします。",
-                    color: "slate",
                   },
                 ].map((program, i) => (
                   <div
                     key={i}
-                    className="p-4 bg-slate-50 rounded-xl border border-slate-200"
+                    className="p-4 rounded-[16px]"
+                    style={{
+                      backgroundColor: appleWebColors.sectionBackground,
+                      border: `1px solid ${appleWebColors.borderSubtle}`,
+                    }}
                   >
-                    <h3 className="font-semibold text-slate-800 mb-2">
+                    <h3
+                      className="font-semibold text-[15px] mb-2"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
                       {program.name}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
                       {program.description}
                     </p>
                   </div>
@@ -222,19 +339,42 @@ export default function AffiliatePage() {
 
         {/* Price Impact */}
         <section className="mb-10">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+          <div
+            className="rounded-[20px] p-6"
+            style={{
+              backgroundColor: "rgba(52, 199, 89, 0.05)",
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <DollarSign className="w-6 h-6 text-emerald-600" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{
+                  backgroundColor: "rgba(52, 199, 89, 0.1)",
+                }}
+              >
+                <DollarSign
+                  className="w-6 h-6"
+                  style={{ color: systemColors.green }}
+                />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-emerald-900 mb-2">
+                <h2
+                  className="text-[20px] font-semibold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   価格への影響について
                 </h2>
-                <p className="text-emerald-800 font-medium mb-2">
-                  💰 アフィリエイトリンクを経由しても、商品価格は変わりません
+                <p
+                  className="text-[15px] font-medium mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  アフィリエイトリンクを経由しても、商品価格は変わりません
                 </p>
-                <p className="text-emerald-700 text-sm">
+                <p
+                  className="text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   当サイトのリンクを経由して購入された場合でも、直接ECサイトで購入した場合でも、商品の価格は同じです。購入者が追加料金を支払うことはありません。紹介料は販売元のECサイトから支払われます。
                 </p>
               </div>
@@ -244,26 +384,50 @@ export default function AffiliatePage() {
 
         {/* Neutrality */}
         <section id="neutrality" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                backgroundColor: systemColors.blue,
+              }}
+            >
               <div className="flex items-center gap-3">
                 <Scale className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-[20px] font-semibold text-white">
                   中立性と透明性の維持
                 </h2>
               </div>
             </div>
 
             <div className="p-6 space-y-6">
-              <p className="text-slate-600">
+              <p
+                className="text-[15px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 サプティアは、アフィリエイト収益の有無に関わらず、以下の原則に基づいて運営しています：
               </p>
 
               {/* Scientific Evidence */}
-              <div className="bg-slate-50 rounded-xl p-5">
+              <div
+                className="rounded-[16px] p-5"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                }}
+              >
                 <div className="flex items-center gap-3 mb-3">
-                  <FlaskConical className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-bold text-slate-800">
+                  <FlaskConical
+                    className="w-5 h-5"
+                    style={{ color: systemColors.blue }}
+                  />
+                  <h3
+                    className="font-semibold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     科学的根拠に基づく評価
                   </h3>
                 </div>
@@ -275,9 +439,13 @@ export default function AffiliatePage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 text-sm text-slate-700"
+                      className="flex items-center gap-2 text-[13px]"
+                      style={{ color: appleWebColors.textSecondary }}
                     >
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                      <div
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: systemColors.blue }}
+                      />
                       {item}
                     </div>
                   ))}
@@ -285,10 +453,23 @@ export default function AffiliatePage() {
               </div>
 
               {/* Honest Reviews */}
-              <div className="bg-slate-50 rounded-xl p-5">
+              <div
+                className="rounded-[16px] p-5"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                }}
+              >
                 <div className="flex items-center gap-3 mb-3">
-                  <Heart className="w-5 h-5 text-rose-600" />
-                  <h3 className="font-bold text-slate-800">正直なレビュー</h3>
+                  <Heart
+                    className="w-5 h-5"
+                    style={{ color: systemColors.pink }}
+                  />
+                  <h3
+                    className="font-semibold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    正直なレビュー
+                  </h3>
                 </div>
                 <div className="space-y-2">
                   {[
@@ -298,9 +479,13 @@ export default function AffiliatePage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 text-sm text-slate-700"
+                      className="flex items-center gap-2 text-[13px]"
+                      style={{ color: appleWebColors.textSecondary }}
                     >
-                      <div className="w-1.5 h-1.5 bg-rose-500 rounded-full flex-shrink-0" />
+                      <div
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: systemColors.pink }}
+                      />
                       {item}
                     </div>
                   ))}
@@ -308,21 +493,47 @@ export default function AffiliatePage() {
               </div>
 
               {/* Multiple Options */}
-              <div className="bg-slate-50 rounded-xl p-5">
+              <div
+                className="rounded-[16px] p-5"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                }}
+              >
                 <div className="flex items-center gap-3 mb-3">
-                  <BarChart3 className="w-5 h-5 text-emerald-600" />
-                  <h3 className="font-bold text-slate-800">
+                  <BarChart3
+                    className="w-5 h-5"
+                    style={{ color: systemColors.green }}
+                  />
+                  <h3
+                    className="font-semibold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     複数の選択肢の提示
                   </h3>
                 </div>
-                <p className="text-sm text-slate-700 mb-3">
+                <p
+                  className="text-[13px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   可能な限り複数のECサイトでの価格比較を提供し、ユーザーが最もお得な選択肢を見つけられるようサポートします。
                 </p>
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-                  <p className="font-semibold text-emerald-800 text-sm mb-1">
-                    📊 価格比較の表示順について
+                <div
+                  className="rounded-[12px] p-4"
+                  style={{
+                    backgroundColor: "rgba(52, 199, 89, 0.05)",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
+                  <p
+                    className="font-medium text-[13px] mb-1"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    価格比較の表示順について
                   </p>
-                  <p className="text-sm text-emerald-700">
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     商品詳細ページの価格比較では、アフィリエイト報酬額に関係なく、
                     <strong>常に最安値を最上位に表示</strong>
                     します。顧客利益を最優先し、公平かつ透明性のある価格比較を提供します。
@@ -335,16 +546,31 @@ export default function AffiliatePage() {
 
         {/* Revenue Use */}
         <section id="revenue" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                backgroundColor: systemColors.orange,
+              }}
+            >
               <div className="flex items-center gap-3">
                 <DollarSign className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">収益の使途</h2>
+                <h2 className="text-[20px] font-semibold text-white">
+                  収益の使途
+                </h2>
               </div>
             </div>
 
             <div className="p-6">
-              <p className="text-slate-600 mb-4">
+              <p
+                className="text-[15px] mb-4"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 アフィリエイト収益は、以下の目的でサプティアの運営に使用されます：
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -357,10 +583,21 @@ export default function AffiliatePage() {
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg"
+                    className="flex items-center gap-2 p-3 rounded-[12px]"
+                    style={{
+                      backgroundColor: "rgba(255, 149, 0, 0.05)",
+                    }}
                   >
-                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-                    <span className="text-sm text-slate-700">{item}</span>
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: systemColors.orange }}
+                    />
+                    <span
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {item}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -370,14 +607,28 @@ export default function AffiliatePage() {
 
         {/* User Freedom */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <ShoppingCart className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <ShoppingCart
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 ユーザーの選択の自由
               </h2>
             </div>
-            <p className="text-slate-600 mb-4">
+            <p
+              className="text-[15px] mb-4"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               当サイトのリンクを使用するかどうかは、完全にユーザーの自由です。
             </p>
             <div className="space-y-2">
@@ -388,9 +639,16 @@ export default function AffiliatePage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg text-sm text-slate-700"
+                  className="flex items-center gap-2 p-3 rounded-[12px] text-[13px]"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                    color: appleWebColors.textSecondary,
+                  }}
                 >
-                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
+                  <div
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: appleWebColors.textSecondary }}
+                  />
                   {item}
                 </div>
               ))}
@@ -400,14 +658,28 @@ export default function AffiliatePage() {
 
         {/* Advertising */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <Megaphone className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <Megaphone
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 広告表示について
               </h2>
             </div>
-            <p className="text-slate-600 mb-4">
+            <p
+              className="text-[15px] mb-4"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               当サイトでは、以下のような広告が表示される場合があります：
             </p>
             <div className="grid sm:grid-cols-3 gap-3 mb-4">
@@ -418,13 +690,20 @@ export default function AffiliatePage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 text-center"
+                  className="p-3 rounded-[12px] text-[13px] text-center"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                    color: appleWebColors.textPrimary,
+                  }}
                 >
                   {item}
                 </div>
               ))}
             </div>
-            <p className="text-sm text-slate-500">
+            <p
+              className="text-[13px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               ※
               通常のコンテンツと広告を明確に区別し、ユーザーが誤解しないよう配慮しています。
             </p>
@@ -433,18 +712,31 @@ export default function AffiliatePage() {
 
         {/* Compliance */}
         <section id="compliance" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                backgroundColor: appleWebColors.textPrimary,
+              }}
+            >
               <div className="flex items-center gap-3">
                 <Gavel className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-[20px] font-semibold text-white">
                   法令遵守とガイドライン
                 </h2>
               </div>
             </div>
 
             <div className="p-6">
-              <p className="text-slate-600 mb-4">
+              <p
+                className="text-[15px] mb-4"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 サプティアは、以下の法令・ガイドラインを遵守しています：
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -457,10 +749,21 @@ export default function AffiliatePage() {
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center gap-2 p-3 rounded-[12px]"
+                    style={{
+                      backgroundColor: appleWebColors.sectionBackground,
+                    }}
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                    <span className="text-sm text-slate-700">{item}</span>
+                    <CheckCircle2
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: systemColors.green }}
+                    />
+                    <span
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {item}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -470,12 +773,28 @@ export default function AffiliatePage() {
 
         {/* Disclosure Updates */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <RefreshCw className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">開示の更新</h2>
+              <RefreshCw
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                開示の更新
+              </h2>
             </div>
-            <p className="text-slate-600">
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               本開示内容は、新たな提携企業の追加やプログラムの変更に応じて更新されます。重要な変更があった場合は、本ページに反映し、必要に応じてサイト内でお知らせします。
             </p>
           </div>
@@ -483,19 +802,38 @@ export default function AffiliatePage() {
 
         {/* Contact */}
         <section className="mb-10">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white">
+          <div
+            className="rounded-[20px] p-6"
+            style={{
+              backgroundColor: appleWebColors.textPrimary,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-white/10 rounded-lg">
-                <Mail className="w-6 h-6" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <Mail className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold mb-2">お問い合わせ</h2>
-                <p className="text-slate-300 mb-4">
+                <h2 className="text-[20px] font-semibold text-white mb-2">
+                  お問い合わせ
+                </h2>
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: "rgba(255, 255, 255, 0.7)" }}
+                >
                   アフィリエイト開示に関するご質問やご意見がございましたら、お気軽にお問い合わせください。
                 </p>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-800 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-[12px] font-medium transition-all text-[15px]"
+                  style={{
+                    backgroundColor: "white",
+                    color: appleWebColors.textPrimary,
+                  }}
                 >
                   お問い合わせフォーム
                   <ChevronRight size={16} />
@@ -507,9 +845,23 @@ export default function AffiliatePage() {
 
         {/* Final Note */}
         <section className="mb-10">
-          <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6">
-            <h3 className="font-bold text-violet-900 mb-3">最後に</h3>
-            <p className="text-violet-800 text-sm leading-relaxed">
+          <div
+            className="rounded-[20px] p-6"
+            style={{
+              backgroundColor: "rgba(0, 122, 255, 0.05)",
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <h3
+              className="font-semibold text-[17px] mb-3"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              最後に
+            </h3>
+            <p
+              className="text-[13px] leading-relaxed"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               サプティアは、ユーザーの皆様に信頼していただけるサービスを目指しています。アフィリエイト収益はサイト運営の重要な資金源ですが、それが情報の中立性や質を損なうことは決してありません。科学的根拠に基づく正確な情報提供と、透明性のある運営を今後も継続してまいります。
             </p>
           </div>
@@ -517,38 +869,74 @@ export default function AffiliatePage() {
 
         {/* Related Links */}
         <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">
+          <h2
+            className="text-[17px] font-semibold mb-4"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             関連リンク
           </h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <Link
               href="/legal/terms"
-              className="p-4 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+              className={`p-4 rounded-[16px] transition-all group ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
             >
-              <h3 className="font-semibold text-slate-800 group-hover:text-violet-600 mb-1">
+              <h3
+                className="font-semibold text-[15px] mb-1 transition-colors"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 利用規約
               </h3>
-              <p className="text-sm text-slate-500">サービスの利用条件</p>
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                サービスの利用条件
+              </p>
             </Link>
 
             <Link
               href="/legal/privacy"
-              className="p-4 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+              className={`p-4 rounded-[16px] transition-all group ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
             >
-              <h3 className="font-semibold text-slate-800 group-hover:text-violet-600 mb-1">
+              <h3
+                className="font-semibold text-[15px] mb-1 transition-colors"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 プライバシーポリシー
               </h3>
-              <p className="text-sm text-slate-500">個人情報の取り扱い</p>
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                個人情報の取り扱い
+              </p>
             </Link>
 
             <Link
               href="/legal/disclosure"
-              className="p-4 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+              className={`p-4 rounded-[16px] transition-all group ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
             >
-              <h3 className="font-semibold text-slate-800 group-hover:text-violet-600 mb-1">
+              <h3
+                className="font-semibold text-[15px] mb-1 transition-colors"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 特定商取引法に基づく表記
               </h3>
-              <p className="text-sm text-slate-500">事業者情報</p>
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                事業者情報
+              </p>
             </Link>
           </div>
         </section>

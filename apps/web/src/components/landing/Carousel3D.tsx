@@ -12,6 +12,17 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Award, TrendingUp, Star } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  appleEase,
+  subtleSpring,
+  tierColors as designTierColors,
+  liquidGlass,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // Apple式：モバイル検出
 const useIsMobile = () => {
@@ -49,13 +60,17 @@ interface Carousel3DProps {
   subtitle?: string;
 }
 
-const tierColors: Record<string, string> = {
-  "S+": "from-purple-600 to-pink-600",
-  S: "from-purple-600 to-indigo-600",
-  A: "from-blue-500 to-cyan-500",
-  B: "from-emerald-500 to-teal-500",
-  C: "from-yellow-400 to-orange-400",
-  D: "from-slate-400 to-slate-500",
+// Tier color mapping using design system
+const getTierGradient = (tier: string): string => {
+  const tierGradients: Record<string, string> = {
+    "S+": `linear-gradient(135deg, ${designTierColors["S+"]} 0%, ${systemColors.pink} 100%)`,
+    S: `linear-gradient(135deg, ${designTierColors.S} 0%, ${systemColors.indigo} 100%)`,
+    A: `linear-gradient(135deg, ${designTierColors.A} 0%, ${systemColors.teal} 100%)`,
+    B: `linear-gradient(135deg, ${designTierColors.B} 0%, ${systemColors.green} 100%)`,
+    C: `linear-gradient(135deg, ${designTierColors.C} 0%, ${systemColors.yellow} 100%)`,
+    D: `linear-gradient(135deg, ${designTierColors.D} 0%, ${appleWebColors.textSecondary} 100%)`,
+  };
+  return tierGradients[tier] || tierGradients.D;
 };
 
 function ProductCard3D({
@@ -102,13 +117,17 @@ function ProductCard3D({
         className="block w-[300px]"
       >
         <motion.div
-          className={`relative bg-white/10 backdrop-blur-xl border rounded-3xl overflow-hidden transition-all duration-300 will-change-transform ${
-            isActive
-              ? "border-white/30 shadow-2xl shadow-primary/20"
-              : "border-white/10"
+          className={`relative backdrop-blur-[20px] backdrop-saturate-[180%] border rounded-[24px] overflow-hidden transition-all duration-300 will-change-transform ${
+            isActive ? "border-white/80" : "border-white/60"
           }`}
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.15)",
+            boxShadow: isActive
+              ? "0 8px 32px rgba(31, 38, 135, 0.15), inset 0 2px 16px rgba(255, 255, 255, 0.2)"
+              : "0 4px 16px rgba(0, 0, 0, 0.04)",
+            transform: "translateZ(0)",
+          }}
           whileHover={{ scale: 1.05, rotateY: 5 }}
-          style={{ transform: "translateZ(0)" }}
         >
           {/* Image */}
           <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
@@ -130,9 +149,12 @@ function ProductCard3D({
             {product.tierRatings?.overallRank && (
               <div className="absolute top-3 left-3">
                 <div
-                  className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br ${
-                    tierColors[product.tierRatings.overallRank] || tierColors.D
-                  } shadow-lg`}
+                  className="px-3 py-1.5 rounded-xl font-bold text-white text-base shadow-lg"
+                  style={{
+                    background: getTierGradient(
+                      product.tierRatings.overallRank,
+                    ),
+                  }}
                 >
                   <span className="text-xs font-bold opacity-80 mr-1">
                     RANK
@@ -300,13 +322,12 @@ export function Carousel3D({
         >
           <div>
             <motion.span
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.3em] uppercase text-white/40 mb-3"
+              className="inline-block text-xs font-semibold tracking-[0.2em] text-white/40 mb-3"
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.2 }}
             >
-              <Star className="w-4 h-4" />
-              Featured Products
+              おすすめ
             </motion.span>
             <h2 className="text-3xl sm:text-4xl font-light text-white mb-2">
               {title}
@@ -389,7 +410,7 @@ export function Carousel3D({
   );
 }
 
-// FlatCarousel用のカードコンポーネント - Apple式モバイル最適化
+// FlatCarousel用のカードコンポーネント - Apple HIG準拠
 function ProductCardFlat({
   product,
   index,
@@ -407,44 +428,41 @@ function ProductCardFlat({
 
   return (
     <motion.div
-      className="flex-shrink-0 w-[280px] sm:w-[320px] will-change-transform"
-      initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
+      className="flex-shrink-0 w-[280px] sm:w-[320px]"
+      initial={{ opacity: 0, y: isMobile ? 15 : 25 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: isMobile ? 0.3 : 0.5,
-        delay: isMobile ? 0.05 * Math.min(index, 3) : 0.1 * index,
-        ease: [0.22, 1, 0.36, 1],
+        duration: isMobile ? 0.4 : 0.5,
+        delay: isMobile ? 0.04 * Math.min(index, 3) : 0.08 * index,
+        ease: appleEase,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ transform: "translateZ(0)" }}
     >
       <Link href={`/products/${product.slug.current}`}>
-        {/* Apple式：モバイルではアニメーションを簡略化 */}
+        {/* Glass Card */}
         <motion.div
-          className="relative bg-white border border-slate-200 rounded-3xl overflow-hidden will-change-transform shadow-sm"
-          animate={
-            isMobile
-              ? {}
-              : {
-                  y: isHovered ? -10 : 0,
-                  scale: isHovered ? 1.02 : 1,
-                  boxShadow: isHovered
-                    ? "0 25px 50px -12px rgba(59, 102, 224, 0.25)"
-                    : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }
-          }
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="relative rounded-[24px] overflow-hidden border"
           style={{
-            transform: "translateZ(0)",
-            borderColor:
-              !isMobile && isHovered ? "rgba(59, 102, 224, 0.3)" : undefined,
+            ...liquidGlass.light,
+            borderColor: isHovered
+              ? `rgba(255, 255, 255, 0.8)`
+              : "rgba(255, 255, 255, 0.8)",
+            boxShadow: isHovered
+              ? "0 12px 40px rgba(0, 0, 0, 0.12)"
+              : liquidGlass.light.boxShadow,
           }}
+          animate={isMobile ? {} : { y: isHovered ? -6 : 0 }}
+          transition={subtleSpring}
         >
-          {/* Image - モバイルではズーム無効 */}
+          {/* Image */}
           <div className="relative aspect-[4/3] overflow-hidden">
             {product.externalImageUrl ? (
-              isMobile ? (
+              <motion.div
+                className="relative w-full h-full"
+                animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
+                transition={{ duration: 0.4, ease: appleEase }}
+              >
                 <Image
                   src={product.externalImageUrl}
                   alt={product.name}
@@ -452,106 +470,92 @@ function ProductCardFlat({
                   className="object-cover"
                   unoptimized
                 />
-              ) : (
-                <motion.div
-                  className="relative w-full h-full"
-                  animate={{ scale: isHovered ? 1.1 : 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Image
-                    src={product.externalImageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                </motion.div>
-              )
+              </motion.div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-                <Award className="w-16 h-16 text-slate-300" strokeWidth={1} />
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <Award
+                  className="w-16 h-16"
+                  style={{ color: appleWebColors.borderSubtle }}
+                  strokeWidth={1}
+                  aria-hidden="true"
+                />
               </div>
             )}
 
-            {/* Tier Badge - モバイルでは静的 */}
-            {product.tierRatings?.overallRank &&
-              (isMobile ? (
-                <div className="absolute top-3 left-3">
-                  <div
-                    className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br shadow-lg ${
-                      tierColors[product.tierRatings.overallRank] ||
-                      tierColors.D
-                    }`}
-                  >
-                    {product.tierRatings.overallRank}
-                  </div>
-                </div>
-              ) : (
-                <motion.div
-                  className="absolute top-3 left-3"
-                  animate={{ scale: isHovered ? 1.1 : 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div
-                    className={`px-3 py-1.5 rounded-lg font-black text-white text-lg bg-gradient-to-br shadow-lg ${
-                      tierColors[product.tierRatings.overallRank] ||
-                      tierColors.D
-                    }`}
-                  >
-                    {product.tierRatings.overallRank}
-                  </div>
-                </motion.div>
-              ))}
-
-            {/* Hover Overlay - デスクトップのみ */}
-            {!isMobile && (
+            {/* Tier Badge */}
+            {product.tierRatings?.overallRank && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isHovered ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
+                className="absolute top-3 left-3"
+                animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
+                transition={{ duration: 0.3, ease: appleEase }}
+              >
+                <div
+                  className="px-3 py-1.5 rounded-xl font-bold text-white text-base shadow-lg"
+                  style={{
+                    background: getTierGradient(
+                      product.tierRatings.overallRank,
+                    ),
+                  }}
+                >
+                  {product.tierRatings.overallRank}
+                </div>
+              </motion.div>
             )}
           </div>
 
           {/* Content */}
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 line-clamp-2 min-h-[2.5rem]">
+            <h3
+              className={`${typography.headline} line-clamp-2 min-h-[2.75rem] mb-4`}
+              style={{ color: appleWebColors.textPrimary }}
+            >
               {product.name}
             </h3>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-[10px] text-slate-400">価格</p>
-                <p className="text-base font-bold text-slate-800">
+                <p
+                  className="text-[11px] font-medium uppercase tracking-wider mb-1"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
+                  価格
+                </p>
+                <p
+                  className="text-[17px] font-semibold"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   ¥{(product.priceJPY ?? 0).toLocaleString()}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-slate-400">1日あたり</p>
-                {isMobile ? (
-                  <p className="text-lg font-black text-primary">
-                    ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
-                  </p>
-                ) : (
-                  <motion.p
-                    className="text-lg font-black text-primary"
-                    animate={{ scale: isHovered ? 1.1 : 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
-                  </motion.p>
-                )}
+                <p
+                  className="text-[11px] font-medium uppercase tracking-wider mb-1"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
+                  1日あたり
+                </p>
+                <p
+                  className="text-[20px] font-bold"
+                  style={{ color: systemColors.green }}
+                >
+                  ¥{(product.effectiveCostPerDay ?? 0).toFixed(0)}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Bottom Accent - デスクトップのみ */}
+          {/* Bottom Accent Line */}
           {!isMobile && (
             <motion.div
-              className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-[#7a98ec]"
+              className="absolute bottom-0 left-0 right-0 h-[3px]"
+              style={{
+                background: `linear-gradient(90deg, ${systemColors.blue}, ${systemColors.indigo})`,
+              }}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: appleEase }}
             />
           )}
         </motion.div>
@@ -569,79 +573,77 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 bg-slate-50"
-      style={{ contain: "layout paint" }}
+      className="relative py-24 md:py-32"
+      style={{
+        backgroundColor: appleWebColors.sectionBackground,
+        fontFamily: fontStack,
+        contain: "layout paint",
+      }}
     >
-      {/* Background subtle pattern - モバイルでは非表示 */}
-      {!isMobile && (
-        <div
-          className="absolute inset-0 opacity-[0.02] pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #3b66e0 1px, transparent 0)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
-      )}
-
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Header - Apple式：モバイルで簡略化 */}
+        {/* Header */}
         <motion.div
-          className="flex items-center justify-between mb-10"
-          initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+          className="flex items-center justify-between mb-12"
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{
-            duration: isMobile ? 0.5 : 0.8,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+          transition={{ duration: 0.8, ease: appleEase }}
         >
           <div>
             <motion.span
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.3em] uppercase text-slate-400 mb-3"
+              className="inline-block text-[13px] font-semibold tracking-[0.2em] uppercase mb-3"
+              style={{ color: appleWebColors.textTertiary }}
               initial={{ opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
             >
-              {/* スターアニメーション - モバイル・reduced-motionでは無効 */}
-              {isMobile || prefersReducedMotion ? (
-                <Star className="w-4 h-4" />
-              ) : (
-                <motion.div
-                  animate={{ rotate: [0, 15, -15, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                >
-                  <Star className="w-4 h-4" />
-                </motion.div>
-              )}
-              Featured Products
+              おすすめ
             </motion.span>
             <motion.h2
-              className="text-3xl sm:text-4xl font-light text-slate-800 mb-2"
+              className="text-[32px] md:text-[48px] font-bold leading-[1.05] tracking-[-0.015em] mb-2"
+              style={{ color: appleWebColors.textPrimary }}
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
             >
               {title || "おすすめのサプリメント"}
             </motion.h2>
-            <p className="text-slate-500">{subtitle}</p>
+            <p
+              className={typography.title3}
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              {subtitle}
+            </p>
           </div>
           <Link
             href="/products"
-            className="group hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+            className="group hidden sm:flex items-center gap-2 px-6 py-3 rounded-[24px] border min-h-[44px] backdrop-blur-[20px] backdrop-saturate-[180%]"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              borderColor: "rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 4px 24px rgba(0, 0, 0, 0.06)",
+            }}
           >
-            <span className="text-sm font-semibold text-slate-700">
+            <span
+              className="text-[15px] font-semibold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               全て見る
             </span>
-            <TrendingUp className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            <TrendingUp
+              className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+              style={{ color: appleWebColors.textSecondary }}
+              aria-hidden="true"
+            />
           </Link>
         </motion.div>
 
-        {/* Horizontal Scroll - GPU最適化 */}
+        {/* Horizontal Scroll */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
           <motion.div
             className="flex gap-6 pb-4"
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, delay: 0.2, ease: appleEase }}
           >
             {products.map((product, index) => (
               <ProductCardFlat
@@ -659,16 +661,28 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
           className="sm:hidden mt-8 text-center"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.5, ease: appleEase }}
         >
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 shadow-md"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-[24px] border min-h-[44px] backdrop-blur-[20px] backdrop-saturate-[180%]"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              borderColor: "rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 4px 24px rgba(0, 0, 0, 0.06)",
+            }}
           >
-            <span className="text-sm font-semibold text-slate-700">
+            <span
+              className="text-[15px] font-semibold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               全て見る
             </span>
-            <TrendingUp className="w-4 h-4 text-slate-400" />
+            <TrendingUp
+              className="w-4 h-4"
+              style={{ color: appleWebColors.textSecondary }}
+              aria-hidden="true"
+            />
           </Link>
         </motion.div>
       </div>

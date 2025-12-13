@@ -13,6 +13,13 @@ import {
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  withOpacity,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -51,15 +58,16 @@ export default function ContactPage() {
         {
           duration: 5000,
           style: {
-            background: "#10b981",
+            background: systemColors.green,
             color: "#fff",
-            fontSize: "16px",
+            fontSize: "15px",
             padding: "16px",
-            borderRadius: "8px",
+            borderRadius: "12px",
+            fontFamily: fontStack,
           },
           iconTheme: {
             primary: "#fff",
-            secondary: "#10b981",
+            secondary: systemColors.green,
           },
         },
       );
@@ -82,15 +90,16 @@ export default function ContactPage() {
       toast.error(errorMessage, {
         duration: 5000,
         style: {
-          background: "#ef4444",
+          background: systemColors.red,
           color: "#fff",
-          fontSize: "16px",
+          fontSize: "15px",
           padding: "16px",
-          borderRadius: "8px",
+          borderRadius: "12px",
+          fontFamily: fontStack,
         },
         iconTheme: {
           primary: "#fff",
-          secondary: "#ef4444",
+          secondary: systemColors.red,
         },
       });
     } finally {
@@ -110,18 +119,37 @@ export default function ContactPage() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       <Toaster position="top-center" reverseOrder={false} />
 
       {/* ヒーローセクション */}
-      <section className="relative bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-800 text-white overflow-hidden">
+      <section
+        className="relative text-white overflow-hidden"
+        style={{
+          background: `linear-gradient(180deg, ${withOpacity(systemColors.blue, 0.95)} 0%, ${withOpacity(systemColors.blue, 0.85)} 100%)`,
+        }}
+      >
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div
+          className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
+          style={{ background: withOpacity("#fff", 0.08) }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-64 h-64 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"
+          style={{ background: withOpacity("#fff", 0.05) }}
+        />
 
         <div className="relative container mx-auto px-4 py-16 md:py-20">
           {/* パンくずリスト */}
-          <nav className="flex items-center space-x-2 text-sm text-cyan-100 mb-8">
+          <nav
+            className="flex items-center space-x-2 text-[13px] mb-8"
+            style={{ color: withOpacity("#fff", 0.8) }}
+          >
             <Link href="/" className="hover:text-white transition-colors">
               ホーム
             </Link>
@@ -130,15 +158,26 @@ export default function ContactPage() {
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6"
+              style={{
+                backgroundColor: withOpacity("#fff", 0.15),
+                backdropFilter: "blur(10px)",
+              }}
+            >
               <HeadphonesIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">カスタマーサポート</span>
+              <span className="text-[15px] font-medium">
+                カスタマーサポート
+              </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="text-[40px] md:text-[48px] font-bold mb-6 leading-tight tracking-tight">
               お問い合わせ
             </h1>
-            <p className="text-xl text-cyan-100 leading-relaxed">
+            <p
+              className="text-[17px] leading-relaxed"
+              style={{ color: withOpacity("#fff", 0.9) }}
+            >
               ご質問、ご意見、ご要望など、お気軽にお問い合わせください。
               <br className="hidden md:block" />
               担当者が丁寧にご対応いたします。
@@ -151,41 +190,87 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         {/* サポート特徴 */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 mb-4">
+          <div
+            className={`rounded-[20px] p-6 text-center transition-all hover:scale-[1.02] hover:-translate-y-1 ${liquidGlassClasses.light}`}
+          >
+            <div
+              className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
+              style={{ backgroundColor: systemColors.blue }}
+            >
               <Mail className="w-7 h-7 text-white" />
             </div>
-            <h3 className="font-bold text-lg mb-2">メール対応</h3>
-            <p className="text-sm text-gray-600">
+            <h3
+              className="font-semibold text-[17px] mb-2"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              メール対応
+            </h3>
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               通常2〜3営業日以内にご返信いたします
             </p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 mb-4">
+          <div
+            className={`rounded-[20px] p-6 text-center transition-all hover:scale-[1.02] hover:-translate-y-1 ${liquidGlassClasses.light}`}
+          >
+            <div
+              className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
+              style={{ backgroundColor: systemColors.blue }}
+            >
               <MessageSquare className="w-7 h-7 text-white" />
             </div>
-            <h3 className="font-bold text-lg mb-2">詳細な回答</h3>
-            <p className="text-sm text-gray-600">
+            <h3
+              className="font-semibold text-[17px] mb-2"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              詳細な回答
+            </h3>
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               担当者が丁寧に対応いたします
             </p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 mb-4">
+          <div
+            className={`rounded-[20px] p-6 text-center transition-all hover:scale-[1.02] hover:-translate-y-1 ${liquidGlassClasses.light}`}
+          >
+            <div
+              className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
+              style={{ backgroundColor: systemColors.blue }}
+            >
               <Clock className="w-7 h-7 text-white" />
             </div>
-            <h3 className="font-bold text-lg mb-2">24時間受付</h3>
-            <p className="text-sm text-gray-600">
+            <h3
+              className="font-semibold text-[17px] mb-2"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              24時間受付
+            </h3>
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               いつでもお問い合わせいただけます
             </p>
           </div>
         </div>
 
         {/* お問い合わせフォーム */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-600 to-teal-600 px-8 py-5">
-            <h2 className="text-xl font-bold text-white flex items-center gap-3">
+        <div
+          className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+        >
+          <div
+            className="px-8 py-5"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${withOpacity(systemColors.blue, 0.85)} 100%)`,
+            }}
+          >
+            <h2 className="text-[20px] font-semibold text-white flex items-center gap-3">
               <Send className="w-5 h-5" />
               お問い合わせフォーム
             </h2>
@@ -197,9 +282,10 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="name"
-                  className="block font-semibold mb-2 text-gray-800"
+                  className="block font-semibold mb-2 text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  お名前 <span className="text-red-500">*</span>
+                  お名前 <span style={{ color: systemColors.red }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -208,8 +294,21 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  className="w-full px-4 min-h-[48px] rounded-[16px] focus:outline-none transition-all text-[17px]"
                   placeholder="山田 太郎"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                    color: appleWebColors.textPrimary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = systemColors.blue;
+                    e.target.style.boxShadow = `0 0 0 4px ${withOpacity(systemColors.blue, 0.1)}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = appleWebColors.borderSubtle;
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
               </div>
 
@@ -217,9 +316,11 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block font-semibold mb-2 text-gray-800"
+                  className="block font-semibold mb-2 text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  メールアドレス <span className="text-red-500">*</span>
+                  メールアドレス{" "}
+                  <span style={{ color: systemColors.red }}>*</span>
                 </label>
                 <input
                   type="email"
@@ -228,8 +329,21 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  className="w-full px-4 min-h-[48px] rounded-[16px] focus:outline-none transition-all text-[17px]"
                   placeholder="example@email.com"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                    color: appleWebColors.textPrimary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = systemColors.blue;
+                    e.target.style.boxShadow = `0 0 0 4px ${withOpacity(systemColors.blue, 0.1)}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = appleWebColors.borderSubtle;
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
               </div>
 
@@ -237,9 +351,11 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="category"
-                  className="block font-semibold mb-2 text-gray-800"
+                  className="block font-semibold mb-2 text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  お問い合わせカテゴリ <span className="text-red-500">*</span>
+                  お問い合わせカテゴリ{" "}
+                  <span style={{ color: systemColors.red }}>*</span>
                 </label>
                 <select
                   id="category"
@@ -247,7 +363,20 @@ export default function ContactPage() {
                   value={formData.category}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none bg-white"
+                  className="w-full px-4 min-h-[48px] rounded-[16px] focus:outline-none transition-all appearance-none text-[17px]"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                    color: appleWebColors.textPrimary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = systemColors.blue;
+                    e.target.style.boxShadow = `0 0 0 4px ${withOpacity(systemColors.blue, 0.1)}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = appleWebColors.borderSubtle;
+                    e.target.style.boxShadow = "none";
+                  }}
                 >
                   <option value="general">一般的なお問い合わせ</option>
                   <option value="product">製品情報について</option>
@@ -263,9 +392,10 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block font-semibold mb-2 text-gray-800"
+                  className="block font-semibold mb-2 text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  件名 <span className="text-red-500">*</span>
+                  件名 <span style={{ color: systemColors.red }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -274,8 +404,21 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  className="w-full px-4 min-h-[48px] rounded-[16px] focus:outline-none transition-all text-[17px]"
                   placeholder="お問い合わせの件名をご入力ください"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                    color: appleWebColors.textPrimary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = systemColors.blue;
+                    e.target.style.boxShadow = `0 0 0 4px ${withOpacity(systemColors.blue, 0.1)}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = appleWebColors.borderSubtle;
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
               </div>
 
@@ -283,9 +426,11 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block font-semibold mb-2 text-gray-800"
+                  className="block font-semibold mb-2 text-[15px]"
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  お問い合わせ内容 <span className="text-red-500">*</span>
+                  お問い合わせ内容{" "}
+                  <span style={{ color: systemColors.red }}>*</span>
                 </label>
                 <textarea
                   id="message"
@@ -294,18 +439,48 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={8}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-[16px] focus:outline-none transition-all resize-none text-[17px]"
                   placeholder="お問い合わせ内容を詳しくご記入ください"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                    color: appleWebColors.textPrimary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = systemColors.blue;
+                    e.target.style.boxShadow = `0 0 0 4px ${withOpacity(systemColors.blue, 0.1)}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = appleWebColors.borderSubtle;
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
               </div>
 
               {/* 注意事項 */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <div
+                className="rounded-[16px] p-4"
+                style={{
+                  backgroundColor: withOpacity(systemColors.orange, 0.1),
+                  border: `1px solid ${withOpacity(systemColors.orange, 0.2)}`,
+                }}
+              >
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <AlertCircle
+                    className="w-5 h-5 flex-shrink-0 mt-0.5"
+                    style={{ color: systemColors.orange }}
+                  />
                   <div>
-                    <p className="font-semibold text-amber-800 mb-1">ご注意</p>
-                    <p className="text-sm text-amber-700">
+                    <p
+                      className="font-semibold text-[15px] mb-1"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      ご注意
+                    </p>
+                    <p
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
                       個別の健康相談、医療アドバイスには対応しておりません。
                       健康や医療に関するご質問は、必ず医師または専門家にご相談ください。
                     </p>
@@ -321,16 +496,25 @@ export default function ContactPage() {
                   checked={privacyChecked}
                   onChange={(e) => setPrivacyChecked(e.target.checked)}
                   required
-                  className="mt-1 w-5 h-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
+                  className="mt-1 w-5 h-5 rounded"
+                  style={{
+                    accentColor: systemColors.blue,
+                  }}
                 />
-                <label htmlFor="privacy" className="text-sm text-gray-600">
+                <label
+                  htmlFor="privacy"
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   <Link
                     href="/legal/privacy"
-                    className="text-cyan-600 hover:text-cyan-700 font-medium hover:underline"
+                    className="font-medium hover:underline"
+                    style={{ color: systemColors.blue }}
                   >
                     プライバシーポリシー
                   </Link>
-                  に同意します <span className="text-red-500">*</span>
+                  に同意します{" "}
+                  <span style={{ color: systemColors.red }}>*</span>
                 </label>
               </div>
 
@@ -338,7 +522,22 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || !privacyChecked}
-                className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 text-white py-4 rounded-xl font-bold hover:from-cyan-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25"
+                className="w-full min-h-[48px] rounded-[16px] font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[17px]"
+                style={{
+                  backgroundColor: systemColors.blue,
+                  boxShadow:
+                    isSubmitting || !privacyChecked
+                      ? "none"
+                      : `0 4px 12px ${withOpacity(systemColors.blue, 0.3)}`,
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSubmitting && privacyChecked) {
+                    e.currentTarget.style.transform = "scale(1.02)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
               >
                 {isSubmitting ? (
                   <>
@@ -358,60 +557,99 @@ export default function ContactPage() {
 
         {/* 対応内容 */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          <h2
+            className="text-[22px] font-bold mb-6"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             対応可能なお問い合わせ
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div className={`rounded-[16px] p-5 ${liquidGlassClasses.light}`}>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle2
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3
+                    className="font-semibold text-[15px] mb-1"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     製品・サービスについて
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     サプティアの機能や使い方に関するご質問
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div className={`rounded-[16px] p-5 ${liquidGlassClasses.light}`}>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle2
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3
+                    className="font-semibold text-[15px] mb-1"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     技術的な問題
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     サイトの動作不良やエラーに関するご報告
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div className={`rounded-[16px] p-5 ${liquidGlassClasses.light}`}>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle2
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3
+                    className="font-semibold text-[15px] mb-1"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     提携・ビジネス
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     パートナーシップや事業提携のご相談
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div className={`rounded-[16px] p-5 ${liquidGlassClasses.light}`}>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle2
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3
+                    className="font-semibold text-[15px] mb-1"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     データに関するご要望
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     個人データの削除・修正のリクエスト
                   </p>
                 </div>
@@ -422,16 +660,29 @@ export default function ContactPage() {
 
         {/* よくある質問へのリンク */}
         <section className="mt-12">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 text-center border border-gray-200">
-            <h3 className="text-xl font-bold mb-3 text-gray-800">
+          <div
+            className="rounded-[20px] p-8 text-center"
+            style={{
+              backgroundColor: appleWebColors.sectionBackground,
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <h3
+              className="text-[20px] font-semibold mb-3"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               お問い合わせの前に
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="text-[15px] mb-6"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               よくある質問をご確認いただくと、すぐに解決できる場合があります
             </p>
             <Link
               href="/faq"
-              className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-semibold"
+              className="inline-flex items-center gap-2 font-semibold hover:underline text-[17px]"
+              style={{ color: systemColors.blue }}
             >
               よくある質問（FAQ）を見る
               <ChevronRight className="w-5 h-5" />
@@ -440,38 +691,72 @@ export default function ContactPage() {
         </section>
 
         {/* 関連リンク */}
-        <section className="mt-12 pt-8 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+        <section
+          className="mt-12 pt-8"
+          style={{ borderTop: `1px solid ${appleWebColors.separator}` }}
+        >
+          <h3
+            className="text-[13px] font-semibold uppercase tracking-wider mb-4"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             関連ページ
           </h3>
           <div className="flex flex-wrap gap-4">
             <Link
               href="/legal/privacy"
-              className="text-sm text-gray-600 hover:text-cyan-600 transition-colors"
+              className="text-[15px] transition-colors hover:underline"
+              style={{ color: appleWebColors.textSecondary }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = systemColors.blue;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = appleWebColors.textSecondary;
+              }}
             >
               プライバシーポリシー
             </Link>
             <Link
               href="/legal/terms"
-              className="text-sm text-gray-600 hover:text-cyan-600 transition-colors"
+              className="text-[15px] transition-colors hover:underline"
+              style={{ color: appleWebColors.textSecondary }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = systemColors.blue;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = appleWebColors.textSecondary;
+              }}
             >
               利用規約
             </Link>
             <Link
               href="/partners"
-              className="text-sm text-gray-600 hover:text-cyan-600 transition-colors"
+              className="text-[15px] transition-colors hover:underline"
+              style={{ color: appleWebColors.textSecondary }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = systemColors.blue;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = appleWebColors.textSecondary;
+              }}
             >
               提携パートナー
             </Link>
             <Link
               href="/about"
-              className="text-sm text-gray-600 hover:text-cyan-600 transition-colors"
+              className="text-[15px] transition-colors hover:underline"
+              style={{ color: appleWebColors.textSecondary }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = systemColors.blue;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = appleWebColors.textSecondary;
+              }}
             >
               サプティアとは
             </Link>
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }

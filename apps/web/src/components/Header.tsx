@@ -12,10 +12,26 @@ import {
   LogOut,
   Home,
   History,
+  Search,
+  BookOpen,
+  Shield,
+  Target,
+  Users,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import {
+  appleWebColors,
+  systemColors,
+  typography,
+  appleEase,
+  subtleSpring,
+  componentSizes,
+  fontStack,
+  liquidGlass,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,189 +60,273 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
+  // Liquid Glass hover effect for menu items (WWDC 2025)
+  const menuItemClasses = `
+    flex items-center gap-3 px-4 py-3 text-[15px] font-medium
+    rounded-[12px] min-h-[44px]
+    transition-all duration-200
+    hover:bg-white/50 hover:backdrop-blur-[12px] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]
+  `
+    .trim()
+    .replace(/\s+/g, " ");
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-white/3 backdrop-blur-xl shadow-lg supports-[backdrop-filter]:bg-white/2">
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
-          <div className="flex h-16 items-center justify-between">
-            {/* Left: Logo */}
+      {/* Apple-style Navigation Bar (44pt height) */}
+      <header
+        className="sticky top-0 z-50 w-full border-b"
+        style={{
+          ...liquidGlass.light,
+          borderRadius: 0,
+          borderColor: appleWebColors.borderSubtle,
+          fontFamily: fontStack,
+        }}
+      >
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-[1440px]">
+          <div
+            className="flex items-center justify-between"
+            style={{ height: componentSizes.navBar + 20 }} // 64px for web
+          >
+            {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-3 transition-opacity hover:opacity-80"
             >
               <Image
                 src="/logo.png"
                 alt="サプティア Logo"
-                width={56}
-                height={70}
+                width={48}
+                height={60}
                 priority
               />
               <div className="flex flex-col">
-                <span className="font-bold text-lg text-primary-900 leading-none">
+                <span
+                  className="font-bold text-[17px] leading-tight"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   サプティア
                 </span>
-                <span className="text-xs text-primary-600 leading-none">
+                <span
+                  className="text-[11px] leading-tight"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   Suptia
                 </span>
               </div>
             </Link>
 
-            {/* Right: Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-3">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-2">
               {/* Menu Dropdown */}
               <div className="relative">
-                <button
+                <motion.button
                   onClick={() => setDesktopMenuOpen(!desktopMenuOpen)}
-                  className="flex items-center gap-2 px-4 py-2 text-primary-800 hover:text-primary rounded-lg hover:bg-primary-50 transition-all text-sm font-medium"
+                  className={`
+                    flex items-center gap-2 px-4 py-2 rounded-full
+                    ${typography.subhead} font-medium
+                    transition-all duration-200 min-h-[44px]
+                    hover:bg-white/50 hover:backdrop-blur-[12px] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]
+                  `}
+                  style={{
+                    color: appleWebColors.textPrimary,
+                    backgroundColor: desktopMenuOpen
+                      ? "rgba(255, 255, 255, 0.5)"
+                      : "transparent",
+                    backdropFilter: desktopMenuOpen ? "blur(12px)" : "none",
+                    boxShadow: desktopMenuOpen
+                      ? "0 2px 12px rgba(0, 0, 0, 0.06)"
+                      : "none",
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={subtleSpring}
                 >
-                  <Menu size={18} />
+                  <Menu size={18} aria-hidden="true" />
                   <span>メニュー</span>
                   <motion.div
                     animate={{ rotate: desktopMenuOpen ? 180 : 0 }}
-                    transition={{
-                      duration: 0.25,
-                      ease: [0.4, 0, 0.2, 1],
-                    }}
+                    transition={{ duration: 0.25, ease: appleEase }}
                   >
-                    <ChevronDown size={16} />
+                    <ChevronDown size={14} aria-hidden="true" />
                   </motion.div>
-                </button>
+                </motion.button>
 
-                {/* Dropdown Menu with AnimatePresence */}
+                {/* Desktop Dropdown */}
                 <AnimatePresence>
                   {desktopMenuOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                      transition={{
-                        duration: 0.25,
-                        ease: [0.4, 0, 0.2, 1],
-                      }}
-                      className="absolute right-0 top-full mt-2 w-64 bg-white/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: appleEase }}
+                      className="absolute right-0 top-full mt-2 w-72 py-2 z-[100] overflow-hidden"
                       style={{
-                        background:
-                          "linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%)",
+                        ...liquidGlass.light,
                         boxShadow:
-                          "0 8px 32px 0 rgba(0, 102, 204, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+                          "0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)",
                       }}
                       onMouseLeave={() => setDesktopMenuOpen(false)}
                     >
-                      {/* Home */}
+                      {/* Main Actions */}
                       <Link
                         href="/"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
-                        <Home size={16} />
+                        <Home
+                          size={18}
+                          style={{ color: systemColors.blue }}
+                          aria-hidden="true"
+                        />
                         ホーム
                       </Link>
 
-                      {/* Diagnosis - Highlighted */}
-                      <Link
-                        href="/diagnosis"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className="group relative block mx-2 my-2 px-4 py-3 text-white transition-all duration-300 font-bold rounded-lg overflow-visible"
-                        style={{
-                          background:
-                            "linear-gradient(to right, #9333ea, #db2777)",
-                          boxShadow: "0 2px 10px rgba(147, 51, 234, 0.3)",
-                        }}
-                      >
-                        <span className="flex items-center gap-2">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                          </svg>
+                      {/* Diagnosis CTA */}
+                      <div className="px-2 py-1">
+                        <Link
+                          href="/diagnosis"
+                          onClick={() => setDesktopMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-[10px] text-white font-semibold min-h-[48px]"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                          }}
+                        >
+                          <Search size={18} aria-hidden="true" />
                           診断する
-                        </span>
-                      </Link>
+                        </Link>
+                      </div>
 
-                      {/* Favorites */}
                       <Link
                         href="/favorites"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
-                        <Heart size={16} />
+                        <Heart
+                          size={18}
+                          style={{ color: systemColors.pink }}
+                          aria-hidden="true"
+                        />
                         お気に入り
                       </Link>
 
-                      {/* Diagnosis History */}
                       <Link
                         href="/diagnosis/history"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 font-medium hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
-                        <History size={16} />
+                        <History
+                          size={18}
+                          style={{ color: systemColors.cyan }}
+                          aria-hidden="true"
+                        />
                         診断履歴
                       </Link>
 
-                      <div className="border-t border-white/40 my-2"></div>
-                      <div className="px-3 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                      {/* Divider */}
+                      <div
+                        className="mx-4 my-2 h-px"
+                        style={{ backgroundColor: appleWebColors.borderSubtle }}
+                      />
+
+                      {/* Section: Guide */}
+                      <p
+                        className={`${typography.caption2} uppercase tracking-wider px-4 py-2`}
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         ガイド
-                      </div>
+                      </p>
+
                       <Link
                         href="/about"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
                         サプティアとは
                       </Link>
                       <Link
                         href="/why-suptia"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
                         AI検索との違い
                       </Link>
                       <Link
                         href="/how-to-use"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
                         サプティアの使い方
                       </Link>
 
-                      <div className="border-t border-white/40 my-2"></div>
-                      <div className="px-3 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                      {/* Divider */}
+                      <div
+                        className="mx-4 my-2 h-px"
+                        style={{ backgroundColor: appleWebColors.borderSubtle }}
+                      />
+
+                      {/* Section: Content */}
+                      <p
+                        className={`${typography.caption2} uppercase tracking-wider px-4 py-2`}
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
                         コンテンツ
-                      </div>
+                      </p>
+
                       <Link
                         href="/ingredients"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
+                        <BookOpen
+                          size={18}
+                          style={{ color: systemColors.green }}
+                          aria-hidden="true"
+                        />
                         成分ガイド
                       </Link>
                       <Link
                         href="/guide/dangerous-ingredients"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
+                        <Shield
+                          size={18}
+                          style={{ color: systemColors.red }}
+                          aria-hidden="true"
+                        />
                         危険成分ガイド
                       </Link>
                       <Link
                         href="/guide/purposes"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
+                        <Target
+                          size={18}
+                          style={{ color: systemColors.orange }}
+                          aria-hidden="true"
+                        />
                         目的別ガイド
                       </Link>
                       <Link
                         href="/guide/audiences"
                         onClick={() => setDesktopMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary-900 hover:bg-white/60 hover:text-primary transition-all duration-150 hover:translate-x-1 rounded-lg mx-2"
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
                       >
+                        <Users
+                          size={18}
+                          style={{ color: systemColors.indigo }}
+                          aria-hidden="true"
+                        />
                         対象者別ガイド
                       </Link>
                     </motion.div>
@@ -236,21 +336,38 @@ export function Header() {
 
               {/* User Menu / Login Button */}
               {authLoading ? (
-                <div className="w-8 h-8 rounded-full bg-primary-100 animate-pulse" />
+                <div
+                  className="w-8 h-8 rounded-full animate-pulse"
+                  style={{ backgroundColor: systemColors.gray[5] }}
+                />
               ) : user ? (
                 <div className="relative">
-                  <button
+                  <motion.button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-50 transition-colors"
+                    className="flex items-center gap-2 px-2 py-2 rounded-full min-h-[44px] transition-all duration-200 hover:bg-white/50 hover:backdrop-blur-[12px] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+                    whileTap={{ scale: 0.97 }}
+                    transition={subtleSpring}
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-medium">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
+                      style={{
+                        background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                      }}
+                    >
                       {user.email?.[0].toUpperCase() || <User size={16} />}
                     </div>
                     <ChevronDown
-                      size={16}
-                      className={`text-primary-600 transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
+                      size={14}
+                      style={{
+                        color: appleWebColors.textSecondary,
+                        transform: userMenuOpen
+                          ? "rotate(180deg)"
+                          : "rotate(0)",
+                        transition: "transform 0.2s ease",
+                      }}
+                      aria-hidden="true"
                     />
-                  </button>
+                  </motion.button>
 
                   <AnimatePresence>
                     {userMenuOpen && (
@@ -258,25 +375,37 @@ export function Header() {
                         initial={{ opacity: 0, y: -10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="absolute right-0 top-full mt-2 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl border border-white/50 py-2 z-[100]"
+                        transition={{ duration: 0.2, ease: appleEase }}
+                        className="absolute right-0 top-full mt-2 w-56 py-2 z-[100] overflow-hidden"
                         style={{
+                          ...liquidGlass.light,
                           boxShadow:
-                            "0 8px 32px 0 rgba(0, 102, 204, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+                            "0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)",
                         }}
                         onMouseLeave={() => setUserMenuOpen(false)}
                       >
-                        <div className="px-4 py-2 border-b border-gray-100">
-                          <p className="text-sm font-medium text-primary-900 truncate">
+                        <div
+                          className="px-4 py-3 border-b"
+                          style={{ borderColor: appleWebColors.borderSubtle }}
+                        >
+                          <p
+                            className={`${typography.subhead} font-medium truncate`}
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
                             {user.email}
                           </p>
                         </div>
                         <Link
                           href="/mypage"
                           onClick={() => setUserMenuOpen(false)}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-primary-900 hover:bg-primary-50 transition-colors"
+                          className={menuItemClasses}
+                          style={{ color: appleWebColors.textPrimary }}
                         >
-                          <User size={16} />
+                          <User
+                            size={18}
+                            style={{ color: systemColors.blue }}
+                            aria-hidden="true"
+                          />
                           マイページ
                         </Link>
                         <button
@@ -284,9 +413,10 @@ export function Header() {
                             signOut();
                             setUserMenuOpen(false);
                           }}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          className={`w-full ${menuItemClasses}`}
+                          style={{ color: systemColors.red }}
                         >
-                          <LogOut size={16} />
+                          <LogOut size={18} aria-hidden="true" />
                           ログアウト
                         </button>
                       </motion.div>
@@ -294,59 +424,71 @@ export function Header() {
                   </AnimatePresence>
                 </div>
               ) : (
-                <button
+                <motion.button
                   onClick={() => setLoginModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-all hover:shadow-lg text-sm font-medium"
+                  className={`
+                    flex items-center gap-2 px-5 py-2 rounded-full
+                    ${typography.subhead} font-semibold
+                    text-white min-h-[44px]
+                    transition-all duration-200
+                    hover:shadow-[0_4px_16px_rgba(0,122,255,0.4)]
+                  `}
+                  style={{ backgroundColor: appleWebColors.blue }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={subtleSpring}
                 >
-                  <User size={18} />
+                  <User size={18} aria-hidden="true" />
                   <span>ログイン</span>
-                </button>
+                </motion.button>
               )}
             </nav>
 
             {/* Mobile Menu Button */}
-            <button
+            <motion.button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-primary-100 rounded-lg transition-colors"
+              className="md:hidden p-2 rounded-[12px] min-w-[44px] min-h-[44px] flex items-center justify-center transition-all duration-200 hover:bg-white/50 hover:backdrop-blur-[12px] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+              style={{
+                backgroundColor: mobileMenuOpen
+                  ? "rgba(255, 255, 255, 0.5)"
+                  : "transparent",
+                backdropFilter: mobileMenuOpen ? "blur(12px)" : "none",
+                boxShadow: mobileMenuOpen
+                  ? "0 2px 12px rgba(0, 0, 0, 0.06)"
+                  : "none",
+              }}
+              whileTap={{ scale: 0.95 }}
+              aria-expanded={mobileMenuOpen}
+              aria-label="メニューを開く"
             >
               {mobileMenuOpen ? (
-                <X size={24} className="text-primary-600" />
+                <X size={24} style={{ color: appleWebColors.textPrimary }} />
               ) : (
-                <Menu size={24} className="text-primary-600" />
+                <Menu size={24} style={{ color: appleWebColors.textPrimary }} />
               )}
-            </button>
+            </motion.button>
           </div>
         </div>
       </header>
 
-      {/* Desktop Menu Overlays with AnimatePresence */}
+      {/* Desktop Menu Overlay */}
       <AnimatePresence>
-        {desktopMenuOpen && (
+        {(desktopMenuOpen || userMenuOpen) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="hidden md:block fixed inset-0 z-[45] bg-gradient-to-br from-primary-900/20 via-primary-500/10 to-transparent backdrop-blur-sm"
-            onClick={() => setDesktopMenuOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {userMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
+            transition={{ duration: 0.2 }}
             className="hidden md:block fixed inset-0 z-[45]"
-            onClick={() => setUserMenuOpen(false)}
+            onClick={() => {
+              setDesktopMenuOpen(false);
+              setUserMenuOpen(false);
+            }}
           />
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu Overlay with AnimatePresence */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -354,198 +496,229 @@ export function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden fixed inset-0 z-[45] bg-gradient-to-br from-primary-900/30 via-primary-600/20 to-transparent backdrop-blur-md"
+              transition={{ duration: 0.3 }}
+              className="md:hidden fixed inset-0 z-[45]"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.div
-              initial={{ opacity: 0, y: -30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -30, scale: 0.95 }}
-              transition={{
-                duration: 0.3,
-                ease: [0.4, 0, 0.2, 1],
-              }}
-              className="md:hidden fixed top-16 left-0 right-0 z-[48] backdrop-blur-2xl border-b border-white/30 shadow-2xl"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: appleEase }}
+              className="md:hidden fixed top-16 left-0 right-0 z-[48] border-b overflow-hidden"
               style={{
-                background:
-                  "linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.85) 100%)",
-                boxShadow:
-                  "0 8px 32px 0 rgba(0, 102, 204, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)",
+                ...liquidGlass.light,
+                borderRadius: 0,
+                borderColor: appleWebColors.borderSubtle,
+                maxHeight: "calc(100vh - 64px)",
               }}
             >
-              <div className="px-6 py-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
-                {/* Home - Mobile */}
+              <div className="px-4 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-80px)]">
+                {/* Home */}
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
+                  <Home
+                    size={20}
+                    style={{ color: systemColors.blue }}
+                    aria-hidden="true"
+                  />
                   ホーム
                 </Link>
 
-                {/* Diagnosis - Mobile (Highlighted) */}
+                {/* Diagnosis CTA */}
                 <Link
                   href="/diagnosis"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="group relative block px-4 py-3 text-white transition-all duration-300 font-bold rounded-xl overflow-visible flex items-center gap-2 active:scale-95"
+                  className="flex items-center gap-3 px-4 py-4 rounded-[12px] text-white font-semibold"
                   style={{
-                    boxShadow:
-                      "0 4px 20px rgba(147, 51, 234, 0.4), 0 2px 10px rgba(219, 39, 119, 0.25)",
+                    background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
                   }}
                 >
-                  {/* Glow effect */}
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-60 blur-sm" />
-
-                  {/* Button background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 rounded-xl" />
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="relative z-10"
-                  >
-                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                  </svg>
-                  <span className="relative z-10">診断する</span>
+                  <Search size={20} aria-hidden="true" />
+                  診断する
                 </Link>
 
                 {/* Divider */}
-                <div className="border-t border-white/40 my-3"></div>
+                <div
+                  className="mx-2 my-3 h-px"
+                  style={{ backgroundColor: appleWebColors.borderSubtle }}
+                />
 
-                {/* Favorites - Mobile */}
                 <Link
                   href="/favorites"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm flex items-center gap-2"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  <Heart size={18} />
+                  <Heart
+                    size={20}
+                    style={{ color: systemColors.pink }}
+                    aria-hidden="true"
+                  />
                   お気に入り
                 </Link>
 
-                {/* Diagnosis History - Mobile */}
                 <Link
                   href="/diagnosis/history"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm flex items-center gap-2"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  <History size={18} />
+                  <History
+                    size={20}
+                    style={{ color: systemColors.cyan }}
+                    aria-hidden="true"
+                  />
                   診断履歴
                 </Link>
 
-                {/* Guide Section Header */}
-                <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                {/* Section: Guide */}
+                <p
+                  className={`${typography.caption1} uppercase tracking-wider px-4 pt-4 pb-2`}
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   ガイド
-                </div>
+                </p>
 
-                {/* About - Mobile */}
                 <Link
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
                   サプティアとは
                 </Link>
-
-                {/* Why Suptia - Mobile */}
                 <Link
                   href="/why-suptia"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
                   AI検索との違い
                 </Link>
-
-                {/* How to Use - Mobile */}
                 <Link
                   href="/how-to-use"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
                   サプティアの使い方
                 </Link>
 
-                {/* Divider */}
-                <div className="border-t border-white/40 my-3"></div>
-
-                {/* Content Section Header */}
-                <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                {/* Section: Content */}
+                <p
+                  className={`${typography.caption1} uppercase tracking-wider px-4 pt-4 pb-2`}
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   コンテンツ
-                </div>
+                </p>
 
-                {/* Ingredient Guide - Mobile */}
                 <Link
                   href="/ingredients"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
+                  <BookOpen
+                    size={20}
+                    style={{ color: systemColors.green }}
+                    aria-hidden="true"
+                  />
                   成分ガイド
                 </Link>
-
-                {/* Dangerous Ingredients Guide - Mobile */}
                 <Link
                   href="/guide/dangerous-ingredients"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
+                  <Shield
+                    size={20}
+                    style={{ color: systemColors.red }}
+                    aria-hidden="true"
+                  />
                   危険成分ガイド
                 </Link>
-
-                {/* Purpose Guide - Mobile */}
                 <Link
                   href="/guide/purposes"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
+                  <Target
+                    size={20}
+                    style={{ color: systemColors.orange }}
+                    aria-hidden="true"
+                  />
                   目的別ガイド
                 </Link>
-
-                {/* Audience Guide - Mobile */}
                 <Link
                   href="/guide/audiences"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
+                  <Users
+                    size={20}
+                    style={{ color: systemColors.indigo }}
+                    aria-hidden="true"
+                  />
                   対象者別ガイド
                 </Link>
 
-                {/* Divider */}
-                <div className="border-t border-white/40 my-3"></div>
-
-                {/* Account Section - Mobile */}
-                <div className="px-4 py-2 text-xs font-semibold text-primary-600 uppercase tracking-wide">
+                {/* Section: Account */}
+                <div
+                  className="mx-2 my-3 h-px"
+                  style={{ backgroundColor: appleWebColors.borderSubtle }}
+                />
+                <p
+                  className={`${typography.caption1} uppercase tracking-wider px-4 pt-2 pb-2`}
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   アカウント
-                </div>
+                </p>
 
                 {authLoading ? (
                   <div className="px-4 py-3">
-                    <div className="w-full h-10 rounded-xl bg-primary-100 animate-pulse" />
+                    <div
+                      className="w-full h-12 rounded-[12px] animate-pulse"
+                      style={{ backgroundColor: systemColors.gray[5] }}
+                    />
                   </div>
                 ) : user ? (
                   <>
                     <div className="px-4 py-3 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-medium">
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                        }}
+                      >
                         {user.email?.[0].toUpperCase() || <User size={18} />}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-primary-900 truncate">
-                          {user.email}
-                        </p>
-                      </div>
+                      <p
+                        className={`${typography.subhead} font-medium truncate flex-1`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {user.email}
+                      </p>
                     </div>
                     <Link
                       href="/mypage"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2 px-4 py-3 text-primary-900 hover:bg-white/70 hover:text-primary transition-all duration-150 font-medium rounded-xl backdrop-blur-sm"
+                      className={menuItemClasses}
+                      style={{ color: appleWebColors.textPrimary }}
                     >
-                      <User size={18} />
+                      <User
+                        size={20}
+                        style={{ color: systemColors.blue }}
+                        aria-hidden="true"
+                      />
                       マイページ
                     </Link>
                     <button
@@ -553,9 +726,10 @@ export function Header() {
                         signOut();
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 transition-all duration-150 font-medium rounded-xl"
+                      className={`w-full ${menuItemClasses}`}
+                      style={{ color: systemColors.red }}
                     >
-                      <LogOut size={18} />
+                      <LogOut size={20} aria-hidden="true" />
                       ログアウト
                     </button>
                   </>
@@ -565,9 +739,13 @@ export function Header() {
                       setMobileMenuOpen(false);
                       setLoginModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-600 transition-colors active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 mx-4 px-4 py-3 rounded-full text-white font-semibold"
+                    style={{
+                      backgroundColor: appleWebColors.blue,
+                      width: "calc(100% - 32px)",
+                    }}
                   >
-                    <User size={18} />
+                    <User size={20} aria-hidden="true" />
                     ログイン / 新規登録
                   </button>
                 )}

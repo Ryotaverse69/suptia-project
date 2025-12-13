@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import {
-  Heart,
   AlertTriangle,
   Baby,
   ChevronRight,
@@ -11,7 +10,14 @@ import {
   Apple,
   Stethoscope,
   Calendar,
+  ArrowRight,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "妊婦・授乳婦向けサプリメントガイド | Suptia",
@@ -148,50 +154,72 @@ const tips = [
     title: "妊娠前から準備",
     description:
       "葉酸は妊娠前1ヶ月から摂取を開始することが推奨されています。計画的な栄養補給が重要です。",
-    color: "from-blue-500 to-cyan-500",
+    color: systemColors.blue,
   },
   {
     icon: Pill,
     title: "プレナタルビタミン優先",
     description:
       "妊婦用マルチビタミン（プレナタルビタミン）を基本とし、個別のサプリメントは医師と相談の上で追加してください。",
-    color: "from-purple-500 to-pink-500",
+    color: systemColors.purple,
   },
   {
     icon: Apple,
     title: "食事からの摂取を優先",
     description:
       "サプリメントは補助的な役割です。バランスの取れた食事を基本として、不足分を補うようにしましょう。",
-    color: "from-green-500 to-emerald-500",
+    color: systemColors.green,
   },
   {
     icon: Stethoscope,
     title: "定期的な検査",
     description:
       "鉄やビタミンDなどの血中濃度を定期的に検査し、適切な摂取量を調整することが重要です。",
-    color: "from-amber-500 to-orange-500",
+    color: systemColors.orange,
   },
 ];
 
 export default function PregnantNursingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-rose-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Breadcrumb */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-neutral-200 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-neutral-600">
-            <Link href="/" className="hover:text-pink-600 transition-colors">
+      <div
+        className={`border-b sticky top-0 z-10 ${liquidGlassClasses.light}`}
+        style={{
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6 py-3">
+          <div className="flex items-center gap-2 text-[14px]">
+            <Link
+              href="/"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
+            >
               ホーム
             </Link>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight
+              size={14}
+              style={{ color: appleWebColors.textTertiary }}
+            />
             <Link
               href="/guide/audiences"
-              className="hover:text-pink-600 transition-colors"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
             >
               対象者別ガイド
             </Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-neutral-900 font-medium">
+            <ChevronRight
+              size={14}
+              style={{ color: appleWebColors.textTertiary }}
+            />
+            <span style={{ color: appleWebColors.textPrimary }}>
               妊婦・授乳婦向け
             </span>
           </div>
@@ -199,68 +227,103 @@ export default function PregnantNursingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-28">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-500 to-pink-600">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent" />
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-            <div className="absolute -top-1/2 -left-1/4 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute -bottom-1/2 -right-1/4 w-96 h-96 bg-rose-300/30 rounded-full blur-3xl animate-pulse delay-1000" />
-          </div>
-          {/* Floating Hearts */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(6)].map((_, i) => (
-              <Heart
-                key={i}
-                className="absolute text-white/10 animate-float"
-                style={{
-                  width: `${20 + i * 8}px`,
-                  height: `${20 + i * 8}px`,
-                  left: `${10 + i * 15}%`,
-                  top: `${20 + (i % 3) * 20}%`,
-                  animationDelay: `${i * 0.5}s`,
-                  animationDuration: `${3 + i * 0.5}s`,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full mb-6">
-              <Baby className="w-10 h-10" />
+      <section
+        className="py-16 sm:py-20 border-b"
+        style={{
+          background: `linear-gradient(135deg, ${systemColors.pink}08 0%, rgba(255, 255, 255, 0.9) 50%, ${systemColors.red}08 100%)`,
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 rounded-[20px] mb-6"
+              style={{
+                background: `linear-gradient(135deg, ${systemColors.pink} 0%, ${systemColors.red} 100%)`,
+              }}
+            >
+              <Baby size={32} className="text-white" />
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1
+              className="text-[34px] sm:text-[40px] lg:text-[48px] font-bold leading-tight tracking-[-0.015em] mb-4"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               妊婦・授乳婦向け
-              <br className="md:hidden" />
+              <br className="sm:hidden" />
               サプリメントガイド
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-6 font-medium">
+            <p
+              className="text-[17px] sm:text-[20px] mb-4"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               母体と赤ちゃんの健康を守るための安全な栄養補給
             </p>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
+            <p
+              className="text-[15px] max-w-2xl mx-auto leading-relaxed mb-8"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               妊娠・授乳期は栄養需要が大幅に増加する時期です。
               安全で効果的な成分を科学的根拠に基づいてご紹介します。
             </p>
 
             {/* Stats */}
-            <div className="flex flex-wrap justify-center gap-6 mt-10">
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
-                <div className="text-3xl font-bold">
+            <div className="flex flex-wrap justify-center gap-4">
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.green }}
+                >
                   {safeIngredients.length}
                 </div>
-                <div className="text-sm text-white/80">安全な成分</div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  安全な成分
+                </div>
               </div>
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
-                <div className="text-3xl font-bold">
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.red }}
+                >
                   {avoidIngredients.length}
                 </div>
-                <div className="text-sm text-white/80">注意成分</div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  注意成分
+                </div>
               </div>
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
-                <div className="text-3xl font-bold">2</div>
-                <div className="text-sm text-white/80">必須成分</div>
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.pink }}
+                >
+                  2
+                </div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  必須成分
+                </div>
               </div>
             </div>
           </div>
@@ -268,21 +331,39 @@ export default function PregnantNursingPage() {
       </section>
 
       {/* Important Notice */}
-      <section className="py-8 -mt-8 relative z-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-2xl p-6 shadow-lg">
+      <section className="py-8 px-6 lg:px-12">
+        <div className="mx-auto max-w-4xl">
+          <div
+            className="rounded-[20px] p-6 border"
+            style={{
+              backgroundColor: `${systemColors.red}08`,
+              borderColor: `${systemColors.red}30`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+              <div
+                className="p-3 rounded-[12px] flex-shrink-0"
+                style={{ backgroundColor: `${systemColors.red}15` }}
+              >
+                <AlertTriangle size={24} style={{ color: systemColors.red }} />
               </div>
               <div>
-                <h3 className="font-bold text-red-900 text-lg mb-2">
+                <h3
+                  className="text-[17px] font-bold mb-2"
+                  style={{ color: systemColors.red }}
+                >
                   重要な注意事項
                 </h3>
-                <p className="text-red-800 mb-2 leading-relaxed">
+                <p
+                  className="text-[15px] leading-relaxed mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   妊娠中・授乳中のサプリメント使用は、必ず医師または助産師に相談してから開始してください。
                 </p>
-                <p className="text-red-700 text-sm">
+                <p
+                  className="text-[14px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   このガイドは一般的な情報提供を目的としており、個別の医療アドバイスではありません。
                 </p>
               </div>
@@ -292,207 +373,356 @@ export default function PregnantNursingPage() {
       </section>
 
       {/* Safe Ingredients */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                <CheckCircle2 className="w-4 h-4" />
+      <section className="py-12 px-6 lg:px-12">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-4"
+              style={{
+                backgroundColor: `${systemColors.green}15`,
+                border: `1px solid ${systemColors.green}30`,
+              }}
+            >
+              <CheckCircle2 size={16} style={{ color: systemColors.green }} />
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: systemColors.green }}
+              >
                 安全性が確認された成分
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-                安全で推奨される成分
-              </h2>
-              <p className="text-neutral-600 max-w-2xl mx-auto">
-                妊娠・授乳期に推奨される栄養素です。医師の指導のもと適切に摂取しましょう。
-              </p>
+              </span>
             </div>
+            <h2
+              className="text-[28px] sm:text-[34px] font-bold tracking-[-0.015em] mb-3"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              安全で推奨される成分
+            </h2>
+            <p
+              className="text-[17px] max-w-2xl mx-auto"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              妊娠・授乳期に推奨される栄養素です。医師の指導のもと適切に摂取しましょう。
+            </p>
+          </div>
 
-            <div className="grid gap-4">
-              {safeIngredients.map((ingredient) => (
-                <Link
-                  key={ingredient.slug}
-                  href={`/ingredients/${ingredient.slug}`}
-                  className="group block bg-white rounded-2xl shadow-md hover:shadow-xl border border-neutral-100 hover:border-green-200 transition-all duration-300 overflow-hidden"
+          <div className="grid gap-4">
+            {safeIngredients.map((ingredient) => (
+              <Link
+                key={ingredient.slug}
+                href={`/ingredients/${ingredient.slug}`}
+                className="group block"
+              >
+                <div
+                  className={`rounded-[20px] p-6 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                  style={{
+                    borderColor: appleWebColors.borderSubtle,
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04)",
+                  }}
                 >
-                  <div className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-neutral-900 group-hover:text-green-600 transition-colors">
-                            {ingredient.name}
-                          </h3>
-                          <span className="text-sm text-neutral-500">
-                            ({ingredient.nameEn})
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3
+                          className="text-[20px] font-bold"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          {ingredient.name}
+                        </h3>
+                        <span
+                          className="text-[14px]"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          ({ingredient.nameEn})
+                        </span>
+                        {ingredient.priority === "必須" && (
+                          <span
+                            className="text-[12px] px-2.5 py-1 rounded-full font-semibold text-white"
+                            style={{
+                              background: `linear-gradient(135deg, ${systemColors.pink} 0%, ${systemColors.red} 100%)`,
+                            }}
+                          >
+                            必須
                           </span>
-                          {ingredient.priority === "必須" && (
-                            <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                              必須
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-neutral-600 mb-4 leading-relaxed">
-                          {ingredient.description}
-                        </p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {ingredient.benefits.map((benefit, idx) => (
-                            <span
-                              key={idx}
-                              className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
-                            >
-                              {benefit}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center text-pink-600 font-medium text-sm group-hover:text-pink-700">
-                          詳細を見る
-                          <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                        </div>
+                        )}
                       </div>
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl px-5 py-4 md:min-w-[160px] text-center">
-                        <div className="text-xs text-green-600 font-medium mb-1">
-                          推奨摂取量
-                        </div>
-                        <div className="text-lg font-bold text-green-800">
-                          {ingredient.dosage}
-                        </div>
+                      <p
+                        className="text-[15px] leading-relaxed mb-4"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {ingredient.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {ingredient.benefits.map((benefit, idx) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1.5 rounded-full text-[13px] font-medium"
+                            style={{
+                              backgroundColor: `${systemColors.green}15`,
+                              color: systemColors.green,
+                            }}
+                          >
+                            {benefit}
+                          </span>
+                        ))}
+                      </div>
+                      <div
+                        className="flex items-center text-[14px] font-medium"
+                        style={{ color: systemColors.blue }}
+                      >
+                        詳細を見る
+                        <ChevronRight
+                          size={16}
+                          className="ml-1 group-hover:translate-x-1 transition-transform"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className="rounded-[16px] px-5 py-4 md:min-w-[160px] text-center border"
+                      style={{
+                        backgroundColor: `${systemColors.green}08`,
+                        borderColor: `${systemColors.green}30`,
+                      }}
+                    >
+                      <div
+                        className="text-[12px] font-medium mb-1"
+                        style={{ color: systemColors.green }}
+                      >
+                        推奨摂取量
+                      </div>
+                      <div
+                        className="text-[17px] font-bold"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {ingredient.dosage}
                       </div>
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Avoid Ingredients */}
-      <section className="py-16 bg-gradient-to-b from-red-50/50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                <XCircle className="w-4 h-4" />
+      <section
+        className="py-16 px-6 lg:px-12"
+        style={{ backgroundColor: appleWebColors.sectionBackground }}
+      >
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-4"
+              style={{
+                backgroundColor: `${systemColors.red}15`,
+                border: `1px solid ${systemColors.red}30`,
+              }}
+            >
+              <XCircle size={16} style={{ color: systemColors.red }} />
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: systemColors.red }}
+              >
                 注意が必要な成分
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-                避けるべき成分
-              </h2>
-              <p className="text-neutral-600 max-w-2xl mx-auto">
-                妊娠・授乳期には安全性が確認されていないか、リスクがある成分です。
-              </p>
+              </span>
             </div>
+            <h2
+              className="text-[28px] sm:text-[34px] font-bold tracking-[-0.015em] mb-3"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              避けるべき成分
+            </h2>
+            <p
+              className="text-[17px] max-w-2xl mx-auto"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              妊娠・授乳期には安全性が確認されていないか、リスクがある成分です。
+            </p>
+          </div>
 
-            <div className="grid gap-3">
-              {avoidIngredients.map((ingredient) => (
-                <Link
-                  key={ingredient.slug}
-                  href={`/ingredients/${ingredient.slug}`}
-                  className="group block bg-white rounded-xl shadow-sm hover:shadow-md border-l-4 border-red-400 hover:border-red-500 transition-all duration-300"
+          <div className="grid gap-3">
+            {avoidIngredients.map((ingredient) => (
+              <Link
+                key={ingredient.slug}
+                href={`/ingredients/${ingredient.slug}`}
+                className="group block"
+              >
+                <div
+                  className={`rounded-[16px] p-5 border-l-4 transition-all duration-300 hover:-translate-y-0.5 ${liquidGlassClasses.light}`}
+                  style={{
+                    borderLeftColor: systemColors.red,
+                    boxShadow: "0 2px 12px rgba(0, 0, 0, 0.04)",
+                  }}
                 >
-                  <div className="p-5">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-bold text-neutral-900 group-hover:text-pink-600 transition-colors">
-                            {ingredient.name}
-                          </h3>
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3
+                          className="text-[17px] font-bold"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          {ingredient.name}
+                        </h3>
+                        <span
+                          className="text-[12px] px-2 py-0.5 rounded-full font-medium"
+                          style={{
+                            backgroundColor:
                               ingredient.riskLevel === "高"
-                                ? "bg-red-100 text-red-700"
+                                ? `${systemColors.red}15`
                                 : ingredient.riskLevel === "中"
-                                  ? "bg-orange-100 text-orange-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            リスク: {ingredient.riskLevel}
-                          </span>
-                        </div>
-                        <p className="text-neutral-600 text-sm">
-                          <span className="font-medium text-neutral-700">
-                            理由:
-                          </span>{" "}
-                          {ingredient.reason}
-                        </p>
+                                  ? `${systemColors.orange}15`
+                                  : `${systemColors.yellow}15`,
+                            color:
+                              ingredient.riskLevel === "高"
+                                ? systemColors.red
+                                : ingredient.riskLevel === "中"
+                                  ? systemColors.orange
+                                  : systemColors.yellow,
+                          }}
+                        >
+                          リスク: {ingredient.riskLevel}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="bg-red-50 border border-red-100 rounded-lg px-4 py-2 text-center">
-                          <div className="text-xs text-red-600 font-medium">
-                            推奨
-                          </div>
-                          <div className="text-sm font-bold text-red-800">
-                            {ingredient.maxDosage}
-                          </div>
+                      <p
+                        className="text-[14px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        <span
+                          className="font-medium"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          理由:
+                        </span>{" "}
+                        {ingredient.reason}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="rounded-[12px] px-4 py-2 text-center border"
+                        style={{
+                          backgroundColor: `${systemColors.red}08`,
+                          borderColor: `${systemColors.red}30`,
+                        }}
+                      >
+                        <div
+                          className="text-[11px] font-medium"
+                          style={{ color: systemColors.red }}
+                        >
+                          推奨
                         </div>
-                        <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-pink-500 group-hover:translate-x-1 transition-all" />
+                        <div
+                          className="text-[14px] font-bold"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          {ingredient.maxDosage}
+                        </div>
                       </div>
+                      <ChevronRight
+                        size={20}
+                        className="group-hover:translate-x-1 transition-all"
+                        style={{ color: appleWebColors.textTertiary }}
+                      />
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Tips Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-                妊娠・授乳期の
-                <br className="md:hidden" />
-                サプリメント使用のポイント
-              </h2>
-            </div>
+      <section className="py-16 px-6 lg:px-12">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <h2
+              className="text-[28px] sm:text-[34px] font-bold tracking-[-0.015em] mb-3"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              妊娠・授乳期の
+              <br className="sm:hidden" />
+              サプリメント使用のポイント
+            </h2>
+          </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {tips.map((tip, index) => (
+          <div className="grid md:grid-cols-2 gap-6">
+            {tips.map((tip, index) => (
+              <div
+                key={index}
+                className={`rounded-[20px] p-6 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04)",
+                }}
+              >
                 <div
-                  key={index}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 border border-neutral-100"
+                  className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] mb-4"
+                  style={{ backgroundColor: `${tip.color}15` }}
                 >
-                  <div
-                    className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${tip.color} rounded-xl mb-4`}
-                  >
-                    <tip.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-neutral-900 mb-2">
-                    {tip.title}
-                  </h3>
-                  <p className="text-neutral-600 leading-relaxed">
-                    {tip.description}
-                  </p>
+                  <tip.icon size={24} style={{ color: tip.color }} />
                 </div>
-              ))}
-            </div>
+                <h3
+                  className="text-[17px] font-bold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  {tip.title}
+                </h3>
+                <p
+                  className="text-[15px] leading-relaxed"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  {tip.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Related Guides */}
-      <section className="py-16 bg-gradient-to-br from-neutral-900 to-neutral-800">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+      {/* Related Guides CTA */}
+      <section className="py-16 px-6 lg:px-12">
+        <div className="mx-auto max-w-4xl text-center">
+          <div
+            className="rounded-[24px] p-8 sm:p-12 border"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.pink}10 0%, ${systemColors.purple}10 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
+            <h2
+              className="text-[24px] sm:text-[28px] font-bold mb-4"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               さらに詳しい成分情報を確認
             </h2>
-            <p className="text-lg text-neutral-300 mb-8">
+            <p
+              className="text-[17px] mb-8 leading-relaxed"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               各成分の詳細ページで、効果、摂取方法、副作用、相互作用などの詳しい情報をご覧いただけます。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/ingredients"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-4 rounded-full font-bold hover:from-pink-600 hover:to-rose-600 transition-all shadow-lg hover:shadow-xl"
+                className="group flex items-center justify-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition-all hover:scale-[1.02] min-h-[48px]"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.pink} 0%, ${systemColors.red} 100%)`,
+                  boxShadow: `0 4px 16px ${systemColors.pink}40`,
+                }}
               >
                 成分一覧を見る
-                <ChevronRight className="w-5 h-5" />
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </Link>
               <Link
                 href="/guide/audiences"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-full font-bold hover:bg-white/20 transition-all border border-white/20"
+                className={`group flex items-center justify-center gap-2 rounded-full px-8 py-4 font-semibold transition-all hover:scale-[1.02] min-h-[48px] border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                  color: appleWebColors.textPrimary,
+                }}
               >
                 他の対象者ガイドを見る
               </Link>

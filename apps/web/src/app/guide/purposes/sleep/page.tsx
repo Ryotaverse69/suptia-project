@@ -11,8 +11,14 @@ import {
   Clock,
   ChevronRight,
   CloudMoon,
-  Sparkles,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  tierColors,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title:
@@ -33,8 +39,7 @@ export const metadata: Metadata = {
 const ingredients = [
   {
     name: "メラトニン",
-    evidenceLevel: "S",
-    evidenceColor: "from-purple-500 to-pink-500",
+    evidenceLevel: "S" as const,
     description:
       "睡眠ホルモンとして知られ、体内時計の調整に重要。入眠時間の短縮と時差ボケ改善に最も効果が実証されている成分です。",
     dosage: "就寝30分〜1時間前に0.5〜5mg（低用量から開始推奨）",
@@ -42,8 +47,7 @@ const ingredients = [
   },
   {
     name: "マグネシウム",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "神経系のリラックスを促進し、睡眠の質を向上。GABA受容体を活性化し、深い眠りをサポートします。グリシン酸マグネシウムが吸収率良好。",
     dosage: "就寝1〜2時間前に200〜400mg（グリシン酸塩またはクエン酸塩）",
@@ -51,8 +55,7 @@ const ingredients = [
   },
   {
     name: "L-テアニン",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "緑茶に含まれるアミノ酸。リラックス効果を持ちながら眠気を引き起こさず、睡眠の質を向上。ストレス軽減にも有効です。",
     dosage: "就寝前に200〜400mg（日中のストレス軽減には100〜200mg）",
@@ -60,8 +63,7 @@ const ingredients = [
   },
   {
     name: "グリシン",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "抑制性神経伝達物質。体温を下げて深部睡眠を促進し、睡眠の質と翌朝の疲労感改善に効果が確認されています。",
     dosage: "就寝前に3g（粉末を水に溶かして摂取）",
@@ -69,8 +71,7 @@ const ingredients = [
   },
   {
     name: "GABA（γ-アミノ酪酸）",
-    evidenceLevel: "B",
-    evidenceColor: "from-green-500 to-emerald-500",
+    evidenceLevel: "B" as const,
     description:
       "主要な抑制性神経伝達物質。リラックス効果と抗不安作用があり、入眠をスムーズにします。経口摂取での脳への到達は限定的との指摘もあります。",
     dosage: "就寝前に100〜300mg（ストレス軽減には50〜100mg）",
@@ -78,8 +79,7 @@ const ingredients = [
   },
   {
     name: "バレリアン（セイヨウカノコソウ）",
-    evidenceLevel: "B",
-    evidenceColor: "from-green-500 to-emerald-500",
+    evidenceLevel: "B" as const,
     description:
       "伝統的な睡眠ハーブ。GABA濃度を高める作用があり、入眠時間の短縮と睡眠の質向上に効果。ただし個人差が大きい。",
     dosage: "就寝1〜2時間前に300〜600mg（抽出物として）",
@@ -236,7 +236,8 @@ export default function SleepGuidePage() {
             {ingredients.map((ingredient) => (
               <div
                 key={ingredient.slug}
-                className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:border-indigo-200 transition-all duration-300"
+                className={`group rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -246,7 +247,11 @@ export default function SleepGuidePage() {
                     </h3>
                   </div>
                   <span
-                    className={`px-3 py-1 bg-gradient-to-r ${ingredient.evidenceColor} text-white text-sm font-bold rounded-full`}
+                    className="px-3 py-1 text-sm font-bold rounded-full"
+                    style={{
+                      backgroundColor: tierColors[ingredient.evidenceLevel].bg,
+                      color: tierColors[ingredient.evidenceLevel].text,
+                    }}
                   >
                     {ingredient.evidenceLevel}ランク
                   </span>
@@ -301,7 +306,8 @@ export default function SleepGuidePage() {
               {combinations.map((combo, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                  className={`rounded-xl p-5 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                  style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="text-2xl mb-3">{combo.icon}</div>
                   <h4 className="font-bold text-gray-900 mb-2">

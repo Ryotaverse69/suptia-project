@@ -12,6 +12,13 @@ import {
   ChevronRight,
   Battery,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  tierColors,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title:
@@ -32,8 +39,7 @@ export const metadata: Metadata = {
 const ingredients = [
   {
     name: "CoQ10（コエンザイムQ10）",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "細胞のエネルギー工場であるミトコンドリアで働く補酵素。慢性疲労症候群の症状を改善し、運動後の疲労回復を促進します。",
     dosage: "1日 100〜300mg（食事と一緒に、ユビキノール型が吸収良好）",
@@ -41,8 +47,7 @@ const ingredients = [
   },
   {
     name: "ビタミンB群（B1, B2, B6, B12）",
-    evidenceLevel: "S",
-    evidenceColor: "from-purple-500 to-pink-500",
+    evidenceLevel: "S" as const,
     description:
       "エネルギー代謝に不可欠な補酵素。特にビタミンB12は神経機能と赤血球生成に重要で、不足すると慢性疲労の原因になります。",
     dosage: "B12: 500〜1000μg / B複合体: 50〜100mg（活性型推奨）",
@@ -50,8 +55,7 @@ const ingredients = [
   },
   {
     name: "鉄（ヘム鉄）",
-    evidenceLevel: "S",
-    evidenceColor: "from-purple-500 to-pink-500",
+    evidenceLevel: "S" as const,
     description:
       "酸素を全身に運ぶヘモグロビンの主成分。鉄欠乏性貧血は疲労の最も一般的な原因の一つ。特に女性は不足しやすい。",
     dosage: "男性: 8〜15mg / 女性: 18〜30mg（ヘム鉄が吸収良好）",
@@ -59,8 +63,7 @@ const ingredients = [
   },
   {
     name: "マグネシウム",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "300以上の酵素反応に関与し、ATP（エネルギー通貨）の生成に必須。不足すると疲労感、筋肉痛、睡眠障害を引き起こします。",
     dosage: "1日 300〜500mg（クエン酸塩またはグリシン酸塩）",
@@ -68,8 +71,7 @@ const ingredients = [
   },
   {
     name: "アシュワガンダ",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "アダプトゲンハーブの王様。ストレスホルモン（コルチゾール）を正常化し、慢性疲労とストレスによるエネルギー低下を改善します。",
     dosage: "1日 300〜600mg（KSM-66またはSensoril抽出物、朝食後推奨）",
@@ -77,8 +79,7 @@ const ingredients = [
   },
   {
     name: "ロディオラ・ロゼア",
-    evidenceLevel: "A",
-    evidenceColor: "from-blue-500 to-cyan-500",
+    evidenceLevel: "A" as const,
     description:
       "ストレス適応性ハーブ。精神的・肉体的疲労を軽減し、集中力と持久力を向上。特に急性ストレス下でのパフォーマンス改善に効果的です。",
     dosage: "1日 200〜600mg（ロザビンとサリドロサイド3%標準化、朝摂取）",
@@ -127,63 +128,99 @@ const cautions = [
 
 export default function EnergyGuidePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* ヒーローセクション */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-yellow-500 py-20 lg:py-28">
-        {/* 背景アニメーション */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-1/2 -left-1/4 w-full h-full bg-gradient-to-br from-amber-400/30 to-transparent rounded-full blur-3xl animate-gradient-drift" />
-          <div className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-gradient-to-tl from-yellow-400/30 to-transparent rounded-full blur-3xl animate-gradient-drift animation-delay-2000" />
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-2xl animate-mist-flow" />
-        </div>
-
-        <div className="relative mx-auto px-6 lg:px-12 xl:px-16 max-w-[1200px]">
-          {/* パンくずリスト */}
-          <nav className="flex items-center gap-2 text-amber-100 text-sm mb-8">
-            <Link href="/" className="hover:text-white transition-colors">
-              ホーム
-            </Link>
-            <ChevronRight size={16} />
-            <Link
-              href="/guide/purposes"
-              className="hover:text-white transition-colors"
-            >
-              目的別ガイド
-            </Link>
-            <ChevronRight size={16} />
-            <span className="text-white font-medium">疲労回復・エネルギー</span>
-          </nav>
-
+      <section
+        className="relative overflow-hidden py-16 sm:py-20 border-b"
+        style={{
+          background: `linear-gradient(135deg, ${systemColors.orange}08 0%, rgba(255, 255, 255, 0.9) 50%, ${systemColors.red}08 100%)`,
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-6">
-                <div className="p-4 bg-white/15 backdrop-blur-sm rounded-2xl">
-                  <Zap size={40} className="text-white" />
+                <div
+                  className="p-4 rounded-[20px]"
+                  style={{
+                    background: `linear-gradient(135deg, ${systemColors.orange} 0%, ${systemColors.red} 100%)`,
+                  }}
+                >
+                  <Zap size={32} className="text-white" />
                 </div>
                 <div>
-                  <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-2">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-[13px] font-medium mb-2"
+                    style={{
+                      backgroundColor: `${systemColors.orange}15`,
+                      color: systemColors.orange,
+                    }}
+                  >
                     目的別ガイド
                   </span>
-                  <h1 className="text-4xl md:text-5xl font-bold text-white">
+                  <h1
+                    className="text-[34px] sm:text-[40px] font-bold tracking-[-0.015em]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     疲労回復・エナジーサプリガイド
                   </h1>
                 </div>
               </div>
-              <p className="text-xl text-amber-100 max-w-2xl leading-relaxed">
+              <p
+                className="text-[17px] sm:text-[20px] max-w-2xl leading-relaxed"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 科学的根拠に基づいて、本当に効果のあるエナジーサプリメントを選びましょう。
                 慢性疲労から解放され、毎日を活力あふれる状態で過ごす。
               </p>
             </div>
 
-            {/* 統計ハイライト */}
+            {/* Stats */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center">
-                <div className="text-3xl font-bold text-white">6</div>
-                <div className="text-amber-100 text-sm">厳選成分</div>
+              <div
+                className={`rounded-[16px] p-4 text-center border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.orange }}
+                >
+                  6
+                </div>
+                <div
+                  className="text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  厳選成分
+                </div>
               </div>
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center">
-                <div className="text-3xl font-bold text-white">2</div>
-                <div className="text-amber-100 text-sm">Sランク成分</div>
+              <div
+                className={`rounded-[16px] p-4 text-center border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.red }}
+                >
+                  2
+                </div>
+                <div
+                  className="text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  Sランク成分
+                </div>
               </div>
             </div>
           </div>
@@ -191,24 +228,42 @@ export default function EnergyGuidePage() {
       </section>
 
       {/* メインコンテンツ */}
-      <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1200px]">
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-12">
         {/* イントロダクション */}
-        <section className="mb-16">
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-8">
+        <section className="mb-12">
+          <div
+            className="rounded-[20px] p-6 sm:p-8 border"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.orange}08 0%, ${systemColors.red}08 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-amber-100 rounded-xl">
-                <BookOpen className="text-amber-600" size={28} />
+              <div
+                className="p-3 rounded-[12px]"
+                style={{ backgroundColor: `${systemColors.orange}15` }}
+              >
+                <BookOpen size={24} style={{ color: systemColors.orange }} />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                <h2
+                  className="text-[20px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   エナジーサプリの基礎知識
                 </h2>
-                <p className="text-gray-700 leading-relaxed">
+                <p
+                  className="text-[15px] leading-relaxed"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   慢性的な疲労やエネルギー不足は、現代人に非常に多い悩みです。
                   原因は栄養不足、睡眠不足、ストレス、運動不足など多岐にわたりますが、適切なサプリメントでエネルギー代謝を最適化し、疲労回復を促進できます。
                 </p>
-                <p className="text-gray-900 font-semibold mt-3 flex items-center gap-2">
-                  <Battery size={18} className="text-amber-500" />
+                <p
+                  className="flex items-center gap-2 mt-3 text-[15px] font-medium"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  <Battery size={16} style={{ color: systemColors.orange }} />
                   科学的に効果が実証された成分を選ぶことで、持続的なエネルギーと活力を取り戻すことができます。
                 </p>
               </div>
@@ -217,12 +272,18 @@ export default function EnergyGuidePage() {
         </section>
 
         {/* 疲労回復に効果的な成分 */}
-        <section className="mb-16">
+        <section className="mb-12">
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-amber-100 rounded-lg">
-              <Beaker className="text-amber-600" size={24} />
+            <div
+              className="p-2 rounded-[10px]"
+              style={{ backgroundColor: `${systemColors.orange}15` }}
+            >
+              <Beaker size={22} style={{ color: systemColors.orange }} />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2
+              className="text-[28px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               疲労回復に効果的な主要成分
             </h2>
           </div>
@@ -231,42 +292,73 @@ export default function EnergyGuidePage() {
             {ingredients.map((ingredient) => (
               <div
                 key={ingredient.slug}
-                className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:border-amber-200 transition-all duration-300"
+                className={`group rounded-[20px] border p-6 transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04)",
+                }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-green-500" size={24} />
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <CheckCircle2
+                      size={22}
+                      style={{ color: systemColors.green }}
+                    />
+                    <h3
+                      className="text-[20px] font-bold"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
                       {ingredient.name}
                     </h3>
                   </div>
                   <span
-                    className={`px-3 py-1 bg-gradient-to-r ${ingredient.evidenceColor} text-white text-sm font-bold rounded-full`}
+                    className="px-3 py-1 text-[13px] font-bold rounded-full text-white"
+                    style={{
+                      background: tierColors[ingredient.evidenceLevel].bg,
+                    }}
                   >
                     {ingredient.evidenceLevel}ランク
                   </span>
                 </div>
 
-                <p className="text-gray-600 mb-4 leading-relaxed">
+                <p
+                  className="text-[15px] leading-relaxed mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   {ingredient.description}
                 </p>
 
-                <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                <div
+                  className="rounded-[12px] p-4 mb-4"
+                  style={{ backgroundColor: appleWebColors.sectionBackground }}
+                >
                   <div className="flex items-center gap-2 mb-2">
-                    <Clock size={16} className="text-gray-500" />
-                    <span className="font-semibold text-gray-900 text-sm">
+                    <Clock
+                      size={14}
+                      style={{ color: appleWebColors.textTertiary }}
+                    />
+                    <span
+                      className="font-semibold text-[13px]"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
                       推奨摂取量
                     </span>
                   </div>
-                  <p className="text-gray-700 text-sm">{ingredient.dosage}</p>
+                  <p
+                    className="text-[14px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    {ingredient.dosage}
+                  </p>
                 </div>
 
                 <Link
                   href={`/ingredients/${ingredient.slug}`}
-                  className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-semibold text-sm group-hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-[14px] font-medium transition-all group-hover:gap-3"
+                  style={{ color: systemColors.blue }}
                 >
                   詳細を見る
-                  <ArrowRight size={16} />
+                  <ArrowRight size={14} />
                 </Link>
               </div>
             ))}
@@ -274,20 +366,35 @@ export default function EnergyGuidePage() {
         </section>
 
         {/* 組み合わせのススメ */}
-        <section className="mb-16">
+        <section className="mb-12">
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Star className="text-orange-600" size={24} />
+            <div
+              className="p-2 rounded-[10px]"
+              style={{ backgroundColor: `${systemColors.red}15` }}
+            >
+              <Star size={22} style={{ color: systemColors.red }} />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2
+              className="text-[28px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               相乗効果のある組み合わせ
             </h2>
           </div>
 
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border border-amber-200 rounded-2xl p-8">
+          <div
+            className="rounded-[20px] p-6 sm:p-8 border"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.red}08 0%, ${systemColors.orange}08 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
             <div className="flex items-center gap-2 mb-6">
-              <span className="text-3xl">⚡</span>
-              <h3 className="text-xl font-bold text-amber-900">
+              <span className="text-2xl">⚡</span>
+              <h3
+                className="text-[20px] font-bold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 エネルギー最大化コンビネーション
               </h3>
             </div>
@@ -296,13 +403,23 @@ export default function EnergyGuidePage() {
               {combinations.map((combo, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                  className={`rounded-[16px] p-5 border transition-all hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                  style={{
+                    borderColor: appleWebColors.borderSubtle,
+                    boxShadow: "0 2px 12px rgba(0, 0, 0, 0.04)",
+                  }}
                 >
                   <div className="text-2xl mb-3">{combo.icon}</div>
-                  <h4 className="font-bold text-gray-900 mb-2">
+                  <h4
+                    className="font-bold mb-2"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     {combo.title}
                   </h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p
+                    className="text-[14px] leading-relaxed"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     {combo.description}
                   </p>
                 </div>
@@ -312,29 +429,55 @@ export default function EnergyGuidePage() {
         </section>
 
         {/* 注意事項 */}
-        <section className="mb-16">
+        <section className="mb-12">
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-amber-100 rounded-lg">
-              <AlertTriangle className="text-amber-600" size={24} />
+            <div
+              className="p-2 rounded-[10px]"
+              style={{ backgroundColor: `${systemColors.orange}15` }}
+            >
+              <AlertTriangle size={22} style={{ color: systemColors.orange }} />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">摂取時の注意点</h2>
+            <h2
+              className="text-[28px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              摂取時の注意点
+            </h2>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8">
+          <div
+            className="rounded-[20px] p-6 sm:p-8 border"
+            style={{
+              backgroundColor: `${systemColors.orange}08`,
+              borderColor: `${systemColors.orange}30`,
+            }}
+          >
             <div className="space-y-4">
               {cautions.map((caution, index) => (
                 <div
                   key={index}
-                  className="flex items-start gap-4 bg-white rounded-xl p-4"
+                  className={`flex items-start gap-4 rounded-[16px] p-4 ${liquidGlassClasses.light}`}
                 >
-                  <div className="p-2 bg-amber-100 rounded-lg flex-shrink-0">
-                    <AlertTriangle className="text-amber-600" size={18} />
+                  <div
+                    className="p-2 rounded-[10px] flex-shrink-0"
+                    style={{ backgroundColor: `${systemColors.orange}15` }}
+                  >
+                    <AlertTriangle
+                      size={16}
+                      style={{ color: systemColors.orange }}
+                    />
                   </div>
                   <div>
-                    <h3 className="font-bold text-amber-900 mb-1">
+                    <h3
+                      className="font-bold mb-1"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
                       {caution.title}
                     </h3>
-                    <p className="text-amber-800 text-sm">
+                    <p
+                      className="text-[14px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
                       {caution.description}
                     </p>
                   </div>
@@ -346,46 +489,93 @@ export default function EnergyGuidePage() {
 
         {/* 関連ガイド */}
         <section>
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-6">関連ガイド</h3>
+          <div
+            className="rounded-[24px] p-8 border"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.red}10 0%, ${systemColors.blue}10 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
+            <h3
+              className="text-[24px] font-bold mb-6"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              関連ガイド
+            </h3>
             <div className="grid md:grid-cols-3 gap-4">
               <Link
                 href="/guide/purposes"
-                className="group p-5 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all"
+                className={`group p-5 rounded-[16px] border transition-all hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
               >
-                <h4 className="font-bold mb-2 group-hover:text-amber-300 transition-colors">
+                <h4
+                  className="font-bold mb-2 transition-colors"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   目的別ガイド
                 </h4>
-                <p className="text-gray-300 text-sm">他の健康目標も見る</p>
+                <p
+                  className="text-[14px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  他の健康目標も見る
+                </p>
                 <ArrowRight
-                  size={18}
-                  className="mt-3 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all"
+                  size={16}
+                  className="group-hover:translate-x-1 transition-all"
+                  style={{ color: systemColors.blue }}
                 />
               </Link>
               <Link
                 href="/guide/purposes/sleep"
-                className="group p-5 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all"
+                className={`group p-5 rounded-[16px] border transition-all hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
               >
-                <h4 className="font-bold mb-2 group-hover:text-amber-300 transition-colors">
+                <h4
+                  className="font-bold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   睡眠改善ガイド
                 </h4>
-                <p className="text-gray-300 text-sm">質の高い睡眠で回復</p>
+                <p
+                  className="text-[14px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  質の高い睡眠で回復
+                </p>
                 <ArrowRight
-                  size={18}
-                  className="mt-3 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all"
+                  size={16}
+                  className="group-hover:translate-x-1 transition-all"
+                  style={{ color: systemColors.blue }}
                 />
               </Link>
               <Link
                 href="/guide/dangerous-ingredients"
-                className="group p-5 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all"
+                className={`group p-5 rounded-[16px] border transition-all hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
               >
-                <h4 className="font-bold mb-2 group-hover:text-amber-300 transition-colors">
+                <h4
+                  className="font-bold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   危険成分ガイド
                 </h4>
-                <p className="text-gray-300 text-sm">避けるべき成分を確認</p>
+                <p
+                  className="text-[14px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  避けるべき成分を確認
+                </p>
                 <ArrowRight
-                  size={18}
-                  className="mt-3 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all"
+                  size={16}
+                  className="group-hover:translate-x-1 transition-all"
+                  style={{ color: systemColors.blue }}
                 />
               </Link>
             </div>

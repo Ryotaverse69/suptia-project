@@ -4,6 +4,7 @@ import { useCookieConsent } from "@/contexts/CookieConsentContext";
 import { useState, useEffect } from "react";
 import { X, Check } from "lucide-react";
 import { CookieConsent } from "@/lib/cookie-consent";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 export function CookieSettingsModal() {
   const { showSettings, consent, updateConsent, closeSettings } =
@@ -37,9 +38,13 @@ export function CookieSettingsModal() {
       />
 
       {/* モーダル */}
-      <div className="relative bg-background rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div
+        className={`relative ${liquidGlassClasses.light} shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto`}
+      >
         {/* ヘッダー */}
-        <div className="sticky top-0 bg-background border-b px-6 py-4 flex items-center justify-between">
+        <div
+          className={`sticky top-0 ${liquidGlassClasses.light} border-b border-white/80 px-6 py-4 flex items-center justify-between`}
+        >
           <h2 className="text-2xl font-bold">Cookie設定</h2>
           <button
             onClick={closeSettings}
@@ -163,7 +168,9 @@ export function CookieSettingsModal() {
         </div>
 
         {/* フッター */}
-        <div className="sticky bottom-0 bg-background border-t px-6 py-4 flex items-center justify-between">
+        <div
+          className={`sticky bottom-0 ${liquidGlassClasses.light} border-t border-white/80 px-6 py-4 flex items-center justify-between`}
+        >
           <button
             onClick={closeSettings}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"

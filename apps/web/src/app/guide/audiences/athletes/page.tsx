@@ -14,6 +14,12 @@ import {
   Target,
   Activity,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "アスリート向けサプリメントガイド | Suptia",
@@ -147,35 +153,75 @@ const tips = [
 const getEvidenceBadgeStyle = (level: string) => {
   switch (level) {
     case "S":
-      return "bg-gradient-to-r from-purple-500 to-indigo-500 text-white";
+      return `text-white`;
     case "A":
-      return "bg-gradient-to-r from-blue-500 to-cyan-500 text-white";
+      return `text-white`;
     case "B":
-      return "bg-gradient-to-r from-green-500 to-emerald-500 text-white";
+      return `text-white`;
     default:
-      return "bg-neutral-200 text-neutral-700";
+      return `text-white`;
+  }
+};
+
+const getEvidenceBadgeBackground = (level: string) => {
+  switch (level) {
+    case "S":
+      return systemColors.green;
+    case "A":
+      return systemColors.blue;
+    case "B":
+      return systemColors.cyan;
+    default:
+      return systemColors.gray[2];
   }
 };
 
 export default function AthletesPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-cyan-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Breadcrumb */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-neutral-200 sticky top-0 z-10">
+      <div
+        className={`border-b sticky top-0 z-10 ${liquidGlassClasses.light}`}
+        style={{
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-neutral-600">
-            <Link href="/" className="hover:text-blue-600 transition-colors">
+          <div
+            className="flex items-center gap-2 text-[15px]"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <Link
+              href="/"
+              className="transition-colors hover:text-[#007AFF]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
+            >
               ホーム
             </Link>
             <ChevronRight className="w-4 h-4" />
             <Link
               href="/guide/audiences"
-              className="hover:text-blue-600 transition-colors"
+              className="transition-colors hover:text-[#007AFF]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
             >
               対象者別ガイド
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-neutral-900 font-medium">アスリート向け</span>
+            <span
+              style={{ color: appleWebColors.textPrimary, fontWeight: 500 }}
+            >
+              アスリート向け
+            </span>
           </div>
         </div>
       </div>
@@ -226,19 +272,25 @@ export default function AthletesPage() {
 
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-6 mt-10">
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
+              <div
+                className={`rounded-2xl px-6 py-4 ${liquidGlassClasses.subtle}`}
+              >
                 <div className="text-3xl font-bold">
                   {performanceIngredients.length}
                 </div>
                 <div className="text-sm text-white/80">パフォーマンス成分</div>
               </div>
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
+              <div
+                className={`rounded-2xl px-6 py-4 ${liquidGlassClasses.subtle}`}
+              >
                 <div className="text-3xl font-bold">
                   {recoveryIngredients.length}
                 </div>
                 <div className="text-sm text-white/80">回復促進成分</div>
               </div>
-              <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4">
+              <div
+                className={`rounded-2xl px-6 py-4 ${liquidGlassClasses.subtle}`}
+              >
                 <div className="text-3xl font-bold">3</div>
                 <div className="text-sm text-white/80">Sランク成分</div>
               </div>
@@ -478,7 +530,7 @@ export default function AthletesPage() {
               </Link>
               <Link
                 href="/guide/audiences"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-full font-bold hover:bg-white/20 transition-all border border-white/20"
+                className={`inline-flex items-center justify-center gap-2 text-white px-8 py-4 rounded-full font-bold hover:bg-white/20 transition-all border border-white/20 ${liquidGlassClasses.subtle}`}
               >
                 他の対象者ガイドを見る
               </Link>

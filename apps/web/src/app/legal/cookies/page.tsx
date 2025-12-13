@@ -3,13 +3,19 @@
 import Link from "next/link";
 import { useCookieConsent } from "@/contexts/CookieConsentContext";
 import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
+import {
   Cookie,
   ChevronRight,
   Settings,
   Shield,
   BarChart3,
   Megaphone,
-  Sparkles,
+  Sliders,
   Clock,
   Globe,
   Baby,
@@ -31,44 +37,78 @@ export default function CookiesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-300/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-
+      <section className="py-16 relative overflow-hidden">
         <div className="container mx-auto px-4 max-w-4xl relative">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-amber-100 text-sm mb-6">
-            <Link href="/" className="hover:text-white transition-colors">
+          <nav
+            className="flex items-center gap-2 text-[15px] mb-8"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <Link
+              href="/"
+              className="transition-colors"
+              style={{
+                color: systemColors.blue,
+              }}
+            >
               ホーム
             </Link>
             <ChevronRight size={16} />
             <Link
               href="/legal/terms"
-              className="hover:text-white transition-colors"
+              className="transition-colors"
+              style={{
+                color: systemColors.blue,
+              }}
             >
               法的情報
             </Link>
             <ChevronRight size={16} />
-            <span className="text-white">Cookieポリシー</span>
+            <span style={{ color: appleWebColors.textPrimary }}>
+              Cookieポリシー
+            </span>
           </nav>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <Cookie className="w-8 h-8 text-white" />
+          <div className="flex items-center gap-4 mb-6">
+            <div
+              className="p-3 rounded-[16px]"
+              style={{ backgroundColor: appleWebColors.sectionBackground }}
+            >
+              <Cookie
+                className="w-8 h-8"
+                style={{ color: systemColors.blue }}
+              />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
+            <h1
+              className="text-[28px] font-bold"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               Cookieポリシー
             </h1>
           </div>
 
-          <p className="text-amber-100 text-lg max-w-2xl">
+          <p
+            className="text-[17px] max-w-2xl mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
             当サイトでのCookie使用についてご説明します
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
+            style={{
+              backgroundColor: appleWebColors.sectionBackground,
+              color: appleWebColors.textSecondary,
+            }}
+          >
             <RefreshCw size={14} />
             最終更新日: 2025年10月30日
           </div>
@@ -76,17 +116,38 @@ export default function CookiesPage() {
       </section>
 
       {/* Quick Navigation */}
-      <section className="bg-white border-b sticky top-0 z-40 shadow-sm">
+      <section
+        className={`sticky top-0 z-40 ${liquidGlassClasses.light}`}
+        style={{
+          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+        }}
+      >
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-2 py-3 overflow-x-auto">
-            <span className="text-sm text-slate-500 whitespace-nowrap">
+            <span
+              className="text-[13px] whitespace-nowrap"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               クイックアクセス:
             </span>
             {sections.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 hover:bg-amber-100 hover:text-amber-700 rounded-full transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-full transition-colors whitespace-nowrap"
+                style={{
+                  backgroundColor: appleWebColors.sectionBackground,
+                  color: appleWebColors.textPrimary,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = systemColors.blue;
+                  e.currentTarget.style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    appleWebColors.sectionBackground;
+                  e.currentTarget.style.color = appleWebColors.textPrimary;
+                }}
               >
                 <item.icon size={14} />
                 {item.label}
@@ -100,19 +161,39 @@ export default function CookiesPage() {
       <main className="container mx-auto px-4 max-w-4xl py-12">
         {/* What is Cookie */}
         <section className="mb-10">
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Cookie className="w-6 h-6 text-amber-600" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <Cookie
+                  className="w-6 h-6"
+                  style={{ color: systemColors.blue }}
+                />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-amber-900 mb-2">
+                <h2
+                  className="text-[20px] font-semibold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   Cookieとは
                 </h2>
-                <p className="text-amber-800 mb-3">
+                <p
+                  className="text-[15px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   Cookieとは、ウェブサイトを訪問した際に、ブラウザに保存される小さなテキストファイルです。Cookieを使用することで、ウェブサイトはユーザーの訪問情報を記憶し、次回訪問時により良い体験を提供できます。
                 </p>
-                <p className="text-amber-800">
+                <p
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   当サイト（サプティア）では、サービスの改善、ユーザー体験の向上、サイト利用状況の分析のためにCookieを使用しています。
                 </p>
               </div>
@@ -122,28 +203,51 @@ export default function CookiesPage() {
 
         {/* Cookie Types */}
         <section id="types" className="mb-10 scroll-mt-20">
-          <h2 className="text-2xl font-bold text-slate-800 mb-6">
+          <h2
+            className="text-[22px] font-bold mb-6"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             使用しているCookieの種類
           </h2>
 
           <div className="space-y-4">
             {/* Essential */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-4">
+            <div
+              className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
+              <div
+                className="px-6 py-4"
+                style={{
+                  backgroundColor: systemColors.green,
+                  borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Shield className="w-5 h-5 text-white" />
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-[17px] font-semibold text-white">
                       必須Cookie（Strictly Necessary Cookies）
                     </h3>
                   </div>
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                  <span
+                    className="px-3 py-1 rounded-full text-[13px] font-medium"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      color: "#FFFFFF",
+                    }}
+                  >
                     常に有効
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-slate-600 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   サイトの基本機能に必要不可欠なCookie。無効にするとサイトが正常に機能しません。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2 mb-4">
@@ -155,14 +259,25 @@ export default function CookiesPage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg text-sm"
+                      className="flex items-center gap-2 p-2 rounded-[10px] text-[13px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                      }}
                     >
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                      <span className="text-slate-700">{item}</span>
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: systemColors.green }}
+                      />
+                      <span style={{ color: appleWebColors.textPrimary }}>
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
+                <div
+                  className="flex items-center gap-2 text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   <Clock size={14} />
                   <span>保持期間: セッション終了まで、または最大1年</span>
                 </div>
@@ -170,22 +285,42 @@ export default function CookiesPage() {
             </div>
 
             {/* Analytics */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+            <div
+              className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
+              <div
+                className="px-6 py-4"
+                style={{
+                  backgroundColor: systemColors.blue,
+                  borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <BarChart3 className="w-5 h-5 text-white" />
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-[17px] font-semibold text-white">
                       分析Cookie（Analytics Cookies）
                     </h3>
                   </div>
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                  <span
+                    className="px-3 py-1 rounded-full text-[13px] font-medium"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      color: "#FFFFFF",
+                    }}
+                  >
                     オプション
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-slate-600 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   サイトの使用状況を分析し、サービス改善に役立てるためのCookie。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2 mb-4">
@@ -198,23 +333,43 @@ export default function CookiesPage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg text-sm"
+                      className="flex items-center gap-2 p-2 rounded-[10px] text-[13px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                      }}
                     >
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                      <span className="text-slate-700">{item}</span>
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: systemColors.blue }}
+                      />
+                      <span style={{ color: appleWebColors.textPrimary }}>
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="bg-slate-50 rounded-xl p-4 mb-4">
-                  <p className="font-semibold text-slate-800 mb-2 text-sm">
+                <div
+                  className="rounded-[16px] p-4 mb-4"
+                  style={{ backgroundColor: appleWebColors.sectionBackground }}
+                >
+                  <p
+                    className="font-semibold mb-2 text-[13px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     使用サービス:
                   </p>
-                  <ul className="text-sm text-slate-600 space-y-1">
+                  <ul
+                    className="text-[13px] space-y-1"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     <li>• Google Analytics 4 (GA4)</li>
                     <li>• その他アクセス解析ツール</li>
                   </ul>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
+                <div
+                  className="flex items-center gap-2 text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   <Clock size={14} />
                   <span>保持期間: 最大2年</span>
                 </div>
@@ -222,22 +377,42 @@ export default function CookiesPage() {
             </div>
 
             {/* Advertising */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-500 to-violet-600 px-6 py-4">
+            <div
+              className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
+              <div
+                className="px-6 py-4"
+                style={{
+                  backgroundColor: systemColors.purple,
+                  borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Megaphone className="w-5 h-5 text-white" />
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-[17px] font-semibold text-white">
                       広告Cookie（Advertising Cookies）
                     </h3>
                   </div>
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                  <span
+                    className="px-3 py-1 rounded-full text-[13px] font-medium"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      color: "#FFFFFF",
+                    }}
+                  >
                     オプション
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-slate-600 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   ユーザーの興味・関心に基づいた広告配信、アフィリエイト成果の測定に使用するCookie。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2 mb-4">
@@ -249,18 +424,35 @@ export default function CookiesPage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg text-sm"
+                      className="flex items-center gap-2 p-2 rounded-[10px] text-[13px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                      }}
                     >
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" />
-                      <span className="text-slate-700">{item}</span>
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: systemColors.purple }}
+                      />
+                      <span style={{ color: appleWebColors.textPrimary }}>
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="bg-slate-50 rounded-xl p-4 mb-4">
-                  <p className="font-semibold text-slate-800 mb-2 text-sm">
+                <div
+                  className="rounded-[16px] p-4 mb-4"
+                  style={{ backgroundColor: appleWebColors.sectionBackground }}
+                >
+                  <p
+                    className="font-semibold mb-2 text-[13px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     使用サービス:
                   </p>
-                  <ul className="text-sm text-slate-600 space-y-1">
+                  <ul
+                    className="text-[13px] space-y-1"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     <li>• Amazon アソシエイト</li>
                     <li>• 楽天アフィリエイト</li>
                     <li>• iHerb アフィリエイト</li>
@@ -268,7 +460,10 @@ export default function CookiesPage() {
                     <li>• その他広告プラットフォーム</li>
                   </ul>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
+                <div
+                  className="flex items-center gap-2 text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   <Clock size={14} />
                   <span>保持期間: 最大1年</span>
                 </div>
@@ -276,22 +471,42 @@ export default function CookiesPage() {
             </div>
 
             {/* Functional */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+            <div
+              className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
+              <div
+                className="px-6 py-4"
+                style={{
+                  backgroundColor: systemColors.orange,
+                  borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-white" />
-                    <h3 className="text-lg font-bold text-white">
+                    <Sliders className="w-5 h-5 text-white" />
+                    <h3 className="text-[17px] font-semibold text-white">
                       機能Cookie（Functional Cookies）
                     </h3>
                   </div>
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                  <span
+                    className="px-3 py-1 rounded-full text-[13px] font-medium"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      color: "#FFFFFF",
+                    }}
+                  >
                     オプション
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-slate-600 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   ユーザー体験を向上させるためのCookie。無効にしても基本機能は使用できます。
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2 mb-4">
@@ -303,14 +518,25 @@ export default function CookiesPage() {
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-amber-50 rounded-lg text-sm"
+                      className="flex items-center gap-2 p-2 rounded-[10px] text-[13px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                      }}
                     >
-                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-                      <span className="text-slate-700">{item}</span>
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: systemColors.orange }}
+                      />
+                      <span style={{ color: appleWebColors.textPrimary }}>
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
+                <div
+                  className="flex items-center gap-2 text-[13px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   <Clock size={14} />
                   <span>保持期間: 最大1年</span>
                 </div>
@@ -321,16 +547,37 @@ export default function CookiesPage() {
 
         {/* Third Party Cookies */}
         <section id="third-party" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">第三者Cookie</h2>
+                <Globe
+                  className="w-5 h-5"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+                <h2
+                  className="text-[20px] font-semibold"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  第三者Cookie
+                </h2>
               </div>
             </div>
 
             <div className="p-6">
-              <p className="text-slate-600 mb-4">
+              <p
+                className="text-[15px] mb-4"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 当サイトでは、第三者サービス（Google
                 Analytics、アフィリエイトプログラム等）が設定するCookieも使用しています。これらのCookieは、各サービス提供者のプライバシーポリシーに従って管理されます。
               </p>
@@ -340,14 +587,39 @@ export default function CookiesPage() {
                   href="https://policies.google.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-[16px] transition-colors group"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = systemColors.blue;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span) (span as HTMLElement).style.color = "#FFFFFF";
+                    if (icon) (icon as SVGElement).style.color = "#FFFFFF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      appleWebColors.sectionBackground;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span)
+                      (span as HTMLElement).style.color =
+                        appleWebColors.textPrimary;
+                    if (icon)
+                      (icon as SVGElement).style.color =
+                        appleWebColors.textSecondary;
+                  }}
                 >
-                  <span className="font-medium text-slate-800">
+                  <span
+                    className="font-medium text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     Google プライバシーポリシー
                   </span>
                   <ExternalLink
                     size={16}
-                    className="text-slate-400 group-hover:text-slate-600"
+                    style={{ color: appleWebColors.textSecondary }}
                   />
                 </a>
 
@@ -355,14 +627,39 @@ export default function CookiesPage() {
                   href="https://affiliate.amazon.co.jp/help/operating/agreement"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-[16px] transition-colors group"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = systemColors.blue;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span) (span as HTMLElement).style.color = "#FFFFFF";
+                    if (icon) (icon as SVGElement).style.color = "#FFFFFF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      appleWebColors.sectionBackground;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span)
+                      (span as HTMLElement).style.color =
+                        appleWebColors.textPrimary;
+                    if (icon)
+                      (icon as SVGElement).style.color =
+                        appleWebColors.textSecondary;
+                  }}
                 >
-                  <span className="font-medium text-slate-800">
+                  <span
+                    className="font-medium text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     Amazon アソシエイト プログラム参加規約
                   </span>
                   <ExternalLink
                     size={16}
-                    className="text-slate-400 group-hover:text-slate-600"
+                    style={{ color: appleWebColors.textSecondary }}
                   />
                 </a>
 
@@ -370,14 +667,39 @@ export default function CookiesPage() {
                   href="https://affiliate.rakuten.co.jp/guides/rules/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-[16px] transition-colors group"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = systemColors.blue;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span) (span as HTMLElement).style.color = "#FFFFFF";
+                    if (icon) (icon as SVGElement).style.color = "#FFFFFF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      appleWebColors.sectionBackground;
+                    const span = e.currentTarget.querySelector("span");
+                    const icon = e.currentTarget.querySelector("svg");
+                    if (span)
+                      (span as HTMLElement).style.color =
+                        appleWebColors.textPrimary;
+                    if (icon)
+                      (icon as SVGElement).style.color =
+                        appleWebColors.textSecondary;
+                  }}
                 >
-                  <span className="font-medium text-slate-800">
+                  <span
+                    className="font-medium text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
                     楽天アフィリエイト 規約
                   </span>
                   <ExternalLink
                     size={16}
-                    className="text-slate-400 group-hover:text-slate-600"
+                    style={{ color: appleWebColors.textSecondary }}
                   />
                 </a>
               </div>
@@ -387,11 +709,27 @@ export default function CookiesPage() {
 
         {/* Cookie Settings */}
         <section id="settings" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
               <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">
+                <Settings
+                  className="w-5 h-5"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+                <h2
+                  className="text-[20px] font-semibold"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   Cookie設定の変更方法
                 </h2>
               </div>
@@ -400,16 +738,38 @@ export default function CookiesPage() {
             <div className="p-6 space-y-6">
               {/* Site Settings */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                <h3
+                  className="text-[17px] font-semibold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   当サイトでの設定
                 </h3>
-                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-5">
-                  <p className="text-slate-700 mb-4">
+                <div
+                  className="rounded-[16px] p-5"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
+                  <p
+                    className="text-[15px] mb-4"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
                     以下のボタンから、いつでもCookie設定を変更できます。各種類のCookieを個別に有効・無効にすることができます。
                   </p>
                   <button
                     onClick={openSettings}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl hover:from-cyan-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl font-medium"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-[16px] transition-all font-medium text-[15px]"
+                    style={{
+                      backgroundColor: systemColors.blue,
+                      color: "#FFFFFF",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.8";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
                   >
                     <Settings size={18} />
                     Cookie設定を変更する
@@ -419,10 +779,16 @@ export default function CookiesPage() {
 
               {/* Browser Settings */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                <h3
+                  className="text-[17px] font-semibold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   ブラウザでの設定
                 </h3>
-                <p className="text-slate-600 mb-4">
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   各ブラウザの設定からCookieを管理できます：
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -444,20 +810,48 @@ export default function CookiesPage() {
                       path: "設定 → プライバシー、検索、サービス",
                     },
                   ].map((browser, i) => (
-                    <div key={i} className="p-4 bg-slate-50 rounded-xl">
-                      <p className="font-semibold text-slate-800 mb-1">
+                    <div
+                      key={i}
+                      className="p-4 rounded-[16px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                      }}
+                    >
+                      <p
+                        className="font-semibold mb-1 text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         {browser.name}
                       </p>
-                      <p className="text-sm text-slate-500">{browser.path}</p>
+                      <p
+                        className="text-[13px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {browser.path}
+                      </p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <div
+                  className="mt-4 rounded-[16px] p-4"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
                   <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-800">
-                      <strong>注意:</strong>{" "}
+                    <AlertTriangle
+                      className="w-5 h-5 flex-shrink-0 mt-0.5"
+                      style={{ color: systemColors.orange }}
+                    />
+                    <p
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      <strong style={{ color: appleWebColors.textPrimary }}>
+                        注意:
+                      </strong>{" "}
                       すべてのCookieをブロックすると、サイトの一部機能が正常に動作しない場合があります。
                     </p>
                   </div>
@@ -469,14 +863,28 @@ export default function CookiesPage() {
 
         {/* Do Not Track */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <Shield className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <Shield
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 Do Not Track (DNT)
               </h2>
             </div>
-            <p className="text-slate-600">
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               一部のブラウザには「Do Not
               Track（追跡拒否）」機能があります。当サイトは、この設定を尊重し、DNTが有効な場合は分析・広告Cookieを制限します。
             </p>
@@ -485,14 +893,28 @@ export default function CookiesPage() {
 
         {/* Mobile Identifiers */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <Smartphone className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <Smartphone
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 モバイルアプリでの識別子
               </h2>
             </div>
-            <p className="text-slate-600 mb-4">
+            <p
+              className="text-[15px] mb-4"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               将来的にモバイルアプリを提供する場合、以下の識別子を使用する可能性があります：
             </p>
             <div className="grid sm:grid-cols-2 gap-2 mb-4">
@@ -500,15 +922,26 @@ export default function CookiesPage() {
                 (item, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-sm"
+                    className="flex items-center gap-2 p-2 rounded-[10px] text-[13px]"
+                    style={{
+                      backgroundColor: appleWebColors.sectionBackground,
+                    }}
                   >
-                    <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                    <span className="text-slate-700">{item}</span>
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: appleWebColors.textSecondary }}
+                    />
+                    <span style={{ color: appleWebColors.textPrimary }}>
+                      {item}
+                    </span>
                   </div>
                 ),
               )}
             </div>
-            <p className="text-slate-500 text-sm">
+            <p
+              className="text-[13px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               これらの識別子は、デバイス設定からオプトアウトできます。
             </p>
           </div>
@@ -516,24 +949,50 @@ export default function CookiesPage() {
 
         {/* Retention Period */}
         <section id="retention" className="mb-10 scroll-mt-20">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
+          <div
+            className={`rounded-[20px] overflow-hidden ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
+            <div
+              className="px-6 py-4"
+              style={{
+                borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+            >
               <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-slate-600" />
-                <h2 className="text-xl font-bold text-slate-800">
+                <Clock
+                  className="w-5 h-5"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+                <h2
+                  className="text-[20px] font-semibold"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   Cookieの保持期間
                 </h2>
               </div>
             </div>
             <div className="p-6">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-[13px]">
                   <thead>
-                    <tr className="border-b border-slate-200">
-                      <th className="text-left py-3 px-4 font-semibold text-slate-800">
+                    <tr
+                      style={{
+                        borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                      }}
+                    >
+                      <th
+                        className="text-left py-3 px-4 font-semibold"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         Cookie種類
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-800">
+                      <th
+                        className="text-left py-3 px-4 font-semibold"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
                         保持期間
                       </th>
                     </tr>
@@ -543,34 +1002,45 @@ export default function CookiesPage() {
                       {
                         type: "必須Cookie",
                         period: "セッション終了まで または 最大1年",
-                        color: "emerald",
+                        color: systemColors.green,
                       },
                       {
                         type: "分析Cookie",
                         period: "最大2年",
-                        color: "blue",
+                        color: systemColors.blue,
                       },
                       {
                         type: "広告Cookie",
                         period: "最大1年",
-                        color: "purple",
+                        color: systemColors.purple,
                       },
                       {
                         type: "機能Cookie",
                         period: "最大1年",
-                        color: "amber",
+                        color: systemColors.orange,
                       },
                     ].map((row, i) => (
-                      <tr key={i} className="border-b border-slate-100">
+                      <tr
+                        key={i}
+                        style={{
+                          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                        }}
+                      >
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-2 h-2 rounded-full bg-${row.color}-500`}
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: row.color }}
                             />
-                            <span className="text-slate-700">{row.type}</span>
+                            <span style={{ color: appleWebColors.textPrimary }}>
+                              {row.type}
+                            </span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-slate-600">
+                        <td
+                          className="py-3 px-4"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
                           {row.period}
                         </td>
                       </tr>
@@ -584,16 +1054,33 @@ export default function CookiesPage() {
 
         {/* Children's Privacy */}
         <section className="mb-10">
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Baby className="w-6 h-6 text-amber-600" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <Baby
+                  className="w-6 h-6"
+                  style={{ color: systemColors.blue }}
+                />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-amber-900 mb-2">
+                <h2
+                  className="text-[20px] font-semibold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   子供のプライバシー
                 </h2>
-                <p className="text-amber-800">
+                <p
+                  className="text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   当サイトは13歳未満の子供を対象としていません。13歳未満の子供のCookie情報を故意に収集することはありません。
                 </p>
               </div>
@@ -603,14 +1090,28 @@ export default function CookiesPage() {
 
         {/* Policy Changes */}
         <section className="mb-10">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <RefreshCw className="w-5 h-5 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-800">
+              <RefreshCw
+                className="w-5 h-5"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+              <h2
+                className="text-[20px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 Cookieポリシーの変更
               </h2>
             </div>
-            <p className="text-slate-600">
+            <p
+              className="text-[15px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               当サイトは、必要に応じて本Cookieポリシーを変更することがあります。重要な変更がある場合は、サイト上で通知します。
             </p>
           </div>
@@ -618,19 +1119,48 @@ export default function CookiesPage() {
 
         {/* Contact */}
         <section className="mb-10">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white">
+          <div
+            className={`rounded-[20px] p-6 ${liquidGlassClasses.light}`}
+            style={{
+              border: `1px solid ${appleWebColors.borderSubtle}`,
+            }}
+          >
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-white/10 rounded-lg">
-                <Mail className="w-6 h-6" />
+              <div
+                className="p-2 rounded-[16px]"
+                style={{ backgroundColor: appleWebColors.sectionBackground }}
+              >
+                <Mail
+                  className="w-6 h-6"
+                  style={{ color: systemColors.blue }}
+                />
               </div>
               <div>
-                <h2 className="text-xl font-bold mb-2">お問い合わせ</h2>
-                <p className="text-slate-300 mb-4">
+                <h2
+                  className="text-[20px] font-semibold mb-2"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  お問い合わせ
+                </h2>
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   Cookieの使用に関するご質問は、お問い合わせフォームよりご連絡ください。
                 </p>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-800 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-[16px] font-medium text-[15px] transition-opacity"
+                  style={{
+                    backgroundColor: systemColors.blue,
+                    color: "#FFFFFF",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = "0.8";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = "1";
+                  }}
                 >
                   お問い合わせフォーム
                   <ChevronRight size={16} />
@@ -642,28 +1172,71 @@ export default function CookiesPage() {
 
         {/* Related Links */}
         <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">
+          <h2
+            className="text-[17px] font-semibold mb-4"
+            style={{ color: appleWebColors.textPrimary }}
+          >
             関連ポリシー
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <Link
               href="/legal/privacy"
-              className="p-4 bg-white border border-slate-200 rounded-xl hover:border-amber-300 hover:shadow-md transition-all group"
+              className={`p-4 rounded-[16px] transition-all group ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <h3 className="font-semibold text-slate-800 group-hover:text-amber-600 mb-1">
+              <h3
+                className="font-semibold mb-1 text-[15px]"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 プライバシーポリシー
               </h3>
-              <p className="text-sm text-slate-500">個人情報の取り扱い</p>
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                個人情報の取り扱い
+              </p>
             </Link>
 
             <Link
               href="/legal/terms"
-              className="p-4 bg-white border border-slate-200 rounded-xl hover:border-amber-300 hover:shadow-md transition-all group"
+              className={`p-4 rounded-[16px] transition-all group ${liquidGlassClasses.light}`}
+              style={{
+                border: `1px solid ${appleWebColors.borderSubtle}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <h3 className="font-semibold text-slate-800 group-hover:text-amber-600 mb-1">
+              <h3
+                className="font-semibold mb-1 text-[15px]"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 利用規約
               </h3>
-              <p className="text-sm text-slate-500">サービスの利用条件</p>
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                サービスの利用条件
+              </p>
             </Link>
           </div>
         </section>

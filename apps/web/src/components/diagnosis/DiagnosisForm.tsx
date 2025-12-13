@@ -5,14 +5,21 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Heart,
   Zap,
-  Sparkles,
   Shield,
   DollarSign,
   CheckCircle2,
   ChevronRight,
   Target,
   AlertCircle,
+  Check,
+  Activity,
 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 const HEALTH_GOALS = [
   {
@@ -32,7 +39,7 @@ const HEALTH_GOALS = [
   {
     id: "skin-health",
     label: "美肌・肌の健康",
-    icon: Sparkles,
+    icon: Heart,
     gradient: "from-pink-400 to-rose-600",
     description: "美しく健康的な肌へ",
   },
@@ -53,7 +60,7 @@ const HEALTH_GOALS = [
   {
     id: "brain-function",
     label: "脳機能・集中力",
-    icon: Sparkles,
+    icon: Activity,
     gradient: "from-purple-400 to-indigo-600",
     description: "クリアな思考と集中力",
   },
@@ -227,7 +234,7 @@ export function DiagnosisForm() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6" style={{ fontFamily: fontStack }}>
       {/* ステップインジケーター */}
       <div className="relative">
         <div className="flex items-center justify-between">
@@ -240,41 +247,47 @@ export function DiagnosisForm() {
               <div key={step.id} className="flex-1 relative">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`
-                      w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center
-                      transition-all duration-300 transform
-                      ${isActive ? "scale-110 shadow-2xl" : "scale-100"}
-                      ${
-                        isCompleted
-                          ? "bg-gradient-to-br from-green-400 to-emerald-600 text-white"
-                          : isActive
-                            ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
-                            : "bg-gray-200 text-gray-400"
-                      }
-                    `}
+                    className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300"
+                    style={{
+                      background: isCompleted
+                        ? `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`
+                        : isActive
+                          ? `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`
+                          : appleWebColors.sectionBackground,
+                      color:
+                        isCompleted || isActive
+                          ? "white"
+                          : appleWebColors.textTertiary,
+                      transform: isActive ? "scale(1.05)" : "scale(1)",
+                    }}
                   >
                     {isCompleted ? (
-                      <CheckCircle2 size={24} className="animate-bounce" />
+                      <Check size={22} strokeWidth={3} />
                     ) : (
-                      <StepIcon size={24} />
+                      <StepIcon size={22} />
                     )}
                   </div>
                   <div
-                    className={`
-                      mt-2 text-xs sm:text-sm font-semibold text-center
-                      ${isActive ? "text-blue-600" : isCompleted ? "text-green-600" : "text-gray-400"}
-                    `}
+                    className="mt-2 text-[11px] sm:text-[13px] font-semibold text-center"
+                    style={{
+                      color: isActive
+                        ? systemColors.blue
+                        : isCompleted
+                          ? systemColors.green
+                          : appleWebColors.textTertiary,
+                    }}
                   >
                     {step.title}
                   </div>
                 </div>
                 {index < STEPS.length - 1 && (
                   <div
-                    className={`
-                      absolute top-6 sm:top-8 left-1/2 w-full h-1
-                      transition-all duration-500
-                      ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-gray-200"}
-                    `}
+                    className="absolute top-5 sm:top-7 left-1/2 w-full h-[3px] rounded-full transition-all duration-500"
+                    style={{
+                      background: isCompleted
+                        ? `linear-gradient(90deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`
+                        : appleWebColors.sectionBackground,
+                    }}
                   />
                 )}
               </div>
@@ -284,16 +297,22 @@ export function DiagnosisForm() {
       </div>
 
       {/* ステップコンテンツ */}
-      <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 md:p-10 min-h-[500px]">
+      <div className={`${liquidGlassClasses.light} p-6 sm:p-8 min-h-[480px]`}>
         <form onSubmit={handleSubmit}>
           {/* ステップ1: 健康目標 */}
           {currentStep === 1 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                <h2
+                  className="text-[20px] sm:text-[24px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   健康目標を選択してください
                 </h2>
-                <p className="text-gray-600">
+                <p
+                  className="text-[14px] sm:text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   複数選択可能です。あなたの目標に合ったサプリメントを推薦します。
                 </p>
               </div>
@@ -302,59 +321,78 @@ export function DiagnosisForm() {
                 {HEALTH_GOALS.map((goal) => {
                   const Icon = goal.icon;
                   const isSelected = selectedGoals.includes(goal.id);
+                  const gradientMap: Record<string, string> = {
+                    "from-green-400 to-emerald-600": `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                    "from-yellow-400 to-orange-600": `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`,
+                    "from-pink-400 to-rose-600": `linear-gradient(135deg, ${systemColors.pink} 0%, ${systemColors.red} 100%)`,
+                    "from-blue-400 to-cyan-600": `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+                    "from-red-400 to-pink-600": `linear-gradient(135deg, ${systemColors.red} 0%, ${systemColors.pink} 100%)`,
+                    "from-purple-400 to-indigo-600": `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.indigo} 100%)`,
+                  };
+                  const gradient =
+                    gradientMap[goal.gradient] ||
+                    `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`;
 
                   return (
                     <button
                       key={goal.id}
                       type="button"
                       onClick={() => toggleGoal(goal.id)}
-                      className={`
-                        relative p-6 rounded-xl border-4 transition-all duration-300 transform
-                        hover:scale-105 hover:shadow-2xl
-                        ${
-                          isSelected
-                            ? "border-blue-500 shadow-2xl scale-105 ring-4 ring-blue-200"
-                            : "border-gray-200 hover:border-blue-300"
-                        }
-                        ${isSelected ? `bg-gradient-to-br ${goal.gradient}` : "bg-white"}
-                      `}
+                      className="relative p-5 rounded-[16px] transition-all duration-300 border-2 min-h-[140px]"
+                      style={{
+                        background: isSelected ? gradient : "white",
+                        borderColor: isSelected
+                          ? "transparent"
+                          : appleWebColors.borderSubtle,
+                        boxShadow: isSelected
+                          ? "0 8px 24px rgba(0, 0, 0, 0.12)"
+                          : "none",
+                      }}
                     >
                       {isSelected && (
-                        <div className="absolute top-2 right-2">
-                          <CheckCircle2
-                            size={24}
-                            className="text-white animate-bounce"
+                        <div
+                          className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: "rgba(255, 255, 255, 0.3)",
+                          }}
+                        >
+                          <Check
+                            size={14}
+                            className="text-white"
+                            strokeWidth={3}
                           />
                         </div>
                       )}
 
                       <div className="text-center">
                         <div
-                          className={`
-                            w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center
-                            transition-all duration-300
-                            ${isSelected ? "bg-white/20" : "bg-gradient-to-br " + goal.gradient}
-                          `}
+                          className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center"
+                          style={{
+                            background: isSelected
+                              ? "rgba(255, 255, 255, 0.2)"
+                              : gradient,
+                          }}
                         >
-                          <Icon
-                            size={32}
-                            className={isSelected ? "text-white" : "text-white"}
-                          />
+                          <Icon size={24} className="text-white" />
                         </div>
 
                         <h3
-                          className={`
-                            text-lg font-bold mb-2
-                            ${isSelected ? "text-white" : "text-gray-900"}
-                          `}
+                          className="text-[15px] font-bold mb-1.5"
+                          style={{
+                            color: isSelected
+                              ? "white"
+                              : appleWebColors.textPrimary,
+                          }}
                         >
                           {goal.label}
                         </h3>
                         <p
-                          className={`
-                            text-sm
-                            ${isSelected ? "text-white/90" : "text-gray-600"}
-                          `}
+                          className="text-[12px] leading-relaxed"
+                          style={{
+                            color: isSelected
+                              ? "rgba(255, 255, 255, 0.85)"
+                              : appleWebColors.textSecondary,
+                          }}
                         >
                           {goal.description}
                         </p>
@@ -365,7 +403,10 @@ export function DiagnosisForm() {
               </div>
 
               {selectedGoals.length === 0 && (
-                <p className="text-center text-sm text-red-500 mt-4">
+                <p
+                  className="text-center text-[13px] mt-4"
+                  style={{ color: systemColors.red }}
+                >
                   少なくとも1つの健康目標を選択してください
                 </p>
               )}
@@ -374,23 +415,42 @@ export function DiagnosisForm() {
 
           {/* ステップ2: 予算設定 */}
           {currentStep === 2 && (
-            <div className="space-y-8 animate-fadeIn">
+            <div className="space-y-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                <h2
+                  className="text-[20px] sm:text-[24px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   1日あたりの予算を設定
                 </h2>
-                <p className="text-gray-600">
+                <p
+                  className="text-[14px] sm:text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   スライダーを動かして予算を設定してください
                 </p>
               </div>
 
-              <div className="max-w-2xl mx-auto">
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 sm:p-12">
+              <div className="max-w-lg mx-auto">
+                <div
+                  className="rounded-[20px] p-8 sm:p-10"
+                  style={{ backgroundColor: appleWebColors.sectionBackground }}
+                >
                   <div className="text-center mb-8">
-                    <div className="text-6xl sm:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 animate-pulse">
+                    <div
+                      className="text-[48px] sm:text-[56px] font-bold mb-1"
+                      style={{
+                        color: systemColors.blue,
+                      }}
+                    >
                       ¥{budgetPerDay.toLocaleString()}
                     </div>
-                    <div className="text-lg text-gray-600">1日あたり</div>
+                    <div
+                      className="text-[15px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      1日あたり
+                    </div>
                   </div>
 
                   <input
@@ -400,24 +460,41 @@ export function DiagnosisForm() {
                     step="100"
                     value={budgetPerDay}
                     onChange={(e) => setBudgetPerDay(Number(e.target.value))}
-                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-purple-600 transition-all"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, ${systemColors.blue} 0%, ${systemColors.indigo} ${((budgetPerDay - 100) / (5000 - 100)) * 100}%, ${appleWebColors.borderSubtle} ${((budgetPerDay - 100) / (5000 - 100)) * 100}%, ${appleWebColors.borderSubtle} 100%)`,
+                    }}
                   />
 
-                  <div className="flex justify-between mt-4 text-sm text-gray-500">
+                  <div
+                    className="flex justify-between mt-3 text-[13px]"
+                    style={{ color: appleWebColors.textTertiary }}
+                  >
                     <span>¥100</span>
                     <span>¥5,000</span>
                   </div>
 
-                  <div className="mt-8 grid grid-cols-3 gap-3">
+                  <div className="mt-6 grid grid-cols-3 gap-3">
                     {[300, 500, 1000].map((amount) => (
                       <button
                         key={amount}
                         type="button"
                         onClick={() => setBudgetPerDay(amount)}
-                        className={`
-                          py-3 rounded-lg font-semibold transition-all duration-200
-                          ${budgetPerDay === amount ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105" : "bg-white text-gray-700 hover:bg-gray-50"}
-                        `}
+                        className="py-3 rounded-xl text-[15px] font-semibold transition-all duration-200 min-h-[48px]"
+                        style={{
+                          background:
+                            budgetPerDay === amount
+                              ? `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`
+                              : "white",
+                          color:
+                            budgetPerDay === amount
+                              ? "white"
+                              : appleWebColors.textPrimary,
+                          boxShadow:
+                            budgetPerDay === amount
+                              ? "0 4px 12px rgba(0, 0, 0, 0.1)"
+                              : "none",
+                        }}
                       >
                         ¥{amount}
                       </button>
@@ -430,12 +507,18 @@ export function DiagnosisForm() {
 
           {/* ステップ3: 健康状態 */}
           {currentStep === 3 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                <h2
+                  className="text-[20px] sm:text-[24px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   健康状態・懸念事項
                 </h2>
-                <p className="text-gray-600">
+                <p
+                  className="text-[14px] sm:text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   該当するものをすべて選択してください（任意）
                 </p>
               </div>
@@ -449,20 +532,25 @@ export function DiagnosisForm() {
                       key={condition.id}
                       type="button"
                       onClick={() => toggleHealthCondition(condition.id)}
-                      className={`
-                        p-4 rounded-lg border-3 text-sm font-semibold transition-all duration-200
-                        hover:scale-105 hover:shadow-lg
-                        ${
-                          isSelected
-                            ? "border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 text-purple-700 shadow-lg ring-2 ring-purple-200"
-                            : "border-gray-200 text-gray-700 hover:border-gray-300 bg-white"
-                        }
-                      `}
+                      className="p-3.5 rounded-xl text-[13px] font-semibold transition-all duration-200 border-2 min-h-[48px]"
+                      style={{
+                        backgroundColor: isSelected
+                          ? `${systemColors.purple}10`
+                          : "white",
+                        borderColor: isSelected
+                          ? systemColors.purple
+                          : appleWebColors.borderSubtle,
+                        color: isSelected
+                          ? systemColors.purple
+                          : appleWebColors.textPrimary,
+                      }}
                     >
                       {isSelected && (
-                        <CheckCircle2
-                          size={16}
-                          className="inline mr-1 text-purple-600"
+                        <Check
+                          size={14}
+                          className="inline mr-1"
+                          style={{ color: systemColors.purple }}
+                          strokeWidth={3}
                         />
                       )}
                       {condition.label}
@@ -475,61 +563,93 @@ export function DiagnosisForm() {
 
           {/* ステップ4: 優先事項 */}
           {currentStep === 4 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                <h2
+                  className="text-[20px] sm:text-[24px] font-bold mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   優先事項を選択
                 </h2>
-                <p className="text-gray-600">
+                <p
+                  className="text-[14px] sm:text-[15px]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
                   サプリメントを選ぶ際、何を最も重視しますか？
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {PRIORITIES.map((priorityOption) => {
                   const Icon = priorityOption.icon;
                   const isSelected = priority === priorityOption.id;
+                  const colorMap: Record<string, string> = {
+                    blue: systemColors.blue,
+                    green: systemColors.green,
+                    emerald: systemColors.teal,
+                    purple: systemColors.purple,
+                    orange: systemColors.orange,
+                  };
+                  const color =
+                    colorMap[priorityOption.color] || systemColors.blue;
 
                   return (
                     <button
                       key={priorityOption.id}
                       type="button"
                       onClick={() => handlePrioritySelect(priorityOption.id)}
-                      className={`
-                        w-full p-6 rounded-xl border-4 flex items-center gap-4 transition-all duration-300
-                        hover:scale-[1.02] hover:shadow-xl cursor-pointer
-                        ${
-                          isSelected
-                            ? "border-blue-500 bg-gradient-to-r from-blue-50 to-cyan-50 shadow-2xl scale-[1.02] ring-4 ring-blue-200"
-                            : "border-gray-200 hover:border-gray-300 bg-white"
-                        }
-                      `}
+                      className="w-full p-5 rounded-[16px] flex items-center gap-4 transition-all duration-300 border-2 min-h-[80px]"
+                      style={{
+                        backgroundColor: isSelected ? `${color}10` : "white",
+                        borderColor: isSelected
+                          ? color
+                          : appleWebColors.borderSubtle,
+                      }}
                     >
                       <div
-                        className={`
-                          w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0
-                          ${isSelected ? "bg-blue-500" : "bg-gray-200"}
-                        `}
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{
+                          backgroundColor: isSelected
+                            ? color
+                            : appleWebColors.sectionBackground,
+                        }}
                       >
                         <Icon
-                          size={28}
-                          className={
-                            isSelected ? "text-white" : "text-gray-500"
-                          }
+                          size={22}
+                          style={{
+                            color: isSelected
+                              ? "white"
+                              : appleWebColors.textTertiary,
+                          }}
                         />
                       </div>
 
                       <div className="flex-1 text-left">
-                        <h3 className="text-lg font-bold text-gray-900">
+                        <h3
+                          className="text-[15px] font-bold"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
                           {priorityOption.label}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p
+                          className="text-[13px]"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
                           {priorityOption.description}
                         </p>
                       </div>
 
                       {isSelected && (
-                        <CheckCircle2 size={28} className="text-blue-500" />
+                        <div
+                          className="w-6 h-6 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: color }}
+                        >
+                          <Check
+                            size={14}
+                            className="text-white"
+                            strokeWidth={3}
+                          />
+                        </div>
                       )}
                     </button>
                   );
@@ -539,12 +659,20 @@ export function DiagnosisForm() {
           )}
 
           {/* ナビゲーションボタン */}
-          <div className="flex gap-4 mt-10 pt-8 border-t-2 border-gray-100">
+          <div
+            className="flex gap-4 mt-8 pt-6 border-t"
+            style={{ borderColor: appleWebColors.borderSubtle }}
+          >
             {currentStep > 1 && (
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 py-4 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all duration-200"
+                className="flex-1 py-3.5 rounded-xl text-[15px] font-semibold transition-all duration-200 border min-h-[52px]"
+                style={{
+                  backgroundColor: "white",
+                  borderColor: appleWebColors.borderSubtle,
+                  color: appleWebColors.textPrimary,
+                }}
               >
                 戻る
               </button>
@@ -555,24 +683,36 @@ export function DiagnosisForm() {
                 type="button"
                 onClick={nextStep}
                 disabled={!canProceed(currentStep)}
-                className={`
-                  flex-1 py-4 rounded-xl font-bold text-white transition-all duration-200 flex items-center justify-center gap-2
-                  ${canProceed(currentStep) ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl" : "bg-gray-300 cursor-not-allowed"}
-                `}
+                className="flex-1 py-3.5 rounded-xl text-[15px] font-bold text-white transition-all duration-200 flex items-center justify-center gap-2 min-h-[52px]"
+                style={{
+                  background: canProceed(currentStep)
+                    ? `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`
+                    : appleWebColors.sectionBackground,
+                  color: canProceed(currentStep)
+                    ? "white"
+                    : appleWebColors.textTertiary,
+                  cursor: canProceed(currentStep) ? "pointer" : "not-allowed",
+                }}
               >
                 次へ進む
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!canProceed(currentStep)}
-                className={`
-                  flex-1 py-4 rounded-xl font-bold text-white transition-all duration-200 flex items-center justify-center gap-2
-                  ${canProceed(currentStep) ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl animate-pulse" : "bg-gray-300 cursor-not-allowed"}
-                `}
+                className="flex-1 py-3.5 rounded-xl text-[15px] font-bold text-white transition-all duration-200 flex items-center justify-center gap-2 min-h-[52px]"
+                style={{
+                  background: canProceed(currentStep)
+                    ? `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`
+                    : appleWebColors.sectionBackground,
+                  color: canProceed(currentStep)
+                    ? "white"
+                    : appleWebColors.textTertiary,
+                  cursor: canProceed(currentStep) ? "pointer" : "not-allowed",
+                }}
               >
-                <Sparkles size={20} />
+                <CheckCircle2 size={18} />
                 診断結果を見る
               </button>
             )}

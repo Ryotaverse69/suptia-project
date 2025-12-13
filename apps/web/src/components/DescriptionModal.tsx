@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Info, FileText } from "lucide-react";
 import { useEffect } from "react";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 interface DescriptionModalProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ export function DescriptionModal({
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden border border-slate-200 relative"
+              className={`${liquidGlassClasses.light} w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden relative`}
             >
               {/* Header */}
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">

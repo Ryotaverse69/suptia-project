@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Pause, Play } from "lucide-react";
+import { ArrowRight, Beaker, Pause, Play } from "lucide-react";
 import { IngredientCoverSVG } from "./IngredientCoverSVG";
 
 interface Ingredient {
@@ -68,10 +68,9 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
     <div className="bg-gradient-to-br from-primary-50 via-white to-accent-mint/5 py-16 overflow-hidden">
       <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px]">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="text-primary" size={24} />
+          <div className="inline-flex items-center gap-3 mb-4">
+            <Beaker className="text-primary" size={28} />
             <h2 className="text-3xl font-bold text-primary-900">成分ガイド</h2>
-            <Sparkles className="text-primary" size={24} />
           </div>
           <p className="text-primary-700 text-lg">
             科学的根拠に基づいた成分の効果を詳しく解説

@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 export function SearchBar() {
   const router = useRouter();
@@ -20,9 +21,8 @@ export function SearchBar() {
   return (
     <form onSubmit={handleSearch} className="w-full max-w-[900px] mx-auto">
       <div
-        className="flex items-center rounded-xl overflow-hidden backdrop-blur-2xl border border-white/40 transition-all duration-500 hover:border-white/60"
+        className={`flex items-center overflow-hidden ${liquidGlassClasses.light} transition-all duration-500 hover:border-white/60`}
         style={{
-          background: "rgba(255, 255, 255, 0.12)",
           boxShadow:
             "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 20px 60px -10px rgba(59, 102, 224, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.1)",
         }}

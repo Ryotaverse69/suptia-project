@@ -14,6 +14,7 @@ import {
   Moon,
   MoreHorizontal,
 } from "lucide-react";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 interface CategoryNavProps {
   categories: { name: string; count: number }[];
@@ -126,10 +127,10 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                     key={category.name}
                     href={`#category-${category.name}`}
                     onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-[1.02] ${style.bgColor}`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-[24px] border-2 transition-all transform hover:scale-[1.02] ${style.bgColor}`}
                   >
                     <div
-                      className={`p-2 rounded-lg bg-white/80 ${style.color}`}
+                      className={`p-2 rounded-lg bg-white/60 backdrop-blur-[20px] backdrop-saturate-[180%] ${style.color}`}
                     >
                       <Icon className="w-5 h-5" />
                     </div>

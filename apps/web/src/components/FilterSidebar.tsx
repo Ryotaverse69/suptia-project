@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ChevronDown,
-  ChevronUp,
-  SlidersHorizontal,
-  Search,
-  Check,
-  X,
-} from "lucide-react";
+import { ChevronDown, SlidersHorizontal, Search, Check, X } from "lucide-react";
 import { TierRank } from "@/lib/tier-colors";
 import { BadgeType } from "@/lib/badges";
+import {
+  systemColors,
+  appleWebColors,
+  tierColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 interface FilterSection {
   title: string;
@@ -157,38 +157,57 @@ export function FilterSidebar({
       return value !== null && value !== undefined;
     }).length + (activeFilters.searchQuery ? 1 : 0);
 
-  // ランク別のスタイル定義
-  const rankStyles: Record<TierRank, string> = {
-    "S+": "border-purple-500 text-purple-600 bg-purple-50",
-    S: "border-indigo-500 text-indigo-600 bg-indigo-50",
-    A: "border-blue-500 text-blue-600 bg-blue-50",
-    B: "border-emerald-500 text-emerald-600 bg-emerald-50",
-    C: "border-yellow-500 text-yellow-600 bg-yellow-50",
-    D: "border-slate-400 text-slate-500 bg-slate-50",
+  // Apple HIG式ランクスタイル定義
+  const getTierGradient = (tier: TierRank): string => {
+    const gradients: Record<TierRank, string> = {
+      "S+": tierColors["S+"].bg, // Already a gradient
+      S: `linear-gradient(135deg, ${tierColors.S.border} 0%, ${systemColors.teal} 100%)`,
+      A: `linear-gradient(135deg, ${tierColors.A.border} 0%, ${systemColors.indigo} 100%)`,
+      B: `linear-gradient(135deg, ${tierColors.B.border} 0%, ${systemColors.blue} 100%)`,
+      C: `linear-gradient(135deg, ${tierColors.C.border} 0%, ${systemColors.yellow} 100%)`,
+      D: `linear-gradient(135deg, ${tierColors.D.border} 0%, ${systemColors.gray[2]} 100%)`,
+    };
+    return gradients[tier] || gradients.D;
   };
 
-  const activeRankStyles: Record<TierRank, string> = {
-    "S+": "bg-gradient-to-br from-purple-600 to-pink-600 text-white border-transparent shadow-md shadow-purple-200",
-    S: "bg-gradient-to-br from-indigo-600 to-purple-600 text-white border-transparent shadow-md shadow-indigo-200",
-    A: "bg-gradient-to-br from-blue-500 to-cyan-500 text-white border-transparent shadow-md shadow-blue-200",
-    B: "bg-gradient-to-br from-emerald-500 to-teal-500 text-white border-transparent shadow-md shadow-emerald-200",
-    C: "bg-gradient-to-br from-yellow-400 to-orange-400 text-white border-transparent shadow-md shadow-yellow-200",
-    D: "bg-slate-500 text-white border-transparent shadow-md shadow-slate-200",
+  // Get tier text color for unselected state
+  const getTierTextColor = (tier: TierRank): string => {
+    return tierColors[tier].border;
   };
 
   return (
-    <div className="w-full lg:w-72 bg-white/60 backdrop-blur-xl rounded-3xl border border-white/60 shadow-xl shadow-slate-200/50 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide">
+    <div
+      className={`w-full lg:w-72 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide ${liquidGlassClasses.light}`}
+      style={{
+        fontFamily: fontStack,
+      }}
+    >
       {/* Header */}
-      <div className="p-6 border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-md z-20">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-base font-bold flex items-center gap-2 text-slate-800">
-            <SlidersHorizontal size={18} className="text-slate-400" />
+      <div
+        className="p-5 border-b sticky top-0 z-20 backdrop-blur-[20px] backdrop-saturate-[180%] border-white/80"
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <h2
+            className="text-[15px] font-semibold flex items-center gap-2"
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            <SlidersHorizontal
+              size={18}
+              style={{ color: appleWebColors.textSecondary }}
+            />
             絞り込み
           </h2>
           {activeFilterCount > 0 && (
             <button
               onClick={clearFilters}
-              className="text-xs font-medium text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1 px-2 py-1 rounded-full hover:bg-red-50"
+              className="text-[13px] font-medium transition-all duration-300 flex items-center gap-1 px-2.5 py-1.5 rounded-full min-h-[32px]"
+              style={{
+                color: systemColors.pink,
+                backgroundColor: `${systemColors.pink}10`,
+              }}
             >
               <X size={12} />
               クリア
@@ -198,37 +217,52 @@ export function FilterSidebar({
       </div>
 
       {/* Search Input */}
-      <div className="p-5 border-b border-slate-100 bg-white/40">
+      <div className="p-5 border-b border-white/80">
         <div className="relative group">
           <Search
             size={16}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors"
+            style={{ color: appleWebColors.textTertiary }}
           />
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="キーワードで検索"
-            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
+            className="w-full pl-10 pr-4 py-3 rounded-xl text-[15px] transition-all border min-h-[44px]"
+            style={{
+              backgroundColor: appleWebColors.sectionBackground,
+              borderColor: appleWebColors.borderSubtle,
+              color: appleWebColors.textPrimary,
+            }}
           />
         </div>
       </div>
 
       {/* Filter Sections */}
-      <div className="divide-y divide-slate-100">
+      <div>
         {filterSections.map((section) => {
           const isExpanded = expandedSections.has(section.title);
 
           return (
-            <div key={section.title} className="p-5">
+            <div key={section.title} className="p-5 border-b border-white/80">
               <button
                 onClick={() => toggleSection(section.title)}
-                className="w-full flex items-center justify-between mb-4 group"
+                className="w-full flex items-center justify-between mb-4 group min-h-[36px]"
               >
-                <h3 className="font-bold text-sm text-slate-700 group-hover:text-blue-600 transition-colors">
+                <h3
+                  className="text-[14px] font-semibold transition-colors"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
                   {section.title}
                 </h3>
-                <div className={`p-1 rounded-full bg-slate-100 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-all ${isExpanded ? 'rotate-180' : ''}`}>
+                <div
+                  className={`p-1.5 rounded-full transition-all duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                    color: appleWebColors.textSecondary,
+                  }}
+                >
                   <ChevronDown size={14} />
                 </div>
               </button>
@@ -246,20 +280,38 @@ export function FilterSidebar({
                           <button
                             key={option.value}
                             onClick={() =>
-                              handleFilterToggle(section.filterKey, option.value)
+                              handleFilterToggle(
+                                section.filterKey,
+                                option.value,
+                              )
                             }
-                            className={`
-                              relative h-12 rounded-xl font-black text-lg transition-all duration-300 flex items-center justify-center border-2
-                              ${isSelected
-                                ? activeRankStyles[rank] + " scale-105 z-10"
-                                : rankStyles[rank] + " hover:scale-105 opacity-80 hover:opacity-100"
-                              }
-                            `}
+                            className="relative h-11 rounded-xl font-bold text-[15px] transition-all duration-300 flex items-center justify-center min-h-[44px]"
+                            style={{
+                              background: isSelected
+                                ? getTierGradient(rank)
+                                : appleWebColors.sectionBackground,
+                              color: isSelected
+                                ? "white"
+                                : getTierTextColor(rank),
+                              boxShadow: isSelected
+                                ? "0 4px 12px rgba(0, 0, 0, 0.15)"
+                                : "none",
+                            }}
                           >
                             {option.value}
                             {isSelected && (
-                              <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full shadow-sm flex items-center justify-center border border-slate-100">
-                                <Check size={12} className="text-blue-600 stroke-[3]" />
+                              <div
+                                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full shadow-sm flex items-center justify-center"
+                                style={{
+                                  backgroundColor: "white",
+                                  border: `1px solid ${appleWebColors.borderSubtle}`,
+                                }}
+                              >
+                                <Check
+                                  size={12}
+                                  className="stroke-[3]"
+                                  style={{ color: systemColors.blue }}
+                                />
                               </div>
                             )}
                           </button>
@@ -271,7 +323,9 @@ export function FilterSidebar({
                       {section.options.map((option) => {
                         const isSelected =
                           section.filterKey === "badges"
-                            ? (activeFilters.badges || []).includes(option.value)
+                            ? (activeFilters.badges || []).includes(
+                                option.value,
+                              )
                             : activeFilters[section.filterKey] === option.value;
 
                         const isPerfect = option.value === "perfect";
@@ -280,17 +334,25 @@ export function FilterSidebar({
                           <button
                             key={option.value}
                             onClick={() =>
-                              handleFilterToggle(section.filterKey, option.value)
+                              handleFilterToggle(
+                                section.filterKey,
+                                option.value,
+                              )
                             }
-                            className={`
-                              px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 border
-                              ${isSelected
+                            className="px-3 py-2 rounded-xl text-[13px] font-semibold transition-all duration-300 flex items-center gap-1.5 min-h-[36px]"
+                            style={{
+                              background: isSelected
                                 ? isPerfect
-                                  ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-transparent shadow-md shadow-orange-200"
-                                  : "bg-slate-800 text-white border-slate-800 shadow-md shadow-slate-200"
-                                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                              }
-                            `}
+                                  ? `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`
+                                  : systemColors.blue
+                                : appleWebColors.sectionBackground,
+                              color: isSelected
+                                ? "white"
+                                : appleWebColors.textSecondary,
+                              boxShadow: isSelected
+                                ? "0 4px 12px rgba(0, 0, 0, 0.15)"
+                                : "none",
+                            }}
                           >
                             {option.icon && <span>{option.icon}</span>}
                             {option.label}

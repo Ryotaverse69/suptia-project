@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MoleculeBackground } from "./MoleculeBackground";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 interface PopularSearch {
   name: string;
@@ -60,18 +61,13 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
           </div>
 
           <div
-            className={`relative flex items-center rounded-lg sm:rounded-xl overflow-hidden backdrop-blur-2xl border transition-all duration-500 ${
+            className={`relative flex items-center rounded-[24px] overflow-hidden bg-white/60 backdrop-blur-[20px] backdrop-saturate-[180%] border transition-all duration-500 ${
               isFocused
-                ? "border-white scale-[1.02] shadow-2xl"
-                : "border-white/40 hover:border-white/60"
+                ? "border-white scale-[1.02] shadow-[0_0_50px_rgba(255,255,255,0.5),0_0_20px_rgba(59,102,224,0.3)]"
+                : "border-white/80 hover:border-white shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
             }`}
             style={{
-              background: isFocused
-                ? "rgba(255, 255, 255, 0.95)"
-                : "rgba(255, 255, 255, 0.08)",
-              boxShadow: isFocused
-                ? "0 0 50px rgba(255, 255, 255, 0.5), 0 0 20px rgba(59, 102, 224, 0.3)"
-                : "0 8px 32px 0 rgba(0, 0, 0, 0.2)",
+              background: isFocused ? "rgba(255, 255, 255, 0.95)" : undefined,
             }}
           >
             <label htmlFor="hero-search" className="sr-only">
@@ -125,11 +121,7 @@ export function HeroSearch({ popularSearches = [] }: HeroSearchProps) {
                 onClick={() => {
                   router.push(`/search?q=${encodeURIComponent(search.name)}`);
                 }}
-                className="relative px-2 sm:px-3 py-0.5 sm:py-1 text-white rounded-full text-[10px] sm:text-xs font-light transition-all duration-300 backdrop-blur-xl border border-white/30 hover:border-white/50 hover:bg-white/10 group overflow-hidden"
-                style={{
-                  boxShadow:
-                    "0 4px 12px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-                }}
+                className="relative px-2 sm:px-3 py-0.5 sm:py-1 text-white rounded-full text-[10px] sm:text-xs font-light transition-all duration-300 bg-white/60 backdrop-blur-[20px] backdrop-saturate-[180%] border border-white/80 hover:border-white hover:bg-white/70 group overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
               >
                 {/* Gathering Mist for Tags */}
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">

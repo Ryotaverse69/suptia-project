@@ -3,9 +3,16 @@
 import { useState, useMemo } from "react";
 import { ProductListItem } from "@/components/ProductListItem";
 import { FilterSidebar } from "@/components/FilterSidebar";
-import { Award } from "lucide-react";
+import { Package, ChevronDown } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
 import { BadgeType, isPerfectSupplement } from "@/lib/badges";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 interface Product {
   _id: string;
@@ -186,7 +193,10 @@ export function ProductsSection({ products }: ProductsSectionProps) {
   };
 
   return (
-    <div className="mx-auto px-6 lg:px-12 xl:px-16 py-12 max-w-[1440px]">
+    <div
+      className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-12 max-w-[1440px]"
+      style={{ fontFamily: fontStack }}
+    >
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
         <aside className="lg:sticky lg:top-20 h-fit w-full lg:w-72 flex-shrink-0">
@@ -205,46 +215,78 @@ export function ProductsSection({ products }: ProductsSectionProps) {
 
         {/* Products Grid */}
         <main className="flex-1 min-w-0" id="all-products">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-light text-primary-900 tracking-wide">
+              <h2
+                className="text-[28px] md:text-[32px] font-bold leading-tight tracking-[-0.015em]"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 すべてのサプリメント
               </h2>
-              <p className="text-primary-600 mt-2 font-light">
+              <p
+                className="text-[15px] mt-2"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 {filteredAndSortedProducts.length}件の商品が見つかりました
               </p>
             </div>
 
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-5 py-3 glass-blue rounded-xl text-sm font-light shadow-soft focus:outline-none focus:shadow-glass transition-shadow cursor-pointer"
-            >
-              <option value="recommended">おすすめ順</option>
-              <option value="price-asc">価格の安い順</option>
-              <option value="price-desc">価格の高い順</option>
-              <option value="rating">評価の高い順</option>
-              <option value="reviews">レビュー数順</option>
-            </select>
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className={`appearance-none px-5 py-3 pr-10 rounded-xl text-[15px] font-medium cursor-pointer transition-all duration-300 min-h-[44px] ${liquidGlassClasses.light}`}
+                style={{
+                  color: appleWebColors.textPrimary,
+                }}
+              >
+                <option value="recommended">おすすめ順</option>
+                <option value="price-asc">価格の安い順</option>
+                <option value="price-desc">価格の高い順</option>
+                <option value="rating">評価の高い順</option>
+                <option value="reviews">レビュー数順</option>
+              </select>
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                style={{ color: appleWebColors.textSecondary }}
+              />
+            </div>
           </div>
 
           {filteredAndSortedProducts.length > 0 ? (
-            <div className="flex flex-col gap-2 sm:gap-3">
+            <div className="flex flex-col gap-3">
               {filteredAndSortedProducts.map((product, index) => (
                 <ProductListItem key={index} product={product} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 glass rounded-3xl shadow-glass">
-              <div className="text-primary-300 mb-4">
-                <Award size={64} className="mx-auto" />
+            <div className={`text-center py-20 ${liquidGlassClasses.light}`}>
+              <div className="mb-4">
+                <Package
+                  size={64}
+                  className="mx-auto"
+                  style={{ color: appleWebColors.borderSubtle }}
+                />
               </div>
-              <p className="text-primary-700 font-light mb-2">
+              <p
+                className="text-[17px] font-medium mb-2"
+                style={{ color: appleWebColors.textPrimary }}
+              >
                 条件に一致する商品が見つかりませんでした
+              </p>
+              <p
+                className="text-[15px] mb-6"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                フィルター条件を変更してお試しください
               </p>
               <button
                 onClick={handleClearFilters}
-                className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
+                className="px-8 py-3 rounded-full text-[15px] font-semibold transition-all duration-300 min-h-[44px]"
+                style={{
+                  backgroundColor: systemColors.blue,
+                  color: "white",
+                }}
               >
                 フィルターをクリア
               </button>
@@ -254,7 +296,12 @@ export function ProductsSection({ products }: ProductsSectionProps) {
           {/* Load More Button */}
           {filteredAndSortedProducts.length > 0 && (
             <div className="mt-10 text-center">
-              <button className="px-10 py-4 glass-blue rounded-xl text-primary-800 font-light shadow-glass hover:shadow-glass-hover transition-all duration-300">
+              <button
+                className={`px-10 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 min-h-[44px] ${liquidGlassClasses.light}`}
+                style={{
+                  color: appleWebColors.textPrimary,
+                }}
+              >
                 もっと見る
               </button>
             </div>

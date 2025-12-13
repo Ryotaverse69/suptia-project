@@ -14,6 +14,11 @@ import { ChevronLeft } from "lucide-react";
 import { TierRatings } from "@/lib/tier-ranking";
 import { BadgeType } from "@/lib/badges";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
+import {
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // ISR設定: 1時間ごとにページを再生成
 export const revalidate = 3600; // 3600秒 = 1時間
@@ -189,37 +194,60 @@ export default async function ProductsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-white via-primary-50/30 to-white">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: appleWebColors.pageBackground,
+          fontFamily: fontStack,
+        }}
+      >
         {/* ヘッダーナビゲーション */}
-        <div className="border-b border-primary-100 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-          <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
+        <div
+          className={`border-b sticky top-0 z-10 ${liquidGlassClasses.light}`}
+          style={{
+            borderColor: appleWebColors.borderSubtle,
+          }}
+        >
+          <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-primary hover:text-primary-700 transition-colors"
+              className="inline-flex items-center gap-2 transition-opacity hover:opacity-70 min-h-[44px]"
+              style={{ color: appleWebColors.textPrimary }}
             >
               <ChevronLeft size={20} />
-              <span className="font-medium">トップページに戻る</span>
+              <span className="text-[15px] font-medium">
+                トップページに戻る
+              </span>
             </Link>
           </div>
         </div>
 
         {/* Tier Rank Statistics */}
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
+        <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1440px] py-4">
           <TierRankStats products={productsWithCost} />
         </div>
 
         {/* Compliance Info Banner */}
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 max-w-[1440px] pb-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-primary-100">
+        <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1440px] pb-4">
+          <div
+            className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[16px] p-4 border ${liquidGlassClasses.light}`}
+            style={{
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
             <div className="flex items-center gap-3">
               <ComplianceBadge variant="compact" />
-              <p className="text-sm text-gray-600">
+              <p
+                className="text-[14px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
                 すべての商品情報は薬機法に準拠して表示されています
               </p>
             </div>
             <Link
               href="/why-suptia"
-              className="text-sm text-primary hover:text-primary-700 font-medium whitespace-nowrap"
+              className="text-[14px] font-medium whitespace-nowrap transition-opacity hover:opacity-70"
+              style={{ color: appleWebColors.blue }}
             >
               AI検索との違いを見る →
             </Link>

@@ -11,6 +11,12 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { ContraindicationChecklist } from "@/components/ContraindicationChecklist";
+import {
+  systemColors,
+  appleWebColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "危険成分ガイド | Suptia（サプティア）",
@@ -78,37 +84,33 @@ async function getAllIngredients(): Promise<IngredientWithRisk[]> {
 const riskLevelConfig = {
   critical: {
     label: "最高リスク",
-    color: "from-red-500 to-rose-600",
-    bgColor: "bg-red-50",
-    borderColor: "border-red-200",
-    textColor: "text-red-900",
+    color: systemColors.red,
+    bgColor: `${systemColors.red}10`,
+    borderColor: `${systemColors.red}30`,
     icon: AlertTriangle,
     description: "使用前に必ず医師に相談してください",
   },
   high: {
     label: "高リスク",
-    color: "from-orange-500 to-amber-600",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-200",
-    textColor: "text-orange-900",
+    color: systemColors.orange,
+    bgColor: `${systemColors.orange}10`,
+    borderColor: `${systemColors.orange}30`,
     icon: AlertCircle,
     description: "広範囲で注意が必要です",
   },
   medium: {
     label: "中リスク",
-    color: "from-yellow-500 to-amber-500",
-    bgColor: "bg-yellow-50",
-    borderColor: "border-yellow-200",
-    textColor: "text-yellow-900",
+    color: systemColors.yellow,
+    bgColor: `${systemColors.yellow}10`,
+    borderColor: `${systemColors.yellow}30`,
     icon: Info,
     description: "特定の条件下で注意してください",
   },
   low: {
     label: "低リスク",
-    color: "from-blue-500 to-cyan-500",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200",
-    textColor: "text-blue-900",
+    color: systemColors.blue,
+    bgColor: `${systemColors.blue}10`,
+    borderColor: `${systemColors.blue}30`,
     icon: CheckCircle2,
     description: "一般的に安全ですが、過剰摂取には注意",
   },
@@ -180,93 +182,113 @@ export default async function DangerousIngredientsPage() {
   const highCount = groupedByRisk.high.length;
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden">
-      {/* Global Background */}
-      <div className="absolute inset-0 bg-slate-50 -z-50" />
-
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-red-600 via-rose-600 to-orange-600 py-24 lg:py-32">
-        {/* Background Animation */}
-        <div
-          className="absolute inset-0 animate-gradient-drift bg-gradient-to-r from-red-600 via-rose-500 to-red-600 -z-20 opacity-90"
-          style={{ animationDuration: "15s" }}
-        />
-        <div
-          className="absolute inset-0 animate-gradient-drift bg-gradient-to-br from-transparent via-white/10 to-transparent -z-19 mix-blend-overlay"
-          style={{
-            animationDuration: "20s",
-            animationDirection: "reverse",
-            backgroundSize: "200% 200%",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20 -z-15 pointer-events-none" />
-
-        {/* Mist Layers */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-          <div
-            className="absolute top-[-30%] left-[-10%] w-[80vw] h-[80vw] bg-white/10 blur-[120px] rounded-full animate-mist-flow"
-            style={{ animationDuration: "45s" }}
-          />
-          <div
-            className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-orange-300/20 blur-[100px] rounded-full animate-mist-flow"
-            style={{ animationDuration: "35s", animationDirection: "reverse" }}
-          />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-12 text-center">
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 backdrop-blur-md border border-white/30 shadow-lg animate-fade-in">
-            <AlertTriangle
-              size={18}
-              className="text-yellow-300 animate-pulse"
-            />
-            <span className="text-sm font-bold text-white tracking-wide">
-              安全性チェック
-            </span>
-          </div>
-
-          <h1
-            className="mb-8 text-4xl font-black leading-tight lg:text-7xl text-white drop-shadow-lg animate-fade-in"
-            style={{ animationDelay: "0.1s" }}
-          >
-            危険成分ガイド
-          </h1>
-
-          <p
-            className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/90 lg:text-2xl font-medium animate-fade-in"
-            style={{ animationDelay: "0.2s" }}
-          >
-            サプリメント成分の危険性・注意事項を科学的根拠に基づいて解説。
-            <br className="hidden sm:block" />
-            あなたの安全を守るための重要な情報をご確認ください。
-          </p>
-
-          {/* Stats */}
-          <div
-            className="flex flex-wrap justify-center gap-6 mt-12 animate-fade-in"
-            style={{ animationDelay: "0.3s" }}
-          >
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
-              <div className="text-3xl font-black text-white">
-                {totalRiskyIngredients}
-              </div>
-              <div className="text-sm text-white/80 font-medium">
-                注意成分を収録
-              </div>
+      <section
+        className="py-16 sm:py-20 lg:py-24 border-b"
+        style={{
+          background: `linear-gradient(135deg, ${systemColors.red}08 0%, rgba(255, 255, 255, 0.9) 50%, ${systemColors.orange}08 100%)`,
+          borderColor: appleWebColors.borderSubtle,
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <div className="text-center">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6"
+              style={{
+                backgroundColor: `${systemColors.red}15`,
+                border: `1px solid ${systemColors.red}30`,
+              }}
+            >
+              <AlertTriangle size={16} style={{ color: systemColors.red }} />
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: systemColors.red }}
+              >
+                安全性チェック
+              </span>
             </div>
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
-              <div className="text-3xl font-black text-white">
-                {criticalCount + highCount}
+
+            <h1
+              className="text-[34px] sm:text-[40px] lg:text-[48px] font-bold leading-tight tracking-[-0.015em] mb-4"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              危険成分ガイド
+            </h1>
+
+            <p
+              className="text-[17px] sm:text-[20px] max-w-3xl mx-auto leading-relaxed mb-10"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              サプリメント成分の危険性・注意事項を科学的根拠に基づいて解説。
+              <br className="hidden sm:block" />
+              あなたの安全を守るための重要な情報をご確認ください。
+            </p>
+
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.red }}
+                >
+                  {totalRiskyIngredients}
+                </div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  注意成分を収録
+                </div>
               </div>
-              <div className="text-sm text-white/80 font-medium">
-                要注意成分
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.orange }}
+                >
+                  {criticalCount + highCount}
+                </div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  要注意成分
+                </div>
               </div>
-            </div>
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/30">
-              <div className="text-3xl font-black text-white">
-                {Object.keys(contraindicationLabels).length}
-              </div>
-              <div className="text-sm text-white/80 font-medium">
-                禁忌カテゴリ
+              <div
+                className={`rounded-[16px] px-6 py-4 border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                }}
+              >
+                <div
+                  className="text-[28px] font-bold"
+                  style={{ color: systemColors.purple }}
+                >
+                  {Object.keys(contraindicationLabels).length}
+                </div>
+                <div
+                  className="text-[13px] font-medium"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  禁忌カテゴリ
+                </div>
               </div>
             </div>
           </div>
@@ -274,57 +296,50 @@ export default async function DangerousIngredientsPage() {
       </section>
 
       {/* Important Notice */}
-      <section className="relative z-10 -mt-16 px-6 lg:px-12">
+      <section className="py-8 px-6 lg:px-12">
         <div className="mx-auto max-w-4xl">
           <div
-            className="bg-white rounded-3xl shadow-xl p-8 border border-red-100 animate-fade-in"
-            style={{ animationDelay: "0.4s" }}
+            className="rounded-[20px] p-6 border"
+            style={{
+              backgroundColor: `${systemColors.red}08`,
+              borderColor: `${systemColors.red}30`,
+            }}
           >
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-red-100 rounded-2xl">
-                <AlertTriangle className="text-red-600" size={28} />
+              <div
+                className="p-3 rounded-[12px] flex-shrink-0"
+                style={{ backgroundColor: `${systemColors.red}15` }}
+              >
+                <AlertTriangle size={24} style={{ color: systemColors.red }} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-red-900 mb-3">
+                <h2
+                  className="text-[17px] font-bold mb-3"
+                  style={{ color: systemColors.red }}
+                >
                   重要な免責事項
                 </h2>
-                <ul className="space-y-2 text-red-800">
-                  <li className="flex items-start gap-2">
-                    <ChevronRight
-                      size={16}
-                      className="mt-1 flex-shrink-0 text-red-500"
-                    />
-                    <span>
-                      このガイドは一般的な情報提供を目的としており、医学的アドバイスではありません
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ChevronRight
-                      size={16}
-                      className="mt-1 flex-shrink-0 text-red-500"
-                    />
-                    <span>
-                      サプリメントを開始する前に、必ず医師または薬剤師に相談してください
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ChevronRight
-                      size={16}
-                      className="mt-1 flex-shrink-0 text-red-500"
-                    />
-                    <span>
-                      妊娠中・授乳中、持病がある場合、薬を服用中の場合は特に注意が必要です
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ChevronRight
-                      size={16}
-                      className="mt-1 flex-shrink-0 text-red-500"
-                    />
-                    <span>
-                      異常を感じたらすぐに使用を中止し、医療機関を受診してください
-                    </span>
-                  </li>
+                <ul className="space-y-2">
+                  {[
+                    "このガイドは一般的な情報提供を目的としており、医学的アドバイスではありません",
+                    "サプリメントを開始する前に、必ず医師または薬剤師に相談してください",
+                    "妊娠中・授乳中、持病がある場合、薬を服用中の場合は特に注意が必要です",
+                    "異常を感じたらすぐに使用を中止し、医療機関を受診してください",
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <ChevronRight
+                        size={16}
+                        className="mt-0.5 flex-shrink-0"
+                        style={{ color: systemColors.red }}
+                      />
+                      <span
+                        className="text-[15px] leading-relaxed"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {item}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -333,18 +348,24 @@ export default async function DangerousIngredientsPage() {
       </section>
 
       {/* Risk Level Sections */}
-      <section className="py-24 px-6 lg:px-12">
+      <section className="py-12 px-6 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-slate-900 lg:text-5xl tracking-tight mb-6">
+          <div className="text-center mb-12">
+            <h2
+              className="text-[28px] sm:text-[34px] font-bold tracking-[-0.015em] mb-4"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               リスクレベル別一覧
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p
+              className="text-[17px] max-w-2xl mx-auto"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               成分のリスクレベルに応じて、適切な注意を払いましょう。
             </p>
           </div>
 
-          <div className="space-y-12">
+          <div className="space-y-10">
             {Object.entries(groupedByRisk).map(([level, ingredients]) => {
               const config =
                 riskLevelConfig[level as keyof typeof riskLevelConfig];
@@ -353,31 +374,52 @@ export default async function DangerousIngredientsPage() {
               const IconComponent = config.icon;
 
               return (
-                <div key={level} className="space-y-6">
+                <div key={level} className="space-y-4">
                   {/* Risk Level Header */}
                   <div
-                    className={`relative overflow-hidden rounded-3xl bg-gradient-to-r ${config.color} p-6 shadow-lg`}
+                    className="rounded-[16px] p-5 border"
+                    style={{
+                      backgroundColor: config.bgColor,
+                      borderColor: config.borderColor,
+                    }}
                   >
-                    <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-                    <div className="relative z-10 flex items-center justify-between">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
-                          <IconComponent className="text-white" size={32} />
+                        <div
+                          className="p-3 rounded-[12px]"
+                          style={{ backgroundColor: `${config.color}20` }}
+                        >
+                          <IconComponent
+                            size={24}
+                            style={{ color: config.color }}
+                          />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-white">
+                          <h3
+                            className="text-[20px] font-bold"
+                            style={{ color: config.color }}
+                          >
                             {config.label}
                           </h3>
-                          <p className="text-white/80 font-medium">
+                          <p
+                            className="text-[14px]"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
                             {config.description}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-4xl font-black text-white">
+                        <div
+                          className="text-[28px] font-bold"
+                          style={{ color: config.color }}
+                        >
                           {ingredients.length}
                         </div>
-                        <div className="text-sm text-white/80 font-medium">
+                        <div
+                          className="text-[13px]"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
                           件
                         </div>
                       </div>
@@ -386,37 +428,47 @@ export default async function DangerousIngredientsPage() {
 
                   {/* Ingredients Grid */}
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {ingredients.map((ingredient, index) => (
+                    {ingredients.map((ingredient) => (
                       <Link
                         key={ingredient._id}
                         href={`/ingredients/${ingredient.slug.current}`}
-                        className="group animate-fade-in"
-                        style={{ animationDelay: `${index * 0.05}s` }}
+                        className="group"
                       >
                         <div
-                          className={`relative h-full overflow-hidden rounded-2xl ${config.bgColor} p-6 border ${config.borderColor} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
+                          className={`h-full rounded-[16px] p-5 border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                          style={{
+                            borderColor: appleWebColors.borderSubtle,
+                            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04)",
+                          }}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2">
                               <IconComponent
-                                size={20}
-                                className={config.textColor}
+                                size={18}
+                                style={{ color: config.color }}
                               />
                               <h4
-                                className={`font-bold text-lg ${config.textColor}`}
+                                className="font-bold text-[17px]"
+                                style={{ color: appleWebColors.textPrimary }}
                               >
                                 {ingredient.name}
                               </h4>
                             </div>
                             <ArrowRight
-                              size={18}
-                              className={`${config.textColor} opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all`}
+                              size={16}
+                              className="opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+                              style={{ color: systemColors.blue }}
                             />
                           </div>
 
                           {ingredient.category && (
                             <span
-                              className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${config.bgColor} border ${config.borderColor} ${config.textColor} mb-3`}
+                              className="inline-block px-3 py-1 rounded-full text-[12px] font-medium mb-3"
+                              style={{
+                                backgroundColor: config.bgColor,
+                                color: config.color,
+                                border: `1px solid ${config.borderColor}`,
+                              }}
                             >
                               {ingredient.category}
                             </span>
@@ -424,7 +476,8 @@ export default async function DangerousIngredientsPage() {
 
                           {ingredient.description && (
                             <p
-                              className={`text-sm ${config.textColor} opacity-80 line-clamp-2 mb-4`}
+                              className="text-[14px] leading-relaxed line-clamp-2 mb-4"
+                              style={{ color: appleWebColors.textSecondary }}
                             >
                               {ingredient.description}
                             </p>
@@ -438,13 +491,25 @@ export default async function DangerousIngredientsPage() {
                                   .map((tag) => (
                                     <span
                                       key={tag}
-                                      className="text-xs px-2 py-1 bg-white/80 rounded-full font-medium text-slate-700"
+                                      className="text-[11px] px-2 py-1 rounded-full font-medium"
+                                      style={{
+                                        backgroundColor:
+                                          appleWebColors.sectionBackground,
+                                        color: appleWebColors.textSecondary,
+                                      }}
                                     >
                                       {contraindicationLabels[tag] || tag}
                                     </span>
                                   ))}
                                 {ingredient.contraindications.length > 3 && (
-                                  <span className="text-xs px-2 py-1 bg-white/80 rounded-full font-medium text-slate-500">
+                                  <span
+                                    className="text-[11px] px-2 py-1 rounded-full font-medium"
+                                    style={{
+                                      backgroundColor:
+                                        appleWebColors.sectionBackground,
+                                      color: appleWebColors.textTertiary,
+                                    }}
+                                  >
                                     +{ingredient.contraindications.length - 3}
                                   </span>
                                 )}
@@ -462,19 +527,37 @@ export default async function DangerousIngredientsPage() {
       </section>
 
       {/* Contraindication Checklist Section */}
-      <section className="py-24 px-6 lg:px-12 bg-white">
+      <section
+        className="py-16 sm:py-20 px-6 lg:px-12"
+        style={{ backgroundColor: appleWebColors.sectionBackground }}
+      >
         <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-amber-100 px-5 py-2 border border-amber-200">
-              <Shield size={18} className="text-amber-600" />
-              <span className="text-sm font-bold text-amber-800 tracking-wide">
+          <div className="text-center mb-12">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6"
+              style={{
+                backgroundColor: `${systemColors.orange}15`,
+                border: `1px solid ${systemColors.orange}30`,
+              }}
+            >
+              <Shield size={16} style={{ color: systemColors.orange }} />
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: systemColors.orange }}
+              >
                 パーソナライズドチェック
               </span>
             </div>
-            <h2 className="text-3xl font-black text-slate-900 lg:text-5xl tracking-tight mb-6">
+            <h2
+              className="text-[28px] sm:text-[34px] font-bold tracking-[-0.015em] mb-4"
+              style={{ color: appleWebColors.textPrimary }}
+            >
               あなたの状況をチェック
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p
+              className="text-[17px] max-w-2xl mx-auto"
+              style={{ color: appleWebColors.textSecondary }}
+            >
               該当する項目をクリックして、注意が必要な成分を確認しましょう。
             </p>
           </div>
@@ -489,39 +572,58 @@ export default async function DangerousIngredientsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative overflow-hidden py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
-
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-12">
-          <h2 className="mb-6 text-3xl font-black text-white lg:text-5xl">
-            成分について詳しく知る
-          </h2>
-          <p className="mb-10 text-xl text-slate-300 font-medium">
-            各成分の詳細ページで、効果、副作用、相互作用などの
-            <br className="hidden sm:block" />
-            詳しい情報を確認できます。
-          </p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/ingredients"
-              className="group flex items-center gap-2 rounded-full bg-white px-10 py-5 font-bold text-slate-900 shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+      <section className="py-16 sm:py-20 px-6 lg:px-12">
+        <div className="mx-auto max-w-4xl text-center">
+          <div
+            className="rounded-[24px] p-8 sm:p-12 border"
+            style={{
+              background: `linear-gradient(135deg, ${systemColors.blue}10 0%, ${systemColors.purple}10 100%)`,
+              borderColor: appleWebColors.borderSubtle,
+            }}
+          >
+            <h2
+              className="text-[24px] sm:text-[28px] font-bold mb-4"
+              style={{ color: appleWebColors.textPrimary }}
             >
-              全成分ガイドを見る
-              <ArrowRight
-                size={20}
-                className="transition-transform group-hover:translate-x-1"
-              />
-            </Link>
-            <Link
-              href="/guide/purposes"
-              className="group flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-10 py-5 font-bold text-white backdrop-blur-md transition-all hover:bg-white/20 hover:border-white"
+              成分について詳しく知る
+            </h2>
+            <p
+              className="text-[17px] mb-8 max-w-2xl mx-auto leading-relaxed"
+              style={{ color: appleWebColors.textSecondary }}
             >
-              目的別ガイドを見る
-              <ArrowRight
-                size={20}
-                className="transition-transform group-hover:translate-x-1"
-              />
-            </Link>
+              各成分の詳細ページで、効果、副作用、相互作用などの
+              詳しい情報を確認できます。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/ingredients"
+                className="group flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition-all hover:scale-[1.02] min-h-[48px]"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.purple} 100%)`,
+                  boxShadow: `0 4px 16px ${systemColors.blue}40`,
+                }}
+              >
+                全成分ガイドを見る
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+              <Link
+                href="/guide/purposes"
+                className={`group flex items-center gap-2 rounded-full px-8 py-4 font-semibold transition-all hover:scale-[1.02] min-h-[48px] border ${liquidGlassClasses.light}`}
+                style={{
+                  borderColor: appleWebColors.borderSubtle,
+                  color: appleWebColors.textPrimary,
+                }}
+              >
+                目的別ガイドを見る
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

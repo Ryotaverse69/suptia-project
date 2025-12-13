@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Award, CheckCircle } from "lucide-react";
+import { Heart, Award, CheckCircle } from "lucide-react";
 import type { HealthGoal } from "@/lib/recommendation-engine";
 import { getRecommendedIngredients } from "@/lib/goal-ingredient-mapping";
 
@@ -42,7 +42,7 @@ export function RecommendedIngredients({ goals }: RecommendedIngredientsProps) {
       {/* ヘッダー */}
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-gradient-to-br from-blue-500 to-purple-500 rounded-full p-2.5">
-          <Sparkles className="text-white" size={24} />
+          <Heart className="text-white" size={24} />
         </div>
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -112,7 +112,10 @@ export function RecommendedIngredients({ goals }: RecommendedIngredientsProps) {
       {/* 注釈 */}
       <div className="mt-6 p-4 bg-blue-100/50 rounded-lg border border-blue-200">
         <div className="flex gap-2">
-          <Sparkles className="flex-shrink-0 text-blue-600 mt-0.5" size={16} />
+          <CheckCircle
+            className="flex-shrink-0 text-blue-600 mt-0.5"
+            size={16}
+          />
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
             <strong>エビデンスレベル:</strong> S = 最高レベルの科学的根拠、A =
             高い信頼性、B = 中程度の信頼性、C = 限定的な根拠、D = 初期段階の研究

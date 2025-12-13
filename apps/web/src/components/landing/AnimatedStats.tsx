@@ -2,6 +2,16 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
+import { Package, BarChart3, CheckCircle2 } from "lucide-react";
+import {
+  systemColors,
+  appleWebColors,
+  typography,
+  fontStack,
+  appleEase,
+  subtleSpring,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 // Apple式：モバイル検出
 const useIsMobile = () => {
@@ -23,6 +33,7 @@ interface StatItemProps {
   sublabel?: string;
   color?: string;
   delay?: number;
+  icon?: React.ElementType;
 }
 
 function AnimatedNumber({
@@ -76,8 +87,9 @@ function StatCard({
   suffix,
   label,
   sublabel,
-  color = "#3b66e0",
+  color = systemColors.blue,
   delay = 0,
+  icon: Icon,
 }: StatItemProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
@@ -92,139 +104,72 @@ function StatCard({
     <motion.div
       ref={ref}
       className="relative group will-change-transform"
-      initial={{
-        opacity: 0,
-        y: isMobile ? 30 : 50,
-        rotateX: isMobile ? 0 : -15,
-      }}
-      animate={isInView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-      transition={{
-        duration: isMobile ? 0.5 : 0.8,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: appleEase }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{
-        transformStyle: isMobile ? "flat" : "preserve-3d",
-        perspective: isMobile ? undefined : 1000,
-        transform: "translateZ(0)",
-      }}
     >
-      {/* Card Container - Apple式：モバイルでは3D効果無効 */}
+      {/* Glass Card Container */}
       <motion.div
-        className="relative h-full bg-white border border-slate-200 rounded-3xl p-8 overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 will-change-transform"
-        animate={
-          isMobile
-            ? { scale: isHovered ? 1.01 : 1 }
-            : {
-                rotateY: isHovered ? 5 : 0,
-                rotateX: isHovered ? -5 : 0,
-                scale: isHovered ? 1.02 : 1,
-              }
-        }
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className={`relative h-full p-8 overflow-hidden ${liquidGlassClasses.light}`}
         style={{
-          transformStyle: isMobile ? "flat" : "preserve-3d",
-          transform: "translateZ(0)",
+          boxShadow: isHovered
+            ? "0 12px 40px rgba(0, 0, 0, 0.12)"
+            : "0 4px 24px rgba(0, 0, 0, 0.06)",
         }}
+        animate={isMobile ? {} : { y: isHovered ? -4 : 0 }}
+        transition={subtleSpring}
       >
-        {/* Background Glow - モバイルでは簡略化 */}
-        {!isMobile && (
+        {/* Icon */}
+        {Icon && (
           <motion.div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            className="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-2xl"
             style={{
-              background: `
-                radial-gradient(circle at 30% 30%, ${color}20 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, ${color}15 0%, transparent 50%)
-              `,
+              background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
             }}
-          />
-        )}
-
-        {/* Animated Border Glow - デスクトップのみ */}
-        {!isMobile && (
-          <motion.div
-            className="absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-            style={{
-              background: `linear-gradient(135deg, ${color}40 0%, transparent 40%, transparent 60%, ${color}40 100%)`,
-            }}
-          />
-        )}
-
-        {/* Floating Particles - Apple式：モバイルでは無効、reduced-motion対応 */}
-        {!isMobile && !prefersReducedMotion && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[0, 1].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 rounded-full"
-                style={{
-                  backgroundColor: `${color}30`,
-                  left: `${25 + i * 50}%`,
-                  top: `${35 + i * 30}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0, 0.6, 0],
-                }}
-                transition={{
-                  duration: 4 + i,
-                  repeat: Infinity,
-                  delay: i * 0.8,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="relative z-10">
-          {/* Value with enhanced styling */}
-          <div className="mb-4">
-            <motion.span
-              className="text-5xl sm:text-6xl lg:text-7xl font-extralight tracking-tight will-change-transform"
-              style={{
-                color,
-                textShadow:
-                  !isMobile && isHovered ? `0 0 40px ${color}30` : "none",
-                transition: "text-shadow 0.3s ease",
-              }}
-            >
-              <AnimatedNumber value={value} suffix={suffix} />
-            </motion.span>
-          </div>
-
-          {/* Label with stagger animation */}
-          <motion.div
-            className="space-y-1"
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: delay + 0.3 }}
+            animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
+            transition={{ duration: 0.3, ease: appleEase }}
           >
-            <p className="text-slate-800 text-lg font-medium">{label}</p>
-            {sublabel && <p className="text-slate-500 text-sm">{sublabel}</p>}
+            <Icon className="w-7 h-7 text-white" aria-hidden="true" />
           </motion.div>
+        )}
+
+        {/* Value */}
+        <div className="mb-4">
+          <span
+            className="text-[48px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.015em] tabular-nums"
+            style={{ color }}
+          >
+            <AnimatedNumber value={value} suffix={suffix} />
+          </span>
         </div>
 
-        {/* Enhanced Shine Effect - デスクトップのみ */}
-        {!isMobile && (
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.4) 50%, transparent 55%)",
-              transform: "translateX(-100%)",
-            }}
-            animate={isHovered ? { transform: "translateX(100%)" } : {}}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-          />
-        )}
+        {/* Label */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: delay + 0.2, ease: appleEase }}
+        >
+          <p
+            className={typography.headline}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            {label}
+          </p>
+          {sublabel && (
+            <p
+              className={`${typography.subhead} mt-1`}
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              {sublabel}
+            </p>
+          )}
+        </motion.div>
 
-        {/* Corner Accent */}
+        {/* Subtle accent gradient */}
         <div
-          className="absolute top-0 right-0 w-24 h-24 opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+          className="absolute top-0 right-0 w-32 h-32 opacity-[0.08] pointer-events-none"
           style={{
             background: `radial-gradient(circle at 100% 0%, ${color} 0%, transparent 70%)`,
           }}
@@ -246,90 +191,87 @@ export function AnimatedStats({
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
 
-  const stats = [
+  const stats: (StatItemProps & { key: string })[] = [
     {
+      key: "products",
       value: totalProducts || 400,
       suffix: "+",
-      label: "Products",
-      sublabel: "厳選されたサプリメント",
-      color: "#3b66e0",
+      label: "厳選サプリメント",
+      sublabel: "科学的根拠に基づいた商品",
+      color: systemColors.blue,
+      icon: Package,
     },
     {
+      key: "evaluation",
       value: 5,
       suffix: "軸",
-      label: "Evaluation",
-      sublabel: "多角的評価システム",
-      color: "#7a98ec",
+      label: "多角的評価",
+      sublabel: "価格・成分・コスパ・根拠・安全性",
+      color: systemColors.indigo,
+      icon: BarChart3,
     },
     {
+      key: "free",
       value: 0,
       suffix: "円",
-      label: "Forever Free",
-      sublabel: "すべての機能が無料",
-      color: "#64e5b3",
+      label: "すべて無料",
+      sublabel: "全機能をずっと無料で利用可能",
+      color: systemColors.green,
+      icon: CheckCircle2,
     },
   ];
 
   return (
     <section
       ref={ref}
-      className={`relative py-20 bg-slate-50 ${className}`}
-      style={{ contain: "layout paint" }}
+      className={`relative py-24 md:py-32 ${className}`}
+      style={{
+        backgroundColor: appleWebColors.sectionBackground,
+        fontFamily: fontStack,
+        contain: "layout paint",
+      }}
     >
-      {/* Decorative Line - 強化版 */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-px will-change-transform"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, #cbd5e1 30%, #cbd5e1 70%, transparent)",
-        }}
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
-        transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-      />
-
-      {/* Background subtle pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.02] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #3b66e0 1px, transparent 0)`,
-          backgroundSize: "32px 32px",
-        }}
-      />
-
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Title - 強化版 */}
+        {/* Section Header */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: appleEase }}
         >
           <motion.span
-            className="inline-block text-xs font-semibold tracking-[0.3em] uppercase text-slate-400 mb-4"
+            className="inline-block text-[13px] font-semibold tracking-[0.2em] uppercase mb-4"
+            style={{ color: appleWebColors.textTertiary }}
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
           >
-            Our Numbers
+            データで示す
           </motion.span>
           <motion.h2
-            className="text-3xl sm:text-4xl font-light text-slate-800"
+            className="text-[32px] md:text-[48px] font-bold leading-[1.05] tracking-[-0.015em]"
+            style={{ color: appleWebColors.textPrimary }}
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
           >
-            数字で見る
-            <span className="bg-gradient-to-r from-[#7a98ec] to-primary bg-clip-text text-transparent ml-2">
-              Suptia
-            </span>
+            Suptiaの実績
           </motion.h2>
         </motion.div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {stats.map((stat, index) => (
-            <StatCard key={stat.label} {...stat} delay={0.3 + index * 0.15} />
+            <StatCard
+              key={stat.key}
+              value={stat.value}
+              suffix={stat.suffix}
+              label={stat.label}
+              sublabel={stat.sublabel}
+              color={stat.color}
+              icon={stat.icon}
+              delay={0.3 + index * 0.12}
+            />
           ))}
         </div>
       </div>

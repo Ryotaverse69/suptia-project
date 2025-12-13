@@ -9,6 +9,7 @@ import {
   SpringAccordion,
   StickyCTA,
 } from "@/components/landing";
+import { appleWebColors, fontStack } from "@/lib/design-system";
 
 interface Product {
   name: string;
@@ -56,7 +57,13 @@ export function LandingPageClient({
   faqData,
 }: LandingPageClientProps) {
   return (
-    <div className="relative bg-white min-h-screen overflow-x-hidden">
+    <div
+      className="relative min-h-screen overflow-x-hidden"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* Hero Section */}
       <HeroRevolution popularSearches={popularIngredients} />
 
@@ -71,7 +78,7 @@ export function LandingPageClient({
         <FlatCarousel
           products={featuredProducts}
           title="おすすめのサプリメント"
-          subtitle="科学的根拠と人気度に基づいた厳選セレクション"
+          subtitle="エビデンスに基づいた厳選商品"
         />
       )}
 
@@ -80,7 +87,7 @@ export function LandingPageClient({
         <MasonryIngredients
           ingredients={popularIngredients}
           title="人気の成分"
-          subtitle="科学的根拠に基づいた成分ガイド"
+          subtitle="各成分の効果と含有商品を確認"
         />
       )}
 
@@ -95,8 +102,8 @@ export function LandingPageClient({
       <StickyCTA
         showAfterScroll={0.3}
         href="/diagnosis"
-        text="あなたに最適なサプリを診断"
-        subtext="無料で今すぐ診断"
+        text="無料で診断する"
+        subtext="3分で完了"
       />
     </div>
   );

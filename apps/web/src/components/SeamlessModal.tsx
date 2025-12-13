@@ -9,6 +9,7 @@ import {
   createContext,
   useContext,
 } from "react";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 interface SeamlessModalContextType {
   isOpen: boolean;
@@ -115,7 +116,7 @@ export function SeamlessModalContent({
           {/* Expanded Content */}
           <motion.div
             layoutId={layoutId}
-            className={`bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden relative z-10 flex flex-col ${className}`}
+            className={`${liquidGlassClasses.light} w-full max-w-4xl max-h-[90vh] overflow-hidden relative z-10 flex flex-col ${className}`}
           >
             <div className="flex-1 overflow-y-auto custom-scrollbar relative">
               {/* Close Button (Floating) */}
@@ -124,7 +125,7 @@ export function SeamlessModalContent({
                   e.stopPropagation();
                   close();
                 }}
-                className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur rounded-full text-slate-500 hover:text-slate-900 hover:bg-white transition-colors z-50 shadow-sm border border-slate-100"
+                className="absolute top-4 right-4 p-2 bg-white/60 backdrop-blur-[20px] backdrop-saturate-[180%] rounded-full text-slate-500 hover:text-slate-900 hover:bg-white/80 transition-colors z-50 shadow-sm border border-white/80"
               >
                 <X className="w-5 h-5" />
               </button>

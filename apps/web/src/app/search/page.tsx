@@ -15,6 +15,12 @@ import {
   BookOpen,
 } from "lucide-react";
 import { BadgeType } from "@/lib/badges";
+import {
+  appleWebColors,
+  systemColors,
+  fontStack,
+  liquidGlassClasses,
+} from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "検索結果 - サプティア",
@@ -276,22 +282,47 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-pastel">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
       {/* パンくずリスト + 検索バー */}
       <div
-        className="relative overflow-hidden border-b border-white/20"
+        className="border-b"
         style={{
-          background:
-            "linear-gradient(135deg, #7a98ec 0%, #5a7fe6 25%, #3b66e0 50%, #2d4fb8 75%, #243d94 100%)",
+          backgroundColor: "white",
+          borderColor: appleWebColors.borderSubtle,
         }}
       >
-        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-6 max-w-[1440px] relative z-10">
-          <nav className="flex items-center gap-2 text-sm text-white/90 mb-6">
-            <Link href="/" className="hover:text-white transition-colors">
+        <div className="mx-auto px-6 lg:px-12 xl:px-16 py-6 max-w-[1440px]">
+          <nav
+            className="flex items-center gap-2 mb-6"
+            style={{
+              fontSize: "15px",
+              color: appleWebColors.textSecondary,
+            }}
+          >
+            <Link
+              href="/"
+              className="transition-colors hover:text-[#007AFF]"
+              style={{
+                color: appleWebColors.textSecondary,
+              }}
+            >
               ホーム
             </Link>
-            <ChevronRight size={16} className="text-white/60" />
-            <span className="text-white font-medium">検索結果</span>
+            <ChevronRight
+              size={16}
+              style={{ color: appleWebColors.textTertiary }}
+            />
+            <span
+              style={{ color: appleWebColors.textPrimary, fontWeight: 500 }}
+            >
+              検索結果
+            </span>
           </nav>
           {/* 検索バー */}
           <SearchBar />
@@ -303,18 +334,42 @@ export default async function SearchPage({
         {!query || query.trim().length === 0 ? (
           /* 検索クエリがない場合 */
           <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-              <SearchIcon className="text-primary" size={32} />
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
+              style={{
+                backgroundColor: `${systemColors.blue}15`,
+              }}
+            >
+              <SearchIcon style={{ color: systemColors.blue }} size={32} />
             </div>
-            <h2 className="text-2xl font-bold text-primary-900 mb-2">
+            <h2
+              className="mb-2"
+              style={{
+                fontSize: "28px",
+                fontWeight: 700,
+                lineHeight: "34px",
+                color: appleWebColors.textPrimary,
+              }}
+            >
               検索キーワードを入力してください
             </h2>
-            <p className="text-primary-700 mb-8">
+            <p
+              className="mb-8"
+              style={{
+                fontSize: "17px",
+                color: appleWebColors.textSecondary,
+              }}
+            >
               成分名やサプリメント名で検索できます
             </p>
             <Link
               href="/"
-              className="inline-block px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-block px-6 py-3 font-semibold rounded-[12px] transition-colors hover:bg-[#0056CC]"
+              style={{
+                backgroundColor: systemColors.blue,
+                color: "white",
+                fontSize: "17px",
+              }}
             >
               ホームに戻る
             </Link>
@@ -324,26 +379,55 @@ export default async function SearchPage({
             {/* ヘッダー情報 */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary-100 rounded-lg">
+                <div
+                  className="p-3 rounded-[12px]"
+                  style={{
+                    backgroundColor: `${systemColors.blue}15`,
+                  }}
+                >
                   {ingredient ? (
-                    <Pill className="text-primary" size={32} />
+                    <Pill style={{ color: systemColors.blue }} size={32} />
                   ) : (
-                    <SearchIcon className="text-primary" size={32} />
+                    <SearchIcon
+                      style={{ color: systemColors.blue }}
+                      size={32}
+                    />
                   )}
                 </div>
                 <div>
                   {ingredient && (
-                    <p className="text-sm text-primary-700 mb-1">
+                    <p
+                      className="mb-1"
+                      style={{
+                        fontSize: "15px",
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
                       {ingredient.category}
                     </p>
                   )}
-                  <h1 className="text-4xl font-bold text-primary-900">
+                  <h1
+                    style={{
+                      fontSize: "34px",
+                      fontWeight: 700,
+                      lineHeight: "41px",
+                      letterSpacing: "0.37px",
+                      color: appleWebColors.textPrimary,
+                    }}
+                  >
                     {ingredient
                       ? `${ingredient.name}を含むサプリメント`
                       : `「${query}」の検索結果`}
                   </h1>
                   {ingredient && (
-                    <p className="text-xl text-primary-700 mt-2">
+                    <p
+                      className="mt-2"
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
                       {ingredient.nameEn}
                     </p>
                   )}
@@ -351,16 +435,37 @@ export default async function SearchPage({
               </div>
 
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="px-4 py-2 bg-primary-100 rounded-lg">
-                  <span className="text-sm font-semibold text-primary-900">
+                <div
+                  className="px-4 py-2 rounded-[12px]"
+                  style={{
+                    backgroundColor: appleWebColors.sectionBackground,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      color: appleWebColors.textPrimary,
+                    }}
+                  >
                     {sortedProducts.length}種類の商品
                   </span>
                 </div>
                 {sortedProducts.length > 0 && (
-                  <div className="px-4 py-2 bg-accent-mint/10 rounded-lg">
-                    <span className="text-sm text-primary-900">
+                  <div
+                    className="px-4 py-2 rounded-[12px]"
+                    style={{
+                      backgroundColor: `${systemColors.green}15`,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "15px",
+                        color: appleWebColors.textPrimary,
+                      }}
+                    >
                       最安値:{" "}
-                      <span className="font-bold">
+                      <span style={{ fontWeight: 600 }}>
                         ¥
                         {Math.min(
                           ...sortedProducts.map((p) => p.priceJPY),
@@ -374,38 +479,64 @@ export default async function SearchPage({
 
             {/* フィルター */}
             {sortedProducts.length > 0 && (
-              <div className="flex items-center justify-between mb-6 p-4 glass-blue rounded-xl">
-                <span className="text-sm font-medium text-primary-900">
+              <div
+                className={`flex items-center justify-between mb-6 p-4 rounded-[16px] ${liquidGlassClasses.light}`}
+              >
+                <span
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    color: appleWebColors.textPrimary,
+                  }}
+                >
                   並び替え
                 </span>
                 <div className="flex gap-2">
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}&sort=price`}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      sortBy === "price"
-                        ? "bg-primary text-white"
-                        : "bg-white text-primary-900 hover:bg-primary-50"
-                    }`}
+                    className="px-4 py-2 font-medium rounded-[12px] transition-colors"
+                    style={{
+                      fontSize: "15px",
+                      backgroundColor:
+                        sortBy === "price" ? systemColors.blue : "white",
+                      color:
+                        sortBy === "price"
+                          ? "white"
+                          : appleWebColors.textPrimary,
+                      border: `1px solid ${sortBy === "price" ? systemColors.blue : appleWebColors.borderSubtle}`,
+                    }}
                   >
                     価格が安い順
                   </Link>
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}&sort=cost`}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      sortBy === "cost"
-                        ? "bg-primary text-white"
-                        : "bg-white text-primary-900 hover:bg-primary-50"
-                    }`}
+                    className="px-4 py-2 font-medium rounded-[12px] transition-colors"
+                    style={{
+                      fontSize: "15px",
+                      backgroundColor:
+                        sortBy === "cost" ? systemColors.blue : "white",
+                      color:
+                        sortBy === "cost"
+                          ? "white"
+                          : appleWebColors.textPrimary,
+                      border: `1px solid ${sortBy === "cost" ? systemColors.blue : appleWebColors.borderSubtle}`,
+                    }}
                   >
                     コスパが良い順
                   </Link>
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}&sort=price_desc`}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      sortBy === "price_desc"
-                        ? "bg-primary text-white"
-                        : "bg-white text-primary-900 hover:bg-primary-50"
-                    }`}
+                    className="px-4 py-2 font-medium rounded-[12px] transition-colors"
+                    style={{
+                      fontSize: "15px",
+                      backgroundColor:
+                        sortBy === "price_desc" ? systemColors.blue : "white",
+                      color:
+                        sortBy === "price_desc"
+                          ? "white"
+                          : appleWebColors.textPrimary,
+                      border: `1px solid ${sortBy === "price_desc" ? systemColors.blue : appleWebColors.borderSubtle}`,
+                    }}
                   >
                     価格が高い順
                   </Link>
@@ -417,18 +548,35 @@ export default async function SearchPage({
             {sortedProducts.length > 0 ? (
               <ProductList products={sortedProducts} initialDisplayCount={10} />
             ) : (
-              <div className="text-center py-20 glass rounded-3xl shadow-glass">
-                <div className="text-primary-300 mb-4">
+              <div
+                className={`text-center py-20 rounded-[20px] ${liquidGlassClasses.light}`}
+              >
+                <div
+                  className="mb-4"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
                   <AlertCircle size={64} className="mx-auto" />
                 </div>
-                <p className="text-primary-700 font-light mb-4">
+                <p
+                  className="mb-4"
+                  style={{
+                    fontSize: "17px",
+                    fontWeight: 300,
+                    color: appleWebColors.textSecondary,
+                  }}
+                >
                   {ingredient
                     ? `${ingredient.name}を含む商品はまだ登録されていません`
                     : `「${query}」に一致する商品が見つかりませんでした`}
                 </p>
                 <Link
                   href="/products"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-[12px] transition-colors hover:bg-[#0056CC]"
+                  style={{
+                    backgroundColor: systemColors.blue,
+                    color: "white",
+                    fontSize: "17px",
+                  }}
                 >
                   すべての商品を見る
                   <TrendingUp size={16} />
@@ -438,22 +586,48 @@ export default async function SearchPage({
 
             {/* 成分ガイドへのリンク */}
             {ingredient && (
-              <div className="mt-12 p-8 glass-blue rounded-xl shadow-soft">
+              <div
+                className={`mt-12 p-8 rounded-[20px] ${liquidGlassClasses.light}`}
+              >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-100 rounded-lg">
-                    <BookOpen className="text-primary" size={24} />
+                  <div
+                    className="p-3 rounded-[12px]"
+                    style={{
+                      backgroundColor: `${systemColors.blue}15`,
+                    }}
+                  >
+                    <BookOpen style={{ color: systemColors.blue }} size={24} />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xl font-bold text-primary-900 mb-2">
+                    <h2
+                      className="mb-2"
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        lineHeight: "25px",
+                        color: appleWebColors.textPrimary,
+                      }}
+                    >
                       {ingredient.name}についてもっと知る
                     </h2>
-                    <p className="text-primary-700 mb-4">
+                    <p
+                      className="mb-4"
+                      style={{
+                        fontSize: "17px",
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
                       {ingredient.name}
                       の効果・効能、推奨摂取量、副作用などの詳細情報をご覧いただけます。
                     </p>
                     <Link
                       href={`/ingredients/${ingredient.slug.current}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                      className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-[12px] transition-colors hover:bg-[#0056CC]"
+                      style={{
+                        backgroundColor: systemColors.blue,
+                        color: "white",
+                        fontSize: "17px",
+                      }}
                     >
                       {ingredient.name}の詳細ガイドを見る
                       <ChevronRight size={16} />

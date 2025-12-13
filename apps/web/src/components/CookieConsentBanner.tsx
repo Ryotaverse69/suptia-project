@@ -3,6 +3,7 @@
 import { useCookieConsent } from "@/contexts/CookieConsentContext";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { liquidGlassClasses } from "@/lib/design-system";
 
 export function CookieConsentBanner() {
   const { showBanner, acceptAll, rejectAll, openSettings, closeBanner } =
@@ -11,7 +12,9 @@ export function CookieConsentBanner() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t shadow-lg">
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-50 ${liquidGlassClasses.light} border-t shadow-lg`}
+    >
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           {/* メッセージ */}
