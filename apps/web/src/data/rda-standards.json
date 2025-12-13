@@ -2,7 +2,7 @@
   "$schema": "./rda-standards.schema.json",
   "version": "1.0.0",
   "source": "厚生労働省「日本人の食事摂取基準（2020年版）」",
-  "lastUpdated": "2025-11-15",
+  "lastUpdated": "2025-12-13",
   "notes": [
     "RDA (Recommended Dietary Allowance): 推奨量",
     "AI (Adequate Intake): 目安量（推奨量を算定するのに十分な科学的根拠が得られない場合）",
@@ -862,6 +862,690 @@
       "ul": null,
       "deficiencyRisks": [],
       "excessRisks": ["血糖値上昇"]
+    },
+    "クレアチン": {
+      "nameEn": "Creatine",
+      "category": "アミノ酸誘導体",
+      "rda": {
+        "male": 5000,
+        "female": 5000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "運動パフォーマンス研究での維持量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状", "腎臓負担（過剰摂取時）"]
+    },
+    "メラトニン": {
+      "nameEn": "Melatonin",
+      "category": "ホルモン様物質",
+      "rda": {
+        "male": 3,
+        "female": 3,
+        "unit": "mg",
+        "type": "AI",
+        "note": "睡眠サポート研究での標準摂取量"
+      },
+      "ul": {
+        "value": 10,
+        "unit": "mg",
+        "note": "過剰摂取で翌日の眠気"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["眠気", "頭痛", "めまい"]
+    },
+    "α-リポ酸": {
+      "nameEn": "Alpha-Lipoic Acid",
+      "category": "抗酸化物質",
+      "rda": {
+        "male": 300,
+        "female": 300,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化・代謝サポート研究での摂取量"
+      },
+      "ul": {
+        "value": 600,
+        "unit": "mg"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["低血糖（糖尿病薬との併用時）", "皮膚発疹"]
+    },
+    "L-テアニン": {
+      "nameEn": "L-Theanine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 200,
+        "female": 200,
+        "unit": "mg",
+        "type": "AI",
+        "note": "リラックス効果研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "アシュワガンダ": {
+      "nameEn": "Ashwagandha",
+      "category": "アダプトゲン",
+      "rda": {
+        "male": 600,
+        "female": 600,
+        "unit": "mg",
+        "type": "AI",
+        "note": "ストレス軽減研究での標準摂取量（KSM-66エキス）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["甲状腺への影響（長期摂取時）"]
+    },
+    "エキナセア": {
+      "nameEn": "Echinacea",
+      "category": "ハーブ",
+      "rda": {
+        "male": 900,
+        "female": 900,
+        "unit": "mg",
+        "type": "AI",
+        "note": "免疫サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["アレルギー反応（キク科アレルギーの方）"]
+    },
+    "エルダーベリー": {
+      "nameEn": "Elderberry",
+      "category": "ハーブ",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "免疫サポート研究でのエキス摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "バレリアン": {
+      "nameEn": "Valerian",
+      "category": "ハーブ",
+      "rda": {
+        "male": 450,
+        "female": 450,
+        "unit": "mg",
+        "type": "AI",
+        "note": "睡眠サポート研究での摂取量（就寝30分前）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["頭痛", "消化器症状"]
+    },
+    "NAC": {
+      "nameEn": "N-Acetyl Cysteine",
+      "category": "アミノ酸誘導体",
+      "rda": {
+        "male": 600,
+        "female": 600,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化サポート研究での摂取量"
+      },
+      "ul": {
+        "value": 1800,
+        "unit": "mg"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状", "頭痛"]
+    },
+    "HMB": {
+      "nameEn": "β-Hydroxy β-Methylbutyrate",
+      "category": "アミノ酸代謝物",
+      "rda": {
+        "male": 3000,
+        "female": 3000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "筋肉維持研究での標準摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "オルニチン": {
+      "nameEn": "Ornithine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "疲労回復研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状（大量摂取時）"]
+    },
+    "NMN": {
+      "nameEn": "Nicotinamide Mononucleotide",
+      "category": "NAD+前駆体",
+      "rda": {
+        "male": 250,
+        "female": 250,
+        "unit": "mg",
+        "type": "AI",
+        "note": "エイジングケア研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "サラシア": {
+      "nameEn": "Salacia",
+      "category": "ハーブ",
+      "rda": {
+        "male": 240,
+        "female": 240,
+        "unit": "mg",
+        "type": "AI",
+        "note": "糖質対策研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["低血糖（糖尿病薬併用時）", "消化器症状"]
+    },
+    "フォルスコリン": {
+      "nameEn": "Forskolin",
+      "category": "植物エキス",
+      "rda": {
+        "male": 250,
+        "female": 250,
+        "unit": "mg",
+        "type": "AI",
+        "note": "代謝サポート研究での摂取量（10%フォルスコリン含有エキス）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["低血圧", "頻脈"]
+    },
+    "キトサン": {
+      "nameEn": "Chitosan",
+      "category": "食物繊維",
+      "rda": {
+        "male": 1500,
+        "female": 1500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "脂質吸収抑制研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["甲殻類アレルギー", "脂溶性ビタミン吸収阻害"]
+    },
+    "ギムネマ": {
+      "nameEn": "Gymnema Sylvestre",
+      "category": "ハーブ",
+      "rda": {
+        "male": 400,
+        "female": 400,
+        "unit": "mg",
+        "type": "AI",
+        "note": "糖質代謝サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["低血糖（糖尿病薬併用時）"]
+    },
+    "高麗人参": {
+      "nameEn": "Korean Ginseng",
+      "category": "アダプトゲン",
+      "rda": {
+        "male": 200,
+        "female": 200,
+        "unit": "mg",
+        "type": "AI",
+        "note": "活力サポート研究での摂取量（標準化エキス）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["不眠", "頭痛", "血圧上昇"]
+    },
+    "ロディオラ": {
+      "nameEn": "Rhodiola Rosea",
+      "category": "アダプトゲン",
+      "rda": {
+        "male": 400,
+        "female": 400,
+        "unit": "mg",
+        "type": "AI",
+        "note": "ストレス軽減・疲労回復研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["不眠", "興奮"]
+    },
+    "ベータアラニン": {
+      "nameEn": "Beta-Alanine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 3200,
+        "female": 3200,
+        "unit": "mg",
+        "type": "AI",
+        "note": "運動パフォーマンス研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["チクチク感（パレステジア）"]
+    },
+    "ブラックコホシュ": {
+      "nameEn": "Black Cohosh",
+      "category": "ハーブ",
+      "rda": {
+        "male": 40,
+        "female": 40,
+        "unit": "mg",
+        "type": "AI",
+        "note": "更年期症状緩和研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["肝障害（まれ）", "消化器症状"]
+    },
+    "レッドクローバー": {
+      "nameEn": "Red Clover",
+      "category": "ハーブ",
+      "rda": {
+        "male": 80,
+        "female": 80,
+        "unit": "mg",
+        "type": "AI",
+        "note": "イソフラボン換算での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["ホルモンバランスへの影響"]
+    },
+    "スクワレン": {
+      "nameEn": "Squalene",
+      "category": "脂質",
+      "rda": {
+        "male": 1000,
+        "female": 1000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "健康維持サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "カフェイン": {
+      "nameEn": "Caffeine",
+      "category": "覚醒物質",
+      "rda": {
+        "male": 400,
+        "female": 400,
+        "unit": "mg",
+        "type": "AI",
+        "note": "成人の安全な1日摂取量上限"
+      },
+      "ul": {
+        "value": 400,
+        "unit": "mg",
+        "note": "妊婦は200mg以下推奨"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": ["不眠", "不安", "動悸", "胃腸障害"]
+    },
+    "オリゴ糖": {
+      "nameEn": "Oligosaccharide",
+      "category": "プレバイオティクス",
+      "rda": {
+        "male": 3000,
+        "female": 3000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "腸内環境サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["腹部膨満", "下痢（過剰摂取時）"]
+    },
+    "活性炭": {
+      "nameEn": "Activated Charcoal",
+      "category": "デトックス成分",
+      "rda": {
+        "male": 1000,
+        "female": 1000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "デトックスサポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["薬物・栄養素の吸収阻害", "便秘"]
+    },
+    "コンブチャ": {
+      "nameEn": "Kombucha Extract",
+      "category": "発酵食品エキス",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "サプリメントエキスとしての摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "ハトムギ": {
+      "nameEn": "Coix Seed Extract",
+      "category": "植物エキス",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "美肌サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "エラグ酸": {
+      "nameEn": "Ellagic Acid",
+      "category": "ポリフェノール",
+      "rda": {
+        "male": 300,
+        "female": 300,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "ヘスペリジン": {
+      "nameEn": "Hesperidin",
+      "category": "フラボノイド",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "血流サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "ヘム鉄": {
+      "nameEn": "Heme Iron",
+      "category": "ミネラル",
+      "rda": {
+        "male": 7.5,
+        "female": 10.5,
+        "unit": "mg",
+        "type": "RDA",
+        "note": "鉄と同じRDA（高吸収率のため低用量で効果的）"
+      },
+      "ul": {
+        "value": 50,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["貧血", "疲労感"],
+      "excessRisks": ["消化器症状", "鉄過剰"]
+    },
+    "プラセンタ": {
+      "nameEn": "Placenta Extract",
+      "category": "動物由来エキス",
+      "rda": {
+        "male": 300,
+        "female": 300,
+        "unit": "mg",
+        "type": "AI",
+        "note": "美容サポート製品での一般的な摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "酵素": {
+      "nameEn": "Digestive Enzymes",
+      "category": "消化酵素",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "消化サポート製品での一般的な摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "EPA": {
+      "nameEn": "Eicosapentaenoic Acid",
+      "category": "脂肪酸",
+      "rda": {
+        "male": 1000,
+        "female": 800,
+        "unit": "mg",
+        "type": "AI",
+        "note": "心血管サポート研究での摂取量"
+      },
+      "ul": {
+        "value": 3000,
+        "unit": "mg",
+        "note": "DHA+EPA合計での上限"
+      },
+      "deficiencyRisks": ["炎症リスク増加"],
+      "excessRisks": ["出血傾向"]
+    },
+    "ナットウキナーゼ": {
+      "nameEn": "Nattokinase",
+      "category": "酵素",
+      "rda": {
+        "male": 2000,
+        "female": 2000,
+        "unit": "FU",
+        "type": "AI",
+        "note": "血流サポート研究での摂取量（FU=フィブリン分解単位）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["抗凝固薬との相互作用"]
+    },
+    "アルギニン": {
+      "nameEn": "L-Arginine",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 3000,
+        "female": 3000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "血流・活力サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状", "血圧低下"]
+    },
+    "シトルリン": {
+      "nameEn": "L-Citrulline",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 3000,
+        "female": 3000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "血流・運動パフォーマンス研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "エクオール": {
+      "nameEn": "Equol",
+      "category": "イソフラボン代謝物",
+      "rda": {
+        "male": 10,
+        "female": 10,
+        "unit": "mg",
+        "type": "AI",
+        "note": "更年期症状緩和研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "タウリン": {
+      "nameEn": "Taurine",
+      "category": "アミノ酸様物質",
+      "rda": {
+        "male": 1000,
+        "female": 1000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "疲労回復・心臓サポート研究での摂取量"
+      },
+      "ul": {
+        "value": 3000,
+        "unit": "mg"
+      },
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "カテキン": {
+      "nameEn": "Catechins",
+      "category": "ポリフェノール",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化・代謝サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["カフェイン過敏症（緑茶由来の場合）"]
+    },
+    "リコピン": {
+      "nameEn": "Lycopene",
+      "category": "カロテノイド",
+      "rda": {
+        "male": 15,
+        "female": 15,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["皮膚の黄変（過剰摂取時）"]
+    },
+    "βカロテン": {
+      "nameEn": "Beta-Carotene",
+      "category": "カロテノイド",
+      "rda": {
+        "male": 6,
+        "female": 6,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["喫煙者は肺がんリスク増加の可能性"]
+    },
+    "レスベラトロール": {
+      "nameEn": "Resveratrol",
+      "category": "ポリフェノール",
+      "rda": {
+        "male": 150,
+        "female": 150,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化・エイジングケア研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "クルクミン": {
+      "nameEn": "Curcumin",
+      "category": "ポリフェノール",
+      "rda": {
+        "male": 500,
+        "female": 500,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗炎症研究での摂取量（黒コショウ併用で吸収率向上）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": ["消化器症状"]
+    },
+    "リン": {
+      "nameEn": "Phosphorus",
+      "category": "ミネラル",
+      "rda": {
+        "male": 1000,
+        "female": 800,
+        "unit": "mg",
+        "type": "RDA"
+      },
+      "ul": {
+        "value": 3000,
+        "unit": "mg"
+      },
+      "deficiencyRisks": ["骨軟化症", "筋力低下"],
+      "excessRisks": ["カルシウム吸収阻害", "腎機能への影響"]
+    },
+    "グルタチオン": {
+      "nameEn": "Glutathione",
+      "category": "抗酸化物質",
+      "rda": {
+        "male": 250,
+        "female": 250,
+        "unit": "mg",
+        "type": "AI",
+        "note": "抗酸化研究での摂取量（リポソーム型推奨）"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "フコイダン": {
+      "nameEn": "Fucoidan",
+      "category": "多糖類",
+      "rda": {
+        "male": 300,
+        "female": 300,
+        "unit": "mg",
+        "type": "AI",
+        "note": "免疫サポート研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
+    },
+    "アスパラギン酸": {
+      "nameEn": "Aspartic Acid",
+      "category": "アミノ酸",
+      "rda": {
+        "male": 2000,
+        "female": 2000,
+        "unit": "mg",
+        "type": "AI",
+        "note": "疲労回復研究での摂取量"
+      },
+      "ul": null,
+      "deficiencyRisks": [],
+      "excessRisks": []
     }
   }
 }
