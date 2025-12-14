@@ -34,6 +34,11 @@ const recommendedDailyIntake = JSON.parse(
   readFileSync(join(__dirname, "../apps/web/src/data/recommended-daily-intake.json"), "utf-8")
 );
 
+// RDA（推奨摂取量）データベースの読み込み
+const rdaStandards = JSON.parse(
+  readFileSync(join(__dirname, "../apps/web/src/data/rda-standards.json"), "utf-8")
+);
+
 // 成分名正規化関数のインポート
 import { normalizeIngredientName } from "./ingredient-normalizer.mjs";
 
@@ -134,12 +139,13 @@ function getPrimaryIngredient(ingredients) {
 }
 
 /**
- * 主要成分トップ5を取得
+ * 主要成分トップ5を取得（mg量ベース - レガシー）
  *
  * mg量が多い順にソートして上位5件を返す
  *
  * @param {Array} ingredients - 成分配列
  * @returns {Array} トップ5成分
+ * @deprecated RDA充足率ベースの getTop5ByRdaCoverage を使用してください
  */
 function getTop5MajorIngredients(ingredients) {
   if (!ingredients || ingredients.length === 0) return [];
@@ -154,19 +160,215 @@ function getTop5MajorIngredients(ingredients) {
 }
 
 /**
- * マルチビタミン用のcost/mg計算
+ * 成分名からRDA（推奨摂取量）を取得
  *
- * 主要成分トップ5（mg量が多い順）のみを使ってコスト効率を計算
- * 微量成分を除外することで、実質的な価値を正確に反映
+ * @param {string} ingredientName - 成分名
+ * @param {string} gender - 性別（デフォルト: male）
+ * @returns {number|null} RDA値（mg）、見つからない場合はnull
+ */
+function getRdaForIngredient(ingredientName, gender = "male") {
+  if (!ingredientName) return null;
+
+  const ingredients = rdaStandards.ingredients;
+
+  // 完全一致を試みる
+  if (ingredients[ingredientName]) {
+    return ingredients[ingredientName].rda[gender];
+  }
+
+  // 部分一致を試みる（成分名の揺らぎに対応）
+  for (const [name, data] of Object.entries(ingredients)) {
+    if (ingredientName.includes(name) || name.includes(ingredientName)) {
+      return data.rda[gender];
+    }
+  }
+
+  return null;
+}
+
+/**
+ * RDA充足率を計算
+ *
+ * @param {string} ingredientName - 成分名
+ * @param {number} amountMg - 含有量（mg）
+ * @param {string} gender - 性別（デフォルト: male）
+ * @returns {number|null} 充足率（%）、RDAが見つからない場合はnull
+ */
+function calculateRdaCoverage(ingredientName, amountMg, gender = "male") {
+  const rda = getRdaForIngredient(ingredientName, gender);
+  if (rda === null || rda === 0) return null;
+
+  return (amountMg / rda) * 100;
+}
+
+/**
+ * 主要成分トップ5を取得（RDA充足率ベース）
+ *
+ * RDA充足率が高い順にソートして上位5件を返す
+ * これにより、栄養学的に重要な成分を優先して比較できる
+ *
+ * @param {Array} ingredients - 成分配列
+ * @param {string} gender - 性別（デフォルト: male）
+ * @returns {Array} RDA充足率順のトップ5成分
+ */
+function getTop5ByRdaCoverage(ingredients, gender = "male") {
+  if (!ingredients || ingredients.length === 0) return [];
+
+  // RDA充足率を計算して付与
+  const withCoverage = ingredients.map((ing) => {
+    const ingredientName = ing.ingredient?.name || "";
+    return {
+      ...ing,
+      rdaCoverage: ingredientName
+        ? calculateRdaCoverage(ingredientName, ing.amountMgPerServing, gender)
+        : null,
+    };
+  });
+
+  // RDA充足率でソート（降順）
+  // RDAが見つからない成分は後ろに回す（mg量でフォールバック）
+  const sorted = [...withCoverage].sort((a, b) => {
+    // 両方ともRDA充足率がある場合
+    if (a.rdaCoverage !== null && b.rdaCoverage !== null) {
+      return b.rdaCoverage - a.rdaCoverage;
+    }
+    // aのみRDA充足率がある場合、aを優先
+    if (a.rdaCoverage !== null) return -1;
+    // bのみRDA充足率がある場合、bを優先
+    if (b.rdaCoverage !== null) return 1;
+    // 両方ともRDA充足率がない場合、mg量でソート
+    return b.amountMgPerServing - a.amountMgPerServing;
+  });
+
+  // トップ5を返す（5件未満の場合は全件）
+  return sorted.slice(0, 5);
+}
+
+/**
+ * 成分名からUL（耐容上限量）を取得
+ *
+ * @param {string} ingredientName - 成分名
+ * @returns {number|null} UL値（mg）、設定されていない場合はnull
+ */
+function getULForIngredient(ingredientName) {
+  if (!ingredientName) return null;
+
+  const ingredients = rdaStandards.ingredients;
+
+  // 完全一致を試みる
+  if (ingredients[ingredientName]?.ul) {
+    return ingredients[ingredientName].ul.value;
+  }
+
+  // 部分一致を試みる
+  for (const [name, data] of Object.entries(ingredients)) {
+    if (ingredientName.includes(name) || name.includes(ingredientName)) {
+      return data.ul?.value ?? null;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * UL（耐容上限量）超過チェック
+ *
+ * @param {string} ingredientName - 成分名
+ * @param {number} amountMg - 摂取量（mg）
+ * @returns {Object} ULチェック結果
+ */
+function checkULExceedance(ingredientName, amountMg) {
+  const ulValue = getULForIngredient(ingredientName);
+
+  if (ulValue === null) {
+    return {
+      ingredientName,
+      amountMg,
+      ulValue: null,
+      exceedsUL: false,
+      exceedanceRate: null,
+      warning: null,
+    };
+  }
+
+  const exceedsUL = amountMg > ulValue;
+  const exceedanceRate = (amountMg / ulValue) * 100;
+
+  let warning = null;
+  if (exceedsUL) {
+    warning = `${ingredientName}の摂取量（${amountMg}mg）が耐容上限量（${ulValue}mg）を超えています`;
+  }
+
+  return {
+    ingredientName,
+    amountMg,
+    ulValue,
+    exceedsUL,
+    exceedanceRate,
+    warning,
+  };
+}
+
+/**
+ * 商品全体のUL超過をチェック（可視化・注意喚起用）
+ *
+ * ULを超過している成分がある場合、警告情報を返す
+ * ※減点には使用しない（ユーザーへの注意喚起のみ）
+ *
+ * @param {Array} ingredients - 成分配列
+ * @param {number} servingsPerDay - 1日あたりの摂取回数
+ * @returns {Object} { deduction: 参考値（使用しない）, warnings: 警告配列 }
+ */
+function calculateULDeduction(ingredients, servingsPerDay = 1) {
+  const warnings = [];
+
+  for (const ing of ingredients) {
+    const ingredientName = ing.ingredient?.name;
+    if (!ingredientName) continue;
+
+    // 1日あたりの摂取量を計算
+    const dailyAmount = ing.amountMgPerServing * servingsPerDay;
+    const result = checkULExceedance(ingredientName, dailyAmount);
+
+    if (result.exceedsUL) {
+      warnings.push(result);
+    }
+  }
+
+  const deduction = Math.min(warnings.length * 10, 30);
+  return { deduction, warnings };
+}
+
+/**
+ * マルチビタミン用のcost/mg計算（RDA充足率ベース）
+ *
+ * RDA充足率が高い順にトップ5成分を抽出し、
+ * それらの成分のみでコスト効率を計算
+ *
+ * 改善点:
+ * - mg量だけでなく栄養学的重要度を考慮
+ * - ビタミンD（微量だが重要）などが正しく評価される
+ * - カルシウム（大量だが充足率は低い）に偏らない
  *
  * @param {number} price - 商品価格
  * @param {Array} ingredients - 成分配列
  * @param {number} servingsPerContainer - 1容器あたりの回数
+ * @param {string} gender - 性別（デフォルト: male）
  * @returns {number} 1mgあたりのコスト（円）
  */
-function calculateCostPerMgForMultiVitamin(price, ingredients, servingsPerContainer) {
-  // 主要成分トップ5を取得
-  const top5Ingredients = getTop5MajorIngredients(ingredients);
+function calculateCostPerMgForMultiVitamin(price, ingredients, servingsPerContainer, gender = "male") {
+  // 成分名があるかチェック
+  const hasIngredientNames = ingredients.some((ing) => ing.ingredient?.name);
+
+  let top5Ingredients;
+
+  if (hasIngredientNames) {
+    // RDA充足率ベースでトップ5を取得
+    top5Ingredients = getTop5ByRdaCoverage(ingredients, gender);
+  } else {
+    // 成分名がない場合は従来のmg量ベースにフォールバック
+    top5Ingredients = getTop5MajorIngredients(ingredients);
+  }
 
   // トップ5の合計mg（1回分）
   const top5MgPerServing = top5Ingredients.reduce(
@@ -627,6 +829,7 @@ async function calculateTierRanks() {
         amount: ing.amountMgPerServing,
         servingsPerDay: product.servingsPerDay || 1,
         ingredientName: ing.ingredient.name, // ハイブリッド方式用
+        ingredients: product.ingredients, // ULチェック用
         safetyScore: calculatedScores.safetyScore,
         evidenceScore: calculatedScores.evidenceScore,
         overallScore: calculatedScores.overall,
@@ -731,7 +934,7 @@ async function calculateTierRanks() {
         }
         const evidenceRank = scoreToRank(evidenceScore);
 
-        // 5. 安全性ランク（絶対評価 - 警告数ペナルティ - 添加物減点）
+        // 5. 安全性ランク（絶対評価 - 警告数ペナルティ - 添加物減点 - UL超過減点）
         // 安全性は相対評価ではなく、成分のsafetyLevelから算出したスコアの絶対評価
         let safetyScore = productData.safetyScore;
         // 警告が3件以上ある場合、-10点ペナルティ
@@ -742,6 +945,11 @@ async function calculateTierRanks() {
         const additiveDeduction = calculateAdditiveDeduction(productData.allIngredients);
         if (additiveDeduction > 0) {
           safetyScore = Math.max(0, safetyScore - additiveDeduction);
+        }
+        // UL（耐容上限量）超過チェック（可視化・注意喚起のみ、減点なし）
+        const ulResult = calculateULDeduction(productData.ingredients, productData.servingsPerDay);
+        if (ulResult.warnings.length > 0 && isTargetProduct) {
+          console.log(`   ⚠️ UL超過注意: ${ulResult.warnings.map(w => w.warning).join(', ')}`);
         }
         const safetyRank = scoreToRank(safetyScore);
 
