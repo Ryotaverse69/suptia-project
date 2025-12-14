@@ -81,6 +81,9 @@ module.exports = {
         "depth-orb-5": "depth-orb-5 11s ease-in-out infinite",
         "depth-orb-6": "depth-orb-6 13s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
+        "float-slow": "float-slow 8s ease-in-out infinite",
+        "float-medium": "float-medium 10s ease-in-out infinite",
+        "float-fast": "float-fast 6s ease-in-out infinite",
         "fade-in": "fade-in 0.2s ease-out",
         "fade-in-slow": "fade-in 0.3s ease-out",
         "slide-down": "slide-down 0.2s ease-out",
@@ -193,6 +196,30 @@ module.exports = {
           },
           "50%": {
             transform: "translateY(-20px)",
+          },
+        },
+        "float-slow": {
+          "0%, 100%": {
+            transform: "translate(0, 0)",
+          },
+          "50%": {
+            transform: "translate(30px, -20px)",
+          },
+        },
+        "float-medium": {
+          "0%, 100%": {
+            transform: "translate(0, 0)",
+          },
+          "50%": {
+            transform: "translate(-25px, 25px)",
+          },
+        },
+        "float-fast": {
+          "0%, 100%": {
+            transform: "translate(0, 0)",
+          },
+          "50%": {
+            transform: "translate(15px, -15px)",
           },
         },
         "fade-in": {

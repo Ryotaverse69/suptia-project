@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -198,7 +198,6 @@ const faqData = [
 // Stat Card with animated counter
 function StatCard({ stat, index }: { stat: StatItem; index: number }) {
   const [count, setCount] = useState(0);
-  const [hasStarted, setHasStarted] = useState(false);
   const ref = useRef(null);
   const cardRef = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
@@ -206,35 +205,32 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
   const prefersReducedMotion = useReducedMotion();
   const Icon = stat.icon;
 
-  // Animated counter effect
-  useState(() => {
-    if (!isInView || hasStarted) return;
+  // Animated counter effect - properly in useEffect
+  useEffect(() => {
+    if (!isInView) return;
+
     if (prefersReducedMotion) {
       setCount(stat.value);
       return;
     }
-  });
 
-  // Use effect for animation
-  if (isInView && !hasStarted) {
-    setHasStarted(true);
-    if (prefersReducedMotion) {
-      setCount(stat.value);
-    } else {
-      const duration = 2000;
-      const startTime = Date.now();
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        setCount(Math.floor(stat.value * easeOut));
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      };
-      requestAnimationFrame(animate);
-    }
-  }
+    const duration = 2000;
+    const startTime = Date.now();
+    let animationId: number;
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(stat.value * easeOut));
+      if (progress < 1) {
+        animationId = requestAnimationFrame(animate);
+      }
+    };
+    animationId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationId);
+  }, [isInView, prefersReducedMotion, stat.value]);
 
   return (
     <motion.div
@@ -763,47 +759,31 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
           }}
         />
 
-        {/* Floating orbs - visual engagement */}
+        {/* Floating orbs - visual engagement (optimized blur values) */}
         {!prefersReducedMotion && (
           <>
-            <motion.div
-              className="absolute w-[400px] h-[400px] rounded-full blur-[100px]"
+            <div
+              className="absolute w-[400px] h-[400px] rounded-full blur-[40px] will-change-transform animate-float-slow"
               style={{
                 backgroundColor: `${systemColors.blue}15`,
                 top: "10%",
                 left: "-10%",
               }}
-              animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
-            <motion.div
-              className="absolute w-[300px] h-[300px] rounded-full blur-[80px]"
+            <div
+              className="absolute w-[300px] h-[300px] rounded-full blur-[32px] will-change-transform animate-float-medium"
               style={{
                 backgroundColor: `${systemColors.indigo}15`,
                 bottom: "20%",
                 right: "-5%",
               }}
-              animate={{ x: [0, -25, 0], y: [0, 25, 0] }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }}
             />
-            <motion.div
-              className="absolute w-[200px] h-[200px] rounded-full blur-[60px]"
+            <div
+              className="absolute w-[200px] h-[200px] rounded-full blur-[24px] will-change-transform animate-float-fast"
               style={{
                 backgroundColor: `${systemColors.teal}12`,
                 top: "30%",
                 right: "20%",
-              }}
-              animate={{ x: [0, 15, 0], y: [0, -15, 0] }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2,
               }}
             />
           </>
@@ -1089,32 +1069,23 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
           }}
         />
 
-        {/* Floating orbs */}
+        {/* Floating orbs (optimized) */}
         {!prefersReducedMotion && (
           <>
-            <motion.div
-              className="absolute w-[300px] h-[300px] rounded-full blur-[80px]"
+            <div
+              className="absolute w-[300px] h-[300px] rounded-full blur-[32px] will-change-transform animate-float-medium"
               style={{
                 backgroundColor: `${systemColors.blue}12`,
                 top: "20%",
                 left: "10%",
               }}
-              animate={{ x: [0, 20, 0], y: [0, -15, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
             />
-            <motion.div
-              className="absolute w-[250px] h-[250px] rounded-full blur-[70px]"
+            <div
+              className="absolute w-[250px] h-[250px] rounded-full blur-[28px] will-change-transform animate-float-slow"
               style={{
                 backgroundColor: `${systemColors.indigo}12`,
                 bottom: "10%",
                 right: "15%",
-              }}
-              animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
-              transition={{
-                duration: 9,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1.5,
               }}
             />
           </>
