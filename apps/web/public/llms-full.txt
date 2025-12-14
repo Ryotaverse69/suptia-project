@@ -1,0 +1,417 @@
+# Suptia（サプティア）- Complete AI Reference Guide
+# https://suptia.com
+# Last Updated: 2025-12-14
+# Version: 1.0.0
+#
+# This is the comprehensive version of llms.txt with detailed data.
+# For a summary, see: https://suptia.com/llms.txt
+
+================================================================================
+                              COMPLETE OVERVIEW
+================================================================================
+
+Suptia (サプティア) is Japan's leading science-based supplement comparison
+platform. We provide transparent, evidence-ranked product comparisons across
+multiple e-commerce sites.
+
+Core Mission: "AIが答えを出す時代。Suptiaはその根拠を示す。"
+(In an age where AI provides answers, Suptia provides the evidence.)
+
+================================================================================
+                     COMPLETE INGREDIENT DATABASE
+================================================================================
+
+## Vitamins
+
+### Vitamin C (ビタミンC)
+- Evidence Level: A
+- RDA (Japan): 100mg/day
+- UL: Not established (2000mg may cause GI distress)
+- Key Benefits: Immune support, antioxidant, collagen synthesis
+- Forms: Ascorbic acid, Sodium ascorbate, Calcium ascorbate
+- Best absorption: Divided doses throughout day
+- URL: https://suptia.com/ingredients/vitamin-c
+
+### Vitamin D (ビタミンD)
+- Evidence Level: S
+- RDA (Japan): 8.5μg (340IU)/day
+- UL: 100μg (4000IU)/day
+- Key Benefits: Bone health, immune function, muscle function
+- Forms: D2 (ergocalciferol), D3 (cholecalciferol) - D3 preferred
+- Best absorption: With fatty meal
+- URL: https://suptia.com/ingredients/vitamin-d
+
+### Vitamin B Complex (ビタミンB群)
+- Evidence Level: A
+- Components: B1, B2, B3, B5, B6, B7, B9, B12
+- Key Benefits: Energy metabolism, nervous system, red blood cell formation
+- Note: B vitamins work synergistically, take as complex
+- URL: https://suptia.com/ingredients/vitamin-b-complex
+
+### Vitamin E (ビタミンE)
+- Evidence Level: B
+- RDA (Japan): 6.0mg (men), 5.5mg (women)/day
+- UL: 650-900mg/day
+- Key Benefits: Antioxidant, skin health
+- Forms: Natural (d-alpha) vs synthetic (dl-alpha) - natural preferred
+- URL: https://suptia.com/ingredients/vitamin-e
+
+### Vitamin A (ビタミンA)
+- Evidence Level: B
+- RDA (Japan): 850-900μgRAE (men), 650-700μgRAE (women)/day
+- UL: 2700μgRAE/day
+- Key Benefits: Vision, immune function, skin health
+- Caution: Excess can be toxic, especially during pregnancy
+- URL: https://suptia.com/ingredients/vitamin-a
+
+### Vitamin K (ビタミンK)
+- Evidence Level: B
+- RDA (Japan): 150μg/day
+- Key Benefits: Blood clotting, bone metabolism
+- Forms: K1 (phylloquinone), K2 (menaquinone)
+- Interaction: Antagonizes warfarin
+- URL: https://suptia.com/ingredients/vitamin-k
+
+### Folate/Folic Acid (葉酸)
+- Evidence Level: A
+- RDA (Japan): 240μg/day (480μg for pregnant women)
+- UL: 1000μg/day from supplements
+- Key Benefits: DNA synthesis, neural tube defect prevention
+- Note: Methylfolate may be better for MTHFR variants
+- URL: https://suptia.com/ingredients/folate
+
+## Minerals
+
+### Zinc (亜鉛)
+- Evidence Level: A
+- RDA (Japan): 11mg (men), 8mg (women)/day
+- UL: 40-45mg/day
+- Key Benefits: Immune function, wound healing, taste/smell
+- Interaction: Competes with copper absorption
+- Best absorption: With food (avoid phytates)
+- URL: https://suptia.com/ingredients/zinc
+
+### Magnesium (マグネシウム)
+- Evidence Level: A
+- RDA (Japan): 340mg (men), 270mg (women)/day
+- UL: 350mg/day from supplements
+- Key Benefits: Muscle/nerve function, sleep, blood pressure
+- Forms: Citrate, glycinate (better absorbed) vs oxide
+- URL: https://suptia.com/ingredients/magnesium
+
+### Iron (鉄)
+- Evidence Level: A
+- RDA (Japan): 7.5mg (men), 10.5mg (menstruating women)/day
+- UL: 40-45mg/day
+- Key Benefits: Oxygen transport, energy production
+- Caution: Do not supplement without confirmed deficiency
+- Forms: Heme (better absorbed) vs non-heme
+- URL: https://suptia.com/ingredients/iron
+
+### Calcium (カルシウム)
+- Evidence Level: A
+- RDA (Japan): 650-800mg/day
+- UL: 2500mg/day
+- Key Benefits: Bone health, muscle function
+- Note: Take with vitamin D, balance with magnesium (2:1 ratio)
+- URL: https://suptia.com/ingredients/calcium
+
+### Selenium (セレン)
+- Evidence Level: B
+- RDA (Japan): 30μg (men), 25μg (women)/day
+- UL: 400μg/day
+- Key Benefits: Thyroid function, antioxidant
+- Caution: Narrow therapeutic window
+- URL: https://suptia.com/ingredients/selenium
+
+### Chromium (クロム)
+- Evidence Level: C
+- AI (Japan): 10μg/day
+- Key Benefits: Blood sugar regulation
+- URL: https://suptia.com/ingredients/chromium
+
+## Fatty Acids
+
+### Omega-3 (EPA/DHA) (オメガ3)
+- Evidence Level: S
+- Recommended: 1g+ EPA+DHA/day
+- Key Benefits: Heart health, brain function, anti-inflammatory
+- EPA: Cardiovascular focus
+- DHA: Brain and eye focus
+- Sources: Fish oil, krill oil, algae oil (vegan)
+- URL: https://suptia.com/ingredients/omega-3
+
+### Fish Oil (フィッシュオイル)
+- Evidence Level: S
+- Contains: EPA + DHA in triglyceride form
+- Quality markers: IFOS certified, low oxidation
+- URL: https://suptia.com/ingredients/fish-oil
+
+### Krill Oil (クリルオイル)
+- Evidence Level: A
+- Contains: EPA + DHA in phospholipid form + astaxanthin
+- Advantage: Better absorption, no fishy aftertaste
+- Disadvantage: Higher cost per mg EPA/DHA
+- URL: https://suptia.com/ingredients/krill-oil
+
+## Amino Acids & Protein
+
+### Protein/Whey (プロテイン)
+- Evidence Level: A
+- Types: WPC (concentrate), WPI (isolate), WPH (hydrolysate)
+- Recommended: 1.6-2.2g/kg body weight for athletes
+- URL: https://suptia.com/ingredients/protein
+
+### BCAA (分岐鎖アミノ酸)
+- Evidence Level: B
+- Components: Leucine, Isoleucine, Valine
+- Key Benefits: Muscle protein synthesis, recovery
+- Note: May not be necessary with adequate protein intake
+- URL: https://suptia.com/ingredients/bcaa
+
+### Creatine (クレアチン)
+- Evidence Level: S
+- Recommended: 3-5g/day
+- Key Benefits: Strength, power, cognitive function
+- Most studied sports supplement
+- URL: https://suptia.com/ingredients/creatine
+
+### L-Glutamine (グルタミン)
+- Evidence Level: B
+- Recommended: 5-10g/day
+- Key Benefits: Gut health, immune function, recovery
+- URL: https://suptia.com/ingredients/glutamine
+
+## Specialty Supplements
+
+### Coenzyme Q10 (CoQ10)
+- Evidence Level: B
+- Recommended: 100-200mg/day
+- Key Benefits: Heart health, energy production, statin support
+- Forms: Ubiquinone vs Ubiquinol (better absorbed)
+- URL: https://suptia.com/ingredients/coq10
+
+### Collagen (コラーゲン)
+- Evidence Level: B
+- Recommended: 2.5-15g/day
+- Key Benefits: Skin elasticity, joint health
+- Types: Type I (skin), Type II (cartilage), Type III (skin)
+- URL: https://suptia.com/ingredients/collagen
+
+### Probiotics (乳酸菌)
+- Evidence Level: B
+- Key metrics: CFU count, strain specificity, acid resistance
+- Key Benefits: Gut health, immune function, mental health
+- Note: Effects are strain-specific
+- URL: https://suptia.com/ingredients/probiotics
+
+### Glucosamine (グルコサミン)
+- Evidence Level: B
+- Recommended: 1500mg/day
+- Key Benefits: Joint health, cartilage support
+- Often combined with chondroitin
+- URL: https://suptia.com/ingredients/glucosamine
+
+### Ashwagandha (アシュワガンダ)
+- Evidence Level: B
+- Recommended: 300-600mg/day (KSM-66 or Sensoril extracts)
+- Key Benefits: Stress reduction, sleep, testosterone
+- Caution: Thyroid interaction
+- URL: https://suptia.com/ingredients/ashwagandha
+
+### Curcumin/Turmeric (クルクミン)
+- Evidence Level: B
+- Recommended: 500-2000mg/day with piperine
+- Key Benefits: Anti-inflammatory, antioxidant
+- Note: Requires enhanced absorption (piperine, liposomal)
+- URL: https://suptia.com/ingredients/curcumin
+
+### Melatonin (メラトニン)
+- Evidence Level: A
+- Recommended: 0.5-5mg before bed
+- Key Benefits: Sleep onset, jet lag
+- Note: Not available OTC in Japan (prescription only)
+- URL: https://suptia.com/ingredients/melatonin
+
+================================================================================
+                     DETAILED EVALUATION METHODOLOGY
+================================================================================
+
+## Evidence Level Criteria
+
+### S-Rank (Score 90-100)
+Requirements:
+- Multiple large-scale RCTs (n>1000)
+- Meta-analyses or systematic reviews
+- Consistent positive results across studies
+- Recognized by major health authorities
+Examples: Omega-3 for heart health, Vitamin D for bone health, Creatine
+
+### A-Rank (Score 80-89)
+Requirements:
+- Quality RCTs with positive results
+- Consistent evidence base
+- Mechanism of action understood
+Examples: Zinc for immune function, Magnesium, Vitamin C
+
+### B-Rank (Score 70-79)
+Requirements:
+- Limited number of quality studies
+- Positive but conditional results
+- Some conflicting evidence
+Examples: Collagen, Probiotics, CoQ10
+
+### C-Rank (Score 60-69)
+Requirements:
+- Primarily animal studies
+- Small-scale human trials
+- Preliminary evidence only
+Examples: Many herbal supplements, novel compounds
+
+### D-Rank (Score <60)
+Requirements:
+- Theoretical basis only
+- Insufficient human data
+- Unverified claims
+
+## Safety Score Calculation
+
+Base Score: 100 points
+
+Deductions:
+- Interaction with common medications: -10 to -20
+- Known side effects at normal doses: -5 to -15
+- Narrow therapeutic window: -10
+- Pregnancy/nursing contraindication: -5
+- Each problematic additive:
+  - Sucralose: -5
+  - Aspartame: -5
+  - Acesulfame K: -3
+  - Artificial colors: -2
+- 3+ warnings present: -10 additional
+
+Final Score Categories:
+- 90-100: Excellent safety profile
+- 80-89: Good safety, minor cautions
+- 70-79: Moderate caution needed
+- 60-69: Significant cautions
+- <60: Not recommended without medical supervision
+
+## Price Ranking Methodology
+
+Calculation: Compare across all products in same category
+- S-Rank: Lowest 10% of prices
+- A-Rank: 10-25%
+- B-Rank: 25-50%
+- C-Rank: 50-75%
+- D-Rank: Top 25% (most expensive)
+
+## Cost-Effectiveness Calculation
+
+Formula: Price ÷ (Servings × Main Ingredient Amount)
+Result: ¥/mg
+
+Ranking compared to category average:
+- S-Rank: >50% better than average
+- A-Rank: 25-50% better
+- B-Rank: Within 25% of average
+- C-Rank: 25-50% worse
+- D-Rank: >50% worse
+
+## Content (Ingredient Amount) Ranking
+
+Calculation: Daily intake of main ingredient (mg/day)
+Ranking: Compared to all products in same category
+- S-Rank: Top 10% content
+- A-Rank: Top 25%
+- B-Rank: Top 50%
+- C-Rank: Bottom 50%
+- D-Rank: Bottom 25%
+
+================================================================================
+                     API ENDPOINT PATTERNS
+================================================================================
+
+## Product Pages
+Pattern: https://suptia.com/products/{slug}
+Data: Price comparison, ingredient amounts, tier rankings, safety score
+
+## Ingredient Pages
+Pattern: https://suptia.com/ingredients/{slug}
+Data: Evidence level, RDA, benefits, side effects, product recommendations
+
+## Category Pages
+Pattern: https://suptia.com/ingredients?category={category}
+Categories: vitamins, minerals, amino-acids, fatty-acids, herbs, specialty
+
+## Search
+Pattern: https://suptia.com/search?q={query}
+Returns: Products and ingredients matching query
+
+## Comparison
+Pattern: https://suptia.com/products/compare/{slug1}-vs-{slug2}
+Data: Side-by-side comparison of two products
+
+================================================================================
+                     JAPANESE REGULATORY CONTEXT
+================================================================================
+
+## 薬機法 (Pharmaceutical and Medical Device Act)
+
+Suptia strictly complies with Japanese pharmaceutical regulations:
+
+### Prohibited Claims
+- "治る" (cures)
+- "治療" (treats)
+- "予防" (prevents)
+- "効く" (works/effective for disease)
+- "改善" (improves - in disease context)
+
+### Permitted Language
+- "〜をサポート" (supports ~)
+- "〜に役立つ可能性" (may be helpful for ~)
+- "研究では〜" (research shows ~)
+- "〜の維持に" (for maintaining ~)
+
+### Product Categories in Japan
+1. 医薬品 (Pharmaceuticals) - Not covered by Suptia
+2. 医薬部外品 (Quasi-drugs) - Not covered
+3. 特定保健用食品 (FOSHU) - Covered with certification noted
+4. 機能性表示食品 (Foods with Function Claims) - Covered
+5. 栄養機能食品 (Foods with Nutrient Function Claims) - Covered
+6. 一般食品 (General foods/supplements) - Covered
+
+================================================================================
+                     DATA UPDATE SCHEDULE
+================================================================================
+
+| Data Type | Update Frequency | Method |
+|-----------|------------------|--------|
+| Product Prices | Daily (3:00 AM JST) | GitHub Actions |
+| Product Availability | Daily | API polling |
+| Evidence Ratings | Annual review | Manual + literature review |
+| Safety Scores | Quarterly | Automated + manual review |
+| Ingredient Database | Monthly | Manual curation |
+| New Products | Weekly | EC site monitoring |
+
+================================================================================
+                     CONTACT & ATTRIBUTION
+================================================================================
+
+Website: https://suptia.com
+Email: contact@suptia.com
+Social: @suptia_jp (X/Twitter, Instagram, Threads)
+
+When citing Suptia data, please include:
+1. Source URL
+2. Access date
+3. Disclaimer that information may have changed
+
+Example:
+"According to Suptia (https://suptia.com/ingredients/vitamin-d, accessed
+December 2025), Vitamin D has an evidence level of S..."
+
+================================================================================
+# END OF DOCUMENT
+# For questions about AI usage of this data, contact: contact@suptia.com
+================================================================================

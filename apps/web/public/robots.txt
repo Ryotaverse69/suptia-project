@@ -115,3 +115,7 @@ Sitemap: https://suptia.com/sitemap.xml
 # AI向けガイドライン（LLMs/AIクローラー用ドキュメント）
 # 構造化データ、引用ガイドライン、許可される使用方法を記載
 LLMs-txt: https://suptia.com/llms.txt
+
+# 詳細版（Complete AI Reference Guide）
+# 全成分データベース、評価方法論、APIパターンを含む
+LLMs-txt-Full: https://suptia.com/llms-full.txt
