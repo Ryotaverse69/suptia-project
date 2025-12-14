@@ -88,6 +88,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    // AI検索最適化：評価方法論ページ（E-E-A-T強化）
+    {
+      url: `${siteUrl}/about/methodology`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.85, // AI引用のため高優先度
+    },
     {
       url: `${siteUrl}/contact`,
       lastModified: new Date(),
