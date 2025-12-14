@@ -20,7 +20,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { Avatar } from "@/components/Avatar";
 import {
   appleWebColors,
   systemColors,
@@ -40,6 +42,7 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const { user, isLoading: authLoading, signOut } = useAuth();
+  const { profile } = useUserProfile();
 
   // Close menus on route change
   useEffect(() => {
@@ -262,6 +265,14 @@ export function Header() {
                       >
                         サプティアの使い方
                       </Link>
+                      <Link
+                        href="/about/methodology"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        比較方法論
+                      </Link>
 
                       {/* Divider */}
                       <div
@@ -348,14 +359,13 @@ export function Header() {
                     whileTap={{ scale: 0.97 }}
                     transition={subtleSpring}
                   >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{
-                        background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
-                      }}
-                    >
-                      {user.email?.[0].toUpperCase() || <User size={16} />}
-                    </div>
+                    <Avatar
+                      type={profile?.avatarType}
+                      presetId={profile?.avatarIcon}
+                      customUrl={profile?.avatarUrl}
+                      fallback={profile?.displayName || user.email || "U"}
+                      size="sm"
+                    />
                     <ChevronDown
                       size={14}
                       style={{
@@ -609,6 +619,14 @@ export function Header() {
                 >
                   サプティアの使い方
                 </Link>
+                <Link
+                  href="/about/methodology"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  比較方法論
+                </Link>
 
                 {/* Section: Content */}
                 <p
@@ -693,19 +711,18 @@ export function Header() {
                 ) : user ? (
                   <>
                     <div className="px-4 py-3 flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
-                        style={{
-                          background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
-                        }}
-                      >
-                        {user.email?.[0].toUpperCase() || <User size={18} />}
-                      </div>
+                      <Avatar
+                        type={profile?.avatarType}
+                        presetId={profile?.avatarIcon}
+                        customUrl={profile?.avatarUrl}
+                        fallback={profile?.displayName || user.email || "U"}
+                        size="md"
+                      />
                       <p
                         className={`${typography.subhead} font-medium truncate flex-1`}
                         style={{ color: appleWebColors.textPrimary }}
                       >
-                        {user.email}
+                        {profile?.displayName || user.email}
                       </p>
                     </div>
                     <Link

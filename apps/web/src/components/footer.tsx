@@ -35,6 +35,8 @@ const footerSections = [
     title: "運営情報",
     links: [
       { href: "/about", label: "サプティアとは" },
+      { href: "/why-suptia", label: "AI検索との違い" },
+      { href: "/about/methodology", label: "比較方法論" },
       { href: "/advisory", label: "情報ソースと方針" },
       { href: "/contact", label: "お問い合わせ" },
       { href: "/partners", label: "提携パートナー" },
