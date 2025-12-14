@@ -16,6 +16,7 @@ import React, {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { AvatarType } from "@/lib/avatar-presets";
 
 /**
  * ユーザープラン
@@ -31,6 +32,9 @@ export interface UserProfile {
   displayName: string | null;
   ageRange: string | null;
   gender: string | null;
+  avatarType: AvatarType;
+  avatarIcon: string | null; // プリセットアイコンID
+  avatarUrl: string | null; // カスタム画像URL
   healthGoals: string[];
   allergies: string[];
   conditions: string[]; // 既往歴（Safety用）
@@ -48,6 +52,9 @@ export interface ProfileUpdateData {
   displayName?: string | null;
   ageRange?: string | null;
   gender?: string | null;
+  avatarType?: AvatarType;
+  avatarIcon?: string | null;
+  avatarUrl?: string | null;
   healthGoals?: string[];
   allergies?: string[];
   conditions?: string[];
@@ -78,6 +85,9 @@ function mapDbToProfile(row: Record<string, unknown>): UserProfile {
     displayName: (row.display_name as string) || null,
     ageRange: (row.age_range as string) || null,
     gender: (row.gender as string) || null,
+    avatarType: ((row.avatar_type as string) || "initial") as AvatarType,
+    avatarIcon: (row.avatar_icon as string) || null,
+    avatarUrl: (row.avatar_url as string) || null,
     healthGoals: (row.health_goals as string[]) || [],
     allergies: (row.allergies as string[]) || [],
     conditions: (row.conditions as string[]) || [],
@@ -106,8 +116,7 @@ export function UserProfileProvider({
     try {
       return createClient();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Supabase接続エラー";
+      const message = err instanceof Error ? err.message : "Supabase接続エラー";
       console.error("[UserProfileContext] Supabase client error:", message);
       setSupabaseError(message);
       return null;
@@ -148,7 +157,12 @@ export function UserProfileProvider({
 
       if (fetchError && fetchError.code !== "PGRST116") {
         // PGRST116 = "no rows returned" は新規ユーザーなので無視
-        console.error("[UserProfileContext] Fetch error:", fetchError.message, fetchError.code, fetchError.details);
+        console.error(
+          "[UserProfileContext] Fetch error:",
+          fetchError.message,
+          fetchError.code,
+          fetchError.details,
+        );
         // エラーでもデフォルトプロフィールを設定（UIが壊れないように）
         setProfile({
           id: "",
@@ -156,6 +170,9 @@ export function UserProfileProvider({
           displayName: null,
           ageRange: null,
           gender: null,
+          avatarType: "initial",
+          avatarIcon: null,
+          avatarUrl: null,
           healthGoals: [],
           allergies: [],
           conditions: [],
@@ -178,6 +195,9 @@ export function UserProfileProvider({
           .from("user_profiles")
           .insert({
             user_id: user.id,
+            avatar_type: "initial",
+            avatar_icon: null,
+            avatar_url: null,
             health_goals: [],
             allergies: [],
             conditions: [],
@@ -236,6 +256,15 @@ export function UserProfileProvider({
               }),
               ...(data.ageRange !== undefined && { ageRange: data.ageRange }),
               ...(data.gender !== undefined && { gender: data.gender }),
+              ...(data.avatarType !== undefined && {
+                avatarType: data.avatarType,
+              }),
+              ...(data.avatarIcon !== undefined && {
+                avatarIcon: data.avatarIcon,
+              }),
+              ...(data.avatarUrl !== undefined && {
+                avatarUrl: data.avatarUrl,
+              }),
               ...(data.healthGoals && { healthGoals: data.healthGoals }),
               ...(data.allergies && { allergies: data.allergies }),
               ...(data.conditions && { conditions: data.conditions }),
@@ -251,6 +280,12 @@ export function UserProfileProvider({
           updateData.display_name = data.displayName;
         if (data.ageRange !== undefined) updateData.age_range = data.ageRange;
         if (data.gender !== undefined) updateData.gender = data.gender;
+        if (data.avatarType !== undefined)
+          updateData.avatar_type = data.avatarType;
+        if (data.avatarIcon !== undefined)
+          updateData.avatar_icon = data.avatarIcon;
+        if (data.avatarUrl !== undefined)
+          updateData.avatar_url = data.avatarUrl;
         if (data.healthGoals) updateData.health_goals = data.healthGoals;
         if (data.allergies) updateData.allergies = data.allergies;
         if (data.conditions) updateData.conditions = data.conditions;

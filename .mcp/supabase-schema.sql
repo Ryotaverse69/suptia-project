@@ -10,11 +10,18 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS user_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  display_name TEXT, -- 表示名
   allergies TEXT[], -- アレルギー情報（例: ['soy', 'dairy', 'gluten']）
   health_goals TEXT[], -- 健康目標（例: ['better_sleep', 'immune_boost', 'skin_health']）
   concerns TEXT[], -- 懸念事項（例: ['pregnant', 'medication', 'high_blood_pressure']）
+  conditions TEXT[], -- 既往歴（Safety用）
+  medications TEXT[], -- 服用中の薬（Safety用）
   age_range TEXT, -- 年齢層（例: '20-29', '30-39'）
   gender TEXT, -- 性別（optional）
+  avatar_type TEXT DEFAULT 'initial', -- アバタータイプ: 'initial' | 'preset' | 'custom'
+  avatar_icon TEXT, -- プリセットアイコンID（例: 'cat', 'dog', 'bot'）
+  avatar_url TEXT, -- カスタム画像URL（Supabase Storage）
+  plan TEXT DEFAULT 'free', -- プラン: 'free' | 'pro' | 'pro_safety'
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id)
@@ -262,12 +269,50 @@ WHERE table_schema = 'public'
   AND table_type = 'BASE TABLE'
 ORDER BY table_name;
 
+-- ============================================
+-- 9. マイグレーション: アバター機能追加（既存テーブル用）
+-- ============================================
+
+-- 既存のuser_profilesテーブルにアバターカラムを追加
+-- （新規セットアップの場合は不要、既存DBの場合のみ実行）
+-- ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS avatar_type TEXT DEFAULT 'initial';
+-- ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS avatar_icon TEXT;
+-- ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+
+-- ============================================
+-- 10. Supabase Storage: アバター画像バケット
+-- ============================================
+--
+-- Supabaseダッシュボードで以下を手動設定:
+--
+-- 1. Storage > New Bucket で「avatars」バケット作成（Public: ON）
+--
+-- 2. Policies > New Policy で以下のRLSポリシー追加:
+--
+-- SELECT（閲覧）:
+--   Policy Name: Public avatars are viewable by everyone
+--   Policy: true
+--
+-- INSERT（アップロード）:
+--   Policy Name: Users can upload their own avatar
+--   Policy: (bucket_id = 'avatars') AND (auth.uid()::text = (storage.foldername(name))[1])
+--
+-- UPDATE（更新）:
+--   Policy Name: Users can update their own avatar
+--   Policy: (bucket_id = 'avatars') AND (auth.uid()::text = (storage.foldername(name))[1])
+--
+-- DELETE（削除）:
+--   Policy Name: Users can delete their own avatar
+--   Policy: (bucket_id = 'avatars') AND (auth.uid()::text = (storage.foldername(name))[1])
+--
+-- ファイルパス形式: avatars/{user_id}/{filename}
+
 -- 成功メッセージ
 DO $$
 BEGIN
   RAISE NOTICE '✅ Suptia データベーススキーマのセットアップが完了しました！';
   RAISE NOTICE '📊 作成されたテーブル:';
-  RAISE NOTICE '   1. user_profiles - ユーザープロファイル';
+  RAISE NOTICE '   1. user_profiles - ユーザープロファイル（アバター対応）';
   RAISE NOTICE '   2. price_alerts - 価格アラート';
   RAISE NOTICE '   3. favorites - お気に入り商品';
   RAISE NOTICE '   4. price_history - 価格履歴';
@@ -277,8 +322,7 @@ BEGIN
   RAISE NOTICE '🔐 Row Level Security (RLS) が有効化されています';
   RAISE NOTICE '📈 インデックスとトリガーが設定されています';
   RAISE NOTICE '';
-  RAISE NOTICE '次のステップ:';
-  RAISE NOTICE '1. Claude Desktop の設定ファイルにSupabase MCPを追加';
-  RAISE NOTICE '2. Claude Desktopを再起動';
-  RAISE NOTICE '3. 「Supabaseのテーブル一覧を表示して」と質問して動作確認';
+  RAISE NOTICE '⚠️ アバター画像アップロードを有効にするには:';
+  RAISE NOTICE '   Supabase Dashboard > Storage > 「avatars」バケットを作成';
+  RAISE NOTICE '   RLSポリシーを設定（上記コメント参照）';
 END $$;

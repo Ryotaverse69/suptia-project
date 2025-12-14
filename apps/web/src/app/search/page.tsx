@@ -325,7 +325,7 @@ export default async function SearchPage({
             </span>
           </nav>
           {/* 検索バー */}
-          <SearchBar />
+          <SearchBar variant="light" />
         </div>
       </div>
 

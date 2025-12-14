@@ -5,7 +5,11 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { liquidGlassClasses } from "@/lib/design-system";
 
-export function SearchBar() {
+interface SearchBarProps {
+  variant?: "dark" | "light";
+}
+
+export function SearchBar({ variant = "dark" }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
@@ -28,14 +32,21 @@ export function SearchBar() {
         }}
       >
         <div className="pl-6 pr-3">
-          <Search className="text-white/80" size={22} />
+          <Search
+            className={variant === "light" ? "text-gray-500" : "text-white/80"}
+            size={22}
+          />
         </div>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="サプリメント名、成分名で検索..."
-          className="flex-1 py-5 px-2 text-base font-light bg-transparent outline-none placeholder:text-white/50 text-white"
+          className={`flex-1 py-5 px-2 text-base font-light bg-transparent outline-none ${
+            variant === "light"
+              ? "placeholder:text-gray-400 text-gray-900"
+              : "placeholder:text-white/50 text-white"
+          }`}
         />
         <button
           type="submit"

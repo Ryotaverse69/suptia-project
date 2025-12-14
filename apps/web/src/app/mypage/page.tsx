@@ -17,6 +17,7 @@ import {
   Zap,
   Check,
   X,
+  Camera,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
@@ -24,6 +25,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useDiagnosisHistory } from "@/contexts/DiagnosisHistoryContext";
 import { usePriceAlerts } from "@/contexts/PriceAlertsContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { Avatar } from "@/components/Avatar";
 import {
   systemColors,
   appleWebColors,
@@ -265,26 +267,36 @@ export default function MyPage() {
 
                 <div className="relative p-6 sm:p-8">
                   <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                    {/* Avatar with Ring */}
-                    <div className="relative">
+                    {/* Avatar with Ring and Edit Button */}
+                    <div className="relative group">
                       <div
                         className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1"
                         style={{
                           background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
                         }}
                       >
-                        <div
-                          className="w-full h-full rounded-full flex items-center justify-center text-[28px] sm:text-[34px] font-bold"
-                          style={{
-                            backgroundColor: "white",
-                            color: systemColors.purple,
-                          }}
-                        >
-                          {profile?.displayName?.[0]?.toUpperCase() ||
-                            user?.email?.[0]?.toUpperCase() ||
-                            "U"}
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center">
+                          <Avatar
+                            type={profile?.avatarType}
+                            presetId={profile?.avatarIcon}
+                            customUrl={profile?.avatarUrl}
+                            fallback={
+                              profile?.displayName || user?.email || "U"
+                            }
+                            size="xl"
+                          />
                         </div>
                       </div>
+                      {/* Edit Button (appears on hover) */}
+                      <Link
+                        href="/mypage/profile"
+                        className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                        }}
+                      >
+                        <Camera size={24} className="text-white" />
+                      </Link>
                       {/* Status indicator */}
                       <div
                         className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full border-4 flex items-center justify-center"

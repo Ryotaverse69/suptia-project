@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Settings,
@@ -12,6 +12,18 @@ import {
   User,
   Calendar,
   Target,
+  Camera,
+  Upload,
+  Smile,
+  Cat,
+  Dog,
+  Bird,
+  Fish,
+  Rabbit,
+  Bot,
+  Ghost,
+  Baby,
+  LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -23,9 +35,25 @@ import {
   systemColors,
   appleWebColors,
   fontStack,
-  liquidGlass,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import { Avatar } from "@/components/Avatar";
+import { AVATAR_PRESETS, AvatarType, AvatarPreset } from "@/lib/avatar-presets";
+import { uploadAvatar } from "@/lib/avatar-upload";
+
+// アイコンマッピング
+const ICON_MAP: Record<string, LucideIcon> = {
+  User,
+  Smile,
+  Cat,
+  Dog,
+  Bird,
+  Fish,
+  Rabbit,
+  Bot,
+  Ghost,
+  Baby,
+};
 
 // 年齢層オプション
 const AGE_RANGES = [
@@ -69,12 +97,17 @@ export default function ProfileEditPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // フォーム状態
   const [displayName, setDisplayName] = useState("");
   const [ageRange, setAgeRange] = useState("");
   const [gender, setGender] = useState("");
   const [healthGoals, setHealthGoals] = useState<string[]>([]);
+  const [avatarType, setAvatarType] = useState<AvatarType>("initial");
+  const [avatarIcon, setAvatarIcon] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const { user, isLoading: authLoading } = useAuth();
   const {
@@ -93,6 +126,9 @@ export default function ProfileEditPage() {
       setAgeRange(profile.ageRange || "");
       setGender(profile.gender || "");
       setHealthGoals(profile.healthGoals || []);
+      setAvatarType(profile.avatarType || "initial");
+      setAvatarIcon(profile.avatarIcon || null);
+      setAvatarUrl(profile.avatarUrl || null);
     }
   }, [profile]);
 
@@ -101,6 +137,61 @@ export default function ProfileEditPage() {
     setHealthGoals((prev) =>
       prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal],
     );
+  };
+
+  // プリセットアイコン選択
+  const handlePresetSelect = (preset: AvatarPreset) => {
+    setAvatarType("preset");
+    setAvatarIcon(preset.id);
+    setAvatarUrl(null);
+  };
+
+  // イニシャルに戻す
+  const handleResetToInitial = () => {
+    setAvatarType("initial");
+    setAvatarIcon(null);
+    setAvatarUrl(null);
+  };
+
+  // ファイル選択ダイアログを開く
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // ファイルアップロード処理（Supabase Storage対応）
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!user) {
+      setSaveError("ログインが必要です");
+      return;
+    }
+
+    setIsUploading(true);
+    setSaveError(null);
+
+    try {
+      const result = await uploadAvatar(user.id, file);
+
+      if (result.success && result.url) {
+        setAvatarType("custom");
+        setAvatarIcon(null);
+        setAvatarUrl(result.url);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      } else {
+        setSaveError(result.error || "アップロードに失敗しました");
+      }
+    } catch {
+      setSaveError("画像のアップロードに失敗しました");
+    } finally {
+      setIsUploading(false);
+      // ファイル入力をリセット（同じファイルを再選択可能にする）
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   // 保存処理
@@ -113,6 +204,9 @@ export default function ProfileEditPage() {
       displayName: displayName || null,
       ageRange: ageRange || null,
       gender: gender || null,
+      avatarType,
+      avatarIcon,
+      avatarUrl: avatarType === "custom" ? avatarUrl : null,
       healthGoals,
     };
 
@@ -243,6 +337,178 @@ export default function ProfileEditPage() {
           {/* Form */}
           {!isLoading && isLoggedIn && (
             <div className="space-y-6">
+              {/* アバター編集カード */}
+              <div
+                className={`overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
+              >
+                <div
+                  className="p-5 border-b"
+                  style={{
+                    borderColor: appleWebColors.borderSubtle,
+                    background: `linear-gradient(135deg, ${systemColors.orange}10 0%, ${systemColors.yellow}10 100%)`,
+                  }}
+                >
+                  <h2
+                    className="text-[17px] font-bold flex items-center gap-2"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    <Camera size={20} style={{ color: systemColors.orange }} />
+                    アイコン設定
+                  </h2>
+                  <p
+                    className="text-[13px] mt-1"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    プロフィールに表示されるアイコンを選択
+                  </p>
+                </div>
+
+                <div className="p-6">
+                  {/* 現在のアバタープレビュー */}
+                  <div className="flex items-center gap-4 mb-6">
+                    <Avatar
+                      type={avatarType}
+                      presetId={avatarIcon}
+                      customUrl={avatarUrl}
+                      fallback={displayName || user?.email || "U"}
+                      size="xl"
+                    />
+                    <div>
+                      <p
+                        className="text-[15px] font-medium"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        現在のアイコン
+                      </p>
+                      <p
+                        className="text-[13px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {avatarType === "initial" && "イニシャル表示"}
+                        {avatarType === "preset" &&
+                          `プリセット: ${AVATAR_PRESETS.find((p) => p.id === avatarIcon)?.label || ""}`}
+                        {avatarType === "custom" && "カスタム画像"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* プリセットアイコン選択 */}
+                  <div className="mb-6">
+                    <p
+                      className="text-[14px] font-semibold mb-3"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      プリセットから選択
+                    </p>
+                    <div className="grid grid-cols-5 gap-3">
+                      {AVATAR_PRESETS.map((preset) => {
+                        const IconComponent = ICON_MAP[preset.icon];
+                        const isSelected =
+                          avatarType === "preset" && avatarIcon === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            onClick={() => handlePresetSelect(preset)}
+                            className="relative aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                            style={{
+                              background: isSelected
+                                ? `linear-gradient(135deg, ${preset.gradient[0]} 0%, ${preset.gradient[1]} 100%)`
+                                : appleWebColors.sectionBackground,
+                              border: isSelected
+                                ? "none"
+                                : `1px solid ${appleWebColors.borderSubtle}`,
+                              boxShadow: isSelected
+                                ? `0 4px 12px ${preset.gradient[0]}40`
+                                : "none",
+                            }}
+                            title={preset.label}
+                          >
+                            {IconComponent && (
+                              <IconComponent
+                                size={24}
+                                className={isSelected ? "text-white" : ""}
+                                style={{
+                                  color: isSelected
+                                    ? "white"
+                                    : preset.gradient[0],
+                                }}
+                              />
+                            )}
+                            <span
+                              className="text-[10px] font-medium"
+                              style={{
+                                color: isSelected
+                                  ? "white"
+                                  : appleWebColors.textSecondary,
+                              }}
+                            >
+                              {preset.label}
+                            </span>
+                            {isSelected && (
+                              <div
+                                className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: "white" }}
+                              >
+                                <Check
+                                  size={10}
+                                  style={{ color: preset.gradient[0] }}
+                                />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* アクションボタン */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleResetToInitial}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[14px] font-medium transition-all min-h-[48px]"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        border: `1px solid ${appleWebColors.borderSubtle}`,
+                        color: appleWebColors.textPrimary,
+                      }}
+                    >
+                      <User size={18} />
+                      イニシャルに戻す
+                    </button>
+                    <button
+                      onClick={handleUploadClick}
+                      disabled={isUploading}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[14px] font-medium transition-all min-h-[48px] disabled:opacity-50"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        border: `1px solid ${appleWebColors.borderSubtle}`,
+                        color: appleWebColors.textPrimary,
+                      }}
+                    >
+                      {isUploading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                      ) : (
+                        <Upload size={18} />
+                      )}
+                      画像をアップロード
+                    </button>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <p
+                    className="mt-3 text-[12px]"
+                    style={{ color: appleWebColors.textTertiary }}
+                  >
+                    JPG、PNG、WebP形式（最大2MB）
+                  </p>
+                </div>
+              </div>
+
               {/* 基本情報カード */}
               <div
                 className={`overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
