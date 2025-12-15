@@ -1,9 +1,43 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+/**
+ * 管理者認証を検証
+ */
+async function verifyAdminAuth(): Promise<{
+  isAdmin: boolean;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { isAdmin: false, error: "認証が必要です" };
+    }
+
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("is_admin")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      return { isAdmin: false, error: "管理者権限が必要です" };
+    }
+
+    return { isAdmin: true };
+  } catch {
+    return { isAdmin: false, error: "認証エラーが発生しました" };
+  }
+}
 
 const CATEGORIES = [
   {
@@ -38,6 +72,15 @@ const CATEGORIES = [
 ];
 
 export async function POST(request: NextRequest) {
+  // 管理者認証チェック
+  const { isAdmin, error: authError } = await verifyAdminAuth();
+  if (!isAdmin) {
+    return NextResponse.json(
+      { success: false, error: authError || "認証エラー" },
+      { status: 401 },
+    );
+  }
+
   try {
     const body = await request.json();
     const { category, customTopic, slideCount = 5 } = body;

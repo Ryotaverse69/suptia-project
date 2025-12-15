@@ -72,12 +72,24 @@ export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
   try {
-    // 簡易的な認証（本番環境では強化が必要）
-    const authHeader = request.headers.get("authorization");
+    // 認証チェック（BATCH_SYNC_TOKEN必須）
     const expectedToken = process.env.BATCH_SYNC_TOKEN;
 
-    if (expectedToken && authHeader !== `Bearer ${expectedToken}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // 本番環境ではトークン必須
+    if (!expectedToken && process.env.NODE_ENV === "production") {
+      console.error("[Batch Sync API] BATCH_SYNC_TOKEN is not configured");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 },
+      );
+    }
+
+    // トークンが設定されている場合は認証チェック
+    if (expectedToken) {
+      const authHeader = request.headers.get("authorization");
+      if (authHeader !== `Bearer ${expectedToken}`) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const body: BatchSyncRequest = await request.json();

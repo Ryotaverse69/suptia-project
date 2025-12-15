@@ -1,8 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { createClient } from "@/lib/supabase/server";
 
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY;
+
+/**
+ * 管理者認証を検証
+ */
+async function verifyAdminAuth(): Promise<{
+  isAdmin: boolean;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { isAdmin: false, error: "認証が必要です" };
+    }
+
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("is_admin")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      return { isAdmin: false, error: "管理者権限が必要です" };
+    }
+
+    return { isAdmin: true };
+  } catch {
+    return { isAdmin: false, error: "認証エラーが発生しました" };
+  }
+}
 
 // イラスト/図解スタイル（統一感重視）
 const IMAGE_STYLES: Record<
@@ -128,6 +162,15 @@ CRITICAL STYLE REQUIREMENTS:
 }
 
 export async function POST(request: NextRequest) {
+  // 管理者認証チェック
+  const { isAdmin, error: authError } = await verifyAdminAuth();
+  if (!isAdmin) {
+    return NextResponse.json(
+      { success: false, error: authError || "認証エラー" },
+      { status: 401 },
+    );
+  }
+
   try {
     const body = await request.json();
     const {

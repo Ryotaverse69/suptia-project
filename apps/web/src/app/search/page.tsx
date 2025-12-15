@@ -100,11 +100,11 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
 
   const searchTerm = query.trim();
 
-  // 特殊文字を含む可能性があるため、複数の検索パターンを試す
+  // パラメータバインディングを使用してGROQ Injection対策
   // 1. 完全一致検索（優先度高）
-  let ingredientQuery = `*[_type == "ingredient" && (
-    name == "${searchTerm}" ||
-    nameEn == "${searchTerm}"
+  const exactMatchQuery = `*[_type == "ingredient" && (
+    name == $term ||
+    nameEn == $term
   )][0]{
     _id,
     name,
@@ -115,7 +115,9 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   }`;
 
   try {
-    let ingredient = await sanity.fetch<Ingredient>(ingredientQuery);
+    let ingredient = await sanity.fetch<Ingredient>(exactMatchQuery, {
+      term: searchTerm,
+    });
 
     // 完全一致が見つからない場合、部分一致を試す
     if (!ingredient) {
@@ -124,11 +126,12 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
         .replace(/[（）()]/g, "") // 括弧を除去
         .trim();
 
-      ingredientQuery = `*[_type == "ingredient" && (
-        name match "*${normalizedTerm}*" ||
-        nameEn match "*${normalizedTerm}*" ||
-        name match "*${searchTerm}*" ||
-        nameEn match "*${searchTerm}*"
+      // パラメータバインディングを使用
+      const partialMatchQuery = `*[_type == "ingredient" && (
+        name match $termWildcard ||
+        nameEn match $termWildcard ||
+        name match $normalizedWildcard ||
+        nameEn match $normalizedWildcard
       )][0]{
         _id,
         name,
@@ -138,7 +141,10 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
         description
       }`;
 
-      ingredient = await sanity.fetch<Ingredient>(ingredientQuery);
+      ingredient = await sanity.fetch<Ingredient>(partialMatchQuery, {
+        termWildcard: `*${searchTerm}*`,
+        normalizedWildcard: `*${normalizedTerm}*`,
+      });
     }
 
     return ingredient || null;
@@ -162,24 +168,36 @@ async function getProductsByIngredient(
     orderClause = "name asc";
   }
 
-  // ブランド名フィルターがある場合は追加条件を含める
-  const brandCondition = brandFilter
-    ? `&& brand->name match "*${brandFilter}*"`
-    : "";
-
-  const query = `*[_type == "product" && references($ingredientId) ${brandCondition}] | order(${orderClause}){
-    _id,
-    name,
-    priceJPY,
-    servingsPerContainer,
-    servingsPerDay,
-    externalImageUrl,
-    slug,
-    badges
-  }`;
+  // パラメータバインディングを使用（GROQ Injection対策）
+  // ブランドフィルターがある場合とない場合で別クエリ
+  const query = brandFilter
+    ? `*[_type == "product" && references($ingredientId) && brand->name match $brandWildcard] | order(${orderClause}){
+        _id,
+        name,
+        priceJPY,
+        servingsPerContainer,
+        servingsPerDay,
+        externalImageUrl,
+        slug,
+        badges
+      }`
+    : `*[_type == "product" && references($ingredientId)] | order(${orderClause}){
+        _id,
+        name,
+        priceJPY,
+        servingsPerContainer,
+        servingsPerDay,
+        externalImageUrl,
+        slug,
+        badges
+      }`;
 
   try {
-    const products = await sanity.fetch<Product[]>(query, { ingredientId });
+    const params: Record<string, string> = { ingredientId };
+    if (brandFilter) {
+      params.brandWildcard = `*${brandFilter}*`;
+    }
+    const products = await sanity.fetch<Product[]>(query, params);
     return products || [];
   } catch (error) {
     console.error("Products search error:", error);
@@ -198,11 +216,12 @@ async function searchProducts(query: string): Promise<Product[]> {
   // 括弧を除去した正規化版も準備
   const normalizedTerm = searchTerm.replace(/[（）()]/g, "").trim();
 
+  // パラメータバインディングを使用（GROQ Injection対策）
   const productsQuery = `*[_type == "product" && (
-    name match "*${searchTerm}*" ||
-    brand->name match "*${searchTerm}*" ||
-    name match "*${normalizedTerm}*" ||
-    brand->name match "*${normalizedTerm}*"
+    name match $termWildcard ||
+    brand->name match $termWildcard ||
+    name match $normalizedWildcard ||
+    brand->name match $normalizedWildcard
   )] | order(priceJPY asc) {
     _id,
     name,
@@ -215,7 +234,10 @@ async function searchProducts(query: string): Promise<Product[]> {
   }`;
 
   try {
-    const products = await sanity.fetch<Product[]>(productsQuery);
+    const products = await sanity.fetch<Product[]>(productsQuery, {
+      termWildcard: `*${searchTerm}*`,
+      normalizedWildcard: `*${normalizedTerm}*`,
+    });
     return products || [];
   } catch (error) {
     console.error("Products search error:", error);

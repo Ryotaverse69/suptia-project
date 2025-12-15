@@ -21,7 +21,7 @@ import { AvatarType } from "@/lib/avatar-presets";
 /**
  * ユーザープラン
  */
-export type UserPlan = "free" | "pro" | "pro_safety";
+export type UserPlan = "free" | "pro" | "pro_safety" | "admin";
 
 /**
  * ユーザープロフィール
@@ -41,6 +41,7 @@ export interface UserProfile {
   medications: string[]; // 服用中の薬（Safety用）
   concerns: string[];
   plan: UserPlan;
+  is_admin: boolean; // 管理者フラグ
   createdAt: string;
   updatedAt: string;
 }
@@ -94,6 +95,7 @@ function mapDbToProfile(row: Record<string, unknown>): UserProfile {
     medications: (row.medications as string[]) || [],
     concerns: (row.concerns as string[]) || [],
     plan: ((row.plan as string) || "free") as UserPlan,
+    is_admin: (row.is_admin as boolean) || false,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -179,6 +181,7 @@ export function UserProfileProvider({
           medications: [],
           concerns: [],
           plan: "free",
+          is_admin: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });

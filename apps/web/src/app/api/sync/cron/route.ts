@@ -47,13 +47,25 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
 
   try {
-    // Vercel Cronからの呼び出しか確認
-    const authHeader = request.headers.get("authorization");
+    // Vercel Cronからの呼び出しか確認（CRON_SECRET必須）
     const cronSecret = process.env.CRON_SECRET;
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      console.error("[Cron] Unauthorized request");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // 本番環境ではCRON_SECRET必須
+    if (!cronSecret && process.env.NODE_ENV === "production") {
+      console.error("[Cron] CRON_SECRET is not configured");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 },
+      );
+    }
+
+    // シークレットが設定されている場合は認証チェック
+    if (cronSecret) {
+      const authHeader = request.headers.get("authorization");
+      if (authHeader !== `Bearer ${cronSecret}`) {
+        console.error("[Cron] Unauthorized request");
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     console.log("[Cron] Starting price sync batch job...");

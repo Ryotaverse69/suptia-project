@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { sanitizeHTML } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 
@@ -125,11 +126,11 @@ export async function POST(request: NextRequest) {
     <table style="width: 100%; border-collapse: collapse;">
       <tr>
         <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">お名前:</td>
-        <td style="padding: 10px 0;">${body.name}</td>
+        <td style="padding: 10px 0;">${sanitizeHTML(body.name)}</td>
       </tr>
       <tr>
         <td style="padding: 10px 0; color: #666; font-weight: bold;">メールアドレス:</td>
-        <td style="padding: 10px 0;"><a href="mailto:${body.email}" style="color: #3b66e0; text-decoration: none;">${body.email}</a></td>
+        <td style="padding: 10px 0;"><a href="mailto:${sanitizeHTML(body.email)}" style="color: #3b66e0; text-decoration: none;">${sanitizeHTML(body.email)}</a></td>
       </tr>
       <tr>
         <td style="padding: 10px 0; color: #666; font-weight: bold;">カテゴリ:</td>
@@ -137,14 +138,14 @@ export async function POST(request: NextRequest) {
       </tr>
       <tr>
         <td style="padding: 10px 0; color: #666; font-weight: bold;">件名:</td>
-        <td style="padding: 10px 0;">${body.subject}</td>
+        <td style="padding: 10px 0;">${sanitizeHTML(body.subject)}</td>
       </tr>
     </table>
   </div>
 
   <div style="background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
     <h2 style="color: #333; font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #3b66e0; padding-bottom: 10px;">お問い合わせ内容</h2>
-    <div style="white-space: pre-wrap; word-wrap: break-word; line-height: 1.8;">${body.message}</div>
+    <div style="white-space: pre-wrap; word-wrap: break-word; line-height: 1.8;">${sanitizeHTML(body.message)}</div>
   </div>
 
   <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 12px; color: #666;">
@@ -166,7 +167,7 @@ export async function POST(request: NextRequest) {
       from: "サプティア お問い合わせ <noreply@suptia.com>",
       to: [adminEmail],
       replyTo: body.email,
-      subject: `【お問い合わせ】${body.subject}`,
+      subject: `【お問い合わせ】${sanitizeHTML(body.subject)}`,
       html: emailHtml,
     });
 

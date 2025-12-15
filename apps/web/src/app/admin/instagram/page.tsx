@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import {
   systemColors,
   appleWebColors,
@@ -58,20 +57,8 @@ const ASPECT_RATIOS = [
 
 const SLIDE_COUNTS = [3, 4, 5, 6, 7];
 
-// シークレットキー（環境変数から取得、フォールバックあり）
-const ADMIN_SECRET_KEY =
-  process.env.NEXT_PUBLIC_INSTAGRAM_ADMIN_KEY || "suptia-instagram-2024";
-
+// 認証はadmin/layout.tsxで行われるため、ここでは認証不要
 export default function InstagramDashboard() {
-  const searchParams = useSearchParams();
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
-
-  // 認証チェック
-  useEffect(() => {
-    const key = searchParams.get("key");
-    setIsAuthorized(key === ADMIN_SECRET_KEY);
-  }, [searchParams]);
-
   const [category, setCategory] = useState("random");
   const [customTopic, setCustomTopic] = useState("");
   const [imageStyle, setImageStyle] = useState("random");
@@ -259,53 +246,6 @@ export default function InstagramDashboard() {
   const completedCount = images.filter((img) => img.status === "done").length;
   const isGenerating = images.some((img) => img.status === "generating");
   const allImagesReady = completedCount === images.length && images.length > 0;
-
-  // 認証チェック中
-  if (isAuthorized === null) {
-    return (
-      <div
-        className="flex min-h-screen items-center justify-center"
-        style={{ backgroundColor: appleWebColors.pageBackground }}
-      >
-        <div
-          className="text-[15px]"
-          style={{ color: appleWebColors.textSecondary }}
-        >
-          読み込み中...
-        </div>
-      </div>
-    );
-  }
-
-  // 未認証の場合は404風のページを表示
-  if (!isAuthorized) {
-    return (
-      <div
-        className="flex min-h-screen flex-col items-center justify-center"
-        style={{ backgroundColor: appleWebColors.pageBackground }}
-      >
-        <h1
-          className="text-[96px] font-bold"
-          style={{ color: appleWebColors.textTertiary }}
-        >
-          404
-        </h1>
-        <p
-          className="mt-4 text-[17px]"
-          style={{ color: appleWebColors.textSecondary }}
-        >
-          ページが見つかりません
-        </p>
-        <a
-          href="/"
-          className="mt-6 text-[17px] hover:underline"
-          style={{ color: systemColors.blue }}
-        >
-          ホームに戻る
-        </a>
-      </div>
-    );
-  }
 
   return (
     <div

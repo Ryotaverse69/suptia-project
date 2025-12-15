@@ -179,11 +179,22 @@ async function sendAlertEmail(
 }
 
 export async function GET(request: NextRequest) {
-  // Cron認証（Vercel Cron Security）
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    // 開発環境ではスキップ
-    if (process.env.NODE_ENV === "production") {
+  // Cron認証（Vercel Cron Security）- CRON_SECRET必須
+  const cronSecret = process.env.CRON_SECRET;
+
+  // 本番環境ではCRON_SECRET必須
+  if (!cronSecret && process.env.NODE_ENV === "production") {
+    console.error("[PriceAlerts Cron] CRON_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
+  }
+
+  // シークレットが設定されている場合は認証チェック
+  if (cronSecret) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }

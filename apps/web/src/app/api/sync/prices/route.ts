@@ -7,6 +7,29 @@ import type { ProductIdentifier } from "@/lib/adapters/types";
 export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 
 /**
+ * オプショナルAPI認証を検証
+ * SYNC_API_SECRET が設定されている場合のみ認証を要求
+ */
+function verifyApiAuth(request: NextRequest): {
+  authorized: boolean;
+  error?: string;
+} {
+  const syncApiSecret = process.env.SYNC_API_SECRET;
+
+  // シークレットが未設定の場合は認証スキップ
+  if (!syncApiSecret) {
+    return { authorized: true };
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader || authHeader !== `Bearer ${syncApiSecret}`) {
+    return { authorized: false, error: "認証が必要です" };
+  }
+
+  return { authorized: true };
+}
+
+/**
  * 価格同期リクエスト
  */
 interface SyncPriceRequest {
@@ -48,6 +71,15 @@ interface SyncPriceResponse {
  * ```
  */
 export async function POST(request: NextRequest) {
+  // オプショナル認証チェック
+  const { authorized, error: authError } = verifyApiAuth(request);
+  if (!authorized) {
+    return NextResponse.json(
+      { error: authError || "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
   try {
     const body: SyncPriceRequest = await request.json();
 
@@ -125,6 +157,15 @@ export async function POST(request: NextRequest) {
  * クエリパラメータで商品を指定して価格を取得
  */
 export async function GET(request: NextRequest) {
+  // オプショナル認証チェック
+  const { authorized, error: authError } = verifyApiAuth(request);
+  if (!authorized) {
+    return NextResponse.json(
+      { error: authError || "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
   const { searchParams } = new URL(request.url);
 
   const identifier: ProductIdentifier = {

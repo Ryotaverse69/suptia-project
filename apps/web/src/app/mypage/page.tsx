@@ -18,6 +18,8 @@ import {
   Check,
   X,
   Camera,
+  ShieldCheck,
+  Eye,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
@@ -60,10 +62,26 @@ const PLAN_BADGES = {
     gradient: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
     icon: Shield,
   },
+  admin: {
+    label: "Admin",
+    bg: `linear-gradient(135deg, ${systemColors.red} 0%, ${systemColors.orange} 100%)`,
+    text: "white",
+    border: "transparent",
+    gradient: `linear-gradient(135deg, ${systemColors.red} 0%, ${systemColors.orange} 100%)`,
+    icon: ShieldCheck,
+  },
 };
+
+// プレビュー用プランオプション
+const PREVIEW_PLANS = [
+  { value: "free", label: "Free" },
+  { value: "pro", label: "Pro" },
+  { value: "pro_safety", label: "Pro + Safety" },
+] as const;
 
 export default function MyPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [previewPlan, setPreviewPlan] = useState<string | null>(null);
 
   const { user, isLoading: authLoading } = useAuth();
   const {
@@ -77,6 +95,9 @@ export default function MyPage() {
 
   const isLoggedIn = !!user;
   const isLoading = authLoading || profileLoading;
+
+  // プレビューモードの場合はプレビュープランを使用、それ以外は実際のプラン
+  const displayPlan = previewPlan || profile?.plan || "free";
 
   // 統計データ
   const stats = [
@@ -139,7 +160,7 @@ export default function MyPage() {
     },
   ];
 
-  const planConfig = PLAN_BADGES[profile?.plan || "free"];
+  const planConfig = PLAN_BADGES[displayPlan as keyof typeof PLAN_BADGES];
   const PlanIcon = planConfig.icon;
 
   return (
@@ -340,7 +361,7 @@ export default function MyPage() {
                           {PlanIcon && <PlanIcon size={16} />}
                           {planConfig.label} プラン
                         </span>
-                        {profile?.plan === "free" && (
+                        {displayPlan === "free" && (
                           <Link
                             href="#plans"
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors min-h-[32px]"
@@ -510,6 +531,164 @@ export default function MyPage() {
                 </div>
               </div>
 
+              {/* Admin Section - Only visible to admins */}
+              {profile?.is_admin && (
+                <div className={`overflow-hidden ${liquidGlassClasses.light}`}>
+                  <div
+                    className="p-5 sm:p-6 border-b"
+                    style={{
+                      borderColor: appleWebColors.borderSubtle,
+                      background: `linear-gradient(135deg, ${systemColors.red}10 0%, ${systemColors.orange}10 100%)`,
+                    }}
+                  >
+                    <h3
+                      className="font-bold text-[17px] flex items-center gap-2"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      <ShieldCheck
+                        size={18}
+                        style={{ color: systemColors.red }}
+                      />
+                      管理者メニュー
+                    </h3>
+                  </div>
+                  <div>
+                    <Link href="/admin/instagram">
+                      <div
+                        className="flex items-center gap-4 p-5 sm:p-6 transition-all duration-200 group min-h-[72px] hover:bg-white/50 hover:backdrop-blur-[12px]"
+                        style={{
+                          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                        }}
+                      >
+                        {/* Icon with gradient */}
+                        <div
+                          className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.red} 0%, ${systemColors.orange} 100%)`,
+                          }}
+                        >
+                          <Camera
+                            size={24}
+                            className="text-white sm:w-7 sm:h-7"
+                          />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4
+                              className="font-semibold text-[15px] transition-colors group-hover:opacity-70"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              Instagram投稿管理
+                            </h4>
+                            <span
+                              className="px-2 py-0.5 text-[11px] font-semibold rounded-full"
+                              style={{
+                                backgroundColor: `${systemColors.red}15`,
+                                color: systemColors.red,
+                              }}
+                            >
+                              Admin
+                            </span>
+                          </div>
+                          <p
+                            className="text-[13px]"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            AI画像生成・キャプション作成
+                          </p>
+                        </div>
+
+                        {/* Arrow */}
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
+                        >
+                          <ChevronRight
+                            size={18}
+                            style={{ color: appleWebColors.textTertiary }}
+                          />
+                        </div>
+                      </div>
+                    </Link>
+
+                    {/* Plan Preview */}
+                    <div className="flex items-center gap-4 p-5 sm:p-6">
+                      {/* Icon */}
+                      <div
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.cyan} 100%)`,
+                        }}
+                      >
+                        <Eye size={24} className="text-white sm:w-7 sm:h-7" />
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4
+                            className="font-semibold text-[15px]"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
+                            プランプレビュー
+                          </h4>
+                          <span
+                            className="px-2 py-0.5 text-[11px] font-semibold rounded-full"
+                            style={{
+                              backgroundColor: `${systemColors.blue}15`,
+                              color: systemColors.blue,
+                            }}
+                          >
+                            テスト用
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => setPreviewPlan(null)}
+                            className="px-3 py-1.5 text-[12px] font-medium rounded-full transition-all min-h-[32px]"
+                            style={{
+                              backgroundColor:
+                                previewPlan === null
+                                  ? systemColors.red
+                                  : `${systemColors.gray[2]}`,
+                              color:
+                                previewPlan === null
+                                  ? "white"
+                                  : appleWebColors.textSecondary,
+                            }}
+                          >
+                            Admin（実際）
+                          </button>
+                          {PREVIEW_PLANS.map((plan) => (
+                            <button
+                              key={plan.value}
+                              onClick={() => setPreviewPlan(plan.value)}
+                              className="px-3 py-1.5 text-[12px] font-medium rounded-full transition-all min-h-[32px]"
+                              style={{
+                                backgroundColor:
+                                  previewPlan === plan.value
+                                    ? systemColors.blue
+                                    : `${systemColors.gray[2]}`,
+                                color:
+                                  previewPlan === plan.value
+                                    ? "white"
+                                    : appleWebColors.textSecondary,
+                              }}
+                            >
+                              {plan.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Plan Comparison Section */}
               <div
                 id="plans"
@@ -551,20 +730,17 @@ export default function MyPage() {
                       className="relative rounded-[16px] p-5 transition-all border"
                       style={{
                         backgroundColor:
-                          !profile?.plan || profile?.plan === "free"
+                          displayPlan === "free"
                             ? appleWebColors.sectionBackground
                             : "transparent",
                         borderColor:
-                          !profile?.plan || profile?.plan === "free"
+                          displayPlan === "free"
                             ? systemColors.blue
                             : appleWebColors.borderSubtle,
-                        borderWidth:
-                          !profile?.plan || profile?.plan === "free"
-                            ? "2px"
-                            : "1px",
+                        borderWidth: displayPlan === "free" ? "2px" : "1px",
                       }}
                     >
-                      {(!profile?.plan || profile?.plan === "free") && (
+                      {displayPlan === "free" && (
                         <div
                           className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[11px] font-bold rounded-full"
                           style={{
@@ -651,11 +827,11 @@ export default function MyPage() {
                       className="relative rounded-[16px] p-5 transition-all"
                       style={{
                         background:
-                          profile?.plan === "pro"
+                          displayPlan === "pro"
                             ? `linear-gradient(135deg, ${systemColors.purple}20 0%, ${systemColors.pink}20 100%)`
                             : `linear-gradient(135deg, ${systemColors.purple}10 0%, ${systemColors.pink}10 100%)`,
                         border:
-                          profile?.plan === "pro"
+                          displayPlan === "pro"
                             ? `2px solid ${systemColors.purple}`
                             : `1px solid ${appleWebColors.borderSubtle}`,
                       }}
@@ -666,7 +842,7 @@ export default function MyPage() {
                           background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
                         }}
                       >
-                        {profile?.plan === "pro" ? "現在のプラン" : "おすすめ"}
+                        {displayPlan === "pro" ? "現在のプラン" : "おすすめ"}
                       </div>
                       <div className="text-center mb-4 pt-2">
                         <h4
@@ -754,16 +930,16 @@ export default function MyPage() {
                       className="relative rounded-[16px] p-5 transition-all"
                       style={{
                         background:
-                          profile?.plan === "pro_safety"
+                          displayPlan === "pro_safety"
                             ? `linear-gradient(135deg, ${systemColors.green}20 0%, ${systemColors.teal}20 100%)`
                             : `linear-gradient(135deg, ${systemColors.green}10 0%, ${systemColors.teal}10 100%)`,
                         border:
-                          profile?.plan === "pro_safety"
+                          displayPlan === "pro_safety"
                             ? `2px solid ${systemColors.green}`
                             : `1px solid ${appleWebColors.borderSubtle}`,
                       }}
                     >
-                      {profile?.plan === "pro_safety" && (
+                      {displayPlan === "pro_safety" && (
                         <div
                           className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[11px] font-bold rounded-full text-white"
                           style={{
