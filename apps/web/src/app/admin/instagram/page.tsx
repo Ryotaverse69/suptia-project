@@ -81,6 +81,8 @@ export default function InstagramDashboard() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPostGuide, setShowPostGuide] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   // アクセストークンを取得
   const getAccessToken = useCallback(async () => {
@@ -107,7 +109,7 @@ export default function InstagramDashboard() {
 
   // 認証ヘッダー付きでAPIを呼び出すヘルパー
   const fetchWithAuth = useCallback(
-    async (url: string, options: RequestInit = {}) => {
+    async (url: string, options: RequestInit = {}, signal?: AbortSignal) => {
       let token = accessToken;
       if (!token) {
         token = await getAccessToken();
@@ -117,6 +119,7 @@ export default function InstagramDashboard() {
       }
       return fetch(url, {
         ...options,
+        signal,
         headers: {
           ...options.headers,
           Authorization: `Bearer ${token}`,
@@ -177,8 +180,11 @@ export default function InstagramDashboard() {
     }
   };
 
-  const generateSingleImage = async (index: number) => {
-    if (!content.title) return;
+  const generateSingleImage = async (
+    index: number,
+    signal?: AbortSignal,
+  ): Promise<boolean> => {
+    if (!content.title) return false;
 
     setImages((prev) =>
       prev.map((img, i) =>
@@ -216,6 +222,7 @@ export default function InstagramDashboard() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         },
+        signal,
       );
 
       const data = await response.json();
@@ -226,7 +233,7 @@ export default function InstagramDashboard() {
             i === index
               ? {
                   ...img,
-                  url: `${data.image.url}?t=${Date.now()}`,
+                  url: data.image.url,
                   filename: data.image.filename,
                   status: "done",
                 }
@@ -234,6 +241,7 @@ export default function InstagramDashboard() {
           ),
         );
         setCurrentImageIndex(index);
+        return true;
       } else {
         setImages((prev) =>
           prev.map((img, i) =>
@@ -243,8 +251,18 @@ export default function InstagramDashboard() {
         if (data.retryable) {
           setError(data.error);
         }
+        return false;
       }
     } catch (err) {
+      // キャンセルされた場合
+      if ((err as Error).name === "AbortError") {
+        setImages((prev) =>
+          prev.map((img, i) =>
+            i === index ? { ...img, status: "pending", error: undefined } : img,
+          ),
+        );
+        return false;
+      }
       setImages((prev) =>
         prev.map((img, i) =>
           i === index
@@ -252,17 +270,36 @@ export default function InstagramDashboard() {
             : img,
         ),
       );
+      return false;
     }
   };
 
   const generateAllPending = async () => {
-    for (let i = 0; i < images.length; i++) {
-      if (images[i].status === "pending" || images[i].status === "error") {
-        await generateSingleImage(i);
-        if (i < images.length - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+    const controller = new AbortController();
+    setAbortController(controller);
+
+    try {
+      for (let i = 0; i < images.length; i++) {
+        if (controller.signal.aborted) break;
+
+        if (images[i].status === "pending" || images[i].status === "error") {
+          await generateSingleImage(i, controller.signal);
+          if (i < images.length - 1 && !controller.signal.aborted) {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+          }
         }
       }
+    } finally {
+      setAbortController(null);
+    }
+  };
+
+  // 画像生成を中止
+  const cancelGeneration = () => {
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+      setError("画像生成を中止しました");
     }
   };
 
@@ -779,18 +816,41 @@ export default function InstagramDashboard() {
                       </div>
                     ))}
 
-                    <button
-                      onClick={generateAllPending}
-                      disabled={isGenerating || allImagesReady}
-                      className="min-h-[48px] w-full rounded-[16px] px-4 py-3 text-[17px] font-semibold text-white transition-all disabled:opacity-50"
-                      style={{ backgroundColor: systemColors.blue }}
-                    >
-                      {isGenerating
-                        ? "生成中..."
-                        : allImagesReady
+                    {isGenerating ? (
+                      <button
+                        onClick={cancelGeneration}
+                        className="min-h-[48px] w-full rounded-[16px] px-4 py-3 text-[17px] font-semibold text-white transition-all hover:opacity-90"
+                        style={{ backgroundColor: systemColors.red }}
+                      >
+                        <span className="flex items-center justify-center gap-2">
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                          生成を中止
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={generateAllPending}
+                        disabled={allImagesReady}
+                        className="min-h-[48px] w-full rounded-[16px] px-4 py-3 text-[17px] font-semibold text-white transition-all disabled:opacity-50"
+                        style={{ backgroundColor: systemColors.blue }}
+                      >
+                        {allImagesReady
                           ? "✓ 全画像完了"
                           : `残り${images.length - completedCount}枚を一括生成`}
-                    </button>
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <p
