@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import {
   systemColors,
   appleWebColors,
@@ -969,12 +969,10 @@ export default function InstagramDashboard() {
               >
                 {images[currentImageIndex]?.url ? (
                   <>
-                    <Image
+                    <img
                       src={images[currentImageIndex].url}
                       alt={`Slide ${currentImageIndex + 1}`}
-                      fill
-                      className="object-cover"
-                      unoptimized
+                      className="absolute inset-0 h-full w-full object-cover"
                     />
                     {images.length > 1 && (
                       <>
@@ -1120,12 +1118,10 @@ export default function InstagramDashboard() {
                         }}
                       >
                         {img.url ? (
-                          <Image
+                          <img
                             src={img.url}
                             alt={`Thumbnail ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            unoptimized
+                            className="absolute inset-0 h-full w-full object-cover"
                           />
                         ) : (
                           <div
