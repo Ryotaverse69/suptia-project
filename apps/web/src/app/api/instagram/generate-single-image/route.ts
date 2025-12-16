@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { verifyAdminToken } from "@/lib/supabase/admin-auth";
 
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY;
@@ -165,8 +163,6 @@ export async function POST(request: NextRequest) {
       ASPECT_RATIOS.square;
 
     const imageTimestamp = timestamp || Date.now();
-    const publicDir = path.join(process.cwd(), "public", "instagram");
-    await mkdir(publicDir, { recursive: true });
 
     let prompt: string;
     let filename: string;
@@ -218,17 +214,15 @@ Slide-specific requirements:
     console.log(`Generating ${imageType}...`);
     const imageBase64 = await generateSingleImage(prompt, selectedAspectRatio);
 
-    await writeFile(
-      path.join(publicDir, filename),
-      Buffer.from(imageBase64, "base64"),
-    );
-    console.log(`${imageType} saved:`, filename);
+    // Base64データURLとして返す（クライアント側でダウンロード可能）
+    const dataUrl = `data:image/png;base64,${imageBase64}`;
+    console.log(`${imageType} generated successfully`);
 
     return NextResponse.json({
       success: true,
       image: {
         type: imageType,
-        url: `/instagram/${filename}`,
+        url: dataUrl,
         filename,
       },
       timestamp: imageTimestamp,

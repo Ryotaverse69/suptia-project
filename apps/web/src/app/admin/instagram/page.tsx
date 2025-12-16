@@ -272,6 +272,30 @@ export default function InstagramDashboard() {
     setTimeout(() => setCopied(null), 2000);
   };
 
+  // 画像をダウンロード
+  const downloadImage = (url: string, filename: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // 全画像を一括ダウンロード
+  const downloadAllImages = async () => {
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      if (img.url && img.filename) {
+        downloadImage(img.url, img.filename);
+        // 連続ダウンロードのため少し間隔を空ける
+        if (i < images.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      }
+    }
+  };
+
   const openFolder = async () => {
     try {
       const response = await fetchWithAuth("/api/instagram/open-folder", {
@@ -1011,6 +1035,62 @@ export default function InstagramDashboard() {
                   </div>
                 )}
               </div>
+
+              {/* Download Buttons */}
+              {completedCount > 0 && (
+                <div className="mt-4 flex gap-2">
+                  {images[currentImageIndex]?.url && (
+                    <button
+                      onClick={() =>
+                        downloadImage(
+                          images[currentImageIndex].url!,
+                          images[currentImageIndex].filename ||
+                            `image_${currentImageIndex + 1}.png`,
+                        )
+                      }
+                      className="flex flex-1 items-center justify-center gap-2 rounded-[12px] px-4 py-2 text-[13px] font-medium text-white transition-all hover:opacity-90"
+                      style={{ backgroundColor: systemColors.blue }}
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      この画像を保存
+                    </button>
+                  )}
+                  {allImagesReady && (
+                    <button
+                      onClick={downloadAllImages}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-[12px] px-4 py-2 text-[13px] font-medium text-white transition-all hover:opacity-90"
+                      style={{ backgroundColor: systemColors.green }}
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      全{images.length}枚を保存
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Image Thumbnails with Order */}
               {images.length > 0 && (

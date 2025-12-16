@@ -50,6 +50,23 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // APIキーの存在確認
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      console.error("[Caption API] ANTHROPIC_API_KEY is not configured");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "サーバー設定エラー: ANTHROPIC_API_KEYが設定されていません",
+        },
+        { status: 500 },
+      );
+    }
+    // APIキーの形式確認（デバッグ用）
+    console.log(
+      `[Caption API] API Key length: ${apiKey.length}, prefix: ${apiKey.substring(0, 10)}...`,
+    );
+
     const body = await request.json();
     const { category, customTopic, slideCount = 5 } = body;
 
@@ -155,8 +172,43 @@ ${selectedCategory.prompt}${topicInstruction}
     });
   } catch (error) {
     console.error("Caption generation error:", error);
+
+    // エラーの詳細を取得
+    let errorMessage = "キャプション生成に失敗しました";
+    let errorDetails = "";
+
+    if (error instanceof Error) {
+      errorDetails = error.message;
+
+      // Anthropic APIのエラーを判別
+      if (
+        error.message.includes("401") ||
+        error.message.includes("authentication")
+      ) {
+        errorMessage = "APIキー認証エラー: ANTHROPIC_API_KEYを確認してください";
+      } else if (
+        error.message.includes("429") ||
+        error.message.includes("rate")
+      ) {
+        errorMessage = "API利用制限: しばらく待ってから再試行してください";
+      } else if (error.message.includes("model")) {
+        errorMessage = "モデルエラー: 指定されたモデルにアクセスできません";
+      } else if (
+        error.message.includes("credit") ||
+        error.message.includes("billing")
+      ) {
+        errorMessage =
+          "課金エラー: Anthropicアカウントのクレジットを確認してください";
+      }
+    }
+
     return NextResponse.json(
-      { success: false, error: "キャプション生成に失敗しました" },
+      {
+        success: false,
+        error: errorMessage,
+        details:
+          process.env.NODE_ENV === "development" ? errorDetails : undefined,
+      },
       { status: 500 },
     );
   }
