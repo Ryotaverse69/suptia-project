@@ -8,6 +8,6 @@
     ".": "./index.ts"
   },
   "peerDependencies": {
-    "sanity": "^3.0.0"
+    "sanity": "^3.99.0 || ^4.0.0"
   }
 }

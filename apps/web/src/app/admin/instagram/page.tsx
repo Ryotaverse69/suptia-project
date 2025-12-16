@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import {
   systemColors,
@@ -8,6 +8,7 @@ import {
   fontStack,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import { createClient } from "@/lib/supabase/client";
 
 interface SlideContent {
   heading: string;
@@ -79,6 +80,51 @@ export default function InstagramDashboard() {
   const [copied, setCopied] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPostGuide, setShowPostGuide] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  // アクセストークンを取得
+  const getAccessToken = useCallback(async () => {
+    try {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        setAccessToken(session.access_token);
+        return session.access_token;
+      }
+      return null;
+    } catch (err) {
+      console.error("Failed to get access token:", err);
+      return null;
+    }
+  }, []);
+
+  // 初回ロード時にトークンを取得
+  useEffect(() => {
+    getAccessToken();
+  }, [getAccessToken]);
+
+  // 認証ヘッダー付きでAPIを呼び出すヘルパー
+  const fetchWithAuth = useCallback(
+    async (url: string, options: RequestInit = {}) => {
+      let token = accessToken;
+      if (!token) {
+        token = await getAccessToken();
+      }
+      if (!token) {
+        throw new Error("認証トークンが取得できません");
+      }
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
+    [accessToken, getAccessToken],
+  );
 
   // Step 1: コンテンツ（テキスト）を生成
   const generateContent = async () => {
@@ -86,7 +132,7 @@ export default function InstagramDashboard() {
     setError(null);
 
     try {
-      const response = await fetch("/api/instagram/generate-caption", {
+      const response = await fetchWithAuth("/api/instagram/generate-caption", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -163,11 +209,14 @@ export default function InstagramDashboard() {
             timestamp,
           };
 
-      const response = await fetch("/api/instagram/generate-single-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const response = await fetchWithAuth(
+        "/api/instagram/generate-single-image",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
 
       const data = await response.json();
 
@@ -225,7 +274,7 @@ export default function InstagramDashboard() {
 
   const openFolder = async () => {
     try {
-      const response = await fetch("/api/instagram/open-folder", {
+      const response = await fetchWithAuth("/api/instagram/open-folder", {
         method: "POST",
       });
       const data = await response.json();

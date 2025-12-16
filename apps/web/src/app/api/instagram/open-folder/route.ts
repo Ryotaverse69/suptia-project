@@ -1,42 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 import path from "path";
-import { createClient } from "@/lib/supabase/server";
+import { verifyAdminToken } from "@/lib/supabase/admin-auth";
 
-/**
- * 管理者認証を検証
- */
-async function verifyAdminAuth(): Promise<{
-  isAdmin: boolean;
-  error?: string;
-}> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return { isAdmin: false, error: "認証が必要です" };
-    }
-
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("is_admin")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!profile?.is_admin) {
-      return { isAdmin: false, error: "管理者権限が必要です" };
-    }
-
-    return { isAdmin: true };
-  } catch {
-    return { isAdmin: false, error: "認証エラーが発生しました" };
-  }
-}
-
-export async function POST(): Promise<Response> {
+export async function POST(request: NextRequest): Promise<Response> {
   // 開発環境のみで動作
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
@@ -45,8 +12,9 @@ export async function POST(): Promise<Response> {
     );
   }
 
-  // 管理者認証チェック
-  const { isAdmin, error: authError } = await verifyAdminAuth();
+  // 管理者認証チェック（トークンベース）
+  const authHeader = request.headers.get("authorization");
+  const { isAdmin, error: authError } = await verifyAdminToken(authHeader);
   if (!isAdmin) {
     return NextResponse.json(
       { success: false, error: authError || "認証エラー" },

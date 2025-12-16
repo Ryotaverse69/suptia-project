@@ -109,6 +109,7 @@ const NON_SUPPLEMENT_KEYWORDS = [
 ];
 
 // プロモーション文字列を除去
+// 注意: 「ふるさと納税」は除去しない（後のチェックで検出するため）
 function removePromotionalText(text) {
   if (!text) return '';
 
@@ -121,7 +122,7 @@ function removePromotionalText(text) {
     .replace(/楽天お買い物マラソン/g, '')
     .replace(/タイムセール/g, '')
     .replace(/送料無料/g, '')
-    .replace(/ふるさと納税/g, '')
+    // ふるさと納税は削除しない（絶対除外チェックで検出するため）
     .replace(/レビューキャンペーン/g, '')
     .replace(/\\[^\\／]*\\/g, '')
     .replace(/【[^】]*】/g, '')
@@ -136,6 +137,16 @@ export function isSupplement(productName) {
 
   const cleanedName = removePromotionalText(productName);
   const cleanedNameLower = cleanedName.toLowerCase();
+  const originalNameLower = productName.toLowerCase();
+
+  // ふるさと納税は絶対除外（サプリ/プロテイン表記があっても価格が寄付金のため除外）
+  if (originalNameLower.includes('ふるさと納税')) {
+    return {
+      isSupplement: false,
+      score: -100,
+      reason: '絶対除外: ふるさと納税商品（価格が寄付金のため）',
+    };
+  }
 
   // 明示的なサプリメント・プロテイン表記があるかチェック
   const hasExplicitSupplementLabel =
@@ -149,6 +160,7 @@ export function isSupplement(productName) {
     cleanedNameLower.includes('eaa');
 
   // 絶対除外チェック（最優先 - ただし明示的サプリ表記がある場合は除外しない）
+  // 注意: ふるさと納税は上記で既にチェック済み
   for (const keyword of ABSOLUTE_BLACKLIST) {
     if (cleanedNameLower.includes(keyword.toLowerCase())) {
       // 商品名に「サプリ」等が含まれる場合、説明文として使われている可能性があるのでスキップ
