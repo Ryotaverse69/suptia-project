@@ -25,6 +25,7 @@ import {
   fontStack,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 
 export const revalidate = 86400; // 24時間キャッシュ
 
@@ -37,6 +38,13 @@ const ARTICLE_DATA = {
   ingredientName: "ビタミンC",
   ingredientSlug: "vitamin-c",
 };
+
+// OGP画像を取得（Cloudinaryから自動生成された画像を使用）
+const ogImageUrl = getArticleOGImage("vitamin-c-comparison");
+const ogImage = generateOGImageMeta(
+  ogImageUrl,
+  "ビタミンCサプリメント比較 - Suptia",
+);
 
 export const metadata: Metadata = {
   title: ARTICLE_DATA.title,
@@ -61,11 +69,13 @@ export const metadata: Metadata = {
     url: "https://suptia.com/articles/vitamin-c-comparison",
     siteName: "サプティア",
     locale: "ja_JP",
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: ARTICLE_DATA.title,
     description: ARTICLE_DATA.description,
+    images: [ogImageUrl],
   },
   alternates: {
     canonical: "https://suptia.com/articles/vitamin-c-comparison",

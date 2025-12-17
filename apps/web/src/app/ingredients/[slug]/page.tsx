@@ -39,6 +39,7 @@ import {
   fontStack,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import { getIngredientOGImage, generateOGImageMeta } from "@/lib/og-image";
 
 interface IngredientPageProps {
   params: {
@@ -111,11 +112,40 @@ export async function generateMetadata({
     };
   }
 
+  const title = `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性 | Suptia成分ガイド`;
+  const description =
+    ingredient.description ||
+    `${ingredient.name}の科学的エビデンス、推奨摂取量、副作用、相互作用について詳しく解説。`;
+  const pageUrl = `${siteUrl}/ingredients/${params.slug}`;
+
+  // OGP画像を取得（Cloudinaryから自動生成された画像を使用）
+  const ogImageUrl = getIngredientOGImage(params.slug);
+  const ogImage = generateOGImageMeta(
+    ogImageUrl,
+    `${ingredient.name}（${ingredient.nameEn}）- Suptia成分ガイド`,
+  );
+
   return {
-    title: `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性 | Suptia成分ガイド`,
-    description:
-      ingredient.description ||
-      `${ingredient.name}の科学的エビデンス、推奨摂取量、副作用、相互作用について詳しく解説。`,
+    title,
+    description,
+    alternates: {
+      canonical: pageUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: "Suptia（サプティア）",
+      type: "article",
+      images: [ogImage],
+      locale: "ja_JP",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   };
 }
 
