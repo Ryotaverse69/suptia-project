@@ -18,6 +18,8 @@ const footerSections = [
       { href: "/guide/dangerous-ingredients", label: "危険成分ガイド" },
       { href: "/guide/purposes", label: "目的別ガイド" },
       { href: "/guide/audiences", label: "対象者別ガイド" },
+      { href: "/tools", label: "無料ツール" },
+      { href: "/articles", label: "比較記事" },
     ],
   },
   {
