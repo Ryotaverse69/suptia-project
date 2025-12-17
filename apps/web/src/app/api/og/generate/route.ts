@@ -22,6 +22,20 @@ const OGP_STYLES = {
       "Professional teal (#20B2AA), soft blue (#87CEEB), white (#FFFFFF), light gray (#F5F5F5)",
     elements: "Medical/health icons, abstract shapes, clean typography space",
   },
+  "gradient-vibrant": {
+    style: "Vibrant gradient illustration with bold, dynamic visual style",
+    colorPalette:
+      "Vibrant gradient colors with purple (#8B5CF6), pink (#EC4899), orange (#F97316), yellow (#FBBF24)",
+    elements:
+      "Flowing gradients, dynamic shapes, modern atmosphere, bold color transitions",
+  },
+  "organic-botanical": {
+    style: "Organic botanical illustration with natural, earthy aesthetic",
+    colorPalette:
+      "Natural colors with leaf green (#4ADE80), beige (#D4C5A9), terracotta (#C2703E), cream (#FAF7F0)",
+    elements:
+      "Leaf and plant motifs, organic shapes, natural textures, earthy feel",
+  },
 };
 
 // Cloudinary設定
@@ -187,9 +201,11 @@ ${baseStyle}
 Requirements:
 - Central visual element representing ${data.nameEn || data.name}
 - Abstract/symbolic representation (not literal pills/capsules)
-- Space at bottom-left for text overlay with title
+- MUST include text "${data.name}" prominently displayed in the image
+- Text should be in white or light color with good contrast
+- Text position: bottom-left area with semi-transparent dark overlay behind it
+- Also include small subtitle "Suptia成分ガイド" below the main title
 - Clean, professional health/wellness aesthetic
-- No text in the image itself
 - Suptia brand feel (modern, trustworthy, scientific)`;
 
     case "article":
@@ -203,9 +219,10 @@ ${baseStyle}
 Requirements:
 - Visual elements suggesting comparison/ranking
 - Abstract representation of supplements being compared
-- Space for text overlay
-- Professional, editorial feel
-- No text in the image itself`;
+- MUST include the title text "${data.name}" prominently in the image
+- Text should be in white or light color with good contrast
+- Text position: bottom-left or center with semi-transparent dark overlay
+- Professional, editorial feel`;
 
     case "tool":
       return `Create an OGP image for a free online tool.
@@ -217,10 +234,12 @@ ${baseStyle}
 
 Requirements:
 - Visual elements suggesting calculation/analysis
+- MUST include the tool name "${data.name}" prominently in the image
+- Include small subtitle "無料ツール | Suptia"
+- Text should be in white or light color with good contrast
+- Text position: bottom-left or center with semi-transparent dark overlay
 - Abstract icons representing the tool's function
-- Space for text overlay
-- Modern, utility-focused design
-- No text in the image itself`;
+- Modern, utility-focused design`;
 
     default:
       return `Create an OGP image.

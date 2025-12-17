@@ -27,6 +27,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "images-na.ssl-images-amazon.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
     // 画像フォーマット最適化
     formats: ["image/avif", "image/webp"],

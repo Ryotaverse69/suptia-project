@@ -1,5 +1,8 @@
 /**
  * OGP画像管理ユーティリティ
+ *
+ * 画像はAI生成時にテキスト（タイトル・サブタイトル）を含めて生成されます。
+ * Cloudinaryは画像ホスティングと最適化のみに使用。
  */
 
 // CloudinaryのOGP画像ベースURL
@@ -19,26 +22,29 @@ export const DEFAULT_OG_IMAGE = "/og-image.png";
 
 /**
  * 成分ページのOGP画像URLを取得
+ * タイトルはAI生成時に画像内に含まれています
  */
 export function getIngredientOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_auto,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.ingredients}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.ingredients}/${slug}`;
 }
 
 /**
  * 記事ページのOGP画像URLを取得
+ * タイトルはAI生成時に画像内に含まれています
  */
 export function getArticleOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_auto,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.articles}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.articles}/${slug}`;
 }
 
 /**
  * ツールページのOGP画像URLを取得
+ * タイトルはAI生成時に画像内に含まれています
  */
 export function getToolOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_auto,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.tools}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.tools}/${slug}`;
 }
 
 /**
@@ -101,7 +107,11 @@ export async function generateOGImage(
     nameEn?: string;
     category?: string;
     description?: string;
-    style?: "flat-minimal" | "modern-health";
+    style?:
+      | "flat-minimal"
+      | "modern-health"
+      | "gradient-vibrant"
+      | "organic-botanical";
   },
 ): Promise<{
   success: boolean;

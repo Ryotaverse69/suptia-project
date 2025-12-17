@@ -306,6 +306,7 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
             evidenceLevel={ingredient.evidenceLevel}
             description={ingredient.description}
             updatedAt={ingredient._updatedAt}
+            ogImageUrl={getIngredientOGImage(ingredient.slug.current)}
           />
 
           {/* 薬機法準拠マーク（AI検索との差別化） */}

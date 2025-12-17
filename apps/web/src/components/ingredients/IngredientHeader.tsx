@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import { Award, Shield, Beaker, Calendar } from "lucide-react";
 import {
   systemColors,
@@ -14,6 +18,7 @@ interface IngredientHeaderProps {
   evidenceLevel?: string;
   description?: string;
   updatedAt?: string;
+  ogImageUrl?: string;
 }
 
 // 日付をフォーマット
@@ -45,7 +50,10 @@ export function IngredientHeader({
   evidenceLevel,
   description,
   updatedAt,
+  ogImageUrl,
 }: IngredientHeaderProps) {
+  const [imageError, setImageError] = useState(false);
+
   const evidenceLabel = evidenceLevel
     ? evidenceLevelLabels[evidenceLevel] || "限定的な根拠"
     : null;
@@ -135,6 +143,20 @@ export function IngredientHeader({
         >
           {nameEn}
         </p>
+
+        {/* アイキャッチ画像（ミニマル） */}
+        {ogImageUrl && !imageError && (
+          <div className="relative w-full max-w-sm mx-auto aspect-[1200/630] mb-5 sm:mb-6 rounded-[12px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+            <Image
+              src={ogImageUrl}
+              alt={`${name}（${nameEn}）のアイキャッチ画像`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 384px) 100vw, 384px"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        )}
 
         {/* バッジ群 */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-5 sm:mb-6">

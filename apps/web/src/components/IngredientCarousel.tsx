@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Beaker, Pause, Play } from "lucide-react";
-import { IngredientCoverSVG } from "./IngredientCoverSVG";
+import { getIngredientOGImage, getEyecatchImage } from "@/lib/og-image";
 
 interface Ingredient {
   name: string;
@@ -116,13 +117,16 @@ export function IngredientCarousel({ ingredients }: IngredientCarouselProps) {
                 className="flex-shrink-0 w-80 group"
               >
                 <div className="bg-white border border-primary-200 rounded-xl overflow-hidden hover:border-primary hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-                  {/* SVGアイキャッチ画像 */}
-                  <div className="h-48 overflow-hidden group-hover:scale-[1.02] transition-transform duration-300">
-                    <IngredientCoverSVG
-                      name={ingredient.name}
-                      nameEn={ingredient.nameEn}
-                      category={ingredient.category}
-                      className="w-full h-full object-cover"
+                  {/* OGPアイキャッチ画像 */}
+                  <div className="h-48 overflow-hidden group-hover:scale-[1.02] transition-transform duration-300 relative">
+                    <Image
+                      src={getEyecatchImage(
+                        getIngredientOGImage(ingredient.slug.current),
+                      )}
+                      alt={ingredient.name}
+                      fill
+                      className="object-cover"
+                      sizes="320px"
                     />
                   </div>
 

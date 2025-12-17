@@ -17,6 +17,11 @@ import {
   Shield,
   Target,
   Users,
+  Wrench,
+  FileText,
+  Info,
+  Mail,
+  HelpCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +45,12 @@ export function Header() {
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [contentOpen, setContentOpen] = useState(false);
+  const [siteInfoOpen, setSiteInfoOpen] = useState(false);
+  const [mobileGuideOpen, setMobileGuideOpen] = useState(false);
+  const [mobileContentOpen, setMobileContentOpen] = useState(false);
+  const [mobileSiteInfoOpen, setMobileSiteInfoOpen] = useState(false);
 
   const { user, isLoading: authLoading, signOut } = useAuth();
   const { profile } = useUserProfile();
@@ -233,113 +244,238 @@ export function Header() {
                         style={{ backgroundColor: appleWebColors.borderSubtle }}
                       />
 
-                      {/* Section: Guide */}
-                      <p
-                        className={`${typography.caption2} uppercase tracking-wider px-4 py-2`}
+                      {/* Section: Guide (Collapsible) */}
+                      <button
+                        onClick={() => setGuideOpen(!guideOpen)}
+                        className={`w-full flex items-center justify-between px-4 py-2 ${typography.caption2} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        ガイド
-                      </p>
+                        <span>ガイド</span>
+                        <motion.div
+                          animate={{ rotate: guideOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2, ease: appleEase }}
+                        >
+                          <ChevronDown size={14} aria-hidden="true" />
+                        </motion.div>
+                      </button>
 
-                      <Link
-                        href="/about"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        サプティアとは
-                      </Link>
-                      <Link
-                        href="/why-suptia"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        AI検索との違い
-                      </Link>
-                      <Link
-                        href="/how-to-use"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        サプティアの使い方
-                      </Link>
-                      <Link
-                        href="/about/methodology"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        比較方法論
-                      </Link>
+                      <AnimatePresence>
+                        {guideOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: appleEase }}
+                            className="overflow-hidden"
+                          >
+                            <Link
+                              href="/about"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              サプティアとは
+                            </Link>
+                            <Link
+                              href="/why-suptia"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              AI検索との違い
+                            </Link>
+                            <Link
+                              href="/how-to-use"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              サプティアの使い方
+                            </Link>
+                            <Link
+                              href="/about/methodology"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              比較方法論
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
-                      {/* Divider */}
-                      <div
-                        className="mx-4 my-2 h-px"
-                        style={{ backgroundColor: appleWebColors.borderSubtle }}
-                      />
-
-                      {/* Section: Content */}
-                      <p
-                        className={`${typography.caption2} uppercase tracking-wider px-4 py-2`}
+                      {/* Section: Content (Collapsible) */}
+                      <button
+                        onClick={() => setContentOpen(!contentOpen)}
+                        className={`w-full flex items-center justify-between px-4 py-2 ${typography.caption2} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        コンテンツ
-                      </p>
+                        <span>コンテンツ</span>
+                        <motion.div
+                          animate={{ rotate: contentOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2, ease: appleEase }}
+                        >
+                          <ChevronDown size={14} aria-hidden="true" />
+                        </motion.div>
+                      </button>
 
-                      <Link
-                        href="/ingredients"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
+                      <AnimatePresence>
+                        {contentOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: appleEase }}
+                            className="overflow-hidden"
+                          >
+                            <Link
+                              href="/ingredients"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <BookOpen
+                                size={18}
+                                style={{ color: systemColors.green }}
+                                aria-hidden="true"
+                              />
+                              成分ガイド
+                            </Link>
+                            <Link
+                              href="/guide/dangerous-ingredients"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Shield
+                                size={18}
+                                style={{ color: systemColors.red }}
+                                aria-hidden="true"
+                              />
+                              危険成分ガイド
+                            </Link>
+                            <Link
+                              href="/guide/purposes"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Target
+                                size={18}
+                                style={{ color: systemColors.orange }}
+                                aria-hidden="true"
+                              />
+                              目的別ガイド
+                            </Link>
+                            <Link
+                              href="/guide/audiences"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Users
+                                size={18}
+                                style={{ color: systemColors.indigo }}
+                                aria-hidden="true"
+                              />
+                              対象者別ガイド
+                            </Link>
+                            <Link
+                              href="/tools"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Wrench
+                                size={18}
+                                style={{ color: systemColors.cyan }}
+                                aria-hidden="true"
+                              />
+                              無料ツール
+                            </Link>
+                            <Link
+                              href="/articles"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <FileText
+                                size={18}
+                                style={{ color: systemColors.purple }}
+                                aria-hidden="true"
+                              />
+                              比較記事
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Section: Site Info (Collapsible) */}
+                      <button
+                        onClick={() => setSiteInfoOpen(!siteInfoOpen)}
+                        className={`w-full flex items-center justify-between px-4 py-2 ${typography.caption2} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
+                        style={{ color: appleWebColors.textSecondary }}
                       >
-                        <BookOpen
-                          size={18}
-                          style={{ color: systemColors.green }}
-                          aria-hidden="true"
-                        />
-                        成分ガイド
-                      </Link>
-                      <Link
-                        href="/guide/dangerous-ingredients"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        <Shield
-                          size={18}
-                          style={{ color: systemColors.red }}
-                          aria-hidden="true"
-                        />
-                        危険成分ガイド
-                      </Link>
-                      <Link
-                        href="/guide/purposes"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        <Target
-                          size={18}
-                          style={{ color: systemColors.orange }}
-                          aria-hidden="true"
-                        />
-                        目的別ガイド
-                      </Link>
-                      <Link
-                        href="/guide/audiences"
-                        onClick={() => setDesktopMenuOpen(false)}
-                        className={menuItemClasses}
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        <Users
-                          size={18}
-                          style={{ color: systemColors.indigo }}
-                          aria-hidden="true"
-                        />
-                        対象者別ガイド
-                      </Link>
+                        <span>サイト情報</span>
+                        <motion.div
+                          animate={{ rotate: siteInfoOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2, ease: appleEase }}
+                        >
+                          <ChevronDown size={14} aria-hidden="true" />
+                        </motion.div>
+                      </button>
+
+                      <AnimatePresence>
+                        {siteInfoOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: appleEase }}
+                            className="overflow-hidden"
+                          >
+                            <Link
+                              href="/advisory"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Info
+                                size={18}
+                                style={{ color: systemColors.blue }}
+                                aria-hidden="true"
+                              />
+                              情報ソースと方針
+                            </Link>
+                            <Link
+                              href="/contact"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Mail
+                                size={18}
+                                style={{ color: systemColors.green }}
+                                aria-hidden="true"
+                              />
+                              お問い合わせ
+                            </Link>
+                            <Link
+                              href="/faq"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <HelpCircle
+                                size={18}
+                                style={{ color: systemColors.orange }}
+                                aria-hidden="true"
+                              />
+                              よくある質問
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -587,107 +723,238 @@ export function Header() {
                   診断履歴
                 </Link>
 
-                {/* Section: Guide */}
-                <p
-                  className={`${typography.caption1} uppercase tracking-wider px-4 pt-4 pb-2`}
+                {/* Section: Guide (Collapsible) */}
+                <button
+                  onClick={() => setMobileGuideOpen(!mobileGuideOpen)}
+                  className={`w-full flex items-center justify-between px-4 pt-4 pb-2 ${typography.caption1} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  ガイド
-                </p>
+                  <span>ガイド</span>
+                  <motion.div
+                    animate={{ rotate: mobileGuideOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: appleEase }}
+                  >
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </motion.div>
+                </button>
 
-                <Link
-                  href="/about"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  サプティアとは
-                </Link>
-                <Link
-                  href="/why-suptia"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  AI検索との違い
-                </Link>
-                <Link
-                  href="/how-to-use"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  サプティアの使い方
-                </Link>
-                <Link
-                  href="/about/methodology"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  比較方法論
-                </Link>
+                <AnimatePresence>
+                  {mobileGuideOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: appleEase }}
+                      className="overflow-hidden"
+                    >
+                      <Link
+                        href="/about"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        サプティアとは
+                      </Link>
+                      <Link
+                        href="/why-suptia"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        AI検索との違い
+                      </Link>
+                      <Link
+                        href="/how-to-use"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        サプティアの使い方
+                      </Link>
+                      <Link
+                        href="/about/methodology"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        比較方法論
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                {/* Section: Content */}
-                <p
-                  className={`${typography.caption1} uppercase tracking-wider px-4 pt-4 pb-2`}
+                {/* Section: Content (Collapsible) */}
+                <button
+                  onClick={() => setMobileContentOpen(!mobileContentOpen)}
+                  className={`w-full flex items-center justify-between px-4 pt-4 pb-2 ${typography.caption1} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  コンテンツ
-                </p>
+                  <span>コンテンツ</span>
+                  <motion.div
+                    animate={{ rotate: mobileContentOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: appleEase }}
+                  >
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </motion.div>
+                </button>
 
-                <Link
-                  href="/ingredients"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
+                <AnimatePresence>
+                  {mobileContentOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: appleEase }}
+                      className="overflow-hidden"
+                    >
+                      <Link
+                        href="/ingredients"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <BookOpen
+                          size={20}
+                          style={{ color: systemColors.green }}
+                          aria-hidden="true"
+                        />
+                        成分ガイド
+                      </Link>
+                      <Link
+                        href="/guide/dangerous-ingredients"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Shield
+                          size={20}
+                          style={{ color: systemColors.red }}
+                          aria-hidden="true"
+                        />
+                        危険成分ガイド
+                      </Link>
+                      <Link
+                        href="/guide/purposes"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Target
+                          size={20}
+                          style={{ color: systemColors.orange }}
+                          aria-hidden="true"
+                        />
+                        目的別ガイド
+                      </Link>
+                      <Link
+                        href="/guide/audiences"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Users
+                          size={20}
+                          style={{ color: systemColors.indigo }}
+                          aria-hidden="true"
+                        />
+                        対象者別ガイド
+                      </Link>
+                      <Link
+                        href="/tools"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Wrench
+                          size={20}
+                          style={{ color: systemColors.cyan }}
+                          aria-hidden="true"
+                        />
+                        無料ツール
+                      </Link>
+                      <Link
+                        href="/articles"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <FileText
+                          size={20}
+                          style={{ color: systemColors.purple }}
+                          aria-hidden="true"
+                        />
+                        比較記事
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Section: Site Info (Collapsible) */}
+                <button
+                  onClick={() => setMobileSiteInfoOpen(!mobileSiteInfoOpen)}
+                  className={`w-full flex items-center justify-between px-4 pt-4 pb-2 ${typography.caption1} uppercase tracking-wider transition-colors hover:bg-white/30 rounded-lg`}
+                  style={{ color: appleWebColors.textSecondary }}
                 >
-                  <BookOpen
-                    size={20}
-                    style={{ color: systemColors.green }}
-                    aria-hidden="true"
-                  />
-                  成分ガイド
-                </Link>
-                <Link
-                  href="/guide/dangerous-ingredients"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  <Shield
-                    size={20}
-                    style={{ color: systemColors.red }}
-                    aria-hidden="true"
-                  />
-                  危険成分ガイド
-                </Link>
-                <Link
-                  href="/guide/purposes"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  <Target
-                    size={20}
-                    style={{ color: systemColors.orange }}
-                    aria-hidden="true"
-                  />
-                  目的別ガイド
-                </Link>
-                <Link
-                  href="/guide/audiences"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={menuItemClasses}
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  <Users
-                    size={20}
-                    style={{ color: systemColors.indigo }}
-                    aria-hidden="true"
-                  />
-                  対象者別ガイド
-                </Link>
+                  <span>サイト情報</span>
+                  <motion.div
+                    animate={{ rotate: mobileSiteInfoOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: appleEase }}
+                  >
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </motion.div>
+                </button>
+
+                <AnimatePresence>
+                  {mobileSiteInfoOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: appleEase }}
+                      className="overflow-hidden"
+                    >
+                      <Link
+                        href="/advisory"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Info
+                          size={20}
+                          style={{ color: systemColors.blue }}
+                          aria-hidden="true"
+                        />
+                        情報ソースと方針
+                      </Link>
+                      <Link
+                        href="/contact"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Mail
+                          size={20}
+                          style={{ color: systemColors.green }}
+                          aria-hidden="true"
+                        />
+                        お問い合わせ
+                      </Link>
+                      <Link
+                        href="/faq"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <HelpCircle
+                          size={20}
+                          style={{ color: systemColors.orange }}
+                          aria-hidden="true"
+                        />
+                        よくある質問
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Section: Account */}
                 <div
