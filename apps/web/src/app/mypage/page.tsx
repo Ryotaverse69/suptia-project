@@ -20,6 +20,7 @@ import {
   Camera,
   ShieldCheck,
   Eye,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
@@ -597,6 +598,68 @@ export default function MyPage() {
                             style={{ color: appleWebColors.textSecondary }}
                           >
                             AI画像生成・キャプション作成
+                          </p>
+                        </div>
+
+                        {/* Arrow */}
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
+                        >
+                          <ChevronRight
+                            size={18}
+                            style={{ color: appleWebColors.textTertiary }}
+                          />
+                        </div>
+                      </div>
+                    </Link>
+
+                    <Link href="/admin/og-images">
+                      <div
+                        className="flex items-center gap-4 p-5 sm:p-6 transition-all duration-200 group min-h-[72px] hover:bg-white/50 hover:backdrop-blur-[12px]"
+                        style={{
+                          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                        }}
+                      >
+                        {/* Icon with gradient */}
+                        <div
+                          className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                          }}
+                        >
+                          <ImageIcon
+                            size={24}
+                            className="text-white sm:w-7 sm:h-7"
+                          />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4
+                              className="font-semibold text-[15px] transition-colors group-hover:opacity-70"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              OGP画像管理
+                            </h4>
+                            <span
+                              className="px-2 py-0.5 text-[11px] font-semibold rounded-full"
+                              style={{
+                                backgroundColor: `${systemColors.purple}15`,
+                                color: systemColors.purple,
+                              }}
+                            >
+                              Admin
+                            </span>
+                          </div>
+                          <p
+                            className="text-[13px]"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            成分・記事のOGP画像を一括生成
                           </p>
                         </div>
 
