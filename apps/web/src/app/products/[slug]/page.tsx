@@ -1313,6 +1313,12 @@ export async function generateMetadata({ params }: PageProps) {
       : relatedPrices.length > 0
         ? relatedPrices
         : fallbackPriceData;
+  // 商品画像を取得（externalImageUrlを優先）
+  const productImages = [
+    product.externalImageUrl,
+    ...(product.images?.map((img) => img.asset?.url) || []),
+  ].filter(Boolean) as string[];
+
   return generateProductMetadata({
     name: product.name,
     brand: product.brandName,
@@ -1323,7 +1329,7 @@ export async function generateMetadata({ params }: PageProps) {
     })),
     slug: product.slug.current,
     description: product.description,
-    images: product.images?.map((img) => img.asset?.url).filter(Boolean),
+    images: productImages,
     mainIngredient: product.ingredients?.[0]?.ingredient?.name,
     ingredientAmount: product.ingredients?.[0]?.amountMgPerServing,
   });

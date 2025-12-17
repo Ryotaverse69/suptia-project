@@ -142,10 +142,14 @@ export function generateProductMetadata(product: ProductSEOData): Metadata {
     description = `${product.brand}の${product.name}を徹底分析。価格・成分量・エビデンス・安全性で科学的に評価。最安値が3秒でわかります。`;
   }
 
+  // 商品画像をOGP画像として使用
+  const ogImage = product.images?.[0] || undefined;
+
   return generateMetadata({
     title,
     description,
     canonical: `/products/${product.slug}`,
+    ogImage,
     keywords: [
       product.name,
       product.brand,
