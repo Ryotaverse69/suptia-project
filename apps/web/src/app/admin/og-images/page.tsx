@@ -9,7 +9,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import NextImage from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { sanity } from "@/lib/sanity.client";
-import { getIngredientOGImage } from "@/lib/og-image";
+import { getIngredientOGImage, getArticleOGImage } from "@/lib/og-image";
 import {
   Image as ImageIcon,
   Loader2,
@@ -21,6 +21,8 @@ import {
   StopCircle,
   CheckCircle2,
   Search,
+  Beaker,
+  FileText,
 } from "lucide-react";
 
 // スタイル定義
@@ -60,6 +62,7 @@ const OGP_STYLES = {
 } as const;
 
 type StyleKey = keyof typeof OGP_STYLES;
+type ContentType = "ingredients" | "articles";
 
 interface IngredientItem {
   _id: string;
@@ -68,6 +71,35 @@ interface IngredientItem {
   slug: { current: string };
   category?: string;
 }
+
+interface ArticleItem {
+  _id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+}
+
+// 比較記事データ（ハードコード）
+const ARTICLES: ArticleItem[] = [
+  {
+    _id: "article-vitamin-c-comparison",
+    slug: "vitamin-c-comparison",
+    title: "【2025年最新】ビタミンCサプリおすすめ比較｜コスパ・品質で徹底分析",
+    description:
+      "ビタミンCサプリメントを価格・成分量・コスパ・安全性で徹底比較。",
+    category: "ビタミン",
+  },
+  {
+    _id: "article-vitamin-d-comparison",
+    slug: "vitamin-d-comparison",
+    title:
+      "【2025年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
+    description:
+      "ビタミンDサプリをD2/D3の違い・吸収率・安全性・コスパで徹底比較。",
+    category: "ビタミン",
+  },
+];
 
 interface GenerationStatus {
   [slug: string]: "pending" | "generating" | "success" | "error" | "exists";
@@ -80,7 +112,9 @@ interface GeneratedImage {
 }
 
 export default function OGImagesAdminPage() {
+  const [contentType, setContentType] = useState<ContentType>("ingredients");
   const [ingredients, setIngredients] = useState<IngredientItem[]>([]);
+  const [articles] = useState<ArticleItem[]>(ARTICLES);
   const [loading, setLoading] = useState(true);
   const [checkingExisting, setCheckingExisting] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -157,7 +191,8 @@ export default function OGImagesAdminPage() {
 
   // 既存OGP画像のチェック
   const checkExistingImages = useCallback(async () => {
-    if (ingredients.length === 0) return;
+    const items = contentType === "ingredients" ? ingredients : articles;
+    if (items.length === 0) return;
 
     setCheckingExisting(true);
     setError(null);
@@ -174,12 +209,18 @@ export default function OGImagesAdminPage() {
 
     // 並列でチェック（5件ずつバッチ処理）
     const batchSize = 5;
-    for (let i = 0; i < ingredients.length; i += batchSize) {
-      const batch = ingredients.slice(i, i + batchSize);
+    for (let i = 0; i < items.length; i += batchSize) {
+      const batch = items.slice(i, i + batchSize);
       const results = await Promise.all(
-        batch.map(async (ingredient) => {
-          const slug = ingredient.slug.current;
-          const ogUrl = getIngredientOGImage(slug);
+        batch.map(async (item) => {
+          const slug =
+            contentType === "ingredients"
+              ? (item as IngredientItem).slug.current
+              : (item as ArticleItem).slug;
+          const ogUrl =
+            contentType === "ingredients"
+              ? getIngredientOGImage(slug)
+              : getArticleOGImage(slug);
 
           const exists = await checkImageExists(ogUrl);
           return { slug, exists, url: ogUrl };
@@ -192,15 +233,15 @@ export default function OGImagesAdminPage() {
           existingImages.push({
             slug: result.slug,
             url: result.url,
-            type: "ingredient",
+            type: contentType === "ingredients" ? "ingredient" : "article",
           });
         }
       });
 
       // 進捗表示のため少し待つ
       setProgress({
-        current: Math.min(i + batchSize, ingredients.length),
-        total: ingredients.length,
+        current: Math.min(i + batchSize, items.length),
+        total: items.length,
       });
     }
 
@@ -208,15 +249,15 @@ export default function OGImagesAdminPage() {
     setGeneratedImages(existingImages);
     setCheckingExisting(false);
     setProgress({ current: 0, total: 0 });
-  }, [ingredients]);
+  }, [contentType, ingredients, articles]);
 
   // 生成中止
   const cancelGeneration = useCallback(() => {
     cancelRef.current = true;
   }, []);
 
-  // 単一画像生成
-  const generateSingleOG = async (ingredient: IngredientItem) => {
+  // 単一画像生成（成分）
+  const generateIngredientOG = async (ingredient: IngredientItem) => {
     if (!token) return;
 
     const slug = ingredient.slug.current;
@@ -257,6 +298,48 @@ export default function OGImagesAdminPage() {
     }
   };
 
+  // 単一画像生成（記事）
+  const generateArticleOG = async (article: ArticleItem) => {
+    if (!token) return;
+
+    const slug = article.slug;
+    setStatus((prev) => ({ ...prev, [slug]: "generating" }));
+
+    try {
+      const response = await fetch("/api/og/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: "article",
+          slug,
+          name: article.title,
+          category: article.category,
+          description: article.description,
+          style: selectedStyle,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus((prev) => ({ ...prev, [slug]: "success" }));
+        setGeneratedImages((prev) => [
+          ...prev,
+          { slug, url: data.ogImage.url, type: "article" },
+        ]);
+      } else {
+        setStatus((prev) => ({ ...prev, [slug]: "error" }));
+        console.error(`Failed to generate OG for ${slug}:`, data.error);
+      }
+    } catch (err) {
+      setStatus((prev) => ({ ...prev, [slug]: "error" }));
+      console.error(`Error generating OG for ${slug}:`, err);
+    }
+  };
+
   // 選択項目の一括生成
   const generateSelected = async () => {
     if (selectedItems.size === 0 || !token) return;
@@ -264,22 +347,37 @@ export default function OGImagesAdminPage() {
     setIsGenerating(true);
     cancelRef.current = false;
 
-    const items = ingredients.filter((i) => selectedItems.has(i.slug.current));
-    setProgress({ current: 0, total: items.length });
+    if (contentType === "ingredients") {
+      const items = ingredients.filter((i) =>
+        selectedItems.has(i.slug.current),
+      );
+      setProgress({ current: 0, total: items.length });
 
-    for (let i = 0; i < items.length; i++) {
-      // 中止チェック
-      if (cancelRef.current) {
-        console.log("Generation cancelled by user");
-        break;
+      for (let i = 0; i < items.length; i++) {
+        if (cancelRef.current) {
+          console.log("Generation cancelled by user");
+          break;
+        }
+        await generateIngredientOG(items[i]);
+        setProgress({ current: i + 1, total: items.length });
+        if (i < items.length - 1 && !cancelRef.current) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
       }
+    } else {
+      const items = articles.filter((a) => selectedItems.has(a.slug));
+      setProgress({ current: 0, total: items.length });
 
-      await generateSingleOG(items[i]);
-      setProgress({ current: i + 1, total: items.length });
-
-      // APIレート制限対策（最後の1件は待たない）
-      if (i < items.length - 1 && !cancelRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+      for (let i = 0; i < items.length; i++) {
+        if (cancelRef.current) {
+          console.log("Generation cancelled by user");
+          break;
+        }
+        await generateArticleOG(items[i]);
+        setProgress({ current: i + 1, total: items.length });
+        if (i < items.length - 1 && !cancelRef.current) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
       }
     }
 
@@ -287,12 +385,28 @@ export default function OGImagesAdminPage() {
     cancelRef.current = false;
   };
 
+  // コンテンツタイプ切り替え時に選択をリセット
+  const handleContentTypeChange = (type: ContentType) => {
+    setContentType(type);
+    setSelectedItems(new Set());
+    setStatus({});
+    setGeneratedImages([]);
+  };
+
+  // 現在のアイテム一覧を取得
+  const currentItems = contentType === "ingredients" ? ingredients : articles;
+  const currentItemCount = currentItems.length;
+
   // 全選択/解除
   const toggleSelectAll = () => {
-    if (selectedItems.size === ingredients.length) {
+    if (selectedItems.size === currentItemCount) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(ingredients.map((i) => i.slug.current)));
+      if (contentType === "ingredients") {
+        setSelectedItems(new Set(ingredients.map((i) => i.slug.current)));
+      } else {
+        setSelectedItems(new Set(articles.map((a) => a.slug)));
+      }
     }
   };
 
@@ -344,6 +458,34 @@ export default function OGImagesAdminPage() {
               </div>
             </div>
           )}
+
+          {/* コンテンツタイプ切り替え */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => handleContentTypeChange("ingredients")}
+              disabled={isGenerating}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
+                contentType === "ingredients"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              } disabled:opacity-50`}
+            >
+              <Beaker className="w-4 h-4" />
+              成分 ({ingredients.length})
+            </button>
+            <button
+              onClick={() => handleContentTypeChange("articles")}
+              disabled={isGenerating}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
+                contentType === "articles"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              } disabled:opacity-50`}
+            >
+              <FileText className="w-4 h-4" />
+              比較記事 ({articles.length})
+            </button>
+          </div>
 
           {/* スタイル選択 */}
           <div className="mb-6">
@@ -405,7 +547,7 @@ export default function OGImagesAdminPage() {
             <button
               onClick={checkExistingImages}
               disabled={
-                checkingExisting || isGenerating || ingredients.length === 0
+                checkingExisting || isGenerating || currentItemCount === 0
               }
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
             >
@@ -426,7 +568,7 @@ export default function OGImagesAdminPage() {
               disabled={isGenerating}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition"
             >
-              {selectedItems.size === ingredients.length ? "全解除" : "全選択"}
+              {selectedItems.size === currentItemCount ? "全解除" : "全選択"}
             </button>
             {isGenerating ? (
               <button
@@ -447,7 +589,8 @@ export default function OGImagesAdminPage() {
               </button>
             )}
             <span className="text-sm text-gray-500">
-              成分数: {ingredients.length}件
+              {contentType === "ingredients" ? "成分" : "記事"}数:{" "}
+              {currentItemCount}件
               {Object.values(status).filter(
                 (s) => s === "exists" || s === "success",
               ).length > 0 && (
@@ -523,7 +666,7 @@ export default function OGImagesAdminPage() {
           </div>
         )}
 
-        {/* 成分一覧 */}
+        {/* アイテム一覧 */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -532,16 +675,19 @@ export default function OGImagesAdminPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     <input
                       type="checkbox"
-                      checked={selectedItems.size === ingredients.length}
+                      checked={
+                        selectedItems.size === currentItemCount &&
+                        currentItemCount > 0
+                      }
                       onChange={toggleSelectAll}
                       className="rounded border-gray-300"
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    成分名
+                    {contentType === "ingredients" ? "成分名" : "タイトル"}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    英名
+                    {contentType === "ingredients" ? "英名" : "説明"}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     カテゴリ
@@ -555,76 +701,165 @@ export default function OGImagesAdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {ingredients.map((ingredient) => {
-                  const slug = ingredient.slug.current;
-                  const itemStatus = status[slug];
+                {contentType === "ingredients"
+                  ? ingredients.map((ingredient) => {
+                      const slug = ingredient.slug.current;
+                      const itemStatus = status[slug];
 
-                  return (
-                    <tr key={ingredient._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <input
-                          type="checkbox"
-                          checked={selectedItems.has(slug)}
-                          onChange={() => toggleSelect(slug)}
-                          className="rounded border-gray-300"
-                        />
-                      </td>
-                      <td className="px-4 py-3 font-medium text-gray-900">
-                        {ingredient.name}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
-                        {ingredient.nameEn || "-"}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
-                        {ingredient.category || "-"}
-                      </td>
-                      <td className="px-4 py-3">
-                        {itemStatus === "generating" && (
-                          <span className="inline-flex items-center gap-1 text-blue-600 text-sm">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            生成中
-                          </span>
-                        )}
-                        {itemStatus === "success" && (
-                          <span className="inline-flex items-center gap-1 text-green-600 text-sm">
-                            <Check className="w-4 h-4" />
-                            完了
-                          </span>
-                        )}
-                        {itemStatus === "exists" && (
-                          <span className="inline-flex items-center gap-1 text-emerald-600 text-sm">
-                            <CheckCircle2 className="w-4 h-4" />
-                            生成済み
-                          </span>
-                        )}
-                        {itemStatus === "error" && (
-                          <span className="inline-flex items-center gap-1 text-red-600 text-sm">
-                            <AlertCircle className="w-4 h-4" />
-                            エラー
-                          </span>
-                        )}
-                        {!itemStatus && (
-                          <span className="text-gray-400 text-sm">未確認</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => generateSingleOG(ingredient)}
-                          disabled={itemStatus === "generating" || !token}
-                          className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
-                            itemStatus === "exists" || itemStatus === "success"
-                              ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
-                              : "text-blue-600 bg-blue-50 hover:bg-blue-100"
-                          }`}
-                        >
-                          {itemStatus === "exists" || itemStatus === "success"
-                            ? "再生成"
-                            : "生成"}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                      return (
+                        <tr key={ingredient._id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedItems.has(slug)}
+                              onChange={() => toggleSelect(slug)}
+                              className="rounded border-gray-300"
+                            />
+                          </td>
+                          <td className="px-4 py-3 font-medium text-gray-900">
+                            {ingredient.name}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">
+                            {ingredient.nameEn || "-"}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">
+                            {ingredient.category || "-"}
+                          </td>
+                          <td className="px-4 py-3">
+                            {itemStatus === "generating" && (
+                              <span className="inline-flex items-center gap-1 text-blue-600 text-sm">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                生成中
+                              </span>
+                            )}
+                            {itemStatus === "success" && (
+                              <span className="inline-flex items-center gap-1 text-green-600 text-sm">
+                                <Check className="w-4 h-4" />
+                                完了
+                              </span>
+                            )}
+                            {itemStatus === "exists" && (
+                              <span className="inline-flex items-center gap-1 text-emerald-600 text-sm">
+                                <CheckCircle2 className="w-4 h-4" />
+                                生成済み
+                              </span>
+                            )}
+                            {itemStatus === "error" && (
+                              <span className="inline-flex items-center gap-1 text-red-600 text-sm">
+                                <AlertCircle className="w-4 h-4" />
+                                エラー
+                              </span>
+                            )}
+                            {!itemStatus && (
+                              <span className="text-gray-400 text-sm">
+                                未確認
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => generateIngredientOG(ingredient)}
+                              disabled={itemStatus === "generating" || !token}
+                              className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                                itemStatus === "exists" ||
+                                itemStatus === "success"
+                                  ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                                  : "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                              }`}
+                            >
+                              {itemStatus === "exists" ||
+                              itemStatus === "success"
+                                ? "再生成"
+                                : "生成"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : articles.map((article) => {
+                      const slug = article.slug;
+                      const itemStatus = status[slug];
+
+                      return (
+                        <tr key={article._id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedItems.has(slug)}
+                              onChange={() => toggleSelect(slug)}
+                              className="rounded border-gray-300"
+                            />
+                          </td>
+                          <td className="px-4 py-3 font-medium text-gray-900">
+                            <div
+                              className="max-w-xs truncate"
+                              title={article.title}
+                            >
+                              {article.title}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">
+                            <div
+                              className="max-w-xs truncate"
+                              title={article.description}
+                            >
+                              {article.description}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">
+                            {article.category}
+                          </td>
+                          <td className="px-4 py-3">
+                            {itemStatus === "generating" && (
+                              <span className="inline-flex items-center gap-1 text-blue-600 text-sm">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                生成中
+                              </span>
+                            )}
+                            {itemStatus === "success" && (
+                              <span className="inline-flex items-center gap-1 text-green-600 text-sm">
+                                <Check className="w-4 h-4" />
+                                完了
+                              </span>
+                            )}
+                            {itemStatus === "exists" && (
+                              <span className="inline-flex items-center gap-1 text-emerald-600 text-sm">
+                                <CheckCircle2 className="w-4 h-4" />
+                                生成済み
+                              </span>
+                            )}
+                            {itemStatus === "error" && (
+                              <span className="inline-flex items-center gap-1 text-red-600 text-sm">
+                                <AlertCircle className="w-4 h-4" />
+                                エラー
+                              </span>
+                            )}
+                            {!itemStatus && (
+                              <span className="text-gray-400 text-sm">
+                                未確認
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => generateArticleOG(article)}
+                              disabled={itemStatus === "generating" || !token}
+                              className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                                itemStatus === "exists" ||
+                                itemStatus === "success"
+                                  ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                                  : "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                              }`}
+                            >
+                              {itemStatus === "exists" ||
+                              itemStatus === "success"
+                                ? "再生成"
+                                : "生成"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
               </tbody>
             </table>
           </div>
