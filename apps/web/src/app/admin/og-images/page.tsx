@@ -99,6 +99,111 @@ const ARTICLES: ArticleItem[] = [
       "ビタミンDサプリをD2/D3の違い・吸収率・安全性・コスパで徹底比較。",
     category: "ビタミン",
   },
+  {
+    _id: "article-protein-comparison",
+    slug: "protein-comparison",
+    title:
+      "【2025年最新】プロテインおすすめ比較｜種類・コスパ・目的別で徹底分析",
+    description:
+      "プロテインをホエイ・カゼイン・ソイなど種類別に比較。WPC/WPI/WPHの違いを解説。",
+    category: "アミノ酸・タンパク質",
+  },
+  {
+    _id: "article-omega3-comparison",
+    slug: "omega3-comparison",
+    title:
+      "【2025年最新】オメガ3（フィッシュオイル）おすすめ比較｜EPA・DHA含有量で徹底分析",
+    description: "オメガ3サプリをEPA/DHA比率・純度・酸化防止で徹底比較。",
+    category: "脂肪酸",
+  },
+  {
+    _id: "article-magnesium-comparison",
+    slug: "magnesium-comparison",
+    title:
+      "【2025年最新】マグネシウムサプリおすすめ比較｜形態別の吸収率で徹底分析",
+    description:
+      "マグネシウムサプリを形態（グリシン酸・クエン酸・酸化物）別に比較。",
+    category: "ミネラル",
+  },
+  {
+    _id: "article-iron-comparison",
+    slug: "iron-comparison",
+    title:
+      "【2025年最新】鉄分サプリおすすめ比較｜ヘム鉄・非ヘム鉄・キレート鉄の違い",
+    description:
+      "鉄分サプリをヘム鉄・非ヘム鉄・キレート鉄で比較。吸収率・副作用を分析。",
+    category: "ミネラル",
+  },
+  {
+    _id: "article-zinc-comparison",
+    slug: "zinc-comparison",
+    title:
+      "【2025年最新】亜鉛サプリおすすめ比較｜形態別の吸収率・効果で徹底分析",
+    description:
+      "亜鉛サプリをピコリン酸・グルコン酸・クエン酸など形態別に比較。",
+    category: "ミネラル",
+  },
+  {
+    _id: "article-vitamin-b-comparison",
+    slug: "vitamin-b-comparison",
+    title:
+      "【2025年最新】ビタミンB群サプリおすすめ比較｜8種のBビタミンを徹底分析",
+    description:
+      "ビタミンB群サプリをB1・B2・B6・B12・葉酸など8種の含有量で比較。",
+    category: "ビタミン",
+  },
+  {
+    _id: "article-collagen-comparison",
+    slug: "collagen-comparison",
+    title:
+      "【2025年最新】コラーゲンサプリおすすめ比較｜種類・原料・吸収率で徹底分析",
+    description:
+      "コラーゲンサプリをI型・II型・III型、魚由来・豚由来・ペプチドで比較。",
+    category: "アミノ酸・タンパク質",
+  },
+  {
+    _id: "article-probiotics-comparison",
+    slug: "probiotics-comparison",
+    title:
+      "【2025年最新】乳酸菌・プロバイオティクスおすすめ比較｜菌株・CFU数で徹底分析",
+    description: "乳酸菌サプリをラクトバチルス・ビフィズス菌など菌株別に比較。",
+    category: "プロバイオティクス",
+  },
+  {
+    _id: "article-nmn-comparison",
+    slug: "nmn-comparison",
+    title:
+      "【2025年最新】NMNサプリおすすめ比較｜純度・吸収率・コスパで徹底分析",
+    description:
+      "NMNサプリを純度・製法・吸収率・コスパで徹底比較。エイジングケア効果を解説。",
+    category: "エイジングケア",
+  },
+  {
+    _id: "article-ashwagandha-comparison",
+    slug: "ashwagandha-comparison",
+    title:
+      "【2025年最新】アシュワガンダおすすめ比較｜KSM-66・Sensoril等の規格で徹底分析",
+    description:
+      "アシュワガンダをKSM-66®・Sensoril®・Shoden®など規格別に比較。",
+    category: "ハーブ・アダプトゲン",
+  },
+  {
+    _id: "article-creatine-comparison",
+    slug: "creatine-comparison",
+    title: "【2025年最新】クレアチンおすすめ比較｜形態・純度・コスパで徹底分析",
+    description:
+      "クレアチンをモノハイドレート・HCl・バッファードなど形態別に比較。",
+    category: "スポーツ",
+  },
+  {
+    _id: "article-mct-oil-comparison",
+    slug: "mct-oil-comparison",
+    title:
+      "【2025年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
+    description:
+      "MCTオイルをC8/C10比率・原料・品質で徹底比較。ケトジェニック向け選び方を解説。",
+    category: "脂肪酸",
+  },
 ];
 
 interface GenerationStatus {
