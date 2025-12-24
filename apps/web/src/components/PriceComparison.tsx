@@ -4,6 +4,7 @@ import { TierRank } from "@/lib/tier-colors";
 
 import { useState } from "react";
 import { parseProductInfo } from "@/lib/product-parser";
+import { ensureAffiliateTag } from "@/lib/affiliate-utils";
 import {
   ExternalLink,
   Database,
@@ -256,7 +257,7 @@ export function PriceComparison({
           return (
             <a
               key={`${price.source}-${index}`}
-              href={price.url}
+              href={ensureAffiliateTag(price.url, price.source)}
               target="_blank"
               rel="noopener noreferrer"
               className={`

@@ -134,7 +134,7 @@ curl -X POST http://localhost:3000/api/sync/prices \
       "success": true,
       "price": 1980,
       "currency": "JPY",
-      "url": "https://amazon.co.jp/dp/B00TEST123?tag=suptia-22"
+      "url": "https://amazon.co.jp/dp/B00TEST123?tag=suptia6902-22"
     },
     {
       "source": "rakuten",

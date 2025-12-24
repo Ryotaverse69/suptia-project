@@ -235,7 +235,7 @@ async function addAmazonProduct() {
     price: 398, // Amazonの現在価格
     servingsPerContainer: 120, // 120粒
     servingsPerDay: 2, // 1日2粒
-    amazonUrl: 'https://www.amazon.co.jp/dp/B008S6QCZK?tag=suptia69-22',
+    amazonUrl: 'https://www.amazon.co.jp/dp/B008S6QCZK?tag=suptia6902-22',
     imageUrl: 'https://m.media-amazon.com/images/I/71qZ8Z9ZQJL._AC_SL1500_.jpg',
     description: 'DHCのビタミンC。1日2粒で500mgのビタミンCを摂取できます。60日分の大容量でコストパフォーマンスに優れています。',
   };

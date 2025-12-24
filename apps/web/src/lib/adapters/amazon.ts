@@ -313,7 +313,8 @@ export class AmazonAdapter extends BaseAdapter {
         Items: [
           {
             ASIN: "B00TEST123",
-            DetailPageURL: "https://amazon.co.jp/dp/B00TEST123?tag=suptia-22",
+            DetailPageURL:
+              "https://amazon.co.jp/dp/B00TEST123?tag=suptia6902-22",
             Offers: {
               Listings: [
                 {

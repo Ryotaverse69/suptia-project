@@ -35,6 +35,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "rktzytsqxmoahrzxdlgn.supabase.co",
+      },
     ],
     // 画像フォーマット最適化
     formats: ["image/avif", "image/webp"],

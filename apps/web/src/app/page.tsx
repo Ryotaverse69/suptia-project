@@ -26,6 +26,7 @@ interface Product {
   slug: {
     current: string;
   };
+  source?: string;
   ingredients?: Array<{
     amountMgPerServing: number;
     ingredient?: {
@@ -164,7 +165,7 @@ function normalizeProductName(name: string): string {
 }
 
 async function getFeaturedProducts(): Promise<Product[]> {
-  const query = `*[_type == "product" && availability == "in-stock"] {
+  const productFields = `{
     _id,
     name,
     priceJPY,
@@ -176,6 +177,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
     servingsPerDay,
     externalImageUrl,
     slug,
+    source,
     ingredients[]{
       amountMgPerServing,
       ingredient->{
@@ -195,11 +197,25 @@ async function getFeaturedProducts(): Promise<Product[]> {
       overallRank
     },
     badges
-  }[0..99]`;
+  }`;
+
+  // Amazon商品を先に取得（確実に全件取得）
+  const amazonQuery = `*[_type == "product" && availability == "in-stock" && source == "amazon"] ${productFields}`;
+  // その他の商品は上位100件
+  const otherQuery = `*[_type == "product" && availability == "in-stock" && source != "amazon"] ${productFields}[0..99]`;
 
   try {
-    const allProducts = await sanity.fetch(query);
-    if (!allProducts || allProducts.length === 0) return [];
+    const [amazonProducts, otherProducts] = await Promise.all([
+      sanity.fetch(amazonQuery),
+      sanity.fetch(otherQuery),
+    ]);
+
+    if (
+      (!amazonProducts || amazonProducts.length === 0) &&
+      (!otherProducts || otherProducts.length === 0)
+    ) {
+      return [];
+    }
 
     const getTierScore = (rank?: string): number => {
       const scores: Record<string, number> = {
@@ -229,43 +245,73 @@ async function getFeaturedProducts(): Promise<Product[]> {
     };
 
     type ProductWithScore = Product & { _calculatedScore: number };
-    const productsWithScore: ProductWithScore[] = allProducts.map(
+
+    // 配列が存在することを確認
+    const safeAmazonProducts = amazonProducts || [];
+    const safeOtherProducts = otherProducts || [];
+
+    // Amazon商品のスコアリング（Tier + 成分人気度）
+    const amazonWithScore: ProductWithScore[] = safeAmazonProducts.map(
       (product: Product) => {
         const tierScore = getTierScore(product.tierRatings?.overallRank);
         const ingredientScore = getIngredientPopularityScore(product);
-        const recommendationScore = tierScore * 0.6 + ingredientScore * 0.4;
-
         return {
           ...product,
-          _calculatedScore: recommendationScore,
+          _calculatedScore: tierScore * 0.6 + ingredientScore * 0.4,
         };
       },
     );
+    amazonWithScore.sort((a, b) => b._calculatedScore - a._calculatedScore);
 
-    productsWithScore.sort((a, b) => b._calculatedScore - a._calculatedScore);
+    // その他商品のスコアリング
+    const otherWithScore: ProductWithScore[] = safeOtherProducts.map(
+      (product: Product) => {
+        const tierScore = getTierScore(product.tierRatings?.overallRank);
+        const ingredientScore = getIngredientPopularityScore(product);
+        return {
+          ...product,
+          _calculatedScore: tierScore * 0.6 + ingredientScore * 0.4,
+        };
+      },
+    );
+    otherWithScore.sort((a, b) => b._calculatedScore - a._calculatedScore);
 
     const uniqueProducts: Product[] = [];
     const seenSlugs = new Set<string>();
     const seenNormalizedNames = new Set<string>();
 
-    for (const product of productsWithScore) {
+    // まずAmazon商品を上位5件まで追加（名前の正規化チェックはスキップ）
+    for (const product of amazonWithScore) {
+      const slugCurrent = product.slug?.current;
+
+      if (!slugCurrent || seenSlugs.has(slugCurrent)) continue;
+
+      seenSlugs.add(slugCurrent);
+      // Amazon商品の名前も登録しておく（後の重複チェック用）
+      const normalizedName = normalizeProductName(product.name);
+      seenNormalizedNames.add(normalizedName);
+      uniqueProducts.push({
+        ...product,
+        badges: Array.isArray(product.badges) ? product.badges : [],
+      });
+
+      if (uniqueProducts.length >= 5) break;
+    }
+
+    // 残りの枠をその他商品で埋める
+    for (const product of otherWithScore) {
       const slugCurrent = product.slug?.current;
       const normalizedName = normalizeProductName(product.name);
 
-      if (!slugCurrent || seenSlugs.has(slugCurrent)) {
-        continue;
-      }
-      if (seenNormalizedNames.has(normalizedName)) {
-        continue;
-      }
+      if (!slugCurrent || seenSlugs.has(slugCurrent)) continue;
+      if (seenNormalizedNames.has(normalizedName)) continue;
 
       seenSlugs.add(slugCurrent);
       seenNormalizedNames.add(normalizedName);
-      const safeProduct = {
+      uniqueProducts.push({
         ...product,
         badges: Array.isArray(product.badges) ? product.badges : [],
-      };
-      uniqueProducts.push(safeProduct);
+      });
 
       if (uniqueProducts.length >= 10) break;
     }

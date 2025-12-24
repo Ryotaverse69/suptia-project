@@ -111,7 +111,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 # EC API
 RAKUTEN_APPLICATION_ID=
 RAKUTEN_AFFILIATE_ID=
-AMAZON_ASSOCIATE_TAG=suptia69-22
+AMAZON_ASSOCIATE_TAG=suptia6902-22
 ```
 
 詳細: [apps/web/.env.local.example](apps/web/.env.local.example)
