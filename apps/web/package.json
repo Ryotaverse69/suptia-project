@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
+    "@google/generative-ai": "^0.24.1",
     "@sanity/client": "^7.11.2",
     "@sanity/vision": "^4.10.1",
     "@supabase/ssr": "^0.8.0",
