@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 import { headers } from "next/headers";
 import { sanity } from "@/lib/sanity.client";
@@ -10,6 +11,7 @@ import {
   Shield,
   ChevronRight,
   Pill,
+  Beaker,
 } from "lucide-react";
 import { IngredientSearch } from "@/components/IngredientSearch";
 import { CategoryNav } from "@/components/CategoryNav";
@@ -23,6 +25,7 @@ import {
   fontStack,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import { getIngredientOGImage } from "@/lib/og-image";
 
 // ISR: 1時間ごとにページを再生成
 export const revalidate = 3600;
@@ -68,6 +71,12 @@ interface Ingredient {
   description: string;
   evidenceLevel: string;
   safetyScore?: number; // 安全性スコア（0-100）
+  coverImage?: {
+    asset: {
+      url: string;
+    };
+  };
+  sampleImageUrl?: string; // 関連商品の画像URL
 }
 
 // カテゴリーの表示順序（整理済み）
@@ -91,7 +100,13 @@ async function getIngredients(): Promise<Ingredient[]> {
     category,
     description,
     evidenceLevel,
-    safetyScore
+    safetyScore,
+    "coverImage": coverImage{
+      "asset": asset->{
+        url
+      }
+    },
+    "sampleImageUrl": *[_type == "product" && availability == "in-stock" && references(^._id) && defined(externalImageUrl)][0].externalImageUrl
   }`;
 
   try {
@@ -416,100 +431,122 @@ export default async function IngredientsPage() {
                               <Link
                                 key={ingredient.slug.current}
                                 href={`/ingredients/${ingredient.slug.current}`}
-                                className={`group rounded-[16px] p-5 border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${liquidGlassClasses.light}`}
+                                className={`group rounded-[16px] overflow-hidden border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${liquidGlassClasses.light}`}
                                 style={{
                                   borderColor: appleWebColors.borderSubtle,
                                 }}
                               >
-                                <div className="flex items-start justify-between mb-3">
-                                  <div className="flex-1">
-                                    <h4
-                                      className="text-[17px] font-semibold group-hover:opacity-70 transition-opacity mb-1"
-                                      style={{
-                                        color: appleWebColors.textPrimary,
-                                      }}
-                                    >
-                                      {ingredient.name}
-                                    </h4>
-                                    <p
-                                      className="text-[13px]"
-                                      style={{
-                                        color: appleWebColors.textSecondary,
-                                      }}
-                                    >
-                                      {ingredient.nameEn}
-                                    </p>
-                                  </div>
-                                  <ChevronRight
-                                    className="group-hover:translate-x-1 transition-all flex-shrink-0"
-                                    style={{
-                                      color: appleWebColors.textTertiary,
-                                    }}
-                                  />
-                                </div>
-
-                                <p
-                                  className="text-[14px] line-clamp-2 mb-4"
+                                {/* アイキャッチ画像 */}
+                                <div
+                                  className="relative h-40 overflow-hidden"
                                   style={{
-                                    color: appleWebColors.textSecondary,
+                                    backgroundColor: `${systemColors.blue}10`,
                                   }}
                                 >
-                                  {ingredient.description}
-                                </p>
+                                  <Image
+                                    src={getIngredientOGImage(
+                                      ingredient.slug.current,
+                                    )}
+                                    alt={ingredient.name}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  />
+                                  {/* ランクバッジ - 画像上に表示 */}
+                                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                                    {/* エビデンスランクバッジ */}
+                                    {ingredient.evidenceLevel &&
+                                      (() => {
+                                        const level =
+                                          ingredient.evidenceLevel as
+                                            | "S"
+                                            | "A"
+                                            | "B"
+                                            | "C"
+                                            | "D";
+                                        const tierColor = tierColors[level];
+                                        if (!tierColor) return null;
+                                        return (
+                                          <div
+                                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-white shadow-sm"
+                                            style={{ background: tierColor.bg }}
+                                          >
+                                            <BookOpen size={11} />
+                                            <span className="text-[10px] font-bold">
+                                              {level}
+                                            </span>
+                                          </div>
+                                        );
+                                      })()}
 
-                                {/* ランクバッジ */}
-                                <div className="flex flex-wrap gap-2">
-                                  {/* エビデンスランクバッジ */}
-                                  {ingredient.evidenceLevel &&
-                                    (() => {
-                                      const level = ingredient.evidenceLevel as
-                                        | "S"
-                                        | "A"
-                                        | "B"
-                                        | "C"
-                                        | "D";
-                                      const tierColor = tierColors[level];
-                                      if (!tierColor) return null;
-                                      return (
-                                        <div
-                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-white"
-                                          style={{ background: tierColor.bg }}
-                                        >
-                                          <Shield size={12} />
-                                          <span className="text-[11px] font-semibold">
-                                            エビデンス{level}
-                                          </span>
-                                        </div>
-                                      );
-                                    })()}
+                                    {/* 安全性ランクバッジ */}
+                                    {ingredient.safetyScore !== undefined &&
+                                      (() => {
+                                        const score = ingredient.safetyScore;
+                                        const getSafetyRank = (
+                                          score: number,
+                                        ): "S" | "A" | "B" | "C" | "D" => {
+                                          if (score >= 90) return "S";
+                                          if (score >= 80) return "A";
+                                          if (score >= 70) return "B";
+                                          if (score >= 60) return "C";
+                                          return "D";
+                                        };
+                                        const grade = getSafetyRank(score);
+                                        const tierColor = tierColors[grade];
+                                        return (
+                                          <div
+                                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-white shadow-sm"
+                                            style={{ background: tierColor.bg }}
+                                          >
+                                            <Shield size={11} />
+                                            <span className="text-[10px] font-bold">
+                                              {grade}
+                                            </span>
+                                          </div>
+                                        );
+                                      })()}
+                                  </div>
+                                </div>
 
-                                  {/* 安全性ランクバッジ */}
-                                  {ingredient.safetyScore !== undefined &&
-                                    (() => {
-                                      const score = ingredient.safetyScore;
-                                      const getSafetyRank = (
-                                        score: number,
-                                      ): "S" | "A" | "B" | "C" | "D" => {
-                                        if (score >= 90) return "S";
-                                        if (score >= 80) return "A";
-                                        if (score >= 70) return "B";
-                                        if (score >= 60) return "C";
-                                        return "D";
-                                      };
-                                      const grade = getSafetyRank(score);
-                                      const tierColor = tierColors[grade];
-                                      return (
-                                        <div
-                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-white"
-                                          style={{ background: tierColor.bg }}
-                                        >
-                                          <Shield size={12} />
-                                          <span className="text-[11px] font-semibold">
-                                            安全性{grade}
-                                          </span>
-                                        </div>
-                                      );
-                                    })()}
+                                {/* コンテンツ */}
+                                <div className="p-4">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4
+                                        className="text-[17px] font-semibold group-hover:opacity-70 transition-opacity mb-0.5"
+                                        style={{
+                                          color: appleWebColors.textPrimary,
+                                        }}
+                                      >
+                                        {ingredient.name}
+                                      </h4>
+                                      <p
+                                        className="text-[12px]"
+                                        style={{
+                                          color: appleWebColors.textTertiary,
+                                        }}
+                                      >
+                                        {ingredient.nameEn}
+                                      </p>
+                                    </div>
+                                    <ChevronRight
+                                      className="group-hover:translate-x-1 transition-all flex-shrink-0 mt-1"
+                                      size={18}
+                                      style={{
+                                        color: appleWebColors.textTertiary,
+                                      }}
+                                    />
+                                  </div>
+
+                                  <p
+                                    className="text-[13px] line-clamp-2"
+                                    style={{
+                                      color: appleWebColors.textSecondary,
+                                    }}
+                                  >
+                                    {ingredient.description}
+                                  </p>
                                 </div>
                               </Link>
                             ))}

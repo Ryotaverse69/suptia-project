@@ -36,6 +36,12 @@ interface IngredientWithStats {
   slug: { current: string };
   productCount: number;
   minPrice: number;
+  coverImage?: {
+    asset: {
+      url: string;
+    };
+  };
+  sampleImageUrl?: string;
 }
 
 interface FAQItem {
