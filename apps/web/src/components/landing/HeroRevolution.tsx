@@ -296,25 +296,38 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
 
         {/* Popular Searches - Apple style tags */}
         <motion.div
-          className="flex flex-wrap justify-center items-center gap-2 mb-12"
+          className={`flex justify-center items-center mb-12 ${
+            isMobile
+              ? "flex-nowrap overflow-x-auto gap-1.5 px-2"
+              : "flex-wrap gap-2"
+          }`}
           custom={5}
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
+          style={{
+            // iOS: hide scrollbar
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
         >
           <span
-            className="text-[13px] mr-1"
+            className={`${isMobile ? "text-[11px] mr-0.5 flex-shrink-0" : "text-[13px] mr-1"}`}
             style={{ color: appleWebColors.textSecondary }}
           >
-            人気の検索:
+            人気:
           </span>
-          {popularSearches.slice(0, 5).map((search, index) => (
+          {popularSearches.slice(0, isMobile ? 4 : 5).map((search, index) => (
             <motion.button
               key={search.name}
               onClick={() =>
                 router.push(`/search?q=${encodeURIComponent(search.name)}`)
               }
-              className="px-4 py-2 rounded-full text-[13px] font-medium transition-all duration-200 min-h-[36px]"
+              className={`rounded-full font-medium transition-all duration-200 flex-shrink-0 ${
+                isMobile
+                  ? "px-2.5 py-1 text-[11px] min-h-[28px]"
+                  : "px-4 py-2 text-[13px] min-h-[36px]"
+              }`}
               style={{
                 backgroundColor: "rgba(0, 0, 0, 0.04)",
                 color: appleWebColors.textPrimary,
@@ -326,11 +339,15 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
                 delay: 0.6 + index * 0.06,
                 ease: appleEase,
               }}
-              whileHover={{
-                backgroundColor: "rgba(0, 122, 255, 0.1)",
-                color: systemColors.blue,
-                scale: 1.02,
-              }}
+              whileHover={
+                isMobile
+                  ? {}
+                  : {
+                      backgroundColor: "rgba(0, 122, 255, 0.1)",
+                      color: systemColors.blue,
+                      scale: 1.02,
+                    }
+              }
               whileTap={{ scale: 0.97 }}
             >
               {search.name}
