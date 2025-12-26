@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   motion,
   useScroll,
@@ -33,17 +33,45 @@ const useIsMobile = () => {
   return isMobile;
 };
 
+// iOS detection
+const useIsIOS = () => {
+  const [isIOS, setIsIOS] = useState(false);
+  useEffect(() => {
+    const isIOSDevice =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    setIsIOS(isIOSDevice);
+  }, []);
+  return isIOS;
+};
+
 interface HeroRevolutionProps {
   popularSearches?: Array<{ name: string }>;
 }
 
 export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLFormElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const isMobile = useIsMobile();
+  const isIOS = useIsIOS();
   const prefersReducedMotion = useReducedMotion();
+
+  // iOS keyboard handling - scroll input into view
+  const handleIOSFocus = useCallback(() => {
+    if (isIOS && searchContainerRef.current) {
+      // Delay to wait for keyboard to appear
+      setTimeout(() => {
+        searchContainerRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 300);
+    }
+  }, [isIOS]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -84,10 +112,14 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
   return (
     <motion.section
       ref={containerRef}
-      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+      className={`relative flex items-center justify-center overflow-hidden ${
+        isIOS && isFocused ? "min-h-[50vh]" : "min-h-[90vh]"
+      }`}
       style={{
         fontFamily: fontStack,
         contain: "layout paint",
+        // iOS: smoother transition when keyboard opens
+        transition: isIOS ? "min-height 0.3s ease" : undefined,
       }}
     >
       {/* Clean Apple-style Background */}
@@ -116,8 +148,9 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
       <motion.div
         className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20"
         style={{
-          y: textY,
-          opacity: textOpacity,
+          // iOS: disable parallax when focused to prevent visual issues
+          y: isIOS && isFocused ? 0 : textY,
+          opacity: isIOS && isFocused ? 1 : textOpacity,
         }}
       >
         {/* Hero Text */}
@@ -186,6 +219,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
 
         {/* Search Box - Apple style clean */}
         <motion.form
+          ref={searchContainerRef}
           onSubmit={handleSearch}
           className="relative max-w-2xl mx-auto mb-10"
           custom={4}
@@ -226,14 +260,22 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
                 />
               </div>
               <input
+                ref={inputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsFocused(true)}
+                onFocus={() => {
+                  setIsFocused(true);
+                  handleIOSFocus();
+                }}
                 onBlur={() => setIsFocused(false)}
                 placeholder="サプリ名・成分名で検索..."
                 className={`flex-1 py-4 px-2 ${typography.body} bg-transparent outline-none transition-colors duration-200 placeholder:text-[#86868b]`}
-                style={{ color: appleWebColors.textPrimary }}
+                style={{
+                  color: appleWebColors.textPrimary,
+                  // iOS: prevent zoom on focus
+                  fontSize: "16px",
+                }}
                 aria-label="サプリメントを検索"
               />
               <motion.button

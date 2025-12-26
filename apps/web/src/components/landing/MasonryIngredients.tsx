@@ -430,7 +430,13 @@ function BentoCard({
             boxShadow: isHovered
               ? `0 20px 60px ${color}25, 0 10px 30px rgba(0, 0, 0, 0.1)`
               : "0 4px 24px rgba(0, 0, 0, 0.06)",
-            minHeight: isLarge ? "320px" : "240px",
+            minHeight: isMobile
+              ? isLarge
+                ? "200px"
+                : "160px"
+              : isLarge
+                ? "320px"
+                : "240px",
           }}
           animate={{
             scale: isHovered ? 1.02 : 1,
@@ -448,7 +454,15 @@ function BentoCard({
           {/* Image Section - Top */}
           <div
             className="relative overflow-hidden"
-            style={{ height: isLarge ? "45%" : "40%" }}
+            style={{
+              height: isMobile
+                ? isLarge
+                  ? "120px"
+                  : "90px"
+                : isLarge
+                  ? "45%"
+                  : "40%",
+            }}
           >
             <Image
               src={getIngredientOGImage(ingredient.slug.current)}
@@ -465,9 +479,11 @@ function BentoCard({
               }
             />
             {/* Category + Trend Badge on Image */}
-            <div className="absolute top-3 left-3 flex items-center gap-2">
+            <div
+              className={`absolute flex items-center gap-1.5 ${isMobile ? "top-2 left-2" : "top-3 left-3"}`}
+            >
               <span
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md"
+                className={`inline-flex items-center rounded-full font-semibold backdrop-blur-md ${isMobile ? "px-2 py-0.5 text-[9px]" : "px-2.5 py-1 text-[11px]"}`}
                 style={{
                   backgroundColor: "rgba(255, 255, 255, 0.85)",
                   color: color,
@@ -475,19 +491,19 @@ function BentoCard({
               >
                 {ingredient.category}
               </span>
-              <TrendBadge rank={rank} />
+              {!isMobile && <TrendBadge rank={rank} />}
             </div>
           </div>
 
           {/* Content Section - Bottom */}
           <div
-            className="relative flex-1 p-4 flex flex-col justify-between"
+            className={`relative flex-1 flex flex-col justify-between ${isMobile ? "p-3" : "p-4"}`}
             style={{ backgroundColor: "white" }}
           >
             {/* Name + Description */}
             <div>
               <h3
-                className={`font-bold leading-tight mb-1 ${isLarge ? "text-lg" : "text-base"}`}
+                className={`font-bold leading-tight mb-0.5 ${isMobile ? (isLarge ? "text-base" : "text-sm") : isLarge ? "text-lg" : "text-base"}`}
                 style={{
                   color: isHovered ? color : appleWebColors.textPrimary,
                   transition: "color 0.3s ease",
@@ -496,7 +512,7 @@ function BentoCard({
                 {ingredient.name}
               </h3>
               <p
-                className="text-[11px] font-medium tracking-wide uppercase mb-2"
+                className={`font-medium tracking-wide uppercase ${isMobile ? "text-[9px] mb-1" : "text-[11px] mb-2"}`}
                 style={{ color: appleWebColors.textTertiary }}
               >
                 {ingredient.nameEn}
@@ -519,33 +535,37 @@ function BentoCard({
 
             {/* Bottom Stats */}
             <div
-              className="flex items-center justify-between pt-3 mt-2 border-t"
+              className={`flex items-center justify-between border-t ${isMobile ? "pt-2 mt-1" : "pt-3 mt-2"}`}
               style={{ borderColor: `${color}15` }}
             >
               <div>
                 <p
-                  className="text-[10px] uppercase tracking-wider mb-0.5"
+                  className={`uppercase tracking-wider ${isMobile ? "text-[8px] mb-0" : "text-[10px] mb-0.5"}`}
                   style={{ color: appleWebColors.textTertiary }}
                 >
                   商品数
                 </p>
                 <p
-                  className={`font-semibold ${isLarge ? "text-base" : "text-sm"}`}
+                  className={`font-semibold ${isMobile ? "text-xs" : isLarge ? "text-base" : "text-sm"}`}
                   style={{ color: appleWebColors.textPrimary }}
                 >
                   {ingredient.productCount}
-                  <span className="text-[11px] font-normal ml-0.5">種類</span>
+                  <span
+                    className={`font-normal ml-0.5 ${isMobile ? "text-[9px]" : "text-[11px]"}`}
+                  >
+                    種類
+                  </span>
                 </p>
               </div>
               <div className="text-right">
                 <p
-                  className="text-[10px] uppercase tracking-wider mb-0.5"
+                  className={`uppercase tracking-wider ${isMobile ? "text-[8px] mb-0" : "text-[10px] mb-0.5"}`}
                   style={{ color: appleWebColors.textTertiary }}
                 >
                   最安価格
                 </p>
                 <p
-                  className={`font-bold ${isLarge ? "text-base" : "text-sm"}`}
+                  className={`font-bold ${isMobile ? "text-xs" : isLarge ? "text-base" : "text-sm"}`}
                   style={{ color }}
                 >
                   ¥{ingredient.minPrice.toLocaleString()}〜
@@ -579,7 +599,7 @@ export function MasonryIngredients({
   const isInView = useInView(ref, { once: true, margin: "-10%" });
   const isMobile = useIsMobile();
 
-  const displayIngredients = ingredients.slice(0, 8);
+  const displayIngredients = ingredients.slice(0, isMobile ? 6 : 8);
 
   // Bento Grid 配置
   // Desktop: 4列レイアウト
@@ -590,7 +610,7 @@ export function MasonryIngredients({
     : ["a", "b", "c", "d", "e", "f", "g", "h"];
 
   const isLargeCard = (index: number) => {
-    if (isMobile) return index === 0;
+    if (isMobile) return index === 0 || index === 5; // a, f が大きいカード
     // a(0)=2列, e(4)=2列, h(7)=3列
     return index === 0 || index === 4 || index === 7;
   };
@@ -598,7 +618,7 @@ export function MasonryIngredients({
   return (
     <section
       ref={ref}
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative py-16 md:py-32 overflow-hidden"
       style={{
         backgroundColor: appleWebColors.pageBackground,
         fontFamily: fontStack,
@@ -675,12 +695,12 @@ export function MasonryIngredients({
 
         {/* Bento Grid */}
         <div
-          className="grid gap-4 sm:gap-5 pt-3 pl-3"
+          className="grid gap-3 sm:gap-5 pt-2 pl-2 sm:pt-3 sm:pl-3"
           style={{
             gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
             gridTemplateRows: isMobile ? "auto" : "auto auto",
             gridTemplateAreas: isMobile
-              ? `"a a" "b c" "d e" "f g"`
+              ? `"a a" "b c" "d e" "f f"`
               : `"a a b c" "d e e f" "g h h h"`,
           }}
         >
