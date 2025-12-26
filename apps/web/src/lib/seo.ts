@@ -389,9 +389,8 @@ export function generateOrganizationJsonLd() {
       email: "info@suptia.com",
     },
     sameAs: [
-      // SNSアカウントがあれば追加
-      // "https://twitter.com/suptia",
-      // "https://www.facebook.com/suptia",
+      "https://x.com/suptia_official",
+      "https://www.instagram.com/suptia_official/",
     ],
   };
 }
