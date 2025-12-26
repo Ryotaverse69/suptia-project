@@ -1,6 +1,7 @@
 /**
  * 乳酸菌・プロバイオティクス比較記事ページ
  * SEO最適化された比較コンテンツ
+ * 統一テンプレート準拠（15セクション構成）
  */
 
 import { Metadata } from "next";
@@ -32,6 +33,17 @@ import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
+
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
 
 const ARTICLE_DATA = {
   title:
@@ -133,6 +145,35 @@ async function getProbioticsProducts(): Promise<Product[]> {
   }
 }
 
+// この記事でわかること
+const LEARNING_POINTS = [
+  "主要な菌種（ラクトバチルス・ビフィズス菌等）の違いと効果",
+  "CFU（菌数）の目安と選び方のポイント",
+  "目的別（便秘・免疫・メンタル・女性の健康）の最適な菌種",
+  "プロバイオティクスとプレバイオティクスの違い",
+  "効果を最大化する摂取方法と保存の注意点",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    label: "初心者・総合的な腸活なら",
+    recommendation: "マルチストレイン（複数菌種）100億CFU以上",
+  },
+  {
+    label: "便秘対策なら",
+    recommendation: "ビフィズス菌（B. longum, B. lactis）200億CFU以上",
+  },
+  {
+    label: "免疫強化なら",
+    recommendation: "ラクトバチルス（L. rhamnosus GG）",
+  },
+  {
+    label: "抗生物質服用中なら",
+    recommendation: "サッカロマイセス・ブラウディ",
+  },
+];
+
 // 菌種データ
 const PROBIOTICS_TYPES = [
   {
@@ -208,7 +249,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "便秘改善・お通じ対策",
     icon: Heart,
-    emoji: "💩",
     description: "便秘気味、お腹が張る、便の状態が悪い",
     recommendation: "ビフィズス菌（B. longum, B. lactis）+ 食物繊維",
     reason:
@@ -218,7 +258,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "免疫力強化",
     icon: Shield,
-    emoji: "🛡️",
     description: "風邪をひきやすい、アレルギー対策、感染症予防",
     recommendation: "L. rhamnosus GG + B. lactis BB-12",
     reason:
@@ -228,7 +267,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "メンタル・ストレス対策",
     icon: Brain,
-    emoji: "🧠",
     description: "不安、ストレス、気分の落ち込み",
     recommendation: "L. helveticus + B. longum（Psychobiotics）",
     reason:
@@ -238,7 +276,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "抗生物質との併用・下痢予防",
     icon: Shield,
-    emoji: "💊",
     description: "抗生物質を服用中、旅行者下痢の予防",
     recommendation: "サッカロマイセス・ブラウディ（S. boulardii）",
     reason:
@@ -248,7 +285,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "女性の健康・膣内環境",
     icon: Heart,
-    emoji: "👩",
     description: "カンジダ対策、膣内環境の改善",
     recommendation: "L. rhamnosus GR-1 + L. reuteri RC-14",
     reason:
@@ -389,12 +425,40 @@ const FAQS = [
   {
     question: "プロバイオティクスで効果がない場合は？",
     answer:
-      "いくつかの理由が考えられます。①菌種が自分に合っていない：人によって効果的な菌種は異なるため、別の菌種を試す。②CFUが足りない：100億CFU以上に増量。③生きて届いていない：腸溶性カプセルや胃酸耐性のある製品に変更。④期間が短い：最低4週間は継続。⑤生活習慣の問題：食物繊維不足、ストレス、睡眠不足は腸内環境に悪影響。⑥より深刻な問題：改善しない場合は医師に相談を。",
+      "いくつかの理由が考えられます。(1)菌種が自分に合っていない：人によって効果的な菌種は異なるため、別の菌種を試す。(2)CFUが足りない：100億CFU以上に増量。(3)生きて届いていない：腸溶性カプセルや胃酸耐性のある製品に変更。(4)期間が短い：最低4週間は継続。(5)生活習慣の問題：食物繊維不足、ストレス、睡眠不足は腸内環境に悪影響。(6)より深刻な問題：改善しない場合は医師に相談を。",
   },
   {
     question: "プロバイオティクスは冷蔵保存が必要？",
     answer:
-      "製品によります。多くの乳酸菌・ビフィズス菌製品は要冷蔵（2〜8℃）で、高温や湿気で菌が死滅します。一方、芽胞形成菌（バチルス属）や特殊な乾燥技術・コーティングを施した製品は常温保存可能です。旅行時や持ち運びには常温保存可能な製品が便利。購入時と保存時の温度管理が効果に直結するため、保存方法は必ず確認してください。",
+      "製品によります。多くの乳酸菌・ビフィズス菌製品は要冷蔵（2〜8度C）で、高温や湿気で菌が死滅します。一方、芽胞形成菌（バチルス属）や特殊な乾燥技術・コーティングを施した製品は常温保存可能です。旅行時や持ち運びには常温保存可能な製品が便利。購入時と保存時の温度管理が効果に直結するため、保存方法は必ず確認してください。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "食物繊維（プレバイオティクス）",
+    slug: "fiber",
+    emoji: "🌾",
+    reason: "善玉菌のエサとなり相乗効果",
+  },
+  {
+    name: "ビタミンD",
+    slug: "vitamin-d",
+    emoji: "☀️",
+    reason: "腸管免疫をサポート",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "⚡",
+    reason: "腸管バリア機能を強化",
+  },
+  {
+    name: "オメガ3",
+    slug: "omega-3",
+    emoji: "🐟",
+    reason: "腸内の炎症を抑える",
   },
 ];
 
@@ -430,7 +494,7 @@ export default async function ProbioticsComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. パンくずリスト（sticky） */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -460,7 +524,7 @@ export default async function ProbioticsComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -518,7 +582,43 @@ export default async function ProbioticsComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.green + "20",
+                      color: systemColors.green,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.green + "30" }}
@@ -530,13 +630,7 @@ export default async function ProbioticsComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "主要な菌種（ラクトバチルス・ビフィズス菌等）の違いと効果",
-              "CFU（菌数）の目安と選び方のポイント",
-              "目的別（便秘・免疫・メンタル・女性の健康）の最適な菌種",
-              "プロバイオティクスとプレバイオティクスの違い",
-              "効果を最大化する摂取方法と保存の注意点",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -551,7 +645,7 @@ export default async function ProbioticsComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
@@ -573,29 +667,19 @@ export default async function ProbioticsComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>初心者・総合的な腸活なら</strong>
-                  →マルチストレイン（複数菌種）100億CFU以上
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>便秘対策なら</strong>
-                  →ビフィズス菌（B. longum, B. lactis）200億CFU以上
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>免疫強化なら</strong>
-                  →ラクトバチルス（L. rhamnosus GG）
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>抗生物質服用中なら</strong>
-                  →サッカロマイセス・ブラウディ
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.label}</strong>
+                    <span className="ml-1">→{rec.recommendation}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* 菌種比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -673,14 +757,20 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜あなたに合ったプロバイオティクスはこれ
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
@@ -692,7 +782,12 @@ export default async function ProbioticsComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.green + "20" }}
+                    >
+                      <Icon size={20} style={{ color: systemColors.green }} />
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -738,8 +833,8 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -813,6 +908,24 @@ export default async function ProbioticsComparisonPage() {
                       </span>
                     </span>
                   </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
 
                 <ArrowRight
@@ -835,8 +948,8 @@ export default async function ProbioticsComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -898,14 +1011,20 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜摂取量の目安
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            CFU（菌数）は製品によって大きく異なります。目的に応じた適切な量を選びましょう。
+          </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
@@ -978,14 +1097,20 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             注意点・副作用
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            プロバイオティクスは一般的に安全ですが、一部の方は注意が必要です。
+          </p>
 
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
@@ -1031,8 +1156,8 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1063,7 +1188,7 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
+        {/* 13. 関連成分 */}
         <section className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
@@ -1072,32 +1197,7 @@ export default async function ProbioticsComparisonPage() {
             プロバイオティクスと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "食物繊維（プレバイオティクス）",
-                slug: "fiber",
-                emoji: "🌾",
-                reason: "善玉菌のエサとなり相乗効果",
-              },
-              {
-                name: "ビタミンD",
-                slug: "vitamin-d",
-                emoji: "☀️",
-                reason: "腸管免疫をサポート",
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                emoji: "🛡️",
-                reason: "腸管バリア機能を強化",
-              },
-              {
-                name: "オメガ3",
-                slug: "omega-3",
-                emoji: "🐟",
-                reason: "腸内の炎症を抑える",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1128,7 +1228,7 @@ export default async function ProbioticsComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1161,7 +1261,7 @@ export default async function ProbioticsComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1187,13 +1287,71 @@ export default async function ProbioticsComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/probiotics-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

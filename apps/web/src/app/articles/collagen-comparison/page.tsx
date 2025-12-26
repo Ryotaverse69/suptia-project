@@ -1,6 +1,7 @@
 /**
  * コラーゲン比較記事ページ
  * SEO最適化された比較コンテンツ
+ * 統一テンプレート v1.0
  */
 
 import { Metadata } from "next";
@@ -18,8 +19,9 @@ import {
   Shield,
   BadgeCheck,
   Info,
-  Sparkles,
   ExternalLink,
+  Droplets,
+  Bone,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -32,6 +34,74 @@ import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
+
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "コラーゲンのタイプ（I型・II型・III型）と効果の違い",
+  "分子量（ペプチド・低分子）と吸収率の関係",
+  "魚・豚・鶏由来コラーゲンの特徴比較",
+  "目的別（美肌・関節・髪・爪）の最適な選び方",
+  "効果を実感するための摂取量と継続期間",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    condition: "美肌目的なら",
+    recommendation: "低分子マリンコラーゲンペプチド（I型）5000〜10000mg",
+  },
+  {
+    condition: "関節サポートなら",
+    recommendation: "非変性II型コラーゲン 40mg",
+  },
+  {
+    condition: "コスパ重視なら",
+    recommendation: "豚由来コラーゲンペプチド。効果は十分。",
+  },
+  {
+    condition: "必ずビタミンCと一緒に",
+    recommendation: "コラーゲン合成に必須。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "ビタミンC",
+    slug: "vitamin-c",
+    emoji: "🍊",
+    reason: "コラーゲン合成に必須。一緒に摂ると効果倍増",
+  },
+  {
+    name: "ヒアルロン酸",
+    slug: "hyaluronic-acid",
+    emoji: "💧",
+    reason: "肌の保水力をサポート",
+  },
+  {
+    name: "ビオチン",
+    slug: "biotin",
+    emoji: "💅",
+    reason: "髪・爪の健康をサポート",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "⚡",
+    reason: "肌のターンオーバーをサポート",
+  },
+];
 
 const ARTICLE_DATA = {
   title:
@@ -146,6 +216,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Type I Collagen",
     source: "魚（マリン）・豚・牛",
     benefit: "肌・髪・爪・骨",
+    absorption: "◎ 高い",
+    price: "○ 中程度",
+    sideEffect: "◎ 少ない",
     description:
       "体内コラーゲンの約90%を占める。肌のハリ・弾力、骨の強度に関与。美容目的なら最も重要。",
     best: "美肌・アンチエイジング目的",
@@ -156,6 +229,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Type II Collagen",
     source: "鶏軟骨",
     benefit: "関節・軟骨",
+    absorption: "◎ 高い（非変性）",
+    price: "△ やや高い",
+    sideEffect: "◎ 少ない",
     description:
       "軟骨の主成分。関節の柔軟性・クッション性を維持。変形性関節症への効果が研究されている。",
     best: "関節痛・膝の悩みがある方",
@@ -166,6 +242,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Type III Collagen",
     source: "豚・牛",
     benefit: "肌・血管・臓器",
+    absorption: "○ 良好",
+    price: "○ 中程度",
+    sideEffect: "◎ 少ない",
     description:
       "肌の柔らかさ、血管の弾力性に関与。I型と一緒に存在することが多い。エイジングケアに重要。",
     best: "肌の弾力・血管ケア目的",
@@ -176,6 +255,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Marine Collagen",
     source: "魚の皮・鱗",
     benefit: "肌・髪・爪",
+    absorption: "◎ 最高",
+    price: "△ やや高い",
+    sideEffect: "◎ 少ない",
     description:
       "分子が小さく吸収率が高いとされる。豚・牛より臭みが少ない。主にI型コラーゲン。",
     best: "吸収率重視・豚牛アレルギーの方",
@@ -186,6 +268,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Porcine Collagen",
     source: "豚皮",
     benefit: "肌・髪・爪",
+    absorption: "○ 良好",
+    price: "◎ 安い",
+    sideEffect: "◎ 少ない",
     description:
       "ヒトとの相性が良く、最も一般的な原料。I型・III型を含む。コスパが良い。",
     best: "コスパ重視・幅広い効果を期待",
@@ -196,6 +281,9 @@ const COLLAGEN_TYPES = [
     nameEn: "Collagen Peptide",
     source: "各種原料を酵素分解",
     benefit: "全身",
+    absorption: "◎ 最高",
+    price: "○ 中程度",
+    sideEffect: "◎ 少ない",
     description:
       "分子量を小さくして吸収率を高めた形態。3000ダルトン以下が目安。現在の主流。",
     best: "効率的な吸収を求める方（全員におすすめ）",
@@ -207,8 +295,7 @@ const COLLAGEN_TYPES = [
 const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "美肌・シワ・たるみ対策",
-    icon: Sparkles,
-    emoji: "✨",
+    icon: Heart,
     description: "肌のハリ・弾力を取り戻したい、若々しい肌を維持したい",
     recommendation: "低分子マリンコラーゲンペプチド（I型）",
     reason:
@@ -217,8 +304,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "関節痛・膝の悩み",
-    icon: Shield,
-    emoji: "🦴",
+    icon: Bone,
     description: "膝が痛い、関節の動きが悪い、運動後に違和感",
     recommendation: "II型コラーゲン（非変性）",
     reason:
@@ -227,8 +313,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "髪のボリューム・ツヤ",
-    icon: Heart,
-    emoji: "💇",
+    icon: Droplets,
     description: "髪が細くなった、パサつく、抜け毛が気になる",
     recommendation: "低分子コラーゲンペプチド + ビオチン",
     reason:
@@ -238,7 +323,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "爪の強化",
     icon: Shield,
-    emoji: "💅",
     description: "爪が割れやすい、二枚爪、縦すじが気になる",
     recommendation: "コラーゲンペプチド + ビオチン + ケイ素",
     reason:
@@ -248,7 +332,6 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "総合的なエイジングケア",
     icon: Heart,
-    emoji: "🌟",
     description: "肌・髪・爪・関節をトータルでケアしたい",
     recommendation: "マルチコラーゲン（I・II・III型含有）",
     reason: "複数のタイプを含む製品で、全身のコラーゲン補給を効率的に。",
@@ -412,9 +495,22 @@ export default async function CollagenComparisonPage() {
         servingsPerDay: product.servingsPerDay,
       });
 
+      const collagenIngredient = product.ingredients?.find(
+        (i) =>
+          i.ingredient?.name?.includes("コラーゲン") ||
+          i.ingredient?.name?.toLowerCase().includes("collagen"),
+      );
+      const mgPerServing = collagenIngredient?.amountMgPerServing || 0;
+      const pricePerMg =
+        mgPerServing > 0
+          ? product.priceJPY / (mgPerServing * product.servingsPerContainer)
+          : 0;
+
       return {
         ...product,
         effectiveCostPerDay,
+        mgPerServing,
+        pricePerMg,
       };
     })
     .sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
@@ -429,7 +525,7 @@ export default async function CollagenComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. パンくずリスト（sticky） */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -459,7 +555,7 @@ export default async function CollagenComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション（タイトル + アイキャッチ） */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -517,7 +613,43 @@ export default async function CollagenComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.pink + "20",
+                      color: systemColors.pink,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.pink + "30" }}
@@ -529,13 +661,7 @@ export default async function CollagenComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "コラーゲンのタイプ（I型・II型・III型）と効果の違い",
-              "分子量（ペプチド・低分子）と吸収率の関係",
-              "魚・豚・鶏由来コラーゲンの特徴",
-              "目的別（美肌・関節・髪・爪）の最適な選び方",
-              "効果を実感するための摂取量と期間",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -550,7 +676,7 @@ export default async function CollagenComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
@@ -572,29 +698,20 @@ export default async function CollagenComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>美肌目的なら</strong>
-                  →低分子マリンコラーゲンペプチド（I型）5000〜10000mg
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>関節サポートなら</strong>
-                  →非変性II型コラーゲン 40mg
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>コスパ重視なら</strong>
-                  →豚由来コラーゲンペプチド。効果は十分。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>必ずビタミンCと一緒に！</strong>
-                  コラーゲン合成に必須。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, index) => (
+                  <li key={index} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.condition}</strong>
+                    {" -> "}
+                    {rec.recommendation}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* コラーゲンの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -657,6 +774,35 @@ export default async function CollagenComparisonPage() {
                       </span>
                     </div>
                   </div>
+                  <div className="flex flex-wrap gap-2 md:flex-col md:gap-1 md:text-right">
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      吸収: {type.absorption}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      価格: {type.price}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      副作用: {type.sideEffect}
+                    </span>
+                  </div>
                 </div>
                 <div
                   className="mt-3 pt-3 border-t text-[13px]"
@@ -672,14 +818,20 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜あなたに合ったコラーゲンはこれ
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
@@ -691,7 +843,12 @@ export default async function CollagenComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.pink + "20" }}
+                    >
+                      <Icon size={20} style={{ color: systemColors.pink }} />
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -713,7 +870,7 @@ export default async function CollagenComparisonPage() {
                           className="font-bold text-[15px] mb-2"
                           style={{ color: systemColors.pink }}
                         >
-                          → {rec.recommendation}
+                          {rec.recommendation}
                         </p>
                         <p
                           className="text-[14px] mb-2"
@@ -737,8 +894,8 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -799,7 +956,7 @@ export default async function CollagenComparisonPage() {
                         className="font-bold"
                         style={{ color: systemColors.blue }}
                       >
-                        ¥{product.priceJPY.toLocaleString()}
+                        {product.priceJPY.toLocaleString()}円
                       </span>
                     </span>
                     <span style={{ color: appleWebColors.textSecondary }}>
@@ -808,10 +965,36 @@ export default async function CollagenComparisonPage() {
                         className="font-bold"
                         style={{ color: systemColors.green }}
                       >
-                        ¥{product.effectiveCostPerDay.toFixed(1)}
+                        {product.effectiveCostPerDay.toFixed(1)}円
                       </span>
                     </span>
+                    {product.mgPerServing > 0 && (
+                      <span style={{ color: appleWebColors.textSecondary }}>
+                        含有量:{" "}
+                        <span className="font-bold">
+                          {product.mgPerServing}mg
+                        </span>
+                      </span>
+                    )}
                   </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
 
                 <ArrowRight
@@ -834,8 +1017,8 @@ export default async function CollagenComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -897,14 +1080,20 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜摂取量の目安
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            コラーゲンは目的によって適切な摂取量が異なります。継続することが大切です。
+          </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
@@ -977,14 +1166,20 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             注意点・副作用
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            コラーゲンは基本的に安全ですが、アレルギーや品質には注意が必要です。
+          </p>
 
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
@@ -1030,8 +1225,8 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1062,7 +1257,7 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
+        {/* 13. 関連成分 */}
         <section className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
@@ -1071,32 +1266,7 @@ export default async function CollagenComparisonPage() {
             コラーゲンと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "ビタミンC",
-                slug: "vitamin-c",
-                emoji: "🍊",
-                reason: "コラーゲン合成に必須。一緒に摂ると効果倍増",
-              },
-              {
-                name: "ヒアルロン酸",
-                slug: "hyaluronic-acid",
-                emoji: "💧",
-                reason: "肌の保水力をサポート",
-              },
-              {
-                name: "ビオチン",
-                slug: "biotin",
-                emoji: "💇",
-                reason: "髪・爪の健康をサポート",
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                emoji: "✨",
-                reason: "肌のターンオーバーをサポート",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1127,7 +1297,7 @@ export default async function CollagenComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1160,7 +1330,7 @@ export default async function CollagenComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1186,13 +1356,71 @@ export default async function CollagenComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/collagen-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

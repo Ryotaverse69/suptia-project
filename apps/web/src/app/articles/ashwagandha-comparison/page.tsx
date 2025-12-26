@@ -1,6 +1,6 @@
 /**
  * アシュワガンダ比較記事ページ
- * SEO最適化された比較コンテンツ
+ * SEO最適化された比較コンテンツ - 統一テンプレート v2
  */
 
 import { Metadata } from "next";
@@ -14,13 +14,14 @@ import {
   AlertTriangle,
   Lightbulb,
   Target,
-  Heart,
   Shield,
   BadgeCheck,
   Info,
   Brain,
   Moon,
   ExternalLink,
+  Dumbbell,
+  Flame,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -33,6 +34,74 @@ import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
+
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "KSM-66・Sensoril・Shodenなど抽出物ブランドの違い",
+  "ウィザノライド含有量と効果の関係",
+  "目的別（ストレス・睡眠・筋力・男性機能）の選び方",
+  "効果を感じるまでの期間と適切な摂取量",
+  "甲状腺への影響など注意すべきポイント",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    condition: "ストレス・筋力・活力なら",
+    recommendation: "KSM-66 300〜600mg。最も研究が多い。",
+  },
+  {
+    condition: "睡眠改善・リラックスなら",
+    recommendation: "Sensoril 125〜250mg。就寝前に。",
+  },
+  {
+    condition: "高濃度で少量希望なら",
+    recommendation: "Shoden 60〜120mg。最新の高濃度抽出。",
+  },
+  {
+    condition: "甲状腺に問題がある方",
+    recommendation: "使用前に医師に相談を。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "マグネシウム",
+    slug: "magnesium",
+    emoji: "💫",
+    reason: "ストレス・睡眠改善に相乗効果",
+  },
+  {
+    name: "L-テアニン",
+    slug: "l-theanine",
+    emoji: "🍵",
+    reason: "リラックス効果を高める",
+  },
+  {
+    name: "ロディオラ",
+    slug: "rhodiola",
+    emoji: "🌿",
+    reason: "アダプトゲン同士で疲労対策",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "⚡",
+    reason: "テストステロンサポートに相乗効果",
+  },
+];
 
 const ARTICLE_DATA = {
   title:
@@ -135,33 +204,33 @@ async function getAshwagandhaProducts(): Promise<Product[]> {
 // アシュワガンダの種類データ
 const ASHWAGANDHA_TYPES = [
   {
-    name: "KSM-66®",
+    name: "KSM-66",
     nameEn: "KSM-66 Ashwagandha",
     extract: "根のみ抽出",
     withanolides: "5%以上",
-    research: "◎ 最多（24以上の臨床試験）",
+    research: "最多（24以上の臨床試験）",
     best: "ストレス・筋力・男性機能",
     description:
       "根のみから抽出した高品質エキス。最も研究が多く、ストレス軽減・筋力向上・テストステロン増加など多数のエビデンス。",
     color: systemColors.orange,
   },
   {
-    name: "Sensoril®",
+    name: "Sensoril",
     nameEn: "Sensoril Ashwagandha",
     extract: "根+葉抽出",
     withanolides: "10%以上",
-    research: "○ 多い（複数の臨床試験）",
+    research: "多い（複数の臨床試験）",
     best: "睡眠・リラックス・コルチゾール低下",
     description:
       "根と葉から抽出。ウィザノライド含有量が高く、特にコルチゾール低下・睡眠改善に強みを持つ。",
     color: systemColors.purple,
   },
   {
-    name: "Shoden®",
+    name: "Shoden",
     nameEn: "Shoden Ashwagandha",
     extract: "葉主体抽出",
     withanolides: "35%以上",
-    research: "○ 新しいが有望",
+    research: "新しいが有望",
     best: "超高濃度・少量で効果",
     description:
       "ウィザノライド濃度35%という超高濃度抽出物。少量で高い効果が期待できる最新技術。",
@@ -172,7 +241,7 @@ const ASHWAGANDHA_TYPES = [
     nameEn: "Standard Extract",
     extract: "様々",
     withanolides: "1.5〜5%",
-    research: "△ 製品による",
+    research: "製品による",
     best: "コスパ重視・お試し",
     description:
       "ブランド抽出物でない一般的なアシュワガンダエキス。効果は期待できるが品質のばらつきあり。",
@@ -183,7 +252,7 @@ const ASHWAGANDHA_TYPES = [
     nameEn: "Full Spectrum",
     extract: "全草",
     withanolides: "低め",
-    research: "△ 限定的",
+    research: "限定的",
     best: "伝統的なアーユルヴェーダ志向",
     description:
       "植物全体を使用した伝統的な形態。アーユルヴェーダに忠実だが、成分濃度は低め。",
@@ -196,9 +265,8 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "ストレス・不安軽減",
     icon: Brain,
-    emoji: "😌",
     description: "仕事のストレス、不安感、イライラを軽減したい",
-    recommendation: "KSM-66® 300〜600mg/日 または Sensoril® 125〜250mg/日",
+    recommendation: "KSM-66 300〜600mg/日 または Sensoril 125〜250mg/日",
     reason:
       "どちらもコルチゾール（ストレスホルモン）を有意に低下させる臨床データあり。KSM-66は活力も維持したい人向け。",
     tips: "効果を感じるまで4〜8週間。マグネシウムとの併用で相乗効果。",
@@ -206,29 +274,26 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "睡眠の質を改善したい",
     icon: Moon,
-    emoji: "😴",
     description: "寝つきが悪い、睡眠が浅い、朝スッキリ起きられない",
-    recommendation: "Sensoril® 125〜250mg/日（就寝前）",
+    recommendation: "Sensoril 125〜250mg/日（就寝前）",
     reason:
       "Sensorilは睡眠改善効果に関する研究が特に充実。GABAへの作用で深い睡眠をサポート。",
     tips: "就寝1〜2時間前に摂取。マグネシウム・L-テアニンとの併用も効果的。",
   },
   {
     purpose: "筋力・運動パフォーマンス",
-    icon: Shield,
-    emoji: "💪",
+    icon: Dumbbell,
     description: "筋肉をつけたい、運動後の回復を早めたい",
-    recommendation: "KSM-66® 300〜600mg/日",
+    recommendation: "KSM-66 300〜600mg/日",
     reason:
       "KSM-66は筋力・筋肉量増加、VO2max向上、回復促進に関する複数の臨床試験あり。",
     tips: "運動前または就寝前に摂取。プロテインとの併用で効果アップ。",
   },
   {
     purpose: "男性機能・テストステロン",
-    icon: Shield,
-    emoji: "🔥",
+    icon: Flame,
     description: "テストステロンを自然に上げたい、活力を取り戻したい",
-    recommendation: "KSM-66® 600mg/日",
+    recommendation: "KSM-66 600mg/日",
     reason:
       "KSM-66は複数の研究でテストステロン増加、精子の質改善が報告されている。",
     tips: "亜鉛・ビタミンDとの併用でさらに効果的。8〜12週間の継続を。",
@@ -236,9 +301,8 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "認知機能・集中力",
     icon: Brain,
-    emoji: "🧠",
     description: "集中力を高めたい、記憶力を改善したい",
-    recommendation: "KSM-66® 300mg/日 または Shoden® 120mg/日",
+    recommendation: "KSM-66 300mg/日 または Shoden 120mg/日",
     reason:
       "アシュワガンダは脳由来神経栄養因子（BDNF）を増加させる研究あり。認知機能改善効果も報告。",
     tips: "オメガ3・バコパとの併用で認知機能サポートを強化。",
@@ -250,7 +314,7 @@ const SELECTION_CHECKLIST = [
   {
     item: "抽出物ブランドを確認",
     description:
-      "KSM-66®、Sensoril®、Shoden®などの品質保証されたブランド抽出物がおすすめ。一般抽出物は品質にばらつき。",
+      "KSM-66、Sensoril、Shodenなどの品質保証されたブランド抽出物がおすすめ。一般抽出物は品質にばらつき。",
     important: true,
   },
   {
@@ -418,7 +482,7 @@ export default async function AshwagandhaComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. [sticky] パンくずナビ */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -448,7 +512,7 @@ export default async function AshwagandhaComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション（タイトル + アイキャッチ） */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -468,7 +532,7 @@ export default async function AshwagandhaComparisonPage() {
                 color: systemColors.orange,
               }}
             >
-              トレンド成分
+              {products.length}商品を比較
             </span>
           </div>
 
@@ -506,7 +570,43 @@ export default async function AshwagandhaComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.orange + "20",
+                      color: systemColors.orange,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.orange + "30" }}
@@ -518,13 +618,7 @@ export default async function AshwagandhaComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "KSM-66・Sensoril・Shodenなど抽出物ブランドの違い",
-              "ウィザノライド含有量と効果の関係",
-              "目的別（ストレス・睡眠・筋力・男性機能）の選び方",
-              "効果を感じるまでの期間と適切な摂取量",
-              "甲状腺への影響など注意すべきポイント",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -539,7 +633,7 @@ export default async function AshwagandhaComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
@@ -561,29 +655,20 @@ export default async function AshwagandhaComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>ストレス・筋力・活力なら</strong>
-                  →KSM-66® 300〜600mg。最も研究が多い。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>睡眠改善・リラックスなら</strong>
-                  →Sensoril® 125〜250mg。就寝前に。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>高濃度で少量希望なら</strong>
-                  →Shoden® 60〜120mg。最新の高濃度抽出。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>甲状腺に問題がある方</strong>
-                  →使用前に医師に相談を。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.condition}</strong>
+                    {" -> "}
+                    {rec.recommendation}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* アシュワガンダの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -670,14 +755,20 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜あなたに合ったアシュワガンダはこれ
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
@@ -689,7 +780,12 @@ export default async function AshwagandhaComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.orange + "15" }}
+                    >
+                      <Icon size={24} style={{ color: systemColors.orange }} />
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -711,7 +807,7 @@ export default async function AshwagandhaComparisonPage() {
                           className="font-bold text-[15px] mb-2"
                           style={{ color: systemColors.orange }}
                         >
-                          → {rec.recommendation}
+                          {rec.recommendation}
                         </p>
                         <p
                           className="text-[14px] mb-2"
@@ -735,8 +831,8 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -810,6 +906,24 @@ export default async function AshwagandhaComparisonPage() {
                       </span>
                     </span>
                   </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
 
                 <ArrowRight
@@ -832,8 +946,8 @@ export default async function AshwagandhaComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -895,14 +1009,20 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜摂取量の目安
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            アシュワガンダは目的に応じて適切な用量と摂取タイミングが異なります。臨床試験のデータを参考に。
+          </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
@@ -975,14 +1095,20 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             注意点・副作用
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            アシュワガンダは一般的に安全ですが、特定の条件では注意が必要です。
+          </p>
 
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
@@ -1028,8 +1154,8 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1060,7 +1186,7 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
+        {/* 13. 関連成分 */}
         <section className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
@@ -1069,32 +1195,7 @@ export default async function AshwagandhaComparisonPage() {
             アシュワガンダと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "マグネシウム",
-                slug: "magnesium",
-                emoji: "💫",
-                reason: "ストレス・睡眠改善に相乗効果",
-              },
-              {
-                name: "L-テアニン",
-                slug: "l-theanine",
-                emoji: "🍵",
-                reason: "リラックス効果を高める",
-              },
-              {
-                name: "ロディオラ",
-                slug: "rhodiola",
-                emoji: "🌿",
-                reason: "アダプトゲン同士で疲労対策",
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                emoji: "🛡️",
-                reason: "テストステロンサポートに相乗効果",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1125,7 +1226,7 @@ export default async function AshwagandhaComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1158,7 +1259,7 @@ export default async function AshwagandhaComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1184,13 +1285,71 @@ export default async function AshwagandhaComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/ashwagandha-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

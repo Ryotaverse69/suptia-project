@@ -1,6 +1,6 @@
 /**
  * ビタミンC比較記事ページ
- * SEO最適化された比較コンテンツ - 顧客目線で価値ある情報を提供
+ * SEO最適化された比較コンテンツ - 統一テンプレート版
  */
 
 import { Metadata } from "next";
@@ -10,14 +10,7 @@ import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import {
   ArrowRight,
-  Award,
-  Shield,
-  TrendingUp,
-  DollarSign,
-  FlaskConical,
   CheckCircle2,
-  ExternalLink,
-  Calculator,
   AlertTriangle,
   Lightbulb,
   Target,
@@ -26,8 +19,11 @@ import {
   Heart,
   Leaf,
   BadgeCheck,
-  XCircle,
   Info,
+  Calculator,
+  ExternalLink,
+  DollarSign,
+  List,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -143,6 +139,49 @@ async function getVitaminCProducts(): Promise<Product[]> {
     return [];
   }
 }
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "ビタミンCサプリの種類と特徴（アスコルビン酸・リポソーム・タイムリリースなど）",
+  "あなたの目的に合った最適なビタミンCの選び方",
+  "mg単価で見た本当のコスパランキングTOP3",
+  "効果的な摂取方法と注意すべき副作用",
+  "よくある疑問への科学的根拠に基づいた回答",
+];
+
+// 結論ファースト（迷ったらこれ）
+const QUICK_RECOMMENDATIONS = [
+  {
+    condition: "コスパ重視なら",
+    recommendation: "アスコルビン酸タイプ。効果は同じで最安。",
+  },
+  {
+    condition: "胃が弱いなら",
+    recommendation: "緩衝型（Buffered）。pHが調整済みで優しい。",
+  },
+  {
+    condition: "本気で効果を求めるなら",
+    recommendation: "リポソーム。吸収率が高く血中濃度が上がりやすい。",
+  },
+  {
+    condition: "面倒くさがりなら",
+    recommendation: "タイムリリース。1日1回でOK。",
+  },
+];
+
+// 目次用セクションデータ
+const SECTIONS = [
+  { id: "learning-points", title: "この記事でわかること" },
+  { id: "quick-recommendations", title: "結論ファースト" },
+  { id: "types", title: "種類と特徴" },
+  { id: "purpose-recommendations", title: "目的別おすすめ" },
+  { id: "ranking", title: "コスパランキング" },
+  { id: "checklist", title: "選び方チェックリスト" },
+  { id: "dosage", title: "摂取量・タイミング" },
+  { id: "cautions", title: "注意点・副作用" },
+  { id: "faq", title: "よくある質問" },
+  { id: "related-ingredients", title: "関連成分" },
+];
 
 // ビタミンCの種類データ
 const VITAMIN_C_TYPES = [
@@ -382,7 +421,7 @@ const FAQS = [
   {
     question: "安いビタミンCサプリと高いものの違いは？",
     answer:
-      "主な違いは①形態（リポソームは高価）②原料（天然由来は高価）③添加物の質④ブランド料金です。アスコルビン酸単体であれば、安価な製品でも効果は同等。ただし、吸収率を高めたリポソームや、胃に優しい緩衝型は価格に見合う価値があります。高いから良いとは限らないので、自分の目的に合った製品を選びましょう。",
+      "主な違いは1.形態（リポソームは高価）2.原料（天然由来は高価）3.添加物の質4.ブランド料金です。アスコルビン酸単体であれば、安価な製品でも効果は同等。ただし、吸収率を高めたリポソームや、胃に優しい緩衝型は価格に見合う価値があります。高いから良いとは限らないので、自分の目的に合った製品を選びましょう。",
   },
   {
     question: "ビタミンCは風邪に効きますか？",
@@ -393,6 +432,34 @@ const FAQS = [
     question: "ビタミンCを摂りすぎるとどうなりますか？",
     answer:
       "水溶性なので基本的に過剰分は尿として排泄されますが、2000mg/日を超えると下痢、腹痛、吐き気、胸やけなどの消化器症状が出ることがあります。長期的な高用量摂取は腎臓結石のリスクを高める可能性も指摘されています。健康な成人なら1000mg/日程度までが安心です。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "鉄分",
+    slug: "iron",
+    emoji: "🩸",
+    reason: "ビタミンCが鉄の吸収を最大6倍促進",
+  },
+  {
+    name: "ビタミンE",
+    slug: "vitamin-e",
+    emoji: "🌻",
+    reason: "抗酸化作用の相乗効果で老化予防",
+  },
+  {
+    name: "コラーゲン",
+    slug: "collagen",
+    emoji: "✨",
+    reason: "ビタミンCがコラーゲン合成をサポート",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "🛡️",
+    reason: "免疫機能をダブルでサポート",
   },
 ];
 
@@ -441,7 +508,7 @@ export default async function VitaminCComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. パンくずリスト（sticky） */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -471,18 +538,18 @@ export default async function VitaminCComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
               style={{
-                backgroundColor: systemColors.blue + "15",
-                color: systemColors.blue,
+                backgroundColor: systemColors.orange + "15",
+                color: systemColors.orange,
               }}
             >
-              比較記事
+              ビタミン
             </span>
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
@@ -529,10 +596,55 @@ export default async function VitaminCComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
-          style={{ borderColor: systemColors.blue + "30" }}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <List size={20} style={{ color: systemColors.blue }} />
+            <h2
+              className={`${typography.title3}`}
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              目次
+            </h2>
+          </div>
+          <nav>
+            <ol className="space-y-2">
+              {SECTIONS.map((section, index) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="flex items-center gap-3 py-1 hover:opacity-70 transition-opacity"
+                  >
+                    <span
+                      className="text-[13px] font-medium w-6 h-6 rounded-full flex items-center justify-center"
+                      style={{
+                        backgroundColor: systemColors.blue + "15",
+                        color: systemColors.blue,
+                      }}
+                    >
+                      {index + 1}
+                    </span>
+                    <span
+                      className="text-[14px]"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {section.title}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </section>
+
+        {/* 4. この記事でわかること */}
+        <section
+          id="learning-points"
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: systemColors.orange + "30" }}
         >
           <h2
             className={`${typography.title3} mb-4`}
@@ -541,18 +653,12 @@ export default async function VitaminCComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "ビタミンCサプリの種類と特徴（アスコルビン酸・リポソーム・タイムリリースなど）",
-              "あなたの目的に合った最適なビタミンCの選び方",
-              "mg単価で見た本当のコスパランキングTOP3",
-              "効果的な摂取方法と注意すべき副作用",
-              "よくある疑問への科学的根拠に基づいた回答",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
                   className="shrink-0 mt-0.5"
-                  style={{ color: systemColors.blue }}
+                  style={{ color: systemColors.orange }}
                 />
                 <span style={{ color: appleWebColors.textPrimary }}>
                   {item}
@@ -562,17 +668,18 @@ export default async function VitaminCComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
+          id="quick-recommendations"
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
-            background: `linear-gradient(135deg, ${systemColors.blue}15, ${systemColors.purple}15)`,
+            background: `linear-gradient(135deg, ${systemColors.orange}15, ${systemColors.yellow}15)`,
           }}
         >
           <div className="flex items-start gap-4">
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-              style={{ backgroundColor: systemColors.blue }}
+              style={{ backgroundColor: systemColors.orange }}
             >
               <Lightbulb size={24} className="text-white" />
             </div>
@@ -584,29 +691,20 @@ export default async function VitaminCComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>コスパ重視なら</strong>
-                  →アスコルビン酸タイプ。効果は同じで最安。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>胃が弱いなら</strong>
-                  →緩衝型（Buffered）。pHが調整済みで優しい。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>本気で効果を求めるなら</strong>
-                  →リポソーム。吸収率が高く血中濃度が上がりやすい。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>面倒くさがりなら</strong>
-                  →タイムリリース。1日1回でOK。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, index) => (
+                  <li key={index} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.condition}</strong>
+                    {" → "}
+                    {rec.recommendation}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* ビタミンCの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -694,8 +792,8 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose-recommendations" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -711,7 +809,6 @@ export default async function VitaminCComparisonPage() {
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
-              const Icon = rec.icon;
               return (
                 <div
                   key={rec.purpose}
@@ -739,7 +836,7 @@ export default async function VitaminCComparisonPage() {
                       >
                         <p
                           className="font-bold text-[15px] mb-2"
-                          style={{ color: systemColors.blue }}
+                          style={{ color: systemColors.orange }}
                         >
                           → {rec.recommendation}
                         </p>
@@ -765,8 +862,8 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="ranking" className="mb-12">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -879,13 +976,23 @@ export default async function VitaminCComparisonPage() {
             ))}
           </div>
 
+          {products.length === 0 && (
+            <div
+              className={`${liquidGlassClasses.light} rounded-[16px] p-8 text-center`}
+            >
+              <p style={{ color: appleWebColors.textSecondary }}>
+                現在、ビタミンCサプリメントの商品データを準備中です。
+              </p>
+            </div>
+          )}
+
           <div
             className={`${liquidGlassClasses.light} rounded-[16px] p-4 mt-6 flex items-center gap-4 border`}
-            style={{ borderColor: systemColors.blue + "30" }}
+            style={{ borderColor: systemColors.orange + "30" }}
           >
             <div
               className="w-10 h-10 rounded-[12px] flex items-center justify-center"
-              style={{ backgroundColor: systemColors.blue }}
+              style={{ backgroundColor: systemColors.orange }}
             >
               <Calculator size={20} className="text-white" />
             </div>
@@ -906,15 +1013,15 @@ export default async function VitaminCComparisonPage() {
             <Link
               href="/tools/mg-calculator"
               className="px-4 py-2 rounded-[10px] text-[13px] font-medium text-white"
-              style={{ backgroundColor: systemColors.blue }}
+              style={{ backgroundColor: systemColors.orange }}
             >
               計算ツールへ
             </Link>
           </div>
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -932,7 +1039,7 @@ export default async function VitaminCComparisonPage() {
                     className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
                     style={{
                       backgroundColor: check.important
-                        ? systemColors.blue
+                        ? systemColors.orange
                         : appleWebColors.sectionBackground,
                     }}
                   >
@@ -955,8 +1062,8 @@ export default async function VitaminCComparisonPage() {
                         <span
                           className="ml-2 text-[11px] px-1.5 py-0.5 rounded"
                           style={{
-                            backgroundColor: systemColors.blue + "20",
-                            color: systemColors.blue,
+                            backgroundColor: systemColors.orange + "20",
+                            color: systemColors.orange,
                           }}
                         >
                           重要
@@ -976,8 +1083,8 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1040,7 +1147,7 @@ export default async function VitaminCComparisonPage() {
                     </td>
                     <td
                       className="py-3 px-4 font-bold"
-                      style={{ color: systemColors.blue }}
+                      style={{ color: systemColors.orange }}
                     >
                       {guide.amount}
                     </td>
@@ -1063,8 +1170,8 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1174,7 +1281,7 @@ export default async function VitaminCComparisonPage() {
               <Link
                 href="/products?ingredient=vitamin-c"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-[12px] font-medium text-white"
-                style={{ backgroundColor: systemColors.blue }}
+                style={{ backgroundColor: systemColors.orange }}
               >
                 全{products.length}商品を見る
                 <ArrowRight size={16} />
@@ -1183,8 +1290,8 @@ export default async function VitaminCComparisonPage() {
           </section>
         )}
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1215,8 +1322,8 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
-        <section className="mb-12">
+        {/* 13. 関連成分 */}
+        <section id="related-ingredients" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1224,32 +1331,7 @@ export default async function VitaminCComparisonPage() {
             ビタミンCと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "鉄分",
-                slug: "iron",
-                emoji: "🩸",
-                reason: "ビタミンCが鉄の吸収を最大6倍促進",
-              },
-              {
-                name: "ビタミンE",
-                slug: "vitamin-e",
-                emoji: "🌻",
-                reason: "抗酸化作用の相乗効果で老化予防",
-              },
-              {
-                name: "コラーゲン",
-                slug: "collagen",
-                emoji: "✨",
-                reason: "ビタミンCがコラーゲン合成をサポート",
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                emoji: "🛡️",
-                reason: "免疫機能をダブルでサポート",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1280,11 +1362,11 @@ export default async function VitaminCComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
-            background: `linear-gradient(135deg, ${systemColors.blue}, ${systemColors.purple})`,
+            background: `linear-gradient(135deg, ${systemColors.orange}, ${systemColors.yellow})`,
           }}
         >
           <h2 className={`${typography.title2} mb-4`}>
@@ -1297,7 +1379,7 @@ export default async function VitaminCComparisonPage() {
             <Link
               href="/products?ingredient=vitamin-c"
               className="inline-flex items-center justify-center gap-2 bg-white font-bold px-6 py-3 rounded-[12px] transition-colors hover:bg-gray-100"
-              style={{ color: systemColors.blue }}
+              style={{ color: systemColors.orange }}
             >
               全商品を見る
               <ArrowRight size={18} />
@@ -1313,7 +1395,7 @@ export default async function VitaminCComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1339,13 +1421,71 @@ export default async function VitaminCComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/vitamin-c-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

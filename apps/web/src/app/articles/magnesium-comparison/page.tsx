@@ -1,6 +1,7 @@
 /**
  * マグネシウム比較記事ページ
  * SEO最適化された比較コンテンツ
+ * 統一テンプレート v2.0 - 15セクション構成
  */
 
 import { Metadata } from "next";
@@ -10,27 +11,22 @@ import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import {
   ArrowRight,
-  Award,
-  Shield,
-  TrendingUp,
-  DollarSign,
-  FlaskConical,
   CheckCircle2,
-  ExternalLink,
-  Calculator,
   AlertTriangle,
   Lightbulb,
   Target,
   Clock,
   Zap,
   Heart,
+  Shield,
+  BadgeCheck,
+  Info,
+  Calculator,
+  ExternalLink,
   Brain,
   Moon,
-  BadgeCheck,
-  XCircle,
-  Info,
-  Sparkles,
   Activity,
+  FlaskConical,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -143,6 +139,40 @@ async function getMagnesiumProducts(): Promise<Product[]> {
   }
 }
 
+// この記事でわかること
+const LEARNING_POINTS = [
+  "マグネシウムサプリの形態と吸収率の違い（グリシン酸・クエン酸・酸化物など）",
+  "目的別（睡眠・筋肉・認知機能・心臓）の最適な選び方",
+  "コスパランキングTOP3と1日あたりのコスト比較",
+  "効果的な摂取タイミングと注意すべき副作用",
+  "薬との相互作用や腎機能への影響について",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    condition: "睡眠・リラックス重視なら",
+    recommendation:
+      "グリシン酸マグネシウム。グリシン自体にもリラックス効果あり。",
+  },
+  {
+    condition: "コスパ重視なら",
+    recommendation: "酸化マグネシウム。ただし吸収率は低め。",
+  },
+  {
+    condition: "バランス重視なら",
+    recommendation: "クエン酸マグネシウム。吸収率と価格のバランスが良い。",
+  },
+  {
+    condition: "認知機能サポートなら",
+    recommendation: "スレオン酸マグネシウム。脳への到達性が高い。",
+  },
+  {
+    condition: "心臓・血圧が気になるなら",
+    recommendation: "タウリン酸マグネシウム。タウリンとの相乗効果。",
+  },
+];
+
 // マグネシウムの形態データ
 const MAGNESIUM_TYPES = [
   {
@@ -217,114 +247,150 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "睡眠・リラックス",
     icon: Moon,
-    recommended: "グリシン酸マグネシウム",
-    timing: "就寝30分〜1時間前",
-    dosage: "200-400mg/日",
-    tips: "グリシン自体にもリラックス効果あり。カフェインとの併用は避ける。",
-    color: systemColors.purple,
+    emoji: "🌙",
+    description: "寝つきが悪い、リラックスしたい",
+    recommendation: "グリシン酸マグネシウム",
+    reason:
+      "グリシン自体にもリラックス効果あり。就寝前の摂取で睡眠の質をサポート。",
+    tips: "就寝30分〜1時間前に200-400mg。カフェインとの併用は避ける。",
   },
   {
     purpose: "筋肉けいれん・こむら返り",
     icon: Activity,
-    recommended: "クエン酸 または リンゴ酸",
-    timing: "運動後・就寝前",
-    dosage: "300-400mg/日",
-    tips: "カリウムやビタミンB6との併用で効果UP。脱水にも注意。",
-    color: systemColors.orange,
+    emoji: "💪",
+    description: "足がつる、筋肉の張りが気になる",
+    recommendation: "クエン酸 または リンゴ酸マグネシウム",
+    reason: "吸収率が高く、筋肉の正常な機能をサポート。運動後の回復にも。",
+    tips: "運動後・就寝前に300-400mg。カリウムやビタミンB6との併用も効果的。",
   },
   {
     purpose: "認知機能・集中力",
     icon: Brain,
-    recommended: "スレオン酸マグネシウム",
-    timing: "朝または昼",
-    dosage: "製品指示に従う（144mg程度）",
-    tips: "高価だが脳への到達性が高い。長期継続で効果を実感。",
-    color: systemColors.indigo,
+    emoji: "🧠",
+    description: "記憶力、集中力を維持したい",
+    recommendation: "スレオン酸マグネシウム",
+    reason: "血液脳関門を通過できる唯一の形態。脳内マグネシウム濃度を高める。",
+    tips: "朝または昼に製品指示量。高価だが長期継続で効果を実感。",
   },
   {
     purpose: "心臓・血圧",
     icon: Heart,
-    recommended: "タウリン酸マグネシウム",
-    timing: "朝晩2回に分けて",
-    dosage: "300-400mg/日",
-    tips: "タウリンとの相乗効果。降圧薬服用中は医師に相談。",
-    color: systemColors.red,
+    emoji: "❤️",
+    description: "心臓の健康、血圧が気になる",
+    recommendation: "タウリン酸マグネシウム",
+    reason: "タウリンは心臓の健康に重要。心血管系をダブルでサポート。",
+    tips: "朝晩2回に分けて300-400mg。降圧薬服用中は医師に相談。",
+  },
+  {
+    purpose: "便秘対策",
+    icon: Zap,
+    emoji: "💫",
+    description: "お通じを改善したい",
+    recommendation: "酸化マグネシウム または クエン酸マグネシウム",
+    reason: "酸化物は強い緩下作用、クエン酸は穏やかな効果。目的に応じて選択。",
+    tips: "夜就寝前に摂取。水分を多めに。効きすぎる場合は量を調整。",
   },
 ];
 
 // 選び方チェックリスト
 const SELECTION_CHECKLIST = [
   {
-    category: "形態（吸収率）",
-    items: [
-      "目的に合った形態を選ぶ（上記参照）",
-      "吸収率重視ならグリシン酸・クエン酸",
-      "コスパ重視なら酸化マグネシウム（吸収率は低い）",
-    ],
+    item: "マグネシウムの形態を確認",
+    description:
+      "グリシン酸・クエン酸・酸化物など。目的と吸収率を考慮して選択。",
+    important: true,
   },
   {
-    category: "含有量",
-    items: [
-      "「元素マグネシウム量」を確認（化合物全体量ではない）",
-      "1日300-400mgが一般的な目安",
-      "分割摂取のため1回100-200mgが理想",
-    ],
+    item: "元素マグネシウム量をチェック",
+    description:
+      "化合物全体量ではなく「元素マグネシウム量」を確認。1日300-400mgが目安。",
+    important: true,
   },
   {
-    category: "胃腸への影響",
-    items: [
-      "酸化マグネシウムは下剤作用が強い",
-      "グリシン酸・タウリン酸は胃に優しい",
-      "便秘気味ならクエン酸が一石二鳥",
-    ],
+    item: "胃腸への影響を考慮",
+    description:
+      "酸化マグネシウムは下剤作用が強い。胃が弱い方はグリシン酸やタウリン酸を。",
+    important: true,
   },
   {
-    category: "品質・添加物",
-    items: [
-      "第三者機関の品質テスト",
-      "不要な添加物・着色料の有無",
-      "GMP認証施設での製造",
-    ],
+    item: "品質認証を確認",
+    description:
+      "GMP認証、第三者機関テスト済みなど。信頼できるブランドを選択。",
+    important: false,
+  },
+  {
+    item: "添加物・カプセルの素材を確認",
+    description:
+      "不要な添加物や着色料の有無。ベジタリアン対応が必要な場合はカプセルも確認。",
+    important: false,
   },
 ];
 
 // 摂取量ガイド
-const DOSAGE_GUIDE = {
-  recommended: "300-400mg/日（元素マグネシウム）",
-  timing: "食事と一緒に（空腹時は避ける）",
-  frequency: "2-3回に分けて摂取が理想",
-  notes: [
-    "日本人の推奨量: 男性340mg、女性270mg",
-    "上限量: 350mg/日（サプリメントから）",
-    "食事からの摂取量も考慮して調整",
-  ],
-};
+const DOSAGE_GUIDE = [
+  {
+    purpose: "一般的な健康維持",
+    amount: "200〜300mg/日",
+    frequency: "1日1〜2回",
+    note: "食事と一緒に。空腹時は避ける",
+  },
+  {
+    purpose: "睡眠サポート",
+    amount: "300〜400mg/日",
+    frequency: "就寝前1回",
+    note: "グリシン酸がおすすめ。30分〜1時間前に",
+  },
+  {
+    purpose: "筋肉けいれん対策",
+    amount: "300〜400mg/日",
+    frequency: "1日2回に分けて",
+    note: "運動後と就寝前。カリウムも一緒に",
+  },
+  {
+    purpose: "便秘対策（酸化物）",
+    amount: "250〜500mg/日",
+    frequency: "就寝前1回",
+    note: "水分を多めに。効きすぎたら減量",
+  },
+  {
+    purpose: "心臓・血圧サポート",
+    amount: "300〜400mg/日",
+    frequency: "朝晩2回に分けて",
+    note: "タウリン酸がおすすめ。薬との併用は医師に相談",
+  },
+];
 
-// 注意点
+// 注意点・副作用
 const CAUTIONS = [
   {
-    title: "腎機能障害",
+    title: "腎機能障害の方は要注意",
     description:
-      "腎機能が低下している方はマグネシウムの排泄が困難。必ず医師に相談。",
-    severity: "high",
+      "腎機能が低下している方はマグネシウムの排泄が困難。高マグネシウム血症のリスクがあるため、必ず医師に相談。",
+    severity: "warning",
   },
   {
-    title: "下痢・軟便",
+    title: "下痢・軟便に注意",
     description:
-      "特に酸化マグネシウムで起こりやすい。用量を減らすか形態を変更。",
-    severity: "medium",
+      "特に酸化マグネシウムで起こりやすい。症状が出たら用量を減らすか、吸収率の高い形態に変更を。",
+    severity: "warning",
   },
   {
-    title: "薬との相互作用",
+    title: "抗生物質との相互作用",
     description:
-      "抗生物質・骨粗鬆症薬などの吸収を妨げる可能性。2時間以上あける。",
-    severity: "medium",
+      "テトラサイクリン系・キノロン系抗生物質、骨粗鬆症薬の吸収を妨げる可能性。2時間以上間隔をあける。",
+    severity: "warning",
   },
   {
-    title: "過剰摂取",
+    title: "過剰摂取に注意",
     description:
-      "サプリからは350mg/日を超えないこと。下痢、吐き気、低血圧の恐れ。",
-    severity: "medium",
+      "サプリメントからは1日350mgを超えないこと（厚生労働省基準）。下痢、吐き気、低血圧の恐れ。",
+    severity: "info",
+  },
+  {
+    title: "カルシウムとの同時摂取",
+    description:
+      "高用量のカルシウムはマグネシウムの吸収を阻害する可能性。時間をずらして摂取が理想的。",
+    severity: "info",
   },
 ];
 
@@ -333,804 +399,1046 @@ const FAQS = [
   {
     question: "マグネシウムはいつ飲むのが効果的？",
     answer:
-      "目的により異なります。睡眠改善なら就寝前、筋肉けいれん対策なら運動後や就寝前、一般的な補給なら食事と一緒に。空腹時は胃腸への刺激が強いので避けましょう。",
+      "目的により異なります。睡眠改善なら就寝30分〜1時間前、筋肉けいれん対策なら運動後や就寝前、一般的な補給なら食事と一緒に。空腹時は胃腸への刺激が強いので避けましょう。分割して摂取すると吸収効率が上がります。",
   },
   {
     question: "酸化マグネシウムと他の形態の違いは？",
     answer:
-      "酸化マグネシウムはマグネシウム含有率は高い（60%）ですが、吸収率は4%程度と低いです。便秘対策には有効ですが、マグネシウム補給目的なら吸収率の高い形態がおすすめです。",
+      "酸化マグネシウムはマグネシウム含有率は高い（60%）ですが、吸収率は4%程度と低いです。便秘対策には有効ですが、マグネシウム補給目的なら吸収率の高いグリシン酸やクエン酸がおすすめです。価格は最も安いので、コスパ重視で下剤作用も気にならない方には選択肢になります。",
   },
   {
     question: "マグネシウムとカルシウムは一緒に摂るべき？",
     answer:
-      "以前は2:1の比率が推奨されていましたが、現在は個別に適量を摂ることが重要とされています。ただし、同時摂取は互いの吸収を妨げる可能性があるため、時間をずらすのが理想的です。",
+      "以前は2:1の比率が推奨されていましたが、現在は個別に適量を摂ることが重要とされています。高用量のカルシウムはマグネシウムの吸収を阻害する可能性があるため、同時摂取は避け、時間をずらすのが理想的です。",
   },
   {
     question: "マグネシウム不足のサインは？",
     answer:
-      "筋肉のけいれん・こむら返り、疲労感、不眠、イライラ、頭痛などが代表的です。日本人の多くはマグネシウム摂取が不足気味と言われています。",
+      "筋肉のけいれん・こむら返り、疲労感、不眠、イライラ、頭痛、食欲不振などが代表的です。日本人の多くはマグネシウム摂取が不足気味と言われています。加工食品中心の食生活、ストレス、アルコール摂取が多い方は特に注意。",
   },
   {
     question: "食事からマグネシウムを摂るには？",
     answer:
-      "ナッツ類（アーモンド、カシューナッツ）、緑黄色野菜（ほうれん草）、豆類、全粒穀物、カカオなどに豊富です。ただし、加工食品中心の食生活では不足しがちです。",
+      "ナッツ類（アーモンド、カシューナッツ）、緑黄色野菜（ほうれん草）、豆類、全粒穀物、カカオ、海藻類などに豊富です。ただし、加工食品中心の食生活では不足しがちで、精製・加工により失われやすいミネラルです。",
+  },
+  {
+    question: "グリシン酸マグネシウムが睡眠に良い理由は？",
+    answer:
+      "グリシン酸マグネシウムは、マグネシウム自体のリラックス効果に加え、グリシンというアミノ酸も含まれています。グリシンは体温を下げ、睡眠の質を高める効果が研究で示されています。吸収率も高く、胃腸への負担も少ないため、就寝前の摂取に最適です。",
+  },
+  {
+    question: "スレオン酸マグネシウムは本当に脳に届く？",
+    answer:
+      "スレオン酸マグネシウム（Magtein）は、MITの研究者が開発した形態で、血液脳関門を通過できることが研究で示されています。脳内のマグネシウム濃度を効率的に高め、認知機能や記憶力をサポートする可能性があります。ただし、他の形態より高価です。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "ビタミンD",
+    slug: "vitamin-d",
+    emoji: "☀️",
+    reason: "マグネシウムの吸収・代謝に必要",
+  },
+  {
+    name: "ビタミンB6",
+    slug: "vitamin-b6",
+    emoji: "🔶",
+    reason: "マグネシウムの細胞内取り込みをサポート",
+  },
+  {
+    name: "カリウム",
+    slug: "potassium",
+    emoji: "🍌",
+    reason: "筋肉の正常な機能に相乗効果",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "💪",
+    reason: "ZMA配合で睡眠・筋肉をサポート",
   },
 ];
 
 export default async function MagnesiumComparisonPage() {
   const products = await getMagnesiumProducts();
 
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+  const productsWithCost = products
+    .filter(
+      (p) =>
+        p.priceJPY > 0 && p.servingsPerContainer > 0 && p.servingsPerDay > 0,
+    )
+    .map((product) => {
+      const effectiveCostPerDay = calculateEffectiveCostPerDay({
+        priceJPY: product.priceJPY,
+        servingsPerContainer: product.servingsPerContainer,
+        servingsPerDay: product.servingsPerDay,
+      });
 
-  const articleStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: ARTICLE_DATA.title,
-    description: ARTICLE_DATA.description,
-    datePublished: ARTICLE_DATA.publishedAt,
-    dateModified: ARTICLE_DATA.updatedAt,
-    author: {
-      "@type": "Organization",
-      name: "サプティア編集部",
-      url: "https://suptia.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "サプティア",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://suptia.com/logo.png",
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": "https://suptia.com/articles/magnesium-comparison",
-    },
-  };
+      const mgIngredient = product.ingredients?.find((i) =>
+        i.ingredient?.name?.includes("マグネシウム"),
+      );
+      const mgPerServing = mgIngredient?.amountMgPerServing || 0;
+      const pricePerMg =
+        mgPerServing > 0
+          ? product.priceJPY / (mgPerServing * product.servingsPerContainer)
+          : 0;
+
+      return {
+        ...product,
+        effectiveCostPerDay,
+        mgPerServing,
+        pricePerMg,
+      };
+    })
+    .sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
+
+  const top3Products = productsWithCost.slice(0, 3);
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqStructuredData),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleStructuredData),
-        }}
-      />
-
-      <main
-        className="min-h-screen"
-        style={{
-          backgroundColor: appleWebColors.pageBackground,
-          fontFamily: fontStack,
-        }}
+    <article
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
+      {/* 1. パンくずリスト (sticky) */}
+      <div
+        className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
+        style={{ borderColor: appleWebColors.borderSubtle }}
       >
-        {/* ヒーローセクション */}
+        <div className="mx-auto px-4 sm:px-6 py-3 max-w-4xl">
+          <nav className="flex items-center gap-2 text-[13px]">
+            <Link
+              href="/"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
+            >
+              ホーム
+            </Link>
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <Link
+              href="/articles"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
+            >
+              記事一覧
+            </Link>
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <span style={{ color: appleWebColors.textSecondary }}>
+              マグネシウム比較
+            </span>
+          </nav>
+        </div>
+      </div>
+
+      {/* 2. ヒーローセクション */}
+      <header className="pt-8 pb-12 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <span
+              className="px-3 py-1 text-[12px] font-medium rounded-full"
+              style={{
+                backgroundColor: systemColors.purple + "15",
+                color: systemColors.purple,
+              }}
+            >
+              ミネラル
+            </span>
+            <span
+              className="px-3 py-1 text-[12px] font-medium rounded-full"
+              style={{
+                backgroundColor: systemColors.green + "15",
+                color: systemColors.green,
+              }}
+            >
+              {products.length}商品を比較
+            </span>
+          </div>
+
+          <h1
+            className={`${typography.title1} md:${typography.largeTitle} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            {ARTICLE_DATA.title}
+          </h1>
+
+          <p
+            className={`${typography.body} mb-6`}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            {ARTICLE_DATA.description}
+          </p>
+
+          <div
+            className={`flex items-center gap-4 ${typography.footnote}`}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <time dateTime={ARTICLE_DATA.publishedAt}>
+              公開: {ARTICLE_DATA.publishedAt}
+            </time>
+            <time dateTime={ARTICLE_DATA.updatedAt}>
+              更新: {ARTICLE_DATA.updatedAt}
+            </time>
+          </div>
+
+          <ArticleEyecatch
+            src={ogImageUrl}
+            alt={`${ARTICLE_DATA.title} - アイキャッチ画像`}
+          />
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol
+            className="space-y-2 text-[15px]"
+            style={{ color: systemColors.blue }}
+          >
+            <li>
+              <a href="#learning" className="hover:opacity-70">
+                1. この記事でわかること
+              </a>
+            </li>
+            <li>
+              <a href="#conclusion" className="hover:opacity-70">
+                2. 結論ファースト（迷ったらこれ）
+              </a>
+            </li>
+            <li>
+              <a href="#types" className="hover:opacity-70">
+                3. マグネシウムの種類と特徴
+              </a>
+            </li>
+            <li>
+              <a href="#purpose" className="hover:opacity-70">
+                4. 目的別おすすめ
+              </a>
+            </li>
+            <li>
+              <a href="#ranking" className="hover:opacity-70">
+                5. おすすめ商品ランキング
+              </a>
+            </li>
+            <li>
+              <a href="#checklist" className="hover:opacity-70">
+                6. 選び方チェックリスト
+              </a>
+            </li>
+            <li>
+              <a href="#dosage" className="hover:opacity-70">
+                7. 摂取量・タイミング
+              </a>
+            </li>
+            <li>
+              <a href="#cautions" className="hover:opacity-70">
+                8. 注意点・副作用
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="hover:opacity-70">
+                9. よくある質問
+              </a>
+            </li>
+            <li>
+              <a href="#related" className="hover:opacity-70">
+                10. 関連成分
+              </a>
+            </li>
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
-          className="relative py-16 md:py-24"
+          id="learning"
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border scroll-mt-20`}
+          style={{ borderColor: systemColors.purple + "30" }}
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            この記事でわかること
+          </h2>
+          <ul className="space-y-3">
+            {LEARNING_POINTS.map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle2
+                  size={20}
+                  className="shrink-0 mt-0.5"
+                  style={{ color: systemColors.purple }}
+                />
+                <span style={{ color: appleWebColors.textPrimary }}>
+                  {item}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 5. 結論ファースト */}
+        <section
+          id="conclusion"
+          className="mb-12 rounded-[20px] p-6 md:p-8 scroll-mt-20"
           style={{
-            background: `linear-gradient(135deg, ${systemColors.purple}08 0%, ${systemColors.indigo}08 100%)`,
+            background: `linear-gradient(135deg, ${systemColors.purple}15, ${systemColors.indigo}15)`,
           }}
         >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            {/* パンくず */}
-            <nav className="mb-8">
-              <ol
-                className="flex items-center gap-2 text-[14px]"
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                <li>
-                  <Link href="/" style={{ color: systemColors.blue }}>
-                    ホーム
-                  </Link>
-                </li>
-                <li>/</li>
-                <li>
-                  <Link href="/articles" style={{ color: systemColors.blue }}>
-                    記事
-                  </Link>
-                </li>
-                <li>/</li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  マグネシウム比較
-                </li>
-              </ol>
-            </nav>
-
-            {/* アイキャッチ画像 */}
-            <div className="mb-8">
-              <ArticleEyecatch
-                src={ogImageUrl}
-                alt={ARTICLE_DATA.title}
-                size="large"
-              />
+          <div className="flex items-start gap-4">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+              style={{ backgroundColor: systemColors.purple }}
+            >
+              <Lightbulb size={24} className="text-white" />
             </div>
-
-            {/* タイトル */}
-            <div className="text-center">
-              <div
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
-                style={{
-                  backgroundColor: systemColors.purple + "15",
-                  color: systemColors.purple,
-                }}
-              >
-                <Sparkles size={16} />
-                <span className="text-[14px] font-medium">
-                  マグネシウム比較
-                </span>
-              </div>
-
-              <h1
-                className={`${typography.title1} md:text-[40px] mb-4`}
+            <div>
+              <h2
+                className={`${typography.title3} mb-3`}
                 style={{ color: appleWebColors.textPrimary }}
               >
-                {ARTICLE_DATA.title}
-              </h1>
-
-              <p
-                className={`${typography.body} max-w-2xl mx-auto mb-6`}
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                {ARTICLE_DATA.description}
-              </p>
-
-              <div
-                className={`flex items-center justify-center gap-4 ${typography.footnote}`}
-                style={{ color: appleWebColors.textTertiary }}
-              >
-                <span className="flex items-center gap-1">
-                  <Clock size={14} />
-                  {ARTICLE_DATA.publishedAt}
-                </span>
-                <span>·</span>
-                <span>読了時間: 6分</span>
-              </div>
+                結論：迷ったらこれを選べ
+              </h2>
+              <ul className="space-y-2 text-[15px]">
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.condition}</strong>
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      {" "}
+                      → {rec.recommendation}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          {/* 目次 */}
-          <nav
-            className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
-            style={{ borderColor: appleWebColors.borderSubtle }}
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
           >
-            <h2
-              className={`${typography.title3} mb-4`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              目次
-            </h2>
-            <ol
-              className="space-y-2 text-[15px]"
-              style={{ color: systemColors.blue }}
-            >
-              <li>
-                <a href="#types" className="hover:opacity-70">
-                  1. マグネシウムの形態と特徴
-                </a>
-              </li>
-              <li>
-                <a href="#purpose" className="hover:opacity-70">
-                  2. 目的別おすすめ
-                </a>
-              </li>
-              <li>
-                <a href="#products" className="hover:opacity-70">
-                  3. おすすめ商品ランキング
-                </a>
-              </li>
-              <li>
-                <a href="#checklist" className="hover:opacity-70">
-                  4. 選び方チェックリスト
-                </a>
-              </li>
-              <li>
-                <a href="#dosage" className="hover:opacity-70">
-                  5. 摂取量・タイミング
-                </a>
-              </li>
-              <li>
-                <a href="#cautions" className="hover:opacity-70">
-                  6. 注意点
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="hover:opacity-70">
-                  7. よくある質問
-                </a>
-              </li>
-            </ol>
-          </nav>
+            マグネシウムサプリの種類と選び方
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            マグネシウムは結合している物質によって吸収率や効果が大きく異なります。
+            「マグネシウム○○mg配合」と書いてあっても、形態によって実際に体に吸収される量は違います。
+          </p>
 
-          {/* セクション1: 形態と特徴 */}
-          <section id="types" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <FlaskConical
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.blue }}
-              />
-              マグネシウムの形態と特徴
-            </h2>
-
-            <p
-              className={`${typography.body} mb-8`}
-              style={{ color: appleWebColors.textSecondary }}
-            >
-              マグネシウムは結合している物質によって吸収率や効果が大きく異なります。
-              目的に合った形態を選ぶことが重要です。
-            </p>
-
-            <div className="grid gap-4">
-              {MAGNESIUM_TYPES.map((type) => (
-                <div
-                  key={type.name}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="flex-1">
-                      <h3
-                        className="text-[17px] font-semibold mb-1"
-                        style={{ color: type.color }}
-                      >
-                        {type.name}
-                      </h3>
-                      <p
-                        className="text-[13px] mb-2"
-                        style={{ color: appleWebColors.textTertiary }}
-                      >
-                        {type.nameEn}
-                      </p>
-                      <p
-                        className="text-[14px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        {type.description}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2 md:gap-3">
-                      <span
-                        className="px-3 py-1 rounded-full text-[12px] font-medium"
-                        style={{
-                          backgroundColor: systemColors.cyan + "15",
-                          color: systemColors.cyan,
-                        }}
-                      >
-                        吸収: {type.absorption}
-                      </span>
-                      <span
-                        className="px-3 py-1 rounded-full text-[12px] font-medium"
-                        style={{
-                          backgroundColor: systemColors.green + "15",
-                          color: systemColors.green,
-                        }}
-                      >
-                        価格: {type.price}
-                      </span>
-                      <span
-                        className="px-3 py-1 rounded-full text-[12px] font-medium"
-                        style={{
-                          backgroundColor: systemColors.orange + "15",
-                          color: systemColors.orange,
-                        }}
-                      >
-                        胃腸: {type.stomach}
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    className="mt-3 pt-3 border-t"
-                    style={{ borderColor: appleWebColors.borderSubtle }}
-                  >
-                    <span
-                      className="text-[13px]"
-                      style={{ color: appleWebColors.textTertiary }}
-                    >
-                      おすすめ:
-                    </span>
-                    <span
-                      className="text-[13px] font-medium ml-1"
+          <div className="space-y-4">
+            {MAGNESIUM_TYPES.map((type) => (
+              <div
+                key={type.name}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border-l-4`}
+                style={{ borderLeftColor: type.color }}
+              >
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                  <div className="flex-1">
+                    <h3
+                      className="font-bold text-[17px] mb-1"
                       style={{ color: appleWebColors.textPrimary }}
                     >
-                      {type.best}
+                      {type.name}
+                    </h3>
+                    <p
+                      className="text-[13px] mb-2"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      {type.nameEn}
+                    </p>
+                    <p
+                      className="text-[14px] leading-[1.6]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      {type.description}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 md:flex-col md:gap-1 md:text-right">
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      吸収: {type.absorption}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      価格: {type.price}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      胃腸: {type.stomach}
                     </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          {/* セクション2: 目的別おすすめ */}
-          <section id="purpose" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <Target
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.orange }}
-              />
-              目的別おすすめ
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              {PURPOSE_RECOMMENDATIONS.map((rec) => (
                 <div
-                  key={rec.purpose}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+                  className="mt-3 pt-3 border-t text-[13px]"
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ backgroundColor: rec.color + "15" }}
-                    >
-                      <rec.icon size={20} style={{ color: rec.color }} />
+                  <span style={{ color: type.color }}>
+                    <Target size={14} className="inline mr-1" />
+                    おすすめ: {type.best}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目的別｜あなたに合ったマグネシウムはこれ
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
+
+          <div className="space-y-4">
+            {PURPOSE_RECOMMENDATIONS.map((rec) => {
+              const Icon = rec.icon;
+              return (
+                <div
+                  key={rec.purpose}
+                  className={`${liquidGlassClasses.light} rounded-[20px] p-5 border`}
+                  style={{ borderColor: appleWebColors.borderSubtle }}
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="text-3xl">{rec.emoji}</span>
+                    <div className="flex-1">
+                      <h3
+                        className="font-bold text-[17px] mb-1"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {rec.purpose}
+                      </h3>
+                      <p
+                        className="text-[14px] mb-3"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {rec.description}
+                      </p>
+                      <div
+                        className="bg-white/50 rounded-[12px] p-4"
+                        style={{ borderColor: appleWebColors.borderSubtle }}
+                      >
+                        <p
+                          className="font-bold text-[15px] mb-2"
+                          style={{ color: systemColors.purple }}
+                        >
+                          → {rec.recommendation}
+                        </p>
+                        <p
+                          className="text-[14px] mb-2"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
+                          {rec.reason}
+                        </p>
+                        <p
+                          className="text-[13px] flex items-center gap-1"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          <Lightbulb size={14} />
+                          {rec.tips}
+                        </p>
+                      </div>
                     </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 8. おすすめ商品ランキング */}
+        <section id="ranking" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-2`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            コスパランキングTOP3｜マグネシウムサプリ
+          </h2>
+          <p
+            className="text-[15px] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            1日あたりのコストで比較した、最もお得なマグネシウムサプリメントです。
+          </p>
+
+          <div className="space-y-4">
+            {top3Products.map((product, index) => (
+              <Link
+                key={product._id}
+                href={`/products/${product.slug.current}`}
+                className={`${liquidGlassClasses.light} rounded-[20px] p-5 flex gap-4 border transition-all hover:shadow-lg hover:-translate-y-0.5`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-white"
+                  style={{
+                    background:
+                      index === 0
+                        ? "linear-gradient(135deg, #FFD700, #FFA500)"
+                        : index === 1
+                          ? "linear-gradient(135deg, #C0C0C0, #A0A0A0)"
+                          : "linear-gradient(135deg, #CD7F32, #8B4513)",
+                  }}
+                >
+                  {index + 1}
+                </div>
+
+                {product.externalImageUrl && (
+                  <div className="w-20 h-20 relative shrink-0 bg-white rounded-[12px] overflow-hidden">
+                    <Image
+                      src={product.externalImageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-1"
+                    />
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className="font-bold text-[15px] mb-1 line-clamp-2"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {product.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      価格:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.blue }}
+                      >
+                        ¥{product.priceJPY.toLocaleString()}
+                      </span>
+                    </span>
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      1日:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.green }}
+                      >
+                        ¥{product.effectiveCostPerDay.toFixed(1)}
+                      </span>
+                    </span>
+                    {product.mgPerServing > 0 && (
+                      <span style={{ color: appleWebColors.textSecondary }}>
+                        含有量:{" "}
+                        <span className="font-bold">
+                          {product.mgPerServing}mg
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
+                </div>
+
+                <ArrowRight
+                  size={20}
+                  className="shrink-0 self-center"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+              </Link>
+            ))}
+          </div>
+
+          {products.length === 0 && (
+            <div
+              className={`${liquidGlassClasses.light} rounded-[16px] p-8 text-center`}
+            >
+              <p style={{ color: appleWebColors.textSecondary }}>
+                現在、マグネシウムサプリメントの商品データを準備中です。
+              </p>
+            </div>
+          )}
+
+          <div className="mt-6 text-center">
+            <Link
+              href="/products?ingredient=magnesium"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[15px] font-medium text-white"
+              style={{ backgroundColor: systemColors.blue }}
+            >
+              すべてのマグネシウム製品を見る
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </section>
+
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            購入前チェックリスト
+          </h2>
+          <div
+            className={`${liquidGlassClasses.light} rounded-[20px] p-6 border`}
+            style={{ borderColor: appleWebColors.borderSubtle }}
+          >
+            <div className="space-y-4">
+              {SELECTION_CHECKLIST.map((check, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{
+                      backgroundColor: check.important
+                        ? systemColors.purple
+                        : appleWebColors.sectionBackground,
+                    }}
+                  >
+                    {check.important ? (
+                      <BadgeCheck size={14} className="text-white" />
+                    ) : (
+                      <CheckCircle2
+                        size={14}
+                        style={{ color: appleWebColors.textTertiary }}
+                      />
+                    )}
+                  </div>
+                  <div>
                     <h3
-                      className="text-[17px] font-semibold"
+                      className="font-bold text-[15px]"
                       style={{ color: appleWebColors.textPrimary }}
                     >
-                      {rec.purpose}
+                      {check.item}
+                      {check.important && (
+                        <span
+                          className="ml-2 text-[11px] px-1.5 py-0.5 rounded"
+                          style={{
+                            backgroundColor: systemColors.purple + "20",
+                            color: systemColors.purple,
+                          }}
+                        >
+                          重要
+                        </span>
+                      )}
                     </h3>
-                  </div>
-
-                  <div className="space-y-2 text-[14px]">
-                    <div style={{ color: appleWebColors.textSecondary }}>
-                      <span>おすすめ: </span>
-                      <span
-                        className="font-medium"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {rec.recommended}
-                      </span>
-                    </div>
-                    <div style={{ color: appleWebColors.textSecondary }}>
-                      <span>タイミング: </span>
-                      <span
-                        className="font-medium"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {rec.timing}
-                      </span>
-                    </div>
-                    <div style={{ color: appleWebColors.textSecondary }}>
-                      <span>目安: </span>
-                      <span
-                        className="font-medium"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {rec.dosage}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    className="mt-4 pt-3 border-t flex items-start gap-2"
-                    style={{ borderColor: appleWebColors.borderSubtle }}
-                  >
-                    <Lightbulb
-                      size={14}
-                      className="flex-shrink-0 mt-0.5"
-                      style={{ color: systemColors.yellow }}
-                    />
                     <p
-                      className="text-[13px]"
+                      className="text-[14px]"
                       style={{ color: appleWebColors.textSecondary }}
                     >
-                      {rec.tips}
+                      {check.description}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* セクション3: 商品ランキング */}
-          <section id="products" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <Award
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.yellow }}
-              />
-              おすすめ商品ランキング
-            </h2>
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目的別｜摂取量の目安
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            マグネシウムは過剰摂取による副作用もあるため、目的に応じた適切な量を守ることが大切です。
+          </p>
 
-            {products.length > 0 ? (
-              <div className="space-y-4">
-                {products.slice(0, 10).map((product, index) => (
-                  <div
-                    key={product._id}
-                    className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px]">
+              <thead>
+                <tr
+                  className="border-b"
+                  style={{ borderColor: appleWebColors.borderSubtle }}
+                >
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    目的
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    1日の目安
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    回数
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    備考
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {DOSAGE_GUIDE.map((guide, index) => (
+                  <tr
+                    key={index}
+                    className="border-b"
                     style={{ borderColor: appleWebColors.borderSubtle }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white flex-shrink-0"
-                        style={{
-                          backgroundColor:
-                            index === 0
-                              ? systemColors.yellow
-                              : index === 1
-                                ? "#94a3b8"
-                                : index === 2
-                                  ? "#cd7f32"
-                                  : systemColors.blue,
-                        }}
-                      >
-                        {index + 1}
-                      </div>
-
-                      {product.externalImageUrl && (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                          <Image
-                            src={product.externalImageUrl}
-                            alt={product.name}
-                            width={64}
-                            height={64}
-                            className="object-contain w-full h-full"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex-1 min-w-0">
-                        <h3
-                          className="text-[15px] font-semibold mb-1 line-clamp-2"
-                          style={{ color: appleWebColors.textPrimary }}
-                        >
-                          {product.name}
-                        </h3>
-                        <div
-                          className="flex flex-wrap items-center gap-3 text-[13px]"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <span className="font-medium">
-                            ¥{product.priceJPY?.toLocaleString()}
-                          </span>
-                          {product.servingsPerContainer &&
-                            product.servingsPerDay && (
-                              <span>
-                                1日あたり ¥
-                                {Math.round(
-                                  calculateEffectiveCostPerDay({
-                                    priceJPY: product.priceJPY,
-                                    servingsPerContainer:
-                                      product.servingsPerContainer,
-                                    servingsPerDay: product.servingsPerDay,
-                                  }),
-                                )}
-                              </span>
-                            )}
-                        </div>
-                      </div>
-
-                      <Link
-                        href={`/products/${product.slug?.current}`}
-                        className="px-4 py-2 rounded-lg text-[13px] font-medium text-white flex-shrink-0"
-                        style={{ backgroundColor: systemColors.blue }}
-                      >
-                        詳細
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div
-                className={`${liquidGlassClasses.light} rounded-[16px] p-8 text-center border`}
-                style={{ borderColor: appleWebColors.borderSubtle }}
-              >
-                <p style={{ color: appleWebColors.textSecondary }}>
-                  商品データを読み込み中...
-                </p>
-              </div>
-            )}
-
-            <div className="mt-6 text-center">
-              <Link
-                href="/search?ingredient=magnesium"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[15px] font-medium text-white"
-                style={{ backgroundColor: systemColors.blue }}
-              >
-                すべてのマグネシウム製品を見る
-                <ArrowRight size={16} />
-              </Link>
-            </div>
-          </section>
-
-          {/* セクション4: 選び方チェックリスト */}
-          <section id="checklist" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <CheckCircle2
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.green }}
-              />
-              選び方チェックリスト
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              {SELECTION_CHECKLIST.map((section) => (
-                <div
-                  key={section.category}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
-                >
-                  <h3
-                    className="text-[15px] font-semibold mb-3"
-                    style={{ color: appleWebColors.textPrimary }}
-                  >
-                    {section.category}
-                  </h3>
-                  <ul className="space-y-2">
-                    {section.items.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle2
-                          size={16}
-                          className="flex-shrink-0 mt-0.5"
-                          style={{ color: systemColors.green }}
-                        />
-                        <span
-                          className="text-[14px]"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* セクション5: 摂取量・タイミング */}
-          <section id="dosage" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <Calculator
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.purple }}
-              />
-              摂取量・タイミング
-            </h2>
-
-            <div
-              className={`${liquidGlassClasses.light} rounded-[20px] p-6 border`}
-              style={{ borderColor: appleWebColors.borderSubtle }}
-            >
-              <div className="grid md:grid-cols-3 gap-6 mb-6">
-                <div className="text-center">
-                  <div
-                    className="text-[20px] font-bold mb-1"
-                    style={{ color: systemColors.blue }}
-                  >
-                    {DOSAGE_GUIDE.recommended}
-                  </div>
-                  <div
-                    className="text-[13px]"
-                    style={{ color: appleWebColors.textSecondary }}
-                  >
-                    推奨摂取量
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div
-                    className="text-[20px] font-bold mb-1"
-                    style={{ color: systemColors.orange }}
-                  >
-                    {DOSAGE_GUIDE.timing}
-                  </div>
-                  <div
-                    className="text-[13px]"
-                    style={{ color: appleWebColors.textSecondary }}
-                  >
-                    タイミング
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div
-                    className="text-[20px] font-bold mb-1"
-                    style={{ color: systemColors.green }}
-                  >
-                    {DOSAGE_GUIDE.frequency}
-                  </div>
-                  <div
-                    className="text-[13px]"
-                    style={{ color: appleWebColors.textSecondary }}
-                  >
-                    摂取頻度
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="pt-4 border-t"
-                style={{ borderColor: appleWebColors.borderSubtle }}
-              >
-                <ul className="space-y-1">
-                  {DOSAGE_GUIDE.notes.map((note, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-start gap-2 text-[14px]"
+                    <td
+                      className="py-3 px-4"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {guide.purpose}
+                    </td>
+                    <td
+                      className="py-3 px-4 font-bold"
+                      style={{ color: systemColors.purple }}
+                    >
+                      {guide.amount}
+                    </td>
+                    <td
+                      className="py-3 px-4"
                       style={{ color: appleWebColors.textSecondary }}
                     >
-                      <Info
-                        size={14}
-                        className="flex-shrink-0 mt-0.5"
-                        style={{ color: systemColors.blue }}
-                      />
-                      {note}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
+                      {guide.frequency}
+                    </td>
+                    <td
+                      className="py-3 px-4 text-[13px]"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      {guide.note}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-          {/* セクション6: 注意点 */}
-          <section id="cautions" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <AlertTriangle
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.orange }}
-              />
-              注意点
-            </h2>
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            注意点・副作用
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            マグネシウムは適量なら安全ですが、過剰摂取や特定の健康状態では注意が必要です。
+          </p>
 
-            <div className="space-y-4">
-              {CAUTIONS.map((caution) => (
-                <div
-                  key={caution.title}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border-l-4`}
-                  style={{
-                    borderColor:
-                      caution.severity === "high"
-                        ? systemColors.red
-                        : systemColors.orange,
-                    backgroundColor:
-                      caution.severity === "high"
-                        ? systemColors.red + "08"
-                        : systemColors.orange + "08",
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle
-                      size={20}
-                      className="flex-shrink-0"
-                      style={{
-                        color:
-                          caution.severity === "high"
-                            ? systemColors.red
-                            : systemColors.orange,
-                      }}
-                    />
-                    <div>
-                      <h3
-                        className="text-[15px] font-semibold mb-1"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {caution.title}
-                      </h3>
-                      <p
-                        className="text-[14px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        {caution.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* セクション7: FAQ */}
-          <section id="faq" className="mb-16 scroll-mt-8">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              <Info
-                className="inline mr-2"
-                size={24}
-                style={{ color: systemColors.blue }}
-              />
-              よくある質問
-            </h2>
-
-            <div className="space-y-4">
-              {FAQS.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
-                >
+          <div className="space-y-3">
+            {CAUTIONS.map((caution, index) => (
+              <div
+                key={index}
+                className={`rounded-[12px] p-4 flex items-start gap-3`}
+                style={{
+                  backgroundColor:
+                    caution.severity === "warning"
+                      ? systemColors.orange + "15"
+                      : systemColors.blue + "15",
+                }}
+              >
+                {caution.severity === "warning" ? (
+                  <AlertTriangle
+                    size={20}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: systemColors.orange }}
+                  />
+                ) : (
+                  <Info
+                    size={20}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: systemColors.blue }}
+                  />
+                )}
+                <div>
                   <h3
-                    className="text-[15px] font-semibold mb-2"
+                    className="font-bold text-[15px]"
                     style={{ color: appleWebColors.textPrimary }}
                   >
-                    Q. {faq.question}
+                    {caution.title}
                   </h3>
                   <p
-                    className="text-[14px] leading-relaxed"
+                    className="text-[14px]"
                     style={{ color: appleWebColors.textSecondary }}
                   >
-                    A. {faq.answer}
+                    {caution.description}
                   </p>
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          {/* CTA */}
-          <section
-            className={`${liquidGlassClasses.light} rounded-[20px] p-8 text-center border`}
-            style={{
-              borderColor: appleWebColors.borderSubtle,
-              background: `linear-gradient(135deg, ${systemColors.purple}08 0%, ${systemColors.indigo}08 100%)`,
-            }}
+        {/* 12. FAQ */}
+        <section id="faq" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-6`}
+            style={{ color: appleWebColors.textPrimary }}
           >
-            <h2
-              className={`${typography.title2} mb-3`}
-              style={{ color: appleWebColors.textPrimary }}
+            よくある質問
+          </h2>
+          <div className="space-y-4">
+            {FAQS.map((faq, index) => (
+              <div
+                key={index}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
+                <h3
+                  className="font-bold text-[15px] mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  Q. {faq.question}
+                </h3>
+                <p
+                  className="text-[14px] leading-[1.8]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  A. {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 13. 関連成分 */}
+        <section id="related" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-6`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            マグネシウムと一緒に摂りたい成分
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {RELATED_INGREDIENTS.map((ingredient) => (
+              <Link
+                key={ingredient.slug}
+                href={`/ingredients/${ingredient.slug}`}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-4 flex items-center gap-4 border transition-all hover:shadow-md`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
+                <span className="text-2xl">{ingredient.emoji}</span>
+                <div className="flex-1">
+                  <h3
+                    className="font-bold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {ingredient.name}
+                  </h3>
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    {ingredient.reason}
+                  </p>
+                </div>
+                <ArrowRight
+                  size={16}
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* 14. CTA */}
+        <section
+          className="rounded-[20px] p-8 text-center text-white"
+          style={{
+            background: `linear-gradient(135deg, ${systemColors.purple}, ${systemColors.indigo})`,
+          }}
+        >
+          <h2 className={`${typography.title2} mb-4`}>
+            マグネシウムサプリをもっと詳しく比較
+          </h2>
+          <p className="text-[15px] opacity-90 mb-6">
+            Suptiaでは、5つの評価軸で商品を比較できます
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/products?ingredient=magnesium"
+              className="inline-flex items-center justify-center gap-2 bg-white font-bold px-6 py-3 rounded-[12px] transition-colors hover:bg-gray-100"
+              style={{ color: systemColors.purple }}
             >
-              あなたに最適なマグネシウムを見つけよう
-            </h2>
-            <p
-              className={`${typography.body} mb-6`}
-              style={{ color: appleWebColors.textSecondary }}
-            >
-              形態別の吸収率、価格、品質を比較して最適な製品を選びましょう
-            </p>
+              全商品を見る
+              <ArrowRight size={18} />
+            </Link>
             <Link
               href="/ingredients/magnesium"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-[15px] font-semibold text-white"
-              style={{ backgroundColor: systemColors.blue }}
+              className="inline-flex items-center justify-center gap-2 bg-white/20 font-medium px-6 py-3 rounded-[12px] transition-colors hover:bg-white/30"
             >
-              マグネシウム成分ガイドを見る
-              <ArrowRight size={16} />
+              マグネシウム成分ガイド
+              <ExternalLink size={16} />
             </Link>
-          </section>
-        </div>
-      </main>
-    </>
+          </div>
+        </section>
+      </div>
+
+      {/* 構造化データ: Article */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: ARTICLE_DATA.title,
+            description: ARTICLE_DATA.description,
+            datePublished: ARTICLE_DATA.publishedAt,
+            dateModified: ARTICLE_DATA.updatedAt,
+            author: {
+              "@type": "Organization",
+              name: "サプティア編集部",
+              url: "https://suptia.com",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "サプティア",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://suptia.com/logo.png",
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
+            },
+          }),
+        }}
+      />
+
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
+    </article>
   );
 }

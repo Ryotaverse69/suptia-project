@@ -1,325 +1,429 @@
 /**
- * MCTオイル比較記事ページ - Apple HIG Design
- * 中鎖脂肪酸サプリの形態・原料・品質による比較
+ * MCTオイル比較記事ページ
+ * SEO最適化された比較コンテンツ - 統一テンプレート v2
  */
 
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
+import { sanity } from "@/lib/sanity.client";
+import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import {
-  ArrowLeft,
-  Clock,
+  ArrowRight,
+  CheckCircle2,
   AlertTriangle,
-  CheckCircle,
-  Info,
+  Lightbulb,
+  Target,
+  Clock,
   Zap,
   Brain,
   Flame,
   Activity,
   Heart,
+  BadgeCheck,
+  Info,
+  ExternalLink,
 } from "lucide-react";
 import {
   appleWebColors,
   systemColors,
+  fontStack,
   liquidGlassClasses,
   typography,
 } from "@/lib/design-system";
-import { getArticleOGImage } from "@/lib/og-image";
+import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
-import { sanity } from "@/lib/sanity.client";
 
-// 商品の型定義
-interface MCTProduct {
-  _id: string;
-  name: string;
-  slug: { current: string };
-  brand?: string;
-  price?: number;
-  pricePerDay?: number;
-  amazonUrl?: string;
-  rakutenUrl?: string;
-  yahooUrl?: string;
-  iherbUrl?: string;
-  ecRating?: number;
-  images?: { asset?: { url?: string } }[];
-  badges?: string[];
-  nutritionFacts?: Record<string, unknown>;
-  servingsPerContainer?: number;
-  category?: string;
-  tags?: string[];
-}
+export const revalidate = 86400;
 
-// 記事データ
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "MCTオイルの形態と種類の違い（C8・C10・ブレンド・パウダー）",
+  "目的別（ケトジェニック・認知機能・運動）の最適な選び方",
+  "コスパランキングTOP3と本当のml単価",
+  "効果的な摂取タイミングと初心者向けの始め方",
+  "消化器トラブルを防ぐための正しい摂取法",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    label: "ケトン体効率重視なら",
+    recommendation: "C8（カプリル酸）100%。最速でケトン体に変換。",
+  },
+  {
+    label: "コスパ重視なら",
+    recommendation: "C8/C10ブレンド（60:40）。バランスが良い。",
+  },
+  {
+    label: "初心者なら",
+    recommendation: "MCTパウダー。消化器への刺激が少ない。",
+  },
+  {
+    label: "環境配慮なら",
+    recommendation: "ココナッツ由来・認証取得品。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "オメガ3（フィッシュオイル）",
+    slug: "omega-3",
+    emoji: "🐟",
+    reason: "脂質バランスで脳機能をサポート",
+  },
+  {
+    name: "ココナッツオイル",
+    slug: "coconut-oil",
+    emoji: "🥥",
+    reason: "MCTを含む天然オイル",
+  },
+  {
+    name: "クレアチン",
+    slug: "creatine",
+    emoji: "💪",
+    reason: "運動パフォーマンス向上に相乗効果",
+  },
+  {
+    name: "カフェイン",
+    slug: "caffeine",
+    emoji: "☕",
+    reason: "バターコーヒーで認知機能サポート",
+  },
+];
+
 const ARTICLE_DATA = {
-  slug: "mct-oil-comparison",
   title:
     "【2025年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
   description:
     "MCTオイルをC8/C10比率・原料・品質で徹底比較。ケトジェニックダイエット、認知機能、エネルギー補給に最適な選び方を解説。",
-  category: "脂肪酸",
-  categoryColor: systemColors.green,
   publishedAt: "2025-01-19",
-  updatedAt: "2025-01-19",
-  readTime: "6分",
-  tags: ["MCTオイル", "C8", "C10", "ケトン体", "ダイエット"],
+  updatedAt: new Date().toISOString().split("T")[0],
+  ingredientName: "MCTオイル",
+  ingredientSlug: "mct-oil",
 };
 
+const ogImageUrl = getArticleOGImage("mct-oil-comparison");
+const ogImage = generateOGImageMeta(ogImageUrl, "MCTオイル比較 - Suptia");
+
 export const metadata: Metadata = {
-  title: `${ARTICLE_DATA.title} - サプティア`,
+  title: ARTICLE_DATA.title,
   description: ARTICLE_DATA.description,
-  keywords: ARTICLE_DATA.tags,
+  keywords: [
+    "MCTオイル",
+    "C8",
+    "カプリル酸",
+    "C10",
+    "カプリン酸",
+    "ケトン体",
+    "ケトジェニック",
+    "バターコーヒー",
+    "中鎖脂肪酸",
+    "ダイエット",
+  ],
   openGraph: {
     title: ARTICLE_DATA.title,
     description: ARTICLE_DATA.description,
     type: "article",
     publishedTime: ARTICLE_DATA.publishedAt,
     modifiedTime: ARTICLE_DATA.updatedAt,
-    url: `https://suptia.com/articles/${ARTICLE_DATA.slug}`,
-    images: [
-      {
-        url: `https://suptia.com${getArticleOGImage(ARTICLE_DATA.slug)}`,
-        width: 1200,
-        height: 630,
-        alt: ARTICLE_DATA.title,
-      },
-    ],
+    url: "https://suptia.com/articles/mct-oil-comparison",
+    siteName: "サプティア",
+    locale: "ja_JP",
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: ARTICLE_DATA.title,
     description: ARTICLE_DATA.description,
+    images: [ogImageUrl],
   },
   alternates: {
-    canonical: `https://suptia.com/articles/${ARTICLE_DATA.slug}`,
+    canonical: "https://suptia.com/articles/mct-oil-comparison",
   },
 };
 
-// MCTオイル関連商品を取得するクエリ
-const MCT_PRODUCTS_QUERY = `*[_type == "product" && (
-  name match "*MCT*" ||
-  name match "*中鎖脂肪酸*" ||
-  tags[]->name match "*MCT*"
-)] | order(ecRating desc)[0...6] {
-  _id,
-  name,
-  slug,
-  brand,
-  price,
-  pricePerDay,
-  amazonUrl,
-  rakutenUrl,
-  yahooUrl,
-  iherbUrl,
-  ecRating,
-  images,
-  badges,
-  nutritionFacts,
-  servingsPerContainer,
-  "category": category->name,
-  "tags": tags[]->name
-}`;
+interface Product {
+  _id: string;
+  name: string;
+  priceJPY: number;
+  servingsPerContainer: number;
+  servingsPerDay: number;
+  externalImageUrl?: string;
+  slug: { current: string };
+  source?: string;
+  tierRatings?: {
+    priceRank?: string;
+    costEffectivenessRank?: string;
+    overallRank?: string;
+  };
+  badges?: string[];
+  ingredients?: Array<{
+    amountMgPerServing: number;
+    ingredient?: { name: string };
+  }>;
+}
 
-// MCTオイルの形態比較データ
+async function getMCTProducts(): Promise<Product[]> {
+  const query = `*[_type == "product" && availability == "in-stock" && (
+    name match "*MCT*" ||
+    name match "*中鎖脂肪酸*"
+  )] | order(priceJPY asc)[0...20]{
+    _id,
+    name,
+    priceJPY,
+    servingsPerContainer,
+    servingsPerDay,
+    externalImageUrl,
+    slug,
+    source,
+    tierRatings,
+    badges,
+    ingredients[]{
+      amountMgPerServing,
+      ingredient->{ name }
+    }
+  }`;
+
+  try {
+    const products = await sanity.fetch(query);
+    return products || [];
+  } catch (error) {
+    console.error("Failed to fetch MCT products:", error);
+    return [];
+  }
+}
+
+// MCTオイルの種類データ
 const MCT_TYPES = [
   {
     name: "C8（カプリル酸）100%",
-    description: "最もケトン体生成効率が高い純粋C8",
-    absorption: 98,
-    ketonePower: 100,
+    nameEn: "Pure C8 (Caprylic Acid)",
+    absorption: "◎ 最高",
+    ketonePower: "◎ 最高",
+    price: "△ 高い",
+    best: "ケトジェニック上級者",
+    description:
+      "最もケトン体生成効率が高い純粋C8。肝臓でほぼ100%ケトン体に変換され、脳のエネルギー源として最適。",
     color: systemColors.green,
-    pros: ["最速のケトン体生成", "エネルギー効率最高", "消化吸収が最も速い"],
-    cons: ["価格が最も高い", "単独では栄養バランスに欠ける"],
-    bestFor: "ケトジェニック上級者・認知機能重視",
   },
   {
     name: "C8/C10ブレンド",
-    description: "C8とC10を最適比率で配合（通常60:40）",
-    absorption: 92,
-    ketonePower: 85,
+    nameEn: "C8/C10 Blend (60:40)",
+    absorption: "○ 良好",
+    ketonePower: "○ 良好",
+    price: "○ 中程度",
+    best: "初心者・日常使い",
+    description:
+      "C8とC10を最適比率で配合。ケトン体生成と持続的エネルギー供給のバランスが良く、コスパも良好。",
     color: systemColors.blue,
-    pros: [
-      "バランスの良いケトン体生成",
-      "コスパが良い",
-      "持続的なエネルギー供給",
-    ],
-    cons: ["C8単体よりケトン体生成は劣る"],
-    bestFor: "ケトジェニック初心者・日常使い",
   },
   {
     name: "C10（カプリン酸）リッチ",
-    description: "C10を多く含む配合",
-    absorption: 88,
-    ketonePower: 70,
+    nameEn: "C10 Rich (Capric Acid)",
+    absorption: "○ 良好",
+    ketonePower: "△ 中程度",
+    price: "◎ 安い",
+    best: "コスパ重視・抗菌効果",
+    description:
+      "C10を多く含む配合。ケトン体生成はC8に劣るが、抗菌・抗真菌作用が報告されている。価格が手頃。",
     color: systemColors.cyan,
-    pros: ["価格が手頃", "抗菌・抗真菌作用", "脳への効果（てんかん研究あり）"],
-    cons: ["ケトン体生成はC8に劣る", "消化に時間がかかる"],
-    bestFor: "コスパ重視・抗菌効果期待",
   },
   {
     name: "ココナッツ由来MCT",
-    description: "ココナッツオイルからC8/C10を抽出",
-    absorption: 90,
-    ketonePower: 75,
+    nameEn: "Coconut-Derived MCT",
+    absorption: "○ 良好",
+    ketonePower: "○ 良好",
+    price: "○ 中程度",
+    best: "天然志向・品質重視",
+    description:
+      "ココナッツオイルからC8/C10を抽出。天然由来で安心感があり、環境負荷も比較的少ない。",
     color: systemColors.orange,
-    pros: ["天然由来で安心感", "環境負荷が比較的少ない", "品質が安定"],
-    cons: ["パーム由来より高価な場合あり"],
-    bestFor: "天然志向・品質重視",
   },
   {
     name: "パーム由来MCT",
-    description: "パームカーネルオイルから抽出",
-    absorption: 90,
-    ketonePower: 75,
+    nameEn: "Palm-Derived MCT",
+    absorption: "○ 良好",
+    ketonePower: "○ 良好",
+    price: "◎ 最安",
+    best: "コスパ最優先",
+    description:
+      "パームカーネルオイルから抽出。大量生産でコストが低いが、環境問題への懸念がある。",
     color: "#6B7280",
-    pros: ["大量生産でコストが低い", "安定供給"],
-    cons: ["環境問題への懸念", "品質のばらつき"],
-    bestFor: "コスパ最優先",
   },
   {
     name: "MCTパウダー",
-    description: "粉末化されたMCT（アカシア繊維等でコーティング）",
-    absorption: 80,
-    ketonePower: 65,
+    nameEn: "MCT Powder",
+    absorption: "△ 中程度",
+    ketonePower: "△ 中程度",
+    price: "△ やや高い",
+    best: "初心者・外出時",
+    description:
+      "粉末化されたMCT。持ち運びに便利で消化器への刺激が少ない。食物繊維も摂取可能。",
     color: systemColors.purple,
-    pros: [
-      "持ち運びに便利",
-      "料理に混ぜやすい",
-      "消化器への刺激が少ない",
-      "食物繊維も摂取可能",
-    ],
-    cons: ["オイルより含有量が少ない", "添加物が含まれる場合あり"],
-    bestFor: "外出時・消化器が敏感な方",
   },
 ];
 
 // 目的別おすすめ
 const PURPOSE_RECOMMENDATIONS = [
   {
-    icon: Brain,
     purpose: "認知機能・集中力向上",
+    icon: Brain,
     description: "脳のエネルギー源としてケトン体を活用",
-    recommended: "C8（カプリル酸）100%",
+    recommendation: "C8（カプリル酸）100%",
     reason:
       "C8は最も速くケトン体に変換され、脳に効率的にエネルギーを供給。朝食時や仕事前の摂取が効果的。",
-    dosage: "朝15ml（約105kcal）",
+    tips: "コーヒーに15ml入れて朝に摂取。糖質を控えるとより効果的。",
   },
   {
-    icon: Flame,
     purpose: "ケトジェニックダイエット",
+    icon: Flame,
     description: "糖質制限と組み合わせて脂肪燃焼を促進",
-    recommended: "C8/C10ブレンド（60:40）",
+    recommendation: "C8/C10ブレンド（60:40）",
     reason:
-      "ケトン体生成と持続的エネルギー供給のバランスが良い。コーヒーに入れるバターコーヒーが人気。",
-    dosage: "1日15-30ml（2-3回に分けて）",
+      "ケトン体生成と持続的エネルギー供給のバランスが良い。バターコーヒーが人気。",
+    tips: "他の脂質と「置き換え」が基本。追加摂取はカロリー過剰に。",
   },
   {
-    icon: Zap,
     purpose: "運動前のエネルギー補給",
+    icon: Zap,
     description: "持久系スポーツ・筋トレ前のエネルギー源",
-    recommended: "C8/C10ブレンド",
+    recommendation: "C8/C10ブレンド",
     reason:
       "糖質とは異なる経路でエネルギーを生成。グリコーゲンを温存しながら持久力をサポート。",
-    dosage: "運動30-60分前に10-15ml",
+    tips: "運動30-60分前に10-15ml。空腹時は避ける。",
   },
   {
-    icon: Activity,
     purpose: "消化器への負担を抑えたい",
+    icon: Activity,
     description: "MCT初心者・お腹が弱い方",
-    recommended: "MCTパウダー",
+    recommendation: "MCTパウダー",
     reason:
       "パウダー化により消化器への刺激が緩和。食物繊維との組み合わせで腸内環境にも配慮。",
-    dosage: "5gから始めて徐々に増量",
+    tips: "5gから始めて徐々に増量。プロテインに混ぜても良い。",
   },
   {
-    icon: Heart,
     purpose: "環境・品質を重視",
+    icon: Heart,
     description: "サステナブルで高品質なMCTを選びたい",
-    recommended: "ココナッツ由来・認証取得品",
+    recommendation: "ココナッツ由来・認証取得品",
     reason:
-      "RSPO認証や有機認証のココナッツ由来MCTは環境負荷が少なく、品質も安定している。",
-    dosage: "用途に応じて調整",
+      "RSPO認証や有機認証のココナッツ由来MCTは環境負荷が少なく、品質も安定。",
+    tips: "遮光瓶入り・第三者機関テスト済みを選ぶ。",
   },
 ];
 
 // 選び方チェックリスト
 const SELECTION_CHECKLIST = [
   {
-    title: "C8/C10比率を確認",
+    item: "C8/C10比率を確認",
     description:
-      "ケトン体生成効率重視ならC8比率高め、コスパ重視ならC8/C10ブレンドを選択",
+      "ケトン体生成効率重視ならC8比率高め、コスパ重視ならC8/C10ブレンドを選択。",
+    important: true,
   },
   {
-    title: "原料の由来を確認",
+    item: "原料の由来を確認",
     description:
-      "ココナッツ由来かパーム由来か。環境配慮・品質安定性ならココナッツ由来が安心",
+      "ココナッツ由来かパーム由来か。環境配慮・品質安定性ならココナッツ由来が安心。",
+    important: true,
   },
   {
-    title: "添加物の有無",
-    description: "純粋なMCTオイルは添加物不要。パウダーは乳化剤等の成分を確認",
+    item: "添加物の有無",
+    description:
+      "純粋なMCTオイルは添加物不要。パウダーは乳化剤等の成分を確認。",
+    important: false,
   },
   {
-    title: "容器の品質",
+    item: "容器の品質",
     description:
-      "遮光瓶か、プラスチックか。酸化防止のため遮光性・密閉性の高い容器が望ましい",
+      "遮光瓶か、プラスチックか。酸化防止のため遮光性・密閉性の高い容器が望ましい。",
+    important: false,
   },
   {
-    title: "第三者機関のテスト",
+    item: "第三者機関のテスト",
     description:
-      "重金属・残留溶媒・微生物検査済みかどうか。GMP認証工場製造だと安心",
-  },
-  {
-    title: "コスパの計算",
-    description:
-      "100mlあたりの価格とC8含有量で比較。純度の高いC8は高価だがケトン効率も高い",
+      "重金属・残留溶媒・微生物検査済みかどうか。GMP認証工場製造だと安心。",
+    important: true,
   },
 ];
 
 // 摂取量ガイド
-const DOSAGE_GUIDE = {
-  beginner: {
-    label: "初心者（導入期）",
-    daily: "5-10ml/日",
-    notes:
-      "最初の1-2週間は少量から開始。消化器系の不調（お腹のゆるみ）が起きやすいため、朝食と一緒に5mlから始める",
+const DOSAGE_GUIDE = [
+  {
+    purpose: "初心者（導入期）",
+    amount: "5-10ml/日",
+    frequency: "朝1回",
+    note: "少量から開始。食事と一緒に摂取して様子を見る",
   },
-  intermediate: {
-    label: "中級者（適応期）",
-    daily: "15-30ml/日",
-    notes:
-      "体が慣れてきたら徐々に増量。2-3回に分けて摂取することで消化器への負担を軽減",
+  {
+    purpose: "中級者（適応期）",
+    amount: "15-30ml/日",
+    frequency: "2-3回に分けて",
+    note: "体が慣れてきたら徐々に増量",
   },
-  advanced: {
-    label: "上級者（ケトジェニック）",
-    daily: "30-45ml/日",
-    notes:
-      "厳格な糖質制限と併用。ケトン体濃度をモニタリングしながら調整。過剰摂取は逆効果の場合も",
+  {
+    purpose: "ケトジェニック上級者",
+    amount: "30-45ml/日",
+    frequency: "朝・昼・夕",
+    note: "糖質制限と併用。ケトン体濃度をモニタリング",
   },
-};
+  {
+    purpose: "運動パフォーマンス",
+    amount: "10-15ml",
+    frequency: "運動30-60分前",
+    note: "空腹時は避ける。持久系に効果的",
+  },
+  {
+    purpose: "認知機能サポート",
+    amount: "15ml",
+    frequency: "朝1回",
+    note: "コーヒーに入れて。糖質を控えると効果的",
+  },
+];
 
-// 注意点
+// 注意点・副作用
 const CAUTIONS = [
   {
-    type: "warning",
     title: "消化器系の副作用",
-    content:
-      "MCTは急速に消化されるため、初期は下痢・胃もたれ・腹痛が起きやすい。少量から開始し、食事と一緒に摂取することで軽減できる。",
+    description:
+      "MCTは急速に消化されるため、初期は下痢・胃もたれ・腹痛が起きやすい。少量から開始し、食事と一緒に摂取。",
+    severity: "warning",
   },
   {
-    type: "warning",
     title: "カロリー過剰に注意",
-    content:
-      "MCTオイルは1mlあたり約7kcal。30mlで約210kcal。ダイエット目的の場合、他の脂質と置き換えるのが基本。追加摂取はカロリー過剰に。",
+    description:
+      "MCTオイルは1mlあたり約7kcal。30mlで約210kcal。ダイエット目的なら他の脂質と「置き換え」が基本。",
+    severity: "warning",
   },
   {
-    type: "info",
     title: "加熱調理には不向き",
-    content:
-      "MCTオイルの発煙点は約160℃と低く、高温調理には適さない。サラダ・スムージー・コーヒーなど非加熱での使用が推奨。",
+    description:
+      "MCTオイルの発煙点は約160℃と低く、高温調理には適さない。サラダ・スムージー・コーヒーなど非加熱で使用。",
+    severity: "info",
   },
   {
-    type: "warning",
-    title: "糖尿病・肝疾患の方",
-    content:
-      "ケトン体が過剰に生成されるリスクがある。特に1型糖尿病の方はケトアシドーシスの危険があるため、医師に相談必須。",
+    title: "糖尿病・肝疾患の方は注意",
+    description:
+      "ケトン体が過剰に生成されるリスクがある。特に1型糖尿病の方はケトアシドーシスの危険があるため医師に相談必須。",
+    severity: "warning",
+  },
+  {
+    title: "空腹時の摂取は避ける",
+    description:
+      "空腹時に摂取すると消化器トラブルを起こしやすい。必ず食事と一緒に摂取することを推奨。",
+    severity: "warning",
   },
 ];
 
@@ -355,668 +459,930 @@ const FAQS = [
     answer:
       "MCT単独での減量効果は限定的です。糖質制限（ケトジェニック）と組み合わせることで脂肪燃焼を促進する可能性があります。ただしMCT自体はカロリーがあるため、他の脂質と「置き換え」が基本。追加摂取はカロリー過剰で逆効果になります。",
   },
+  {
+    question: "MCTオイルの保存方法は？",
+    answer:
+      "直射日光を避け、常温で保存してください。冷蔵保存は不要ですが、開封後は早めに使い切ることをおすすめします。遮光瓶入りの製品は酸化しにくいです。",
+  },
 ];
 
 export default async function MCTOilComparisonPage() {
-  // Sanityから商品データを取得
-  let products: MCTProduct[] = [];
-  try {
-    products = await sanity.fetch(MCT_PRODUCTS_QUERY);
-  } catch (error) {
-    console.error("Failed to fetch MCT products:", error);
-  }
+  const products = await getMCTProducts();
 
-  // コスパ計算を追加
-  const productsWithCost = products.map((product) => {
-    let costPerDay = 0;
-    if (product.pricePerDay) {
-      costPerDay = product.pricePerDay;
-    } else if (product.price && product.servingsPerContainer) {
-      costPerDay = product.price / product.servingsPerContainer;
-    }
-    return {
-      ...product,
-      costPerDay,
-    };
-  });
+  const productsWithCost = products
+    .filter(
+      (p) =>
+        p.priceJPY > 0 && p.servingsPerContainer > 0 && p.servingsPerDay > 0,
+    )
+    .map((product) => {
+      const effectiveCostPerDay = calculateEffectiveCostPerDay({
+        priceJPY: product.priceJPY,
+        servingsPerContainer: product.servingsPerContainer,
+        servingsPerDay: product.servingsPerDay,
+      });
 
-  // JSON-LD構造化データ
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: ARTICLE_DATA.title,
-    description: ARTICLE_DATA.description,
-    datePublished: ARTICLE_DATA.publishedAt,
-    dateModified: ARTICLE_DATA.updatedAt,
-    author: {
-      "@type": "Organization",
-      name: "サプティア編集部",
-      url: "https://suptia.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "サプティア",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://suptia.com/logo.png",
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://suptia.com/articles/${ARTICLE_DATA.slug}`,
-    },
-    image: `https://suptia.com${getArticleOGImage(ARTICLE_DATA.slug)}`,
-  };
+      return {
+        ...product,
+        effectiveCostPerDay,
+      };
+    })
+    .sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+  const top3Products = productsWithCost.slice(0, 3);
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <main
-        className="min-h-screen"
-        style={{
-          backgroundColor: appleWebColors.pageBackground,
-        }}
+    <article
+      className="min-h-screen"
+      style={{
+        backgroundColor: appleWebColors.pageBackground,
+        fontFamily: fontStack,
+      }}
+    >
+      {/* 1. パンくずリスト（sticky） */}
+      <div
+        className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
+        style={{ borderColor: appleWebColors.borderSubtle }}
       >
-        {/* ヘッダー */}
-        <header className="pt-8 pb-6 px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto">
+        <div className="mx-auto px-4 sm:px-6 py-3 max-w-4xl">
+          <nav className="flex items-center gap-2 text-[13px]">
             <Link
-              href="/articles"
-              className="inline-flex items-center gap-2 text-[15px] mb-6 transition-opacity hover:opacity-70"
+              href="/"
+              className="hover:opacity-70 transition-opacity"
               style={{ color: systemColors.blue }}
             >
-              <ArrowLeft size={16} />
-              記事一覧に戻る
+              ホーム
             </Link>
-
-            {/* アイキャッチ画像 */}
-            <div className="mb-6 rounded-[16px] overflow-hidden">
-              <ArticleEyecatch
-                src={getArticleOGImage(ARTICLE_DATA.slug)}
-                alt={ARTICLE_DATA.title}
-              />
-            </div>
-
-            <div className="flex items-center gap-3 mb-4">
-              <span
-                className="px-3 py-1 text-[12px] font-medium rounded-full"
-                style={{
-                  backgroundColor: ARTICLE_DATA.categoryColor + "15",
-                  color: ARTICLE_DATA.categoryColor,
-                }}
-              >
-                {ARTICLE_DATA.category}
-              </span>
-              <span
-                className="flex items-center gap-1 text-[12px]"
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                <Clock size={12} />
-                {ARTICLE_DATA.readTime}で読める
-              </span>
-              <span
-                className="text-[12px]"
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                更新: {ARTICLE_DATA.updatedAt}
-              </span>
-            </div>
-
-            <h1
-              className="text-[28px] md:text-[36px] font-bold leading-[1.2] tracking-[-0.02em] mb-4"
-              style={{ color: appleWebColors.textPrimary }}
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <Link
+              href="/articles"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
             >
-              {ARTICLE_DATA.title}
-            </h1>
+              記事一覧
+            </Link>
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <span style={{ color: appleWebColors.textSecondary }}>
+              MCTオイル比較
+            </span>
+          </nav>
+        </div>
+      </div>
 
-            <p
-              className="text-[17px] leading-[1.6]"
-              style={{ color: appleWebColors.textSecondary }}
+      {/* 2. ヘッダー（ヒーローセクション） */}
+      <header className="pt-8 pb-12 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <span
+              className="px-3 py-1 text-[12px] font-medium rounded-full"
+              style={{
+                backgroundColor: systemColors.green + "15",
+                color: systemColors.green,
+              }}
             >
-              {ARTICLE_DATA.description}
-            </p>
+              脂肪酸
+            </span>
+            <span
+              className="px-3 py-1 text-[12px] font-medium rounded-full"
+              style={{
+                backgroundColor: systemColors.cyan + "15",
+                color: systemColors.cyan,
+              }}
+            >
+              {products.length}商品を比較
+            </span>
           </div>
-        </header>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-          {/* 導入セクション */}
-          <section className="mb-12">
-            <div
-              className={`${liquidGlassClasses.light} rounded-[16px] p-6 border`}
-              style={{ borderColor: appleWebColors.borderSubtle }}
-            >
-              <h2 className={`${typography.headline} mb-4`}>
-                MCTオイルとは？なぜ注目されている？
-              </h2>
-              <div
-                className="space-y-3 text-[15px] leading-[1.7]"
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                <p>
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    MCT（中鎖脂肪酸）
-                  </strong>
-                  は、炭素数6-12の脂肪酸の総称です。一般的な油脂（長鎖脂肪酸）と異なり、
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    肝臓で直接代謝されてケトン体
-                  </strong>
-                  に変換されるため、素早くエネルギーとして利用できます。
-                </p>
-                <p>
-                  特に
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    C8（カプリル酸）
-                  </strong>
-                  と
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    C10（カプリン酸）
-                  </strong>
-                  がケトン体生成効率が高く、MCTオイルの主成分として使用されています。
-                </p>
-                <p>
-                  ケトジェニックダイエット、認知機能サポート、持久系スポーツなど様々な目的で活用されていますが、
-                  製品によってC8/C10比率や原料が異なるため、目的に合った選択が重要です。
-                </p>
-              </div>
-            </div>
-          </section>
+          <h1
+            className={`${typography.title1} md:${typography.largeTitle} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            {ARTICLE_DATA.title}
+          </h1>
 
-          {/* MCTオイルの形態比較 */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>
-              MCTオイルの形態・原料比較
-            </h2>
+          <p
+            className={`${typography.body} mb-6`}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            {ARTICLE_DATA.description}
+          </p>
 
-            <div className="grid gap-4">
-              {MCT_TYPES.map((type) => (
-                <div
-                  key={type.name}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
+          <div
+            className={`flex items-center gap-4 ${typography.footnote}`}
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            <time dateTime={ARTICLE_DATA.publishedAt}>
+              公開: {ARTICLE_DATA.publishedAt}
+            </time>
+            <time dateTime={ARTICLE_DATA.updatedAt}>
+              更新: {ARTICLE_DATA.updatedAt}
+            </time>
+          </div>
+
+          <ArticleEyecatch
+            src={ogImageUrl}
+            alt={`${ARTICLE_DATA.title} - アイキャッチ画像`}
+          />
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3
-                        className="text-[17px] font-semibold mb-1"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {type.name}
-                      </h3>
-                      <p
-                        className="text-[14px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        {type.description}
-                      </p>
-                    </div>
-                    <div
-                      className="px-3 py-1 rounded-full text-[12px] font-medium"
-                      style={{
-                        backgroundColor: type.color + "15",
-                        color: type.color,
-                      }}
-                    >
-                      {type.bestFor}
-                    </div>
-                  </div>
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.green + "20",
+                      color: systemColors.green,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
 
-                  {/* ケトン体生成効率バー */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-[12px] mb-1">
-                      <span style={{ color: appleWebColors.textSecondary }}>
-                        ケトン体生成効率
-                      </span>
-                      <span style={{ color: type.color }}>
-                        {type.ketonePower}%
-                      </span>
-                    </div>
-                    <div
-                      className="h-2 rounded-full overflow-hidden"
+        {/* 4. この記事でわかること */}
+        <section
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: systemColors.green + "30" }}
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            この記事でわかること
+          </h2>
+          <ul className="space-y-3">
+            {LEARNING_POINTS.map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle2
+                  size={20}
+                  className="shrink-0 mt-0.5"
+                  style={{ color: systemColors.green }}
+                />
+                <span style={{ color: appleWebColors.textPrimary }}>
+                  {item}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 5. 結論ファースト（迷ったらこれ） */}
+        <section
+          className="mb-12 rounded-[20px] p-6 md:p-8"
+          style={{
+            background: `linear-gradient(135deg, ${systemColors.green}15, ${systemColors.cyan}15)`,
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+              style={{ backgroundColor: systemColors.green }}
+            >
+              <Lightbulb size={24} className="text-white" />
+            </div>
+            <div>
+              <h2
+                className={`${typography.title3} mb-3`}
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                結論：迷ったらこれを選べ
+              </h2>
+              <ul className="space-y-2 text-[15px]">
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.label}</strong>
+                    {" → "}
+                    {rec.recommendation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            MCTオイルの種類と選び方
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            MCTオイルには様々な形態があり、C8/C10比率・原料・形状が異なります。
+            「MCTオイル」と書いてあっても、ケトン体生成効率やコスパは大きく違います。
+          </p>
+
+          <div className="space-y-4">
+            {MCT_TYPES.map((type) => (
+              <div
+                key={type.name}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border-l-4`}
+                style={{ borderLeftColor: type.color }}
+              >
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                  <div className="flex-1">
+                    <h3
+                      className="font-bold text-[17px] mb-1"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {type.name}
+                    </h3>
+                    <p
+                      className="text-[13px] mb-2"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      {type.nameEn}
+                    </p>
+                    <p
+                      className="text-[14px] leading-[1.6]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      {type.description}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 md:flex-col md:gap-1 md:text-right">
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
                       style={{
                         backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
                       }}
                     >
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${type.ketonePower}%`,
-                          backgroundColor: type.color,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <p
-                        className="text-[12px] font-medium mb-2"
-                        style={{ color: systemColors.green }}
-                      >
-                        メリット
-                      </p>
-                      <ul className="space-y-1">
-                        {type.pros.map((pro, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-[13px]"
-                            style={{ color: appleWebColors.textSecondary }}
-                          >
-                            <CheckCircle
-                              size={14}
-                              className="mt-0.5 flex-shrink-0"
-                              style={{ color: systemColors.green }}
-                            />
-                            {pro}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p
-                        className="text-[12px] font-medium mb-2"
-                        style={{ color: systemColors.orange }}
-                      >
-                        デメリット
-                      </p>
-                      <ul className="space-y-1">
-                        {type.cons.map((con, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-[13px]"
-                            style={{ color: appleWebColors.textSecondary }}
-                          >
-                            <AlertTriangle
-                              size={14}
-                              className="mt-0.5 flex-shrink-0"
-                              style={{ color: systemColors.orange }}
-                            />
-                            {con}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                      吸収: {type.absorption}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      ケトン効率: {type.ketonePower}
+                    </span>
+                    <span
+                      className="text-[13px] px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: appleWebColors.sectionBackground,
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      価格: {type.price}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
+                <div
+                  className="mt-3 pt-3 border-t text-[13px]"
+                  style={{ borderColor: appleWebColors.borderSubtle }}
+                >
+                  <span style={{ color: type.color }}>
+                    <Target size={14} className="inline mr-1" />
+                    おすすめ: {type.best}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          {/* 目的別おすすめ */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>
-              目的別おすすめMCTオイル
-            </h2>
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目的別｜あなたに合ったMCTオイルはこれ
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
-            <div className="grid gap-4">
-              {PURPOSE_RECOMMENDATIONS.map((rec) => {
-                const IconComponent = rec.icon;
-                return (
-                  <div
-                    key={rec.purpose}
-                    className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                    style={{ borderColor: appleWebColors.borderSubtle }}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: systemColors.green + "15" }}
+          <div className="space-y-4">
+            {PURPOSE_RECOMMENDATIONS.map((rec) => {
+              const Icon = rec.icon;
+              return (
+                <div
+                  key={rec.purpose}
+                  className={`${liquidGlassClasses.light} rounded-[20px] p-5 border`}
+                  style={{ borderColor: appleWebColors.borderSubtle }}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.green + "15" }}
+                    >
+                      <Icon size={24} style={{ color: systemColors.green }} />
+                    </div>
+                    <div className="flex-1">
+                      <h3
+                        className="font-bold text-[17px] mb-1"
+                        style={{ color: appleWebColors.textPrimary }}
                       >
-                        <IconComponent
-                          size={24}
+                        {rec.purpose}
+                      </h3>
+                      <p
+                        className="text-[14px] mb-3"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {rec.description}
+                      </p>
+                      <div
+                        className="bg-white/50 rounded-[12px] p-4"
+                        style={{ borderColor: appleWebColors.borderSubtle }}
+                      >
+                        <p
+                          className="font-bold text-[15px] mb-2"
                           style={{ color: systemColors.green }}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h3
-                          className="text-[17px] font-semibold mb-1"
-                          style={{ color: appleWebColors.textPrimary }}
                         >
-                          {rec.purpose}
-                        </h3>
-                        <p
-                          className="text-[14px] mb-3"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          {rec.description}
+                          {rec.recommendation}
                         </p>
-                        <div
-                          className="inline-block px-3 py-1 rounded-full text-[13px] font-medium mb-2"
-                          style={{
-                            backgroundColor: systemColors.green + "15",
-                            color: systemColors.green,
-                          }}
-                        >
-                          おすすめ: {rec.recommended}
-                        </div>
                         <p
-                          className="text-[14px] leading-[1.6] mb-2"
+                          className="text-[14px] mb-2"
                           style={{ color: appleWebColors.textSecondary }}
                         >
                           {rec.reason}
                         </p>
                         <p
-                          className="text-[13px]"
+                          className="text-[13px] flex items-center gap-1"
                           style={{ color: appleWebColors.textTertiary }}
                         >
-                          推奨摂取量: {rec.dosage}
+                          <Lightbulb size={14} />
+                          {rec.tips}
                         </p>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-          {/* 選び方チェックリスト */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>
-              MCTオイル選びのチェックリスト
-            </h2>
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-2`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            コスパランキングTOP3｜MCTオイル
+          </h2>
+          <p
+            className="text-[15px] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            1日あたりのコストで比較した、最もお得なMCTオイル製品です。
+          </p>
 
-            <div
-              className={`${liquidGlassClasses.light} rounded-[16px] p-6 border`}
-              style={{ borderColor: appleWebColors.borderSubtle }}
-            >
-              <div className="space-y-4">
-                {SELECTION_CHECKLIST.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[13px] font-semibold"
+          <div className="space-y-4">
+            {top3Products.map((product, index) => (
+              <Link
+                key={product._id}
+                href={`/products/${product.slug.current}`}
+                className={`${liquidGlassClasses.light} rounded-[20px] p-5 flex gap-4 border transition-all hover:shadow-lg hover:-translate-y-0.5`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-white"
+                  style={{
+                    background:
+                      index === 0
+                        ? "linear-gradient(135deg, #FFD700, #FFA500)"
+                        : index === 1
+                          ? "linear-gradient(135deg, #C0C0C0, #A0A0A0)"
+                          : "linear-gradient(135deg, #CD7F32, #8B4513)",
+                  }}
+                >
+                  {index + 1}
+                </div>
+
+                {product.externalImageUrl && (
+                  <div className="w-20 h-20 relative shrink-0 bg-white rounded-[12px] overflow-hidden">
+                    <Image
+                      src={product.externalImageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-1"
+                    />
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className="font-bold text-[15px] mb-1 line-clamp-2"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {product.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      価格:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.blue }}
+                      >
+                        ¥{product.priceJPY.toLocaleString()}
+                      </span>
+                    </span>
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      1日:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.green }}
+                      >
+                        ¥{product.effectiveCostPerDay.toFixed(1)}
+                      </span>
+                    </span>
+                  </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
                       style={{
-                        backgroundColor: systemColors.green + "15",
-                        color: systemColors.green,
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
                       }}
                     >
-                      {index + 1}
-                    </div>
-                    <div>
-                      <h4
-                        className="text-[15px] font-medium mb-1"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {item.title}
-                      </h4>
-                      <p
-                        className="text-[14px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* 摂取量ガイド */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>
-              MCTオイル摂取量の目安
-            </h2>
-
-            <div className="grid md:grid-cols-3 gap-4">
-              {Object.entries(DOSAGE_GUIDE).map(([key, guide]) => (
-                <div
-                  key={key}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
-                >
-                  <h3
-                    className="text-[15px] font-semibold mb-2"
-                    style={{ color: appleWebColors.textPrimary }}
-                  >
-                    {guide.label}
-                  </h3>
-                  <p
-                    className="text-[24px] font-bold mb-3"
-                    style={{ color: systemColors.green }}
-                  >
-                    {guide.daily}
-                  </p>
-                  <p
-                    className="text-[13px] leading-[1.6]"
-                    style={{ color: appleWebColors.textSecondary }}
-                  >
-                    {guide.notes}
-                  </p>
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
-              ))}
+
+                <ArrowRight
+                  size={20}
+                  className="shrink-0 self-center"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+              </Link>
+            ))}
+          </div>
+
+          {products.length === 0 && (
+            <div
+              className={`${liquidGlassClasses.light} rounded-[16px] p-8 text-center`}
+            >
+              <p style={{ color: appleWebColors.textSecondary }}>
+                現在、MCTオイル製品の商品データを準備中です。
+              </p>
             </div>
-          </section>
-
-          {/* 関連商品 */}
-          {productsWithCost.length > 0 && (
-            <section className="mb-12">
-              <h2 className={`${typography.title2} mb-6`}>MCTオイル関連商品</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {productsWithCost.slice(0, 6).map((product) => (
-                  <Link
-                    key={product._id}
-                    href={`/products/${product.slug.current}`}
-                    className={`${liquidGlassClasses.light} rounded-[16px] p-4 border transition-all hover:shadow-lg hover:-translate-y-0.5`}
-                    style={{ borderColor: appleWebColors.borderSubtle }}
-                  >
-                    <h3
-                      className="font-bold text-[14px] mb-2 line-clamp-2"
-                      style={{ color: appleWebColors.textPrimary }}
-                    >
-                      {product.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
-                      {product.price && (
-                        <span style={{ color: appleWebColors.textSecondary }}>
-                          ¥{product.price.toLocaleString()}
-                        </span>
-                      )}
-                      {product.costPerDay > 0 && (
-                        <span style={{ color: systemColors.green }}>
-                          1日¥{product.costPerDay.toFixed(1)}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <Link
-                  href="/search?q=MCT"
-                  className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[14px] font-medium transition-opacity hover:opacity-80"
-                  style={{
-                    backgroundColor: systemColors.green + "15",
-                    color: systemColors.green,
-                  }}
-                >
-                  MCTオイル商品をもっと見る
-                </Link>
-              </div>
-            </section>
           )}
+        </section>
 
-          {/* 注意点 */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>MCTオイルの注意点</h2>
-
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            購入前チェックリスト
+          </h2>
+          <div
+            className={`${liquidGlassClasses.light} rounded-[20px] p-6 border`}
+            style={{ borderColor: appleWebColors.borderSubtle }}
+          >
             <div className="space-y-4">
-              {CAUTIONS.map((caution, index) => (
-                <div
-                  key={index}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
-                  style={{
-                    borderColor:
-                      caution.type === "warning"
-                        ? systemColors.orange + "30"
-                        : systemColors.blue + "30",
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    {caution.type === "warning" ? (
-                      <AlertTriangle
-                        size={20}
-                        className="flex-shrink-0 mt-0.5"
-                        style={{ color: systemColors.orange }}
-                      />
+              {SELECTION_CHECKLIST.map((check, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{
+                      backgroundColor: check.important
+                        ? systemColors.green
+                        : appleWebColors.sectionBackground,
+                    }}
+                  >
+                    {check.important ? (
+                      <BadgeCheck size={14} className="text-white" />
                     ) : (
-                      <Info
-                        size={20}
-                        className="flex-shrink-0 mt-0.5"
-                        style={{ color: systemColors.blue }}
+                      <CheckCircle2
+                        size={14}
+                        style={{ color: appleWebColors.textTertiary }}
                       />
                     )}
-                    <div>
-                      <h4
-                        className="text-[15px] font-medium mb-1"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {caution.title}
-                      </h4>
-                      <p
-                        className="text-[14px] leading-[1.6]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        {caution.content}
-                      </p>
-                    </div>
+                  </div>
+                  <div>
+                    <h3
+                      className="font-bold text-[15px]"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {check.item}
+                      {check.important && (
+                        <span
+                          className="ml-2 text-[11px] px-1.5 py-0.5 rounded"
+                          style={{
+                            backgroundColor: systemColors.green + "20",
+                            color: systemColors.green,
+                          }}
+                        >
+                          重要
+                        </span>
+                      )}
+                    </h3>
+                    <p
+                      className="text-[14px]"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      {check.description}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* FAQ */}
-          <section className="mb-12">
-            <h2 className={`${typography.title2} mb-6`}>
-              MCTオイルに関するよくある質問
-            </h2>
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目的別｜摂取量の目安
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            MCTオイルは消化器への負担があるため、少量から始めて徐々に増量することが大切です。
+          </p>
 
-            <div className="space-y-4">
-              {FAQS.map((faq, index) => (
-                <div
-                  key={index}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px]">
+              <thead>
+                <tr
+                  className="border-b"
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
-                  <h3
-                    className="text-[16px] font-semibold mb-3"
+                  <th
+                    className="text-left py-3 px-4 font-bold"
                     style={{ color: appleWebColors.textPrimary }}
                   >
-                    Q. {faq.question}
+                    目的
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    1日の目安
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    回数
+                  </th>
+                  <th
+                    className="text-left py-3 px-4 font-bold"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    備考
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {DOSAGE_GUIDE.map((guide, index) => (
+                  <tr
+                    key={index}
+                    className="border-b"
+                    style={{ borderColor: appleWebColors.borderSubtle }}
+                  >
+                    <td
+                      className="py-3 px-4"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      {guide.purpose}
+                    </td>
+                    <td
+                      className="py-3 px-4 font-bold"
+                      style={{ color: systemColors.green }}
+                    >
+                      {guide.amount}
+                    </td>
+                    <td
+                      className="py-3 px-4"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      {guide.frequency}
+                    </td>
+                    <td
+                      className="py-3 px-4 text-[13px]"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      {guide.note}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            注意点・副作用
+          </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            MCTオイルは適量なら安全ですが、消化器系への影響や持病との相互作用に注意が必要です。
+          </p>
+
+          <div className="space-y-3">
+            {CAUTIONS.map((caution, index) => (
+              <div
+                key={index}
+                className={`rounded-[12px] p-4 flex items-start gap-3`}
+                style={{
+                  backgroundColor:
+                    caution.severity === "warning"
+                      ? systemColors.orange + "15"
+                      : systemColors.blue + "15",
+                }}
+              >
+                {caution.severity === "warning" ? (
+                  <AlertTriangle
+                    size={20}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: systemColors.orange }}
+                  />
+                ) : (
+                  <Info
+                    size={20}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: systemColors.blue }}
+                  />
+                )}
+                <div>
+                  <h3
+                    className="font-bold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {caution.title}
                   </h3>
                   <p
-                    className="text-[14px] leading-[1.7]"
+                    className="text-[14px]"
                     style={{ color: appleWebColors.textSecondary }}
                   >
-                    A. {faq.answer}
+                    {caution.description}
                   </p>
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          {/* まとめ */}
-          <section className="mb-12">
-            <div
-              className={`${liquidGlassClasses.light} rounded-[16px] p-6 border`}
-              style={{
-                borderColor: systemColors.green + "30",
-                backgroundColor: systemColors.green + "08",
-              }}
-            >
-              <h2 className={`${typography.title2} mb-4`}>まとめ</h2>
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
+          <h2
+            className={`${typography.title2} mb-6`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            よくある質問
+          </h2>
+          <div className="space-y-4">
+            {FAQS.map((faq, index) => (
               <div
-                className="space-y-3 text-[15px] leading-[1.7]"
-                style={{ color: appleWebColors.textSecondary }}
+                key={index}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
               >
-                <p>
-                  MCTオイル選びで最も重要なのは
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    C8/C10比率と使用目的のマッチング
-                  </strong>
-                  です。ケトン体生成効率を最優先するならC8（カプリル酸）100%、
-                  コスパと効果のバランスを取るならC8/C10ブレンドがおすすめです。
-                </p>
-                <p>
-                  初めてMCTオイルを試す方は、
-                  <strong style={{ color: appleWebColors.textPrimary }}>
-                    少量（5ml）から開始
-                  </strong>
-                  し、消化器系の反応を確認しながら徐々に増量してください。
-                  パウダータイプは消化器への刺激が少なく、初心者にも適しています。
-                </p>
-                <p>
-                  環境配慮を重視する場合は、ココナッツ由来でRSPO認証を取得した製品を選ぶとよいでしょう。
-                  サプティアでは、成分量・コスパ・品質を総合的に評価したMCTオイル製品を掲載しています。
+                <h3
+                  className="font-bold text-[15px] mb-3"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  Q. {faq.question}
+                </h3>
+                <p
+                  className="text-[14px] leading-[1.8]"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  A. {faq.answer}
                 </p>
               </div>
-            </div>
-          </section>
+            ))}
+          </div>
+        </section>
 
-          {/* 関連記事リンク */}
-          <section>
-            <h2 className={`${typography.title2} mb-6`}>関連記事</h2>
-            <div className="grid md:grid-cols-2 gap-4">
+        {/* 13. 関連成分 */}
+        <section className="mb-12">
+          <h2
+            className={`${typography.title2} mb-6`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            MCTオイルと一緒に摂りたい成分
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
-                href="/articles/omega3-comparison"
-                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border transition-all hover:shadow-lg hover:-translate-y-1`}
+                key={ingredient.slug}
+                href={`/ingredients/${ingredient.slug}`}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-4 flex items-center gap-4 border transition-all hover:shadow-md`}
                 style={{ borderColor: appleWebColors.borderSubtle }}
               >
-                <span
-                  className="text-[12px] font-medium"
-                  style={{ color: systemColors.cyan }}
-                >
-                  脂肪酸
-                </span>
-                <h3
-                  className="text-[15px] font-semibold mt-1"
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  オメガ3（フィッシュオイル）比較
-                </h3>
+                <span className="text-2xl">{ingredient.emoji}</span>
+                <div className="flex-1">
+                  <h3
+                    className="font-bold text-[15px]"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {ingredient.name}
+                  </h3>
+                  <p
+                    className="text-[13px]"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    {ingredient.reason}
+                  </p>
+                </div>
+                <ArrowRight
+                  size={16}
+                  style={{ color: appleWebColors.textSecondary }}
+                />
               </Link>
-              <Link
-                href="/articles/creatine-comparison"
-                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border transition-all hover:shadow-lg hover:-translate-y-1`}
-                style={{ borderColor: appleWebColors.borderSubtle }}
-              >
-                <span
-                  className="text-[12px] font-medium"
-                  style={{ color: systemColors.red }}
-                >
-                  スポーツ
-                </span>
-                <h3
-                  className="text-[15px] font-semibold mt-1"
-                  style={{ color: appleWebColors.textPrimary }}
-                >
-                  クレアチン比較
-                </h3>
-              </Link>
-            </div>
-          </section>
-        </div>
-      </main>
-    </>
+            ))}
+          </div>
+        </section>
+
+        {/* 14. CTA */}
+        <section
+          className="rounded-[20px] p-8 text-center text-white"
+          style={{
+            background: `linear-gradient(135deg, ${systemColors.green}, ${systemColors.cyan})`,
+          }}
+        >
+          <h2 className={`${typography.title2} mb-4`}>
+            MCTオイルをもっと詳しく比較
+          </h2>
+          <p className="text-[15px] opacity-90 mb-6">
+            Suptiaでは、5つの評価軸で商品を比較できます
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/search?q=MCT"
+              className="inline-flex items-center justify-center gap-2 bg-white font-bold px-6 py-3 rounded-[12px] transition-colors hover:bg-gray-100"
+              style={{ color: systemColors.green }}
+            >
+              全商品を見る
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              href="/articles"
+              className="inline-flex items-center justify-center gap-2 bg-white/20 font-medium px-6 py-3 rounded-[12px] transition-colors hover:bg-white/30"
+            >
+              他の比較記事を見る
+              <ExternalLink size={16} />
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      {/* 構造化データ: Article */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: ARTICLE_DATA.title,
+            description: ARTICLE_DATA.description,
+            datePublished: ARTICLE_DATA.publishedAt,
+            dateModified: ARTICLE_DATA.updatedAt,
+            author: {
+              "@type": "Organization",
+              name: "サプティア編集部",
+              url: "https://suptia.com",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "サプティア",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://suptia.com/logo.png",
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
+            },
+          }),
+        }}
+      />
+
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
+    </article>
   );
 }

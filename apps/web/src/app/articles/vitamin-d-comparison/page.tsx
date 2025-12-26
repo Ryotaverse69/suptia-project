@@ -1,6 +1,6 @@
 /**
  * ビタミンD比較記事ページ
- * SEO最適化された比較コンテンツ - 顧客目線で価値ある情報を提供
+ * SEO最適化された比較コンテンツ - 統一テンプレート準拠
  */
 
 import { Metadata } from "next";
@@ -10,9 +10,7 @@ import { sanity } from "@/lib/sanity.client";
 import { calculateEffectiveCostPerDay } from "@/lib/cost";
 import {
   ArrowRight,
-  Award,
   Shield,
-  TrendingUp,
   DollarSign,
   FlaskConical,
   CheckCircle2,
@@ -21,13 +19,10 @@ import {
   AlertTriangle,
   Lightbulb,
   Target,
-  Clock,
-  Zap,
   Heart,
   Sun,
   Bone,
   BadgeCheck,
-  XCircle,
   Info,
 } from "lucide-react";
 import {
@@ -40,7 +35,7 @@ import {
 import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
-export const revalidate = 86400; // 24時間キャッシュ
+export const revalidate = 86400;
 
 const ARTICLE_DATA = {
   title: "【2025年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
@@ -52,7 +47,6 @@ const ARTICLE_DATA = {
   ingredientSlug: "vitamin-d",
 };
 
-// OGP画像を取得
 const ogImageUrl = getArticleOGImage("vitamin-d-comparison");
 const ogImage = generateOGImageMeta(
   ogImageUrl,
@@ -145,6 +139,46 @@ async function getVitaminDProducts(): Promise<Product[]> {
   }
 }
 
+// この記事でわかること
+const LEARNING_POINTS = [
+  "ビタミンD2とD3の違い、選び方のポイント",
+  "日本人の8割が不足している理由と対策",
+  "骨・免疫・メンタルなど目的別のおすすめ商品",
+  "適切な摂取量と過剰摂取のリスク",
+  "血液検査で確認すべき数値の目安",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    label: "効果重視なら",
+    text: "ビタミンD3（コレカルシフェロール）。D2より効率的。",
+  },
+  {
+    label: "骨の健康重視なら",
+    text: "D3+K2配合タイプ。カルシウムを骨に届ける。",
+  },
+  { label: "ヴィーガンなら", text: "苔類由来D3またはD2。植物性で安心。" },
+  {
+    label: "用量の目安",
+    text: "1000〜2000IU/日が一般的。欠乏時は医師に相談。",
+  },
+];
+
+// 目次用セクションデータ
+const SECTIONS = [
+  { id: "learning-points", title: "この記事でわかること" },
+  { id: "quick-recommendations", title: "結論ファースト" },
+  { id: "types", title: "種類と特徴" },
+  { id: "purpose-recommendations", title: "目的別おすすめ" },
+  { id: "ranking", title: "おすすめ商品ランキング" },
+  { id: "checklist", title: "選び方チェックリスト" },
+  { id: "dosage", title: "摂取量・タイミング" },
+  { id: "cautions", title: "注意点・副作用" },
+  { id: "faq", title: "よくある質問" },
+  { id: "related", title: "関連成分" },
+];
+
 // ビタミンDの種類データ
 const VITAMIN_D_TYPES = [
   {
@@ -209,72 +243,77 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "骨の健康維持",
     icon: Bone,
-    color: systemColors.purple,
+    emoji: "🦴",
+    description: "骨密度を維持したい、閉経後の女性",
     recommendation: "D3+K2タイプ",
     reason:
       "カルシウムを骨に届けるK2との組み合わせが最適。閉経後女性に特におすすめ。",
-    products: ["D3+K2配合タイプ"],
+    tips: "カルシウムも一緒に摂取すると効果的。",
   },
   {
     purpose: "免疫力サポート",
     icon: Shield,
-    color: systemColors.blue,
+    emoji: "🛡️",
+    description: "風邪やインフルエンザ予防、日照不足",
     recommendation: "D3 1000-2000IU",
     reason: "免疫細胞の正常な機能に必要。風邪やインフルエンザ予防に。",
-    products: ["標準用量D3"],
+    tips: "亜鉛・ビタミンCとの併用で相乗効果。",
   },
   {
     purpose: "気分・メンタル",
     icon: Sun,
-    color: systemColors.yellow,
+    emoji: "☀️",
+    description: "冬季うつ対策、気分の安定",
     recommendation: "D3 2000-4000IU",
     reason: "セロトニン生成をサポート。冬季うつ対策や日照不足の方に。",
-    products: ["中〜高用量D3"],
+    tips: "朝食後の摂取がおすすめ。",
   },
   {
     purpose: "ヴィーガン対応",
     icon: Heart,
-    color: systemColors.green,
+    emoji: "🌱",
+    description: "動物性原料を避けたい方",
     recommendation: "D2または苔類由来D3",
     reason: "動物性原料不使用。苔類由来のヴィーガンD3が効果的。",
-    products: ["植物性D2", "苔類D3"],
+    tips: "D2の場合は少し多めに摂取を。",
   },
   {
     purpose: "コスパ重視",
     icon: DollarSign,
-    color: systemColors.mint,
+    emoji: "💰",
+    description: "長期継続で費用を抑えたい",
     recommendation: "高用量D3（5000IU）",
     reason: "週1-2回の服用で1日コストを抑える。1日あたり5円以下も可能。",
-    products: ["高用量D3"],
+    tips: "血液検査で適正量を確認すると安心。",
   },
 ];
 
 // 購入前チェックリスト
 const SELECTION_CHECKLIST = [
   {
-    title: "D3かD2か確認",
+    item: "D3かD2か確認",
     description: "効果重視ならD3、ヴィーガンならD2（または苔類D3）を選択。",
     important: true,
   },
   {
-    title: "用量（IU）を確認",
+    item: "用量（IU）を確認",
     description:
       "一般的な維持量は1000-2000IU/日。欠乏時は医師と相談の上4000IU以上も。",
     important: true,
   },
   {
-    title: "油脂との組み合わせ",
+    item: "油脂との組み合わせ",
     description:
       "脂溶性ビタミンのため、食事と一緒または油脂配合製品を選ぶと吸収率UP。",
     important: false,
   },
   {
-    title: "K2配合の有無",
+    item: "K2配合の有無",
     description: "骨の健康重視ならK2配合製品がおすすめ。単独でも問題なし。",
     important: false,
   },
   {
-    title: "第三者検査の有無",
+    item: "第三者検査の有無",
     description:
       "高用量製品は特に品質管理が重要。GMP認証や第三者検査済みを推奨。",
     important: false,
@@ -286,32 +325,32 @@ const DOSAGE_GUIDE = [
   {
     purpose: "健康維持",
     amount: "600-1000IU",
-    timing: "朝食後",
+    frequency: "1日1回",
     note: "厚労省目安量。日光浴も併用推奨",
   },
   {
     purpose: "欠乏予防",
     amount: "1000-2000IU",
-    timing: "食事と一緒",
+    frequency: "1日1回",
     note: "血中25(OH)D 30ng/mL以上を目指す",
   },
   {
     purpose: "免疫サポート",
     amount: "2000-4000IU",
-    timing: "朝食後",
+    frequency: "1日1回",
     note: "冬季や日照不足時",
   },
   {
     purpose: "骨密度維持",
     amount: "1000-2000IU + K2",
-    timing: "カルシウムと一緒",
-    note: "閉経後女性、高齢者",
+    frequency: "1日1回",
+    note: "閉経後女性、高齢者におすすめ",
   },
   {
     purpose: "欠乏症治療",
     amount: "4000-10000IU",
-    timing: "医師の指示",
-    note: "必ず血液検査で確認",
+    frequency: "医師の指示",
+    note: "必ず血液検査で確認を",
   },
 ];
 
@@ -388,95 +427,112 @@ const FAQS = [
   },
 ];
 
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "ビタミンK2",
+    slug: "vitamin-k",
+    emoji: "💜",
+    reason: "カルシウムを骨に届ける相乗効果",
+  },
+  {
+    name: "カルシウム",
+    slug: "calcium",
+    emoji: "🦴",
+    reason: "ビタミンDが吸収を促進",
+  },
+  {
+    name: "マグネシウム",
+    slug: "magnesium",
+    emoji: "💎",
+    reason: "ビタミンDの活性化に必要",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "🔶",
+    reason: "免疫機能をダブルでサポート",
+  },
+];
+
 export default async function VitaminDComparisonPage() {
   const products = await getVitaminDProducts();
 
-  // コスパ計算
-  const productsWithCost = products.map((product) => {
-    const vitaminDIngredient = product.ingredients?.find(
-      (ing) =>
-        ing.ingredient?.name?.includes("ビタミンD") ||
-        ing.ingredient?.name?.includes("Vitamin D"),
-    );
-    const amountPerServing = vitaminDIngredient?.amountMgPerServing || 0;
-    // ビタミンDはIU表記が多いため、mcgの場合は40倍してIUに変換
-    const amountIU =
-      amountPerServing < 1 ? amountPerServing * 40 : amountPerServing;
-    const costPerDay = calculateEffectiveCostPerDay({
-      priceJPY: product.priceJPY,
-      servingsPerContainer: product.servingsPerContainer,
-      servingsPerDay: product.servingsPerDay,
-    });
-    const costPerIU = amountIU > 0 ? costPerDay / amountIU : Infinity;
+  const productsWithCost = products
+    .filter(
+      (p) =>
+        p.priceJPY > 0 && p.servingsPerContainer > 0 && p.servingsPerDay > 0,
+    )
+    .map((product) => {
+      const effectiveCostPerDay = calculateEffectiveCostPerDay({
+        priceJPY: product.priceJPY,
+        servingsPerContainer: product.servingsPerContainer,
+        servingsPerDay: product.servingsPerDay,
+      });
 
-    return {
-      ...product,
-      amountPerServing: amountIU,
-      costPerDay,
-      costPerIU,
-    };
-  });
+      const vitaminDIngredient = product.ingredients?.find(
+        (i) =>
+          i.ingredient?.name?.includes("ビタミンD") ||
+          i.ingredient?.name?.includes("Vitamin D"),
+      );
+      const amountPerServing = vitaminDIngredient?.amountMgPerServing || 0;
+      const amountIU =
+        amountPerServing < 1 ? amountPerServing * 40 : amountPerServing;
+      const pricePerIU =
+        amountIU > 0
+          ? product.priceJPY / (amountIU * product.servingsPerContainer)
+          : 0;
 
-  // コスパ順にソート
-  const sortedByCost = [...productsWithCost]
-    .filter((p) => p.costPerIU < Infinity && p.costPerIU > 0)
-    .sort((a, b) => a.costPerIU - b.costPerIU);
+      return {
+        ...product,
+        effectiveCostPerDay,
+        amountIU,
+        pricePerIU,
+      };
+    })
+    .sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
 
-  const top3Products = sortedByCost.slice(0, 3);
-  const otherProducts = sortedByCost.slice(3);
-
-  // Schema.org構造化データ
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: ARTICLE_DATA.title,
-    description: ARTICLE_DATA.description,
-    datePublished: ARTICLE_DATA.publishedAt,
-    dateModified: ARTICLE_DATA.updatedAt,
-    author: {
-      "@type": "Organization",
-      name: "サプティア",
-      url: "https://suptia.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "サプティア",
-      url: "https://suptia.com",
-    },
-  };
+  const top3Products = productsWithCost.slice(0, 3);
 
   return (
-    <main
+    <article
       className="min-h-screen"
       style={{
         backgroundColor: appleWebColors.pageBackground,
         fontFamily: fontStack,
       }}
     >
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      {/* 1. パンくずリスト（sticky） */}
+      <div
+        className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
+        style={{ borderColor: appleWebColors.borderSubtle }}
+      >
+        <div className="mx-auto px-4 sm:px-6 py-3 max-w-4xl">
+          <nav className="flex items-center gap-2 text-[13px]">
+            <Link
+              href="/"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
+            >
+              ホーム
+            </Link>
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <Link
+              href="/articles"
+              className="hover:opacity-70 transition-opacity"
+              style={{ color: systemColors.blue }}
+            >
+              記事一覧
+            </Link>
+            <span style={{ color: appleWebColors.textSecondary }}>/</span>
+            <span style={{ color: appleWebColors.textSecondary }}>
+              ビタミンD比較
+            </span>
+          </nav>
+        </div>
+      </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -487,7 +543,7 @@ export default async function VitaminDComparisonPage() {
                 color: systemColors.orange,
               }}
             >
-              比較記事
+              ビタミン
             </span>
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
@@ -534,8 +590,46 @@ export default async function VitaminDComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
         <section
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <nav>
+            <ol className="space-y-2">
+              {SECTIONS.map((section, i) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="flex items-center gap-3 text-[15px] hover:opacity-70 transition-opacity"
+                    style={{ color: systemColors.blue }}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium"
+                      style={{
+                        backgroundColor: systemColors.orange + "15",
+                        color: systemColors.orange,
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    {section.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </section>
+
+        {/* 4. この記事でわかること */}
+        <section
+          id="learning-points"
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.orange + "30" }}
         >
@@ -546,13 +640,7 @@ export default async function VitaminDComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "ビタミンD2とD3の違い、選び方のポイント",
-              "日本人の8割が不足している理由と対策",
-              "骨・免疫・メンタルなど目的別のおすすめ商品",
-              "適切な摂取量と過剰摂取のリスク",
-              "血液検査で確認すべき数値の目安",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -567,8 +655,9 @@ export default async function VitaminDComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト */}
         <section
+          id="quick-recommendations"
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
             background: `linear-gradient(135deg, ${systemColors.orange}15, ${systemColors.yellow}15)`,
@@ -589,29 +678,18 @@ export default async function VitaminDComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>効果重視なら</strong>
-                  →ビタミンD3（コレカルシフェロール）。D2より効率的。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>骨の健康重視なら</strong>
-                  →D3+K2配合タイプ。カルシウムを骨に届ける。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>ヴィーガンなら</strong>
-                  →苔類由来D3またはD2。植物性で安心。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>用量の目安</strong>
-                  →1000〜2000IU/日が一般的。欠乏時は医師に相談。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.label}</strong>→{rec.text}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* ビタミンDの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -624,14 +702,15 @@ export default async function VitaminDComparisonPage() {
           >
             ビタミンDサプリは大きく5つのタイプに分かれます。それぞれの特徴を理解して、あなたに合ったものを選びましょう。
           </p>
+
           <div className="space-y-4">
-            {VITAMIN_D_TYPES.map((type, index) => (
+            {VITAMIN_D_TYPES.map((type) => (
               <div
-                key={index}
+                key={type.name}
                 className={`${liquidGlassClasses.light} rounded-[16px] p-5 border-l-4`}
                 style={{ borderLeftColor: type.color }}
               >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
                   <div className="flex-1">
                     <h3
                       className="font-bold text-[17px] mb-1"
@@ -641,7 +720,7 @@ export default async function VitaminDComparisonPage() {
                     </h3>
                     <p
                       className="text-[13px] mb-2"
-                      style={{ color: appleWebColors.textSecondary }}
+                      style={{ color: appleWebColors.textTertiary }}
                     >
                       {type.nameEn}
                     </p>
@@ -696,8 +775,8 @@ export default async function VitaminDComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose-recommendations" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -708,44 +787,58 @@ export default async function VitaminDComparisonPage() {
             className="text-[15px] leading-[1.7] mb-6"
             style={{ color: appleWebColors.textSecondary }}
           >
-            あなたの目的に合わせて、最適なビタミンDの種類と用量を選びましょう。
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
           </p>
-          <div className="grid md:grid-cols-2 gap-4">
-            {PURPOSE_RECOMMENDATIONS.map((rec, index) => {
+
+          <div className="space-y-4">
+            {PURPOSE_RECOMMENDATIONS.map((rec) => {
               const Icon = rec.icon;
               return (
                 <div
-                  key={index}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-5 border`}
+                  key={rec.purpose}
+                  className={`${liquidGlassClasses.light} rounded-[20px] p-5 border`}
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: rec.color + "20" }}
-                    >
-                      <Icon size={20} style={{ color: rec.color }} />
+                  <div className="flex items-start gap-4">
+                    <span className="text-3xl">{rec.emoji}</span>
+                    <div className="flex-1">
+                      <h3
+                        className="font-bold text-[17px] mb-1"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {rec.purpose}
+                      </h3>
+                      <p
+                        className="text-[14px] mb-3"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {rec.description}
+                      </p>
+                      <div
+                        className="bg-white/50 rounded-[12px] p-4"
+                        style={{ borderColor: appleWebColors.borderSubtle }}
+                      >
+                        <p
+                          className="font-bold text-[15px] mb-2"
+                          style={{ color: systemColors.orange }}
+                        >
+                          → {rec.recommendation}
+                        </p>
+                        <p
+                          className="text-[14px] mb-2"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
+                          {rec.reason}
+                        </p>
+                        <p
+                          className="text-[13px] flex items-center gap-1"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          <Lightbulb size={14} />
+                          {rec.tips}
+                        </p>
+                      </div>
                     </div>
-                    <h3
-                      className="font-bold text-[17px]"
-                      style={{ color: appleWebColors.textPrimary }}
-                    >
-                      {rec.purpose}
-                    </h3>
-                  </div>
-                  <div className="space-y-2">
-                    <p
-                      className="font-bold text-[15px]"
-                      style={{ color: rec.color }}
-                    >
-                      → {rec.recommendation}
-                    </p>
-                    <p
-                      className="text-[14px] leading-[1.6]"
-                      style={{ color: appleWebColors.textSecondary }}
-                    >
-                      {rec.reason}
-                    </p>
                   </div>
                 </div>
               );
@@ -753,8 +846,8 @@ export default async function VitaminDComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="ranking" className="mb-12">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -765,135 +858,119 @@ export default async function VitaminDComparisonPage() {
             className="text-[15px] mb-6"
             style={{ color: appleWebColors.textSecondary }}
           >
-            1日あたりのコストとIU単価で算出した、本当にお得なビタミンDサプリメント。
+            1日あたりのコストで比較した、最もお得なビタミンDサプリメントです。
           </p>
 
-          {top3Products.length > 0 ? (
-            <div className="space-y-4">
-              {top3Products.map((product, index) => (
+          <div className="space-y-4">
+            {top3Products.map((product, index) => (
+              <Link
+                key={product._id}
+                href={`/products/${product.slug.current}`}
+                className={`${liquidGlassClasses.light} rounded-[20px] p-5 flex gap-4 border transition-all hover:shadow-lg hover:-translate-y-0.5`}
+                style={{ borderColor: appleWebColors.borderSubtle }}
+              >
                 <div
-                  key={product._id}
-                  className={`${liquidGlassClasses.light} rounded-[20px] p-5 border transition-all hover:shadow-lg`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-white"
+                  style={{
+                    background:
+                      index === 0
+                        ? "linear-gradient(135deg, #FFD700, #FFA500)"
+                        : index === 1
+                          ? "linear-gradient(135deg, #C0C0C0, #A0A0A0)"
+                          : "linear-gradient(135deg, #CD7F32, #8B4513)",
+                  }}
                 >
-                  <div className="flex items-start gap-4">
-                    {/* ランキング */}
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 font-bold text-white text-[20px]"
+                  {index + 1}
+                </div>
+
+                {product.externalImageUrl && (
+                  <div className="w-20 h-20 relative shrink-0 bg-white rounded-[12px] overflow-hidden">
+                    <Image
+                      src={product.externalImageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-1"
+                    />
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className="font-bold text-[15px] mb-1 line-clamp-2"
+                    style={{ color: appleWebColors.textPrimary }}
+                  >
+                    {product.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      価格:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.blue }}
+                      >
+                        ¥{product.priceJPY.toLocaleString()}
+                      </span>
+                    </span>
+                    <span style={{ color: appleWebColors.textSecondary }}>
+                      1日:{" "}
+                      <span
+                        className="font-bold"
+                        style={{ color: systemColors.green }}
+                      >
+                        ¥{product.effectiveCostPerDay.toFixed(1)}
+                      </span>
+                    </span>
+                    {product.amountIU > 0 && (
+                      <span style={{ color: appleWebColors.textSecondary }}>
+                        含有量:{" "}
+                        <span className="font-bold">
+                          {product.amountIU.toFixed(0)}IU
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
                       style={{
-                        background:
-                          index === 0
-                            ? "linear-gradient(135deg, #FFD700, #FFA500)"
-                            : index === 1
-                              ? "linear-gradient(135deg, #C0C0C0, #A8A8A8)"
-                              : "linear-gradient(135deg, #CD7F32, #8B4513)",
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
                       }}
                     >
-                      {index + 1}
-                    </div>
-
-                    {/* 商品画像 */}
-                    {product.externalImageUrl && (
-                      <div className="w-20 h-20 relative shrink-0 rounded-[12px] overflow-hidden bg-white">
-                        <Image
-                          src={product.externalImageUrl}
-                          alt={product.name}
-                          fill
-                          className="object-contain p-1"
-                          sizes="80px"
-                        />
-                      </div>
-                    )}
-
-                    {/* 商品情報 */}
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className="font-bold text-[15px] mb-1 line-clamp-2"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        {product.name}
-                      </h3>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        <span
-                          className="text-[12px] px-2 py-0.5 rounded-full"
-                          style={{
-                            backgroundColor: systemColors.orange + "15",
-                            color: systemColors.orange,
-                          }}
-                        >
-                          ¥{product.costPerDay.toFixed(1)}/日
-                        </span>
-                        <span
-                          className="text-[12px] px-2 py-0.5 rounded-full"
-                          style={{
-                            backgroundColor: systemColors.green + "15",
-                            color: systemColors.green,
-                          }}
-                        >
-                          {product.amountPerServing.toFixed(0)}IU/回
-                        </span>
-                      </div>
-                      <p
-                        className="text-[13px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        ¥{product.priceJPY.toLocaleString()} /{" "}
-                        {product.servingsPerContainer}回分
-                      </p>
-                    </div>
-
-                    {/* 詳細リンク */}
-                    <Link
-                      href={`/products/${product.slug.current}`}
-                      className="shrink-0 p-2 rounded-full transition-colors"
-                      style={{ backgroundColor: systemColors.orange + "10" }}
-                    >
-                      <ArrowRight
-                        size={20}
-                        style={{ color: systemColors.orange }}
-                      />
-                    </Link>
-                  </div>
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
-          ) : (
+
+                <ArrowRight
+                  size={20}
+                  className="shrink-0 self-center"
+                  style={{ color: appleWebColors.textSecondary }}
+                />
+              </Link>
+            ))}
+          </div>
+
+          {products.length === 0 && (
             <div
-              className={`${liquidGlassClasses.light} rounded-[20px] p-8 text-center border`}
-              style={{ borderColor: appleWebColors.borderSubtle }}
+              className={`${liquidGlassClasses.light} rounded-[16px] p-8 text-center`}
             >
               <p style={{ color: appleWebColors.textSecondary }}>
-                現在、ビタミンDサプリのデータを取得中です。
+                現在、ビタミンDサプリメントの商品データを準備中です。
               </p>
             </div>
           )}
-
-          {/* 計算ツールへの誘導 */}
-          <div
-            className="mt-6 p-4 rounded-[12px] flex items-center justify-between"
-            style={{ backgroundColor: systemColors.orange + "10" }}
-          >
-            <div className="flex items-center gap-3">
-              <Calculator size={20} style={{ color: systemColors.orange }} />
-              <span
-                className="text-[14px]"
-                style={{ color: appleWebColors.textPrimary }}
-              >
-                自分で計算したい方はこちら
-              </span>
-            </div>
-            <Link
-              href="/tools/mg-calculator"
-              className="text-[14px] font-medium flex items-center gap-1"
-              style={{ color: systemColors.orange }}
-            >
-              計算ツールへ
-            </Link>
-          </div>
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -929,10 +1006,21 @@ export default async function VitaminDComparisonPage() {
                       className="font-bold text-[15px]"
                       style={{ color: appleWebColors.textPrimary }}
                     >
-                      {check.title}
+                      {check.item}
+                      {check.important && (
+                        <span
+                          className="ml-2 text-[11px] px-1.5 py-0.5 rounded"
+                          style={{
+                            backgroundColor: systemColors.orange + "20",
+                            color: systemColors.orange,
+                          }}
+                        >
+                          重要
+                        </span>
+                      )}
                     </h3>
                     <p
-                      className="text-[14px] leading-[1.6]"
+                      className="text-[14px]"
                       style={{ color: appleWebColors.textSecondary }}
                     >
                       {check.description}
@@ -944,8 +1032,8 @@ export default async function VitaminDComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -956,36 +1044,36 @@ export default async function VitaminDComparisonPage() {
             className="text-[15px] leading-[1.7] mb-6"
             style={{ color: appleWebColors.textSecondary }}
           >
-            目的に応じた1日の摂取量目安です。高用量を長期摂取する場合は、血液検査での確認を推奨します。
+            ビタミンDは脂溶性のため過剰摂取に注意が必要です。目的に応じた適切な量を守りましょう。
           </p>
+
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
               <thead>
                 <tr
-                  style={{
-                    backgroundColor: appleWebColors.sectionBackground,
-                  }}
+                  className="border-b"
+                  style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <th
-                    className="text-left p-3 font-bold rounded-tl-[12px]"
+                    className="text-left py-3 px-4 font-bold"
                     style={{ color: appleWebColors.textPrimary }}
                   >
                     目的
                   </th>
                   <th
-                    className="text-left p-3 font-bold"
+                    className="text-left py-3 px-4 font-bold"
                     style={{ color: appleWebColors.textPrimary }}
                   >
-                    摂取量
+                    1日の目安
                   </th>
                   <th
-                    className="text-left p-3 font-bold"
+                    className="text-left py-3 px-4 font-bold"
                     style={{ color: appleWebColors.textPrimary }}
                   >
-                    タイミング
+                    回数
                   </th>
                   <th
-                    className="text-left p-3 font-bold rounded-tr-[12px]"
+                    className="text-left py-3 px-4 font-bold"
                     style={{ color: appleWebColors.textPrimary }}
                   >
                     備考
@@ -1000,23 +1088,26 @@ export default async function VitaminDComparisonPage() {
                     style={{ borderColor: appleWebColors.borderSubtle }}
                   >
                     <td
-                      className="p-3 font-medium"
+                      className="py-3 px-4"
                       style={{ color: appleWebColors.textPrimary }}
                     >
                       {guide.purpose}
                     </td>
-                    <td className="p-3" style={{ color: systemColors.orange }}>
-                      <strong>{guide.amount}</strong>
+                    <td
+                      className="py-3 px-4 font-bold"
+                      style={{ color: systemColors.orange }}
+                    >
+                      {guide.amount}
                     </td>
                     <td
-                      className="p-3"
+                      className="py-3 px-4"
                       style={{ color: appleWebColors.textSecondary }}
                     >
-                      {guide.timing}
+                      {guide.frequency}
                     </td>
                     <td
-                      className="p-3"
-                      style={{ color: appleWebColors.textSecondary }}
+                      className="py-3 px-4 text-[13px]"
+                      style={{ color: appleWebColors.textTertiary }}
                     >
                       {guide.note}
                     </td>
@@ -1027,8 +1118,8 @@ export default async function VitaminDComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1041,40 +1132,41 @@ export default async function VitaminDComparisonPage() {
           >
             ビタミンDは脂溶性ビタミンのため、過剰摂取には注意が必要です。以下の点を理解した上で適切に摂取しましょう。
           </p>
+
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-4 rounded-[12px]"
+                className={`rounded-[12px] p-4 flex items-start gap-3`}
                 style={{
                   backgroundColor:
                     caution.severity === "warning"
-                      ? systemColors.red + "08"
-                      : systemColors.orange + "08",
+                      ? systemColors.orange + "15"
+                      : systemColors.blue + "15",
                 }}
               >
                 {caution.severity === "warning" ? (
                   <AlertTriangle
                     size={20}
                     className="shrink-0 mt-0.5"
-                    style={{ color: systemColors.red }}
+                    style={{ color: systemColors.orange }}
                   />
                 ) : (
                   <Info
                     size={20}
                     className="shrink-0 mt-0.5"
-                    style={{ color: systemColors.orange }}
+                    style={{ color: systemColors.blue }}
                   />
                 )}
                 <div>
                   <h3
-                    className="font-bold text-[15px] mb-1"
+                    className="font-bold text-[15px]"
                     style={{ color: appleWebColors.textPrimary }}
                   >
                     {caution.title}
                   </h3>
                   <p
-                    className="text-[14px] leading-[1.6]"
+                    className="text-[14px]"
                     style={{ color: appleWebColors.textSecondary }}
                   >
                     {caution.description}
@@ -1085,68 +1177,8 @@ export default async function VitaminDComparisonPage() {
           </div>
         </section>
 
-        {/* その他の商品 */}
-        {otherProducts.length > 0 && (
-          <section className="mb-12">
-            <h2
-              className={`${typography.title2} mb-6`}
-              style={{ color: appleWebColors.textPrimary }}
-            >
-              その他のビタミンDサプリ
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {otherProducts.slice(0, 6).map((product) => (
-                <Link
-                  key={product._id}
-                  href={`/products/${product.slug.current}`}
-                  className={`${liquidGlassClasses.light} rounded-[16px] p-4 border flex items-center gap-4 transition-all hover:shadow-md`}
-                  style={{ borderColor: appleWebColors.borderSubtle }}
-                >
-                  {product.externalImageUrl && (
-                    <div className="w-16 h-16 relative shrink-0 rounded-[8px] overflow-hidden bg-white">
-                      <Image
-                        src={product.externalImageUrl}
-                        alt={product.name}
-                        fill
-                        className="object-contain p-1"
-                        sizes="64px"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3
-                      className="font-bold text-[14px] mb-1 line-clamp-2"
-                      style={{ color: appleWebColors.textPrimary }}
-                    >
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="text-[12px]"
-                        style={{ color: systemColors.orange }}
-                      >
-                        ¥{product.costPerDay.toFixed(1)}/日
-                      </span>
-                      <span
-                        className="text-[12px]"
-                        style={{ color: appleWebColors.textSecondary }}
-                      >
-                        ¥{product.priceJPY.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight
-                    size={16}
-                    style={{ color: appleWebColors.textTertiary }}
-                  />
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1167,18 +1199,18 @@ export default async function VitaminDComparisonPage() {
                   Q. {faq.question}
                 </h3>
                 <p
-                  className="text-[14px] leading-[1.7]"
+                  className="text-[14px] leading-[1.8]"
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  {faq.answer}
+                  A. {faq.answer}
                 </p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* 関連成分 */}
-        <section className="mb-12">
+        {/* 13. 関連成分 */}
+        <section id="related" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1186,66 +1218,38 @@ export default async function VitaminDComparisonPage() {
             ビタミンDと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "ビタミンK2",
-                slug: "vitamin-k",
-                description:
-                  "カルシウムを骨に届ける。D3との相乗効果で骨密度維持。",
-                color: systemColors.purple,
-              },
-              {
-                name: "カルシウム",
-                slug: "calcium",
-                description: "ビタミンDが吸収を促進。骨と歯の健康に必須。",
-                color: systemColors.cyan,
-              },
-              {
-                name: "マグネシウム",
-                slug: "magnesium",
-                description:
-                  "ビタミンDの活性化に必要。筋肉や神経機能にも重要。",
-                color: systemColors.blue,
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                description: "免疫機能をサポート。ビタミンDと共に免疫力UP。",
-                color: systemColors.green,
-              },
-            ].map((related) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
-                key={related.slug}
-                href={`/ingredients/${related.slug}`}
-                className={`${liquidGlassClasses.light} rounded-[16px] p-5 border flex items-start gap-4 transition-all hover:shadow-md`}
+                key={ingredient.slug}
+                href={`/ingredients/${ingredient.slug}`}
+                className={`${liquidGlassClasses.light} rounded-[16px] p-4 flex items-center gap-4 border transition-all hover:shadow-md`}
                 style={{ borderColor: appleWebColors.borderSubtle }}
               >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: related.color + "20" }}
-                >
-                  <FlaskConical size={20} style={{ color: related.color }} />
-                </div>
-                <div>
+                <span className="text-2xl">{ingredient.emoji}</span>
+                <div className="flex-1">
                   <h3
-                    className="font-bold text-[15px] mb-1"
+                    className="font-bold text-[15px]"
                     style={{ color: appleWebColors.textPrimary }}
                   >
-                    {related.name}
+                    {ingredient.name}
                   </h3>
                   <p
-                    className="text-[13px] leading-[1.5]"
+                    className="text-[13px]"
                     style={{ color: appleWebColors.textSecondary }}
                   >
-                    {related.description}
+                    {ingredient.reason}
                   </p>
                 </div>
+                <ArrowRight
+                  size={16}
+                  style={{ color: appleWebColors.textSecondary }}
+                />
               </Link>
             ))}
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1256,27 +1260,136 @@ export default async function VitaminDComparisonPage() {
             ビタミンDサプリをもっと詳しく比較
           </h2>
           <p className="text-[15px] opacity-90 mb-6">
-            Suptiaでは、5つの評価軸で{products.length}商品以上を比較できます
+            Suptiaでは、5つの評価軸で商品を比較できます
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/products?ingredient=vitamin-d"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white rounded-[12px] font-medium"
+              className="inline-flex items-center justify-center gap-2 bg-white font-bold px-6 py-3 rounded-[12px] transition-colors hover:bg-gray-100"
               style={{ color: systemColors.orange }}
             >
-              ビタミンD商品一覧
-              <ArrowRight size={16} />
+              全商品を見る
+              <ArrowRight size={18} />
             </Link>
             <Link
               href="/ingredients/vitamin-d"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/20 rounded-[12px] font-medium text-white"
+              className="inline-flex items-center justify-center gap-2 bg-white/20 font-medium px-6 py-3 rounded-[12px] transition-colors hover:bg-white/30"
             >
-              成分ガイドを見る
+              ビタミンD成分ガイド
               <ExternalLink size={16} />
             </Link>
           </div>
         </section>
       </div>
-    </main>
+
+      {/* 構造化データ: Article */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: ARTICLE_DATA.title,
+            description: ARTICLE_DATA.description,
+            datePublished: ARTICLE_DATA.publishedAt,
+            dateModified: ARTICLE_DATA.updatedAt,
+            author: {
+              "@type": "Organization",
+              name: "サプティア編集部",
+              url: "https://suptia.com",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "サプティア",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://suptia.com/logo.png",
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
+            },
+          }),
+        }}
+      />
+
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
+    </article>
   );
 }

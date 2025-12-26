@@ -1,6 +1,6 @@
 /**
  * クレアチン比較記事ページ
- * SEO最適化された比較コンテンツ
+ * SEO最適化された比較コンテンツ（統一テンプレート準拠）
  */
 
 import { Metadata } from "next";
@@ -33,6 +33,74 @@ import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
+
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "クレアチンの種類（モノハイドレート・HCl・バッファード）の違い",
+  "ローディングは必要か？最適な摂取方法",
+  "筋力・パワーだけでなく認知機能への効果",
+  "女性・高齢者・ベジタリアンへの効果",
+  "腎臓への影響など安全性の真実",
+];
+
+// 結論ファースト
+const QUICK_RECOMMENDATIONS = [
+  {
+    label: "基本はモノハイドレート",
+    detail: "最も研究が多く、安価で効果確実。5g/日で十分。",
+  },
+  {
+    label: "溶けやすさ重視なら",
+    detail: "マイクロナイズド（微粉末）。効果は同じ。",
+  },
+  {
+    label: "胃腸が気になるなら",
+    detail: "クレアチンHCl。少量で効果、負担少ない。",
+  },
+  {
+    label: "ローディングは不要",
+    detail: "3〜4週間で同じ効果に到達。",
+  },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "プロテイン",
+    slug: "protein",
+    emoji: "💪",
+    reason: "筋肉合成に相乗効果",
+  },
+  {
+    name: "ベータアラニン",
+    slug: "beta-alanine",
+    emoji: "⚡",
+    reason: "持久力向上に相乗効果",
+  },
+  {
+    name: "オメガ3",
+    slug: "omega-3",
+    emoji: "🐟",
+    reason: "炎症抑制・回復促進",
+  },
+  {
+    name: "ビタミンD",
+    slug: "vitamin-d",
+    emoji: "☀️",
+    reason: "筋力・パフォーマンス向上",
+  },
+];
 
 const ARTICLE_DATA = {
   title:
@@ -190,7 +258,7 @@ const CREATINE_TYPES = [
     color: "#6B7280",
   },
   {
-    name: "クレアルカリン（Kre-Alkalyn®）",
+    name: "クレアルカリン（Kre-Alkalyn）",
     nameEn: "Kre-Alkalyn",
     research: "△ 限定的",
     price: "△ 高い",
@@ -207,7 +275,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "筋力・筋肉量アップ",
     icon: Dumbbell,
-    emoji: "💪",
+    emoji: "muscle",
     description: "筋トレ効果を最大化したい、ベンチプレスを伸ばしたい",
     recommendation: "クレアチンモノハイドレート 5g/日",
     reason:
@@ -217,7 +285,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "瞬発力・パワー向上",
     icon: Shield,
-    emoji: "⚡",
+    emoji: "zap",
     description: "スポーツのパフォーマンス向上、スプリント、ジャンプ力",
     recommendation: "クレアチンモノハイドレート 5g/日",
     reason:
@@ -227,7 +295,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "認知機能・脳のエネルギー",
     icon: Brain,
-    emoji: "🧠",
+    emoji: "brain",
     description: "集中力、記憶力、睡眠不足時のパフォーマンス",
     recommendation: "クレアチンモノハイドレート 5g/日",
     reason:
@@ -237,7 +305,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "胃腸への負担を減らしたい",
     icon: Heart,
-    emoji: "🩹",
+    emoji: "pill",
     description: "モノハイドレートでお腹が張る、下痢になる",
     recommendation: "クレアチンHCl 1.5〜3g/日",
     reason:
@@ -247,7 +315,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "ベジタリアン・ヴィーガン",
     icon: Shield,
-    emoji: "🥬",
+    emoji: "leaf",
     description: "肉・魚を食べない、クレアチンが不足している",
     recommendation: "クレアチンモノハイドレート 3〜5g/日",
     reason:
@@ -267,7 +335,7 @@ const SELECTION_CHECKLIST = [
   {
     item: "純度を確認",
     description:
-      "Creapure®などの品質保証ブランド、または純度99%以上の表記があると安心。",
+      "Creapure などの品質保証ブランド、または純度99%以上の表記があると安心。",
     important: true,
   },
   {
@@ -397,6 +465,20 @@ const FAQS = [
   },
 ];
 
+// 絵文字マッピング関数
+function getEmojiIcon(emojiKey: string): string {
+  const emojiMap: Record<string, string> = {
+    muscle: "",
+    zap: "",
+    brain: "",
+    pill: "",
+    leaf: "",
+    fish: "",
+    sun: "",
+  };
+  return emojiMap[emojiKey] || "";
+}
+
 export default async function CreatineComparisonPage() {
   const products = await getCreatineProducts();
 
@@ -429,7 +511,7 @@ export default async function CreatineComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. [sticky] パンくずナビ */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -459,7 +541,7 @@ export default async function CreatineComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション（タイトル + アイキャッチ） */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -475,11 +557,11 @@ export default async function CreatineComparisonPage() {
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
               style={{
-                backgroundColor: systemColors.orange + "15",
-                color: systemColors.orange,
+                backgroundColor: systemColors.green + "15",
+                color: systemColors.green,
               }}
             >
-              トレンド成分
+              {products.length}商品を比較
             </span>
           </div>
 
@@ -517,7 +599,43 @@ export default async function CreatineComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.blue + "20",
+                      color: systemColors.blue,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.blue + "30" }}
@@ -529,13 +647,7 @@ export default async function CreatineComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "クレアチンの種類（モノハイドレート・HCl・バッファード）の違い",
-              "ローディングは必要か？最適な摂取方法",
-              "筋力・パワーだけでなく認知機能への効果",
-              "女性・高齢者・ベジタリアンへの効果",
-              "腎臓への影響など安全性の真実",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -550,7 +662,7 @@ export default async function CreatineComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
@@ -572,29 +684,18 @@ export default async function CreatineComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>基本はモノハイドレート</strong>
-                  →最も研究が多く、安価で効果確実。5g/日で十分。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>溶けやすさ重視なら</strong>
-                  →マイクロナイズド（微粉末）。効果は同じ。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>胃腸が気になるなら</strong>
-                  →クレアチンHCl。少量で効果、負担少ない。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>ローディングは不要</strong>
-                  →3〜4週間で同じ効果に到達。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.label}</strong> →{rec.detail}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* クレアチンの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -681,14 +782,20 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜あなたに合ったクレアチンはこれ
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
@@ -700,7 +807,12 @@ export default async function CreatineComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.blue + "15" }}
+                    >
+                      <Icon size={20} style={{ color: systemColors.blue }} />
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -746,8 +858,8 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -821,6 +933,24 @@ export default async function CreatineComparisonPage() {
                       </span>
                     </span>
                   </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
 
                 <ArrowRight
@@ -843,8 +973,8 @@ export default async function CreatineComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -906,14 +1036,20 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜摂取量の目安
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            クレアチンは毎日継続摂取することで体内レベルが飽和し、効果を発揮します。
+          </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
@@ -986,14 +1122,20 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             注意点・副作用
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            クレアチンは最も安全性が研究されているサプリメントの一つですが、いくつかの注意点があります。
+          </p>
 
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
@@ -1039,8 +1181,8 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1071,7 +1213,7 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
+        {/* 13. 関連成分 */}
         <section className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
@@ -1080,32 +1222,7 @@ export default async function CreatineComparisonPage() {
             クレアチンと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "プロテイン",
-                slug: "protein",
-                emoji: "💪",
-                reason: "筋肉合成に相乗効果",
-              },
-              {
-                name: "ベータアラニン",
-                slug: "beta-alanine",
-                emoji: "⚡",
-                reason: "持久力向上に相乗効果",
-              },
-              {
-                name: "オメガ3",
-                slug: "omega-3",
-                emoji: "🐟",
-                reason: "炎症抑制・回復促進",
-              },
-              {
-                name: "ビタミンD",
-                slug: "vitamin-d",
-                emoji: "☀️",
-                reason: "筋力・パフォーマンス向上",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1136,7 +1253,7 @@ export default async function CreatineComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1159,17 +1276,17 @@ export default async function CreatineComparisonPage() {
               <ArrowRight size={18} />
             </Link>
             <Link
-              href="/ingredients"
+              href="/ingredients/creatine"
               className="inline-flex items-center justify-center gap-2 bg-white/20 font-medium px-6 py-3 rounded-[12px] transition-colors hover:bg-white/30"
             >
-              成分ガイド一覧
+              クレアチン成分ガイド
               <ExternalLink size={16} />
             </Link>
           </div>
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1195,13 +1312,71 @@ export default async function CreatineComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/creatine-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

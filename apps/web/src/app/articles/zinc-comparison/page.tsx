@@ -37,6 +37,17 @@ import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
 
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+];
+
 const ARTICLE_DATA = {
   title: "【2025年最新】亜鉛サプリおすすめ比較｜形態別の吸収率・効果で徹底分析",
   description:
@@ -567,6 +578,42 @@ export default async function ZincComparisonPage() {
           </ul>
         </section>
 
+        {/* 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.cyan + "20",
+                      color: systemColors.cyan,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
         {/* 結論ファースト */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
@@ -611,7 +658,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* 亜鉛の種類比較 */}
-        <section className="mb-12">
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -699,7 +746,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* 目的別おすすめ */}
-        <section className="mb-12">
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -770,7 +817,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* コスパランキング */}
-        <section className="mb-12">
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -893,7 +940,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -956,7 +1003,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* 摂取量ガイド */}
-        <section className="mb-12">
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1042,7 +1089,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* 注意点・副作用 */}
-        <section className="mb-12">
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1101,7 +1148,7 @@ export default async function ZincComparisonPage() {
         </section>
 
         {/* FAQ */}
-        <section className="mb-12">
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1230,7 +1277,7 @@ export default async function ZincComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1256,13 +1303,71 @@ export default async function ZincComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/zinc-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

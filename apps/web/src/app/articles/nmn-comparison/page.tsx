@@ -1,6 +1,6 @@
 /**
  * NMN比較記事ページ
- * SEO最適化された比較コンテンツ
+ * 統一テンプレート（15セクション）に準拠
  */
 
 import { Metadata } from "next";
@@ -18,9 +18,11 @@ import {
   Shield,
   BadgeCheck,
   Info,
-  Sparkles,
   Clock,
   ExternalLink,
+  Zap,
+  Brain,
+  Dumbbell,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -33,6 +35,68 @@ import { getArticleOGImage, generateOGImageMeta } from "@/lib/og-image";
 import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
+
+// ===== データ構造 =====
+
+// 目次データ
+const SECTIONS = [
+  { id: "types", label: "種類と特徴" },
+  { id: "purpose", label: "目的別おすすめ" },
+  { id: "products", label: "おすすめ商品ランキング" },
+  { id: "checklist", label: "選び方チェックリスト" },
+  { id: "dosage", label: "摂取量・タイミング" },
+  { id: "cautions", label: "注意点・副作用" },
+  { id: "faq", label: "よくある質問" },
+  { id: "related", label: "関連成分" },
+];
+
+// この記事でわかること
+const LEARNING_POINTS = [
+  "NMNがなぜ「若返り物質」として注目されているか",
+  "純度・形態（腸溶性・リポソーム等）による効果の違い",
+  "コスパの良いNMNサプリの選び方（mg単価比較）",
+  "効果を感じるまでの期間と適切な摂取量",
+  "偽物・低品質品を避けるためのチェックポイント",
+];
+
+// 結論ファースト（迷ったらこれ）
+const QUICK_RECOMMENDATIONS = [
+  {
+    label: "効果重視なら",
+    text: "純度99%以上のβ-NMN。COA（分析証明書）付き。",
+  },
+  { label: "吸収率重視なら", text: "リポソームNMN or 腸溶性カプセル。" },
+  { label: "コスパ重視なら", text: "mg単価で比較。純度95%以上なら十分。" },
+  { label: "摂取量の目安", text: "250〜500mg/日。朝の摂取がおすすめ。" },
+];
+
+// 関連成分
+const RELATED_INGREDIENTS = [
+  {
+    name: "レスベラトロール",
+    slug: "resveratrol",
+    emoji: "🍇",
+    reason: "サーチュイン活性化に相乗効果",
+  },
+  {
+    name: "コエンザイムQ10",
+    slug: "coq10",
+    emoji: "⚡",
+    reason: "ミトコンドリア機能を強化",
+  },
+  {
+    name: "ビタミンD",
+    slug: "vitamin-d",
+    emoji: "☀️",
+    reason: "代謝・免疫機能をサポート",
+  },
+  {
+    name: "オメガ3",
+    slug: "omega-3",
+    emoji: "🐟",
+    reason: "脳・心臓の健康をサポート",
+  },
+];
 
 const ARTICLE_DATA = {
   title: "【2025年最新】NMNサプリおすすめ比較｜純度・価格・効果で徹底分析",
@@ -201,8 +265,7 @@ const NMN_TYPES = [
 const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "本格的なアンチエイジング",
-    icon: Sparkles,
-    emoji: "✨",
+    icon: Heart,
     description: "NAD+レベルを効率的に上げたい、若返りを本気で目指す",
     recommendation: "高純度β-NMN（99%以上）250〜500mg/日",
     reason:
@@ -211,8 +274,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "コスパ重視で始めたい",
-    icon: Heart,
-    emoji: "💰",
+    icon: Zap,
     description: "まずは試してみたい、予算を抑えたい",
     recommendation: "一般カプセル（純度95%以上）125〜250mg/日",
     reason:
@@ -221,8 +283,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "吸収率を最大化したい",
-    icon: Clock,
-    emoji: "🚀",
+    icon: Target,
     description: "効率的に体内に取り込みたい",
     recommendation: "リポソームNMN or 腸溶性カプセル",
     reason:
@@ -231,8 +292,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "エネルギー・活力向上",
-    icon: Shield,
-    emoji: "⚡",
+    icon: Dumbbell,
     description: "疲れにくい体、運動パフォーマンス向上",
     recommendation: "NMN 250mg + コエンザイムQ10",
     reason:
@@ -241,8 +301,7 @@ const PURPOSE_RECOMMENDATIONS = [
   },
   {
     purpose: "認知機能・脳の健康",
-    icon: Clock,
-    emoji: "🧠",
+    icon: Brain,
     description: "集中力、記憶力、脳のアンチエイジング",
     recommendation: "NMN 250mg + オメガ3",
     reason:
@@ -423,7 +482,7 @@ export default async function NMNComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* 1. [sticky] パンくずナビ */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -451,7 +510,7 @@ export default async function NMNComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* 2. ヒーローセクション（タイトル + アイキャッチ） */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -467,11 +526,11 @@ export default async function NMNComparisonPage() {
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
               style={{
-                backgroundColor: systemColors.orange + "15",
-                color: systemColors.orange,
+                backgroundColor: systemColors.green + "15",
+                color: systemColors.green,
               }}
             >
-              トレンド成分
+              {products.length}商品を比較
             </span>
           </div>
 
@@ -509,7 +568,43 @@ export default async function NMNComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* 3. 目次 */}
+        <nav
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+          aria-label="目次"
+        >
+          <h2
+            className={`${typography.title3} mb-4`}
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            目次
+          </h2>
+          <ol className="space-y-2">
+            {SECTIONS.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center gap-3 py-2 px-3 rounded-[12px] transition-colors hover:bg-black/5"
+                  style={{ color: systemColors.blue }}
+                >
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold"
+                    style={{
+                      backgroundColor: systemColors.purple + "20",
+                      color: systemColors.purple,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-[15px]">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* 4. この記事でわかること */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
           style={{ borderColor: systemColors.purple + "30" }}
@@ -521,13 +616,7 @@ export default async function NMNComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "NMNがなぜ「若返り物質」として注目されているか",
-              "純度・形態（腸溶性・リポソーム等）による効果の違い",
-              "コスパの良いNMNサプリの選び方（mg単価比較）",
-              "効果を感じるまでの期間と適切な摂取量",
-              "偽物・低品質品を避けるためのチェックポイント",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
@@ -542,7 +631,7 @@ export default async function NMNComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
         <section
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
@@ -564,29 +653,20 @@ export default async function NMNComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>効果重視なら</strong>
-                  →純度99%以上のβ-NMN。COA（分析証明書）付き。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>吸収率重視なら</strong>
-                  →リポソームNMN or 腸溶性カプセル。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>コスパ重視なら</strong>
-                  →mg単価で比較。純度95%以上なら十分。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>摂取量の目安</strong>
-                  →250〜500mg/日。朝の摂取がおすすめ。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.label}</strong>
+                    {" → "}
+                    {rec.text}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* NMNの種類比較 */}
-        <section className="mb-12">
+        {/* 6. 種類と特徴 */}
+        <section id="types" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -673,14 +753,20 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* 7. 目的別おすすめ */}
+        <section id="purpose" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜あなたに合ったNMNはこれ
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「結局どれを買えばいいの？」という方のために、目的別におすすめをまとめました。
+          </p>
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
@@ -692,7 +778,12 @@ export default async function NMNComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: systemColors.purple + "15" }}
+                    >
+                      <Icon size={20} style={{ color: systemColors.purple }} />
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -714,7 +805,7 @@ export default async function NMNComparisonPage() {
                           className="font-bold text-[15px] mb-2"
                           style={{ color: systemColors.purple }}
                         >
-                          → {rec.recommendation}
+                          {rec.recommendation}
                         </p>
                         <p
                           className="text-[14px] mb-2"
@@ -738,8 +829,8 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* 8. おすすめ商品ランキング */}
+        <section id="products" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -813,6 +904,24 @@ export default async function NMNComparisonPage() {
                       </span>
                     </span>
                   </div>
+                  {product.tierRatings?.overallRank && (
+                    <span
+                      className="inline-block mt-2 px-2 py-0.5 text-[11px] font-bold rounded"
+                      style={{
+                        backgroundColor:
+                          product.tierRatings.overallRank === "S+"
+                            ? "#FFD700"
+                            : product.tierRatings.overallRank === "S"
+                              ? "#AF52DE"
+                              : product.tierRatings.overallRank === "A"
+                                ? "#007AFF"
+                                : "#34C759",
+                        color: "white",
+                      }}
+                    >
+                      {product.tierRatings.overallRank}ランク
+                    </span>
+                  )}
                 </div>
 
                 <ArrowRight
@@ -835,8 +944,8 @@ export default async function NMNComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* 9. 選び方チェックリスト */}
+        <section id="checklist" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -898,14 +1007,20 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* 10. 摂取量・タイミング */}
+        <section id="dosage" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             目的別｜摂取量の目安
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            NMNは目的に応じて摂取量を調整できます。まずは少量から始めて、体調を見ながら増量するのがおすすめです。
+          </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-[14px]">
@@ -978,14 +1093,20 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* 11. 注意点・副作用 */}
+        <section id="cautions" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
           >
             注意点・副作用
           </h2>
+          <p
+            className="text-[15px] leading-[1.7] mb-6"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            NMNは比較的安全性が高いとされていますが、以下の点に注意してください。
+          </p>
 
           <div className="space-y-3">
             {CAUTIONS.map((caution, index) => (
@@ -1031,8 +1152,8 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* 12. よくある質問（FAQ） */}
+        <section id="faq" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1063,8 +1184,8 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
-        <section className="mb-12">
+        {/* 13. 関連成分 */}
+        <section id="related" className="mb-12 scroll-mt-20">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1072,32 +1193,7 @@ export default async function NMNComparisonPage() {
             NMNと一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "レスベラトロール",
-                slug: "resveratrol",
-                emoji: "🍇",
-                reason: "サーチュイン活性化に相乗効果",
-              },
-              {
-                name: "コエンザイムQ10",
-                slug: "coq10",
-                emoji: "⚡",
-                reason: "ミトコンドリア機能を強化",
-              },
-              {
-                name: "ビタミンD",
-                slug: "vitamin-d",
-                emoji: "☀️",
-                reason: "代謝・免疫機能をサポート",
-              },
-              {
-                name: "オメガ3",
-                slug: "omega-3",
-                emoji: "🐟",
-                reason: "脳・心臓の健康をサポート",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1128,7 +1224,7 @@ export default async function NMNComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* 14. CTA */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
@@ -1161,7 +1257,7 @@ export default async function NMNComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1187,13 +1283,71 @@ export default async function NMNComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/nmn-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

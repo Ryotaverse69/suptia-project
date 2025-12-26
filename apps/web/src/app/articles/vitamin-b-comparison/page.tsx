@@ -1,6 +1,7 @@
 /**
  * ビタミンB群比較記事ページ
  * SEO最適化された比較コンテンツ
+ * 統一テンプレート v1.0
  */
 
 import { Metadata } from "next";
@@ -23,6 +24,7 @@ import {
   Brain,
   Battery,
   ExternalLink,
+  List,
 } from "lucide-react";
 import {
   appleWebColors,
@@ -36,6 +38,9 @@ import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 
 export const revalidate = 86400;
 
+// ============================================
+// 記事メタデータ
+// ============================================
 const ARTICLE_DATA = {
   title: "【2025年最新】ビタミンB群サプリおすすめ比較｜B1・B2・B6・B12の選び方",
   description:
@@ -44,6 +49,8 @@ const ARTICLE_DATA = {
   updatedAt: new Date().toISOString().split("T")[0],
   ingredientName: "ビタミンB群",
   ingredientSlug: "vitamin-b-complex",
+  category: "ビタミン",
+  categoryColor: systemColors.orange,
 };
 
 const ogImageUrl = getArticleOGImage("vitamin-b-comparison");
@@ -89,6 +96,88 @@ export const metadata: Metadata = {
   },
 };
 
+// ============================================
+// 目次用セクションデータ
+// ============================================
+const SECTIONS = [
+  { id: "learning-points", title: "この記事でわかること" },
+  { id: "quick-recommendations", title: "結論ファースト" },
+  { id: "types", title: "種類と特徴" },
+  { id: "purpose-recommendations", title: "目的別おすすめ" },
+  { id: "ranking", title: "おすすめ商品ランキング" },
+  { id: "checklist", title: "選び方チェックリスト" },
+  { id: "dosage", title: "摂取量・タイミング" },
+  { id: "cautions", title: "注意点・副作用" },
+  { id: "faq", title: "よくある質問" },
+  { id: "related", title: "関連成分" },
+];
+
+// ============================================
+// この記事でわかること（5項目）
+// ============================================
+const LEARNING_POINTS = [
+  "8種のビタミンB群それぞれの役割と不足症状",
+  "活性型（コエンザイム型）と通常型の違い",
+  "目的別（疲労回復・妊活・美容・メンタル）の選び方",
+  "コスパランキングと効果的な摂取タイミング",
+  "ベジタリアン・ヴィーガンが必ず摂るべきB群",
+];
+
+// ============================================
+// 結論ファースト（3-5項目）
+// ============================================
+const QUICK_RECOMMENDATIONS = [
+  {
+    condition: "総合的な健康維持なら",
+    recommendation: "B群コンプレックス。8種をバランスよく。",
+  },
+  {
+    condition: "妊活・妊娠中なら",
+    recommendation: "メチル葉酸400〜800μg。活性型が確実。",
+  },
+  {
+    condition: "ベジタリアンなら",
+    recommendation: "B12（メチルコバラミン）必須。舌下錠が効率的。",
+  },
+  {
+    condition: "髪・肌・爪なら",
+    recommendation: "ビオチン5000μg + B群コンプレックス。",
+  },
+];
+
+// ============================================
+// 関連成分（4種類）
+// ============================================
+const RELATED_INGREDIENTS = [
+  {
+    name: "マグネシウム",
+    slug: "magnesium",
+    emoji: "🔵",
+    reason: "エネルギー代謝・ストレス対策に相乗効果",
+  },
+  {
+    name: "ビタミンC",
+    slug: "vitamin-c",
+    emoji: "🍊",
+    reason: "抗酸化作用・免疫機能をサポート",
+  },
+  {
+    name: "鉄分",
+    slug: "iron",
+    emoji: "🔴",
+    reason: "B12・葉酸と共に造血をサポート",
+  },
+  {
+    name: "亜鉛",
+    slug: "zinc",
+    emoji: "🔶",
+    reason: "免疫機能・代謝をサポート",
+  },
+];
+
+// ============================================
+// 商品型定義
+// ============================================
 interface Product {
   _id: string;
   name: string;
@@ -142,7 +231,9 @@ async function getVitaminBProducts(): Promise<Product[]> {
   }
 }
 
+// ============================================
 // ビタミンB群の種類データ
+// ============================================
 const VITAMIN_B_TYPES = [
   {
     name: "ビタミンB1（チアミン）",
@@ -160,7 +251,7 @@ const VITAMIN_B_TYPES = [
     deficiency: "口内炎、口角炎、肌荒れ",
     foodSource: "レバー、卵、乳製品",
     best: "肌トラブルが気になる方",
-    color: systemColors.yellow,
+    color: "#FFD60A",
   },
   {
     name: "ビタミンB6（ピリドキシン）",
@@ -218,12 +309,14 @@ const VITAMIN_B_TYPES = [
   },
 ];
 
+// ============================================
 // 目的別おすすめ
+// ============================================
 const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "疲労回復・エネルギー補給",
     icon: Battery,
-    emoji: "⚡",
+    emoji: "1",
     description: "毎日疲れやすい、朝起きられない",
     recommendation: "B群コンプレックス（高含有）",
     reason:
@@ -233,7 +326,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "妊娠・妊活サポート",
     icon: Heart,
-    emoji: "👶",
+    emoji: "2",
     description: "妊娠希望、妊娠中、授乳中",
     recommendation: "葉酸（メチル葉酸）+ B12",
     reason:
@@ -243,7 +336,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "メンタル・ストレス対策",
     icon: Brain,
-    emoji: "🧠",
+    emoji: "3",
     description: "ストレスが多い、気分が落ち込む",
     recommendation: "B6 + B12 + 葉酸",
     reason:
@@ -253,7 +346,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "髪・肌・爪の美容",
     icon: Heart,
-    emoji: "✨",
+    emoji: "4",
     description: "抜け毛、肌荒れ、爪が弱い",
     recommendation: "ビオチン + B2 + B6",
     reason:
@@ -263,7 +356,7 @@ const PURPOSE_RECOMMENDATIONS = [
   {
     purpose: "ベジタリアン・ヴィーガン",
     icon: Shield,
-    emoji: "🥬",
+    emoji: "5",
     description: "動物性食品を控えている",
     recommendation: "ビタミンB12（メチルコバラミン）",
     reason:
@@ -272,7 +365,9 @@ const PURPOSE_RECOMMENDATIONS = [
   },
 ];
 
+// ============================================
 // 選び方チェックリスト
+// ============================================
 const SELECTION_CHECKLIST = [
   {
     item: "活性型（コエンザイム型）を確認",
@@ -306,7 +401,9 @@ const SELECTION_CHECKLIST = [
   },
 ];
 
+// ============================================
 // 摂取量ガイド
+// ============================================
 const DOSAGE_GUIDE = [
   {
     purpose: "一般的な健康維持",
@@ -340,7 +437,9 @@ const DOSAGE_GUIDE = [
   },
 ];
 
+// ============================================
 // 注意点・副作用
+// ============================================
 const CAUTIONS = [
   {
     title: "ナイアシンフラッシュ",
@@ -374,7 +473,9 @@ const CAUTIONS = [
   },
 ];
 
+// ============================================
 // FAQ
+// ============================================
 const FAQS = [
   {
     question: "ビタミンB群は単体と複合型どちらがいいですか？",
@@ -413,6 +514,9 @@ const FAQS = [
   },
 ];
 
+// ============================================
+// メインコンポーネント
+// ============================================
 export default async function VitaminBComparisonPage() {
   const products = await getVitaminBProducts();
 
@@ -436,7 +540,6 @@ export default async function VitaminBComparisonPage() {
     .sort((a, b) => a.effectiveCostPerDay - b.effectiveCostPerDay);
 
   const top3Products = productsWithCost.slice(0, 3);
-  const otherProducts = productsWithCost.slice(3);
 
   return (
     <article
@@ -446,7 +549,9 @@ export default async function VitaminBComparisonPage() {
         fontFamily: fontStack,
       }}
     >
-      {/* パンくずリスト */}
+      {/* ============================================ */}
+      {/* 1. [sticky] パンくずナビ */}
+      {/* ============================================ */}
       <div
         className={`sticky top-0 z-10 border-b ${liquidGlassClasses.light}`}
         style={{ borderColor: appleWebColors.borderSubtle }}
@@ -476,18 +581,20 @@ export default async function VitaminBComparisonPage() {
         </div>
       </div>
 
-      {/* ヘッダー */}
+      {/* ============================================ */}
+      {/* 2. ヒーローセクション（タイトル + アイキャッチ） */}
+      {/* ============================================ */}
       <header className="pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
               style={{
-                backgroundColor: systemColors.orange + "15",
-                color: systemColors.orange,
+                backgroundColor: ARTICLE_DATA.categoryColor + "15",
+                color: ARTICLE_DATA.categoryColor,
               }}
             >
-              ビタミン
+              {ARTICLE_DATA.category}
             </span>
             <span
               className="px-3 py-1 text-[12px] font-medium rounded-full"
@@ -534,10 +641,55 @@ export default async function VitaminBComparisonPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
-        {/* この記事でわかること */}
+        {/* ============================================ */}
+        {/* 3. 目次 */}
+        {/* ============================================ */}
         <section
           className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
-          style={{ borderColor: systemColors.orange + "30" }}
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <List size={20} style={{ color: ARTICLE_DATA.categoryColor }} />
+            <h2
+              className={`${typography.title3}`}
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              目次
+            </h2>
+          </div>
+          <nav>
+            <ol className="space-y-2">
+              {SECTIONS.map((section, index) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="flex items-center gap-3 text-[15px] hover:opacity-70 transition-opacity"
+                    style={{ color: appleWebColors.textSecondary }}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium"
+                      style={{
+                        backgroundColor: ARTICLE_DATA.categoryColor + "15",
+                        color: ARTICLE_DATA.categoryColor,
+                      }}
+                    >
+                      {index + 1}
+                    </span>
+                    {section.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </section>
+
+        {/* ============================================ */}
+        {/* 4. この記事でわかること */}
+        {/* ============================================ */}
+        <section
+          id="learning-points"
+          className={`${liquidGlassClasses.light} rounded-[20px] p-6 mb-12 border`}
+          style={{ borderColor: ARTICLE_DATA.categoryColor + "30" }}
         >
           <h2
             className={`${typography.title3} mb-4`}
@@ -546,18 +698,12 @@ export default async function VitaminBComparisonPage() {
             この記事でわかること
           </h2>
           <ul className="space-y-3">
-            {[
-              "8種のビタミンB群それぞれの役割と不足症状",
-              "活性型（コエンザイム型）と通常型の違い",
-              "目的別（疲労回復・妊活・美容・メンタル）の選び方",
-              "コスパランキングと効果的な摂取タイミング",
-              "ベジタリアン・ヴィーガンが必ず摂るべきB群",
-            ].map((item, i) => (
+            {LEARNING_POINTS.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2
                   size={20}
                   className="shrink-0 mt-0.5"
-                  style={{ color: systemColors.orange }}
+                  style={{ color: ARTICLE_DATA.categoryColor }}
                 />
                 <span style={{ color: appleWebColors.textPrimary }}>
                   {item}
@@ -567,17 +713,20 @@ export default async function VitaminBComparisonPage() {
           </ul>
         </section>
 
-        {/* 結論ファースト */}
+        {/* ============================================ */}
+        {/* 5. 結論ファースト（迷ったらこれ） */}
+        {/* ============================================ */}
         <section
+          id="quick-recommendations"
           className="mb-12 rounded-[20px] p-6 md:p-8"
           style={{
-            background: `linear-gradient(135deg, ${systemColors.orange}15, ${systemColors.yellow}15)`,
+            background: `linear-gradient(135deg, ${ARTICLE_DATA.categoryColor}15, ${systemColors.yellow}15)`,
           }}
         >
           <div className="flex items-start gap-4">
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-              style={{ backgroundColor: systemColors.orange }}
+              style={{ backgroundColor: ARTICLE_DATA.categoryColor }}
             >
               <Lightbulb size={24} className="text-white" />
             </div>
@@ -589,29 +738,22 @@ export default async function VitaminBComparisonPage() {
                 結論：迷ったらこれを選べ
               </h2>
               <ul className="space-y-2 text-[15px]">
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>総合的な健康維持なら</strong>
-                  →B群コンプレックス。8種をバランスよく。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>妊活・妊娠中なら</strong>
-                  →メチル葉酸400〜800μg。活性型が確実。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>ベジタリアンなら</strong>
-                  →B12（メチルコバラミン）必須。舌下錠が効率的。
-                </li>
-                <li style={{ color: appleWebColors.textPrimary }}>
-                  <strong>髪・肌・爪なら</strong>
-                  →ビオチン5000μg + B群コンプレックス。
-                </li>
+                {QUICK_RECOMMENDATIONS.map((rec, i) => (
+                  <li key={i} style={{ color: appleWebColors.textPrimary }}>
+                    <strong>{rec.condition}</strong>
+                    {" -> "}
+                    {rec.recommendation}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        {/* ビタミンB群の種類一覧 */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 6. 種類と特徴 */}
+        {/* ============================================ */}
+        <section id="types" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -674,8 +816,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* 目的別おすすめ */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 7. 目的別おすすめ */}
+        {/* ============================================ */}
+        <section id="purpose-recommendations" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -691,7 +835,6 @@ export default async function VitaminBComparisonPage() {
 
           <div className="space-y-4">
             {PURPOSE_RECOMMENDATIONS.map((rec) => {
-              const Icon = rec.icon;
               return (
                 <div
                   key={rec.purpose}
@@ -699,7 +842,12 @@ export default async function VitaminBComparisonPage() {
                   style={{ borderColor: appleWebColors.borderSubtle }}
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{rec.emoji}</span>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold"
+                      style={{ backgroundColor: ARTICLE_DATA.categoryColor }}
+                    >
+                      {rec.emoji}
+                    </div>
                     <div className="flex-1">
                       <h3
                         className="font-bold text-[17px] mb-1"
@@ -719,9 +867,9 @@ export default async function VitaminBComparisonPage() {
                       >
                         <p
                           className="font-bold text-[15px] mb-2"
-                          style={{ color: systemColors.orange }}
+                          style={{ color: ARTICLE_DATA.categoryColor }}
                         >
-                          → {rec.recommendation}
+                          {rec.recommendation}
                         </p>
                         <p
                           className="text-[14px] mb-2"
@@ -745,8 +893,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* コスパランキング */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 8. おすすめ商品ランキング */}
+        {/* ============================================ */}
+        <section id="ranking" className="mb-12">
           <h2
             className={`${typography.title2} mb-2`}
             style={{ color: appleWebColors.textPrimary }}
@@ -860,8 +1010,10 @@ export default async function VitaminBComparisonPage() {
           )}
         </section>
 
-        {/* 選び方チェックリスト */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 9. 選び方チェックリスト */}
+        {/* ============================================ */}
+        <section id="checklist" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -879,7 +1031,7 @@ export default async function VitaminBComparisonPage() {
                     className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
                     style={{
                       backgroundColor: check.important
-                        ? systemColors.orange
+                        ? ARTICLE_DATA.categoryColor
                         : appleWebColors.sectionBackground,
                     }}
                   >
@@ -902,8 +1054,8 @@ export default async function VitaminBComparisonPage() {
                         <span
                           className="ml-2 text-[11px] px-1.5 py-0.5 rounded"
                           style={{
-                            backgroundColor: systemColors.orange + "20",
-                            color: systemColors.orange,
+                            backgroundColor: ARTICLE_DATA.categoryColor + "20",
+                            color: ARTICLE_DATA.categoryColor,
                           }}
                         >
                           重要
@@ -923,8 +1075,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* 摂取量ガイド */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 10. 摂取量・タイミング */}
+        {/* ============================================ */}
+        <section id="dosage" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -980,7 +1134,7 @@ export default async function VitaminBComparisonPage() {
                     </td>
                     <td
                       className="py-3 px-4 font-bold"
-                      style={{ color: systemColors.orange }}
+                      style={{ color: ARTICLE_DATA.categoryColor }}
                     >
                       {guide.amount}
                     </td>
@@ -1003,8 +1157,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* 注意点・副作用 */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 11. 注意点・副作用 */}
+        {/* ============================================ */}
+        <section id="cautions" className="mb-12">
           <h2
             className={`${typography.title2} mb-4`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1056,8 +1212,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 12. よくある質問（FAQ） */}
+        {/* ============================================ */}
+        <section id="faq" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1088,8 +1246,10 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* 関連成分 */}
-        <section className="mb-12">
+        {/* ============================================ */}
+        {/* 13. 関連成分 */}
+        {/* ============================================ */}
+        <section id="related" className="mb-12">
           <h2
             className={`${typography.title2} mb-6`}
             style={{ color: appleWebColors.textPrimary }}
@@ -1097,32 +1257,7 @@ export default async function VitaminBComparisonPage() {
             ビタミンB群と一緒に摂りたい成分
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                name: "マグネシウム",
-                slug: "magnesium",
-                emoji: "💫",
-                reason: "エネルギー代謝・ストレス対策に相乗効果",
-              },
-              {
-                name: "ビタミンC",
-                slug: "vitamin-c",
-                emoji: "🍊",
-                reason: "抗酸化作用・免疫機能をサポート",
-              },
-              {
-                name: "鉄分",
-                slug: "iron",
-                emoji: "🩸",
-                reason: "B12・葉酸と共に造血をサポート",
-              },
-              {
-                name: "亜鉛",
-                slug: "zinc",
-                emoji: "🛡️",
-                reason: "免疫機能・代謝をサポート",
-              },
-            ].map((ingredient) => (
+            {RELATED_INGREDIENTS.map((ingredient) => (
               <Link
                 key={ingredient.slug}
                 href={`/ingredients/${ingredient.slug}`}
@@ -1153,11 +1288,13 @@ export default async function VitaminBComparisonPage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* ============================================ */}
+        {/* 14. CTA */}
+        {/* ============================================ */}
         <section
           className="rounded-[20px] p-8 text-center text-white"
           style={{
-            background: `linear-gradient(135deg, ${systemColors.orange}, ${systemColors.yellow})`,
+            background: `linear-gradient(135deg, ${ARTICLE_DATA.categoryColor}, ${systemColors.yellow})`,
           }}
         >
           <h2 className={`${typography.title2} mb-4`}>
@@ -1170,7 +1307,7 @@ export default async function VitaminBComparisonPage() {
             <Link
               href="/products?q=ビタミンB"
               className="inline-flex items-center justify-center gap-2 bg-white font-bold px-6 py-3 rounded-[12px] transition-colors hover:bg-gray-100"
-              style={{ color: systemColors.orange }}
+              style={{ color: ARTICLE_DATA.categoryColor }}
             >
               全商品を見る
               <ArrowRight size={18} />
@@ -1186,7 +1323,7 @@ export default async function VitaminBComparisonPage() {
         </section>
       </div>
 
-      {/* 構造化データ */}
+      {/* 構造化データ: Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -1212,13 +1349,71 @@ export default async function VitaminBComparisonPage() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://suptia.com/articles/vitamin-b-comparison",
+              "@id": `https://suptia.com/articles/${ARTICLE_DATA.ingredientSlug}-comparison`,
             },
           }),
         }}
       />
 
-      {/* FAQ構造化データ */}
+      {/* 構造化データ: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "ホーム",
+                item: "https://suptia.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "記事一覧",
+                item: "https://suptia.com/articles",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${ARTICLE_DATA.ingredientName}サプリ比較`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* 構造化データ: ItemList（商品ランキング） */}
+      {top3Products.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${ARTICLE_DATA.ingredientName}サプリ コスパランキング`,
+              itemListElement: top3Products.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "Product",
+                  name: product.name,
+                  url: `https://suptia.com/products/${product.slug.current}`,
+                  offers: {
+                    "@type": "Offer",
+                    price: product.priceJPY,
+                    priceCurrency: "JPY",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* 構造化データ: FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
