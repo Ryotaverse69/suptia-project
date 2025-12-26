@@ -99,12 +99,14 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   }
 
   const searchTerm = query.trim();
+  const searchTermLower = searchTerm.toLowerCase();
 
   // パラメータバインディングを使用してGROQ Injection対策
   // 1. 完全一致検索（優先度高）
   const exactMatchQuery = `*[_type == "ingredient" && (
     name == $term ||
-    nameEn == $term
+    nameEn == $term ||
+    lower(nameEn) == $termLower
   )][0]{
     _id,
     name,
@@ -117,9 +119,31 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
   try {
     let ingredient = await sanity.fetch<Ingredient>(exactMatchQuery, {
       term: searchTerm,
+      termLower: searchTermLower,
     });
 
-    // 完全一致が見つからない場合、部分一致を試す
+    // 完全一致が見つからない場合、前方一致を試す（例: "アシュ" → "アシュワガンダ"）
+    if (!ingredient) {
+      const prefixMatchQuery = `*[_type == "ingredient" && (
+        name match $prefixWildcard ||
+        nameEn match $prefixWildcard ||
+        lower(nameEn) match $prefixWildcardLower
+      )][0]{
+        _id,
+        name,
+        nameEn,
+        slug,
+        category,
+        description
+      }`;
+
+      ingredient = await sanity.fetch<Ingredient>(prefixMatchQuery, {
+        prefixWildcard: `${searchTerm}*`,
+        prefixWildcardLower: `${searchTermLower}*`,
+      });
+    }
+
+    // 前方一致が見つからない場合、部分一致を試す
     if (!ingredient) {
       // 括弧を除去した検索も試みる（例: "ビタミンC（アスコルビン酸）" → "ビタミンC"）
       const normalizedTerm = searchTerm
@@ -217,7 +241,10 @@ async function searchProducts(query: string): Promise<Product[]> {
   const normalizedTerm = searchTerm.replace(/[（）()]/g, "").trim();
 
   // パラメータバインディングを使用（GROQ Injection対策）
+  // 前方一致と部分一致の両方を含む検索
   const productsQuery = `*[_type == "product" && (
+    name match $prefixWildcard ||
+    brand->name match $prefixWildcard ||
     name match $termWildcard ||
     brand->name match $termWildcard ||
     name match $normalizedWildcard ||
@@ -235,6 +262,7 @@ async function searchProducts(query: string): Promise<Product[]> {
 
   try {
     const products = await sanity.fetch<Product[]>(productsQuery, {
+      prefixWildcard: `${searchTerm}*`,
       termWildcard: `*${searchTerm}*`,
       normalizedWildcard: `*${normalizedTerm}*`,
     });
