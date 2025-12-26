@@ -123,11 +123,12 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
     });
 
     // 完全一致が見つからない場合、前方一致を試す（例: "アシュ" → "アシュワガンダ"）
+    // 日本語はstring::startsWithを使用（matchは日本語の前方一致で動作しない）
     if (!ingredient) {
       const prefixMatchQuery = `*[_type == "ingredient" && (
-        name match $prefixWildcard ||
-        nameEn match $prefixWildcard ||
-        lower(nameEn) match $prefixWildcardLower
+        string::startsWith(name, $term) ||
+        string::startsWith(nameEn, $term) ||
+        string::startsWith(lower(nameEn), $termLower)
       )][0]{
         _id,
         name,
@@ -138,8 +139,8 @@ async function searchIngredient(query: string): Promise<Ingredient | null> {
       }`;
 
       ingredient = await sanity.fetch<Ingredient>(prefixMatchQuery, {
-        prefixWildcard: `${searchTerm}*`,
-        prefixWildcardLower: `${searchTermLower}*`,
+        term: searchTerm,
+        termLower: searchTermLower,
       });
     }
 
