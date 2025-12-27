@@ -12,7 +12,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronDown, Lock, Check } from "lucide-react";
+import { ChevronDown, Lock, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   systemColors,
@@ -51,12 +51,21 @@ export function CharacterSelector({
   compact = false,
 }: CharacterSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [previewCharacter, setPreviewCharacter] = useState<CharacterId | null>(
+    null,
+  );
   const selectedCharacter = CHARACTERS[selectedCharacterId];
   const availableCharacters = getAvailableCharacters(userPlan);
   const allCharacters = Object.values(CHARACTERS);
   const gradient = CHARACTER_GRADIENTS[selectedCharacterId];
   const { getAvatarUrl } = useCharacterAvatars();
   const selectedAvatarUrl = getAvatarUrl(selectedCharacterId);
+  const previewAvatarUrl = previewCharacter
+    ? getAvatarUrl(previewCharacter)
+    : null;
+  const previewCharacterData = previewCharacter
+    ? CHARACTERS[previewCharacter]
+    : null;
 
   return (
     <div className="relative">
@@ -147,9 +156,15 @@ export function CharacterSelector({
             onClick={() => setIsOpen(false)}
           />
 
-          {/* メニュー */}
+          {/* メニュー - モバイルでは画面中央に固定表示 */}
           <div
-            className={`absolute top-full left-0 mt-2 w-80 z-50 rounded-2xl overflow-hidden shadow-xl ${liquidGlassClasses.light}`}
+            className={cn(
+              "z-50 rounded-2xl overflow-hidden shadow-xl",
+              liquidGlassClasses.light,
+              // モバイル: 画面中央に固定、デスクトップ: ボタンの下に表示
+              "fixed inset-x-4 top-20 max-h-[70vh] overflow-y-auto",
+              "sm:absolute sm:inset-auto sm:top-full sm:left-0 sm:mt-2 sm:w-80 sm:max-h-[60vh]",
+            )}
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.95)",
               border: `1px solid ${appleWebColors.borderSubtle}`,
@@ -189,15 +204,22 @@ export function CharacterSelector({
                         : undefined,
                   }}
                 >
-                  {/* アバター */}
+                  {/* アバター（タップで拡大表示） */}
                   <div className="relative flex-shrink-0">
-                    <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden"
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (avatarUrl) {
+                          setPreviewCharacter(character.id);
+                        }
+                      }}
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden transition-transform hover:scale-110 active:scale-100"
                       style={{
                         background: avatarUrl
                           ? undefined
                           : `linear-gradient(135deg, ${charGradient[0]} 0%, ${charGradient[1]} 100%)`,
                       }}
+                      title="タップで拡大表示"
                     >
                       {avatarUrl ? (
                         <Image
@@ -212,7 +234,7 @@ export function CharacterSelector({
                           {character.name.charAt(0)}
                         </span>
                       )}
-                    </div>
+                    </button>
                     {!isAvailable && (
                       <div
                         className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
@@ -291,6 +313,65 @@ export function CharacterSelector({
             })}
           </div>
         </>
+      )}
+
+      {/* アバター拡大モーダル */}
+      {previewCharacter && previewAvatarUrl && previewCharacterData && (
+        <div
+          className="fixed z-[100] bg-black/60 backdrop-blur-sm"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+          }}
+          onClick={() => setPreviewCharacter(null)}
+        >
+          <div
+            className="absolute animate-in zoom-in-95 duration-200"
+            style={{
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 閉じるボタン */}
+            <button
+              onClick={() => setPreviewCharacter(null)}
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center z-10 hover:bg-gray-100 transition-colors"
+            >
+              <X size={20} style={{ color: appleWebColors.textSecondary }} />
+            </button>
+
+            {/* アバター画像 */}
+            <div
+              className="w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden shadow-2xl"
+              style={{
+                backgroundColor: appleWebColors.sectionBackground,
+              }}
+            >
+              <Image
+                src={previewAvatarUrl}
+                alt={previewCharacterData.name}
+                width={320}
+                height={320}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* キャラクター情報 */}
+            <div className="mt-4 text-center">
+              <h3 className="text-xl font-bold text-white">
+                {previewCharacterData.name}
+              </h3>
+              <p className="text-sm text-white/70 mt-1">
+                {previewCharacterData.recommendationStyleLabel}
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

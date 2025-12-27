@@ -89,10 +89,9 @@ export function ChatMessage({
     <div
       className={cn("px-4", isUser ? "flex justify-end" : "flex justify-start")}
     >
-      <div className={cn("max-w-[85%]", isUser ? "items-end" : "items-start")}>
-        {/* メッセージバブル */}
-        {isUser ? (
-          // ユーザーメッセージ
+      {isUser ? (
+        // ユーザーメッセージ
+        <div className="max-w-[85%]">
           <div
             className="rounded-2xl px-4 py-3"
             style={{
@@ -103,40 +102,55 @@ export function ChatMessage({
               {message.content}
             </div>
           </div>
-        ) : (
-          // アシスタントメッセージ
-          <div className="space-y-2">
-            {/* キャラクター名 */}
-            <div className="flex items-center gap-2 px-1">
-              <div
-                className="w-6 h-6 rounded-lg flex items-center justify-center overflow-hidden"
-                style={{
-                  background: avatarUrl
-                    ? undefined
-                    : `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
-                }}
-              >
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={characterName}
-                    width={24}
-                    height={24}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-white text-[10px] font-semibold">
-                    {characterName.charAt(0)}
-                  </span>
-                )}
-              </div>
-              <span
-                className="text-[13px] font-medium"
-                style={{ color: appleWebColors.textSecondary }}
-              >
-                {characterName}
+          {/* タイムスタンプ */}
+          <div className="mt-1 px-1 text-right">
+            <span
+              className="text-[11px]"
+              style={{ color: appleWebColors.textTertiary }}
+            >
+              {new Date(message.createdAt).toLocaleTimeString("ja-JP", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
+        </div>
+      ) : (
+        // アシスタントメッセージ（アバターを左外側に配置）
+        <div className="flex gap-3 max-w-[85%]">
+          {/* 大きなアバター（左側固定） */}
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden shadow-md flex-shrink-0"
+            style={{
+              background: avatarUrl
+                ? undefined
+                : `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+            }}
+          >
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={characterName}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-white text-lg font-semibold">
+                {characterName.charAt(0)}
               </span>
-            </div>
+            )}
+          </div>
+
+          {/* メッセージコンテンツ */}
+          <div className="flex-1 min-w-0 space-y-1">
+            {/* キャラクター名 */}
+            <span
+              className="text-[13px] font-medium px-1"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              {characterName}
+            </span>
 
             {/* メッセージ本文 */}
             <div
@@ -292,22 +306,22 @@ export function ChatMessage({
                 )}
               </div>
             )}
-          </div>
-        )}
 
-        {/* タイムスタンプ */}
-        <div className={cn("mt-1 px-1", isUser ? "text-right" : "text-left")}>
-          <span
-            className="text-[11px]"
-            style={{ color: appleWebColors.textTertiary }}
-          >
-            {new Date(message.createdAt).toLocaleTimeString("ja-JP", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
+            {/* タイムスタンプ */}
+            <div className="mt-1 px-1 text-left">
+              <span
+                className="text-[11px]"
+                style={{ color: appleWebColors.textTertiary }}
+              >
+                {new Date(message.createdAt).toLocaleTimeString("ja-JP", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

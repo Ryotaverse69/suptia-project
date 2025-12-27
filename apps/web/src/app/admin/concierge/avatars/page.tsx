@@ -19,35 +19,69 @@ import {
 import { CHARACTERS } from "@/lib/concierge/characters";
 import type { CharacterId } from "@/lib/concierge/types";
 
-// キャラクター別のデフォルトプロンプト
+// 共通スタイルガイド（統一感のため）
+const COMMON_STYLE = `Common Style:
+- Japanese anime illustration, modern clean design
+- High quality, professional anime art
+- Soft shading, clean linework, vibrant colors
+- Portrait view, upper body focus
+- Friendly and approachable expression`;
+
+// キャラクター別のデフォルトプロンプト（日本アニメ風で統一）
 const DEFAULT_PROMPTS: Record<CharacterId, string> = {
-  navi: `Create a friendly and professional AI assistant avatar.
-Style: Modern, clean, minimalist illustration
-Character: A helpful guide with a warm, trustworthy appearance
-Colors: Soft green and teal gradient accents
-Expression: Friendly smile, approachable
-Format: Square avatar icon, simple background, suitable for UI`,
+  navi: `Create a Japanese anime style avatar of a friendly wellness guide.
 
-  mint: `Create a cheerful and energetic AI assistant avatar.
-Style: Cute anime-inspired illustration
-Character: A playful, friendly companion with youthful energy
-Colors: Fresh mint green, bright accents
-Expression: Happy, enthusiastic smile with sparkling eyes
-Format: Square avatar icon, simple background, suitable for UI`,
+${COMMON_STYLE}
+- Square avatar icon, clean mint-green gradient background
 
-  doc: `Create a knowledgeable and scholarly AI assistant avatar.
-Style: Professional illustration with a touch of sophistication
-Character: A wise researcher/scientist type with intellectual aura
-Colors: Deep blue, silver accents
-Expression: Thoughtful, confident, intelligent gaze
-Format: Square avatar icon, simple background, suitable for UI`,
+Character Specifics:
+- Gender: Androgynous/neutral appearance
+- Hair: Short, neat, dark green or teal color
+- Expression: Calm, trustworthy smile
+- Outfit: Smart casual attire (polo shirt, neat sweater)
+- Colors: Green and teal accents
+- Vibe: Reliable, approachable, knowledgeable`,
 
-  haru: `Create a gentle and caring AI assistant avatar.
-Style: Soft, warm illustration style
-Character: A nurturing, supportive companion with calming presence
-Colors: Warm orange, soft yellow accents
-Expression: Kind, reassuring smile, gentle eyes
-Format: Square avatar icon, simple background, suitable for UI`,
+  mint: `Create a Japanese anime style avatar of a cheerful young assistant.
+
+${COMMON_STYLE}
+- Square avatar icon, clean cyan gradient background
+
+Character Specifics:
+- Gender: Androgynous/neutral appearance
+- Hair: Medium length, bright mint green with playful styling
+- Expression: Big happy smile, sparkling eyes
+- Outfit: Casual, trendy clothing
+- Colors: Mint green and cyan accents
+- Vibe: Energetic, friendly, youthful
+- Optional: Small sparkle effects around`,
+
+  doc: `Create a Japanese anime style avatar of a scholarly researcher.
+
+${COMMON_STYLE}
+- Square avatar icon, clean deep blue gradient background
+
+Character Specifics:
+- Gender: Androgynous/neutral appearance
+- Hair: Neat, dark blue or indigo color
+- Expression: Confident, intellectual gaze, slight smile
+- Outfit: Academic attire (blazer, dress shirt, vest)
+- Accessories: Stylish glasses
+- Colors: Deep blue and purple accents
+- Vibe: Knowledgeable, analytical, trustworthy`,
+
+  haru: `Create a Japanese anime style avatar of a gentle caring companion.
+
+${COMMON_STYLE}
+- Square avatar icon, clean warm orange gradient background
+
+Character Specifics:
+- Gender: Androgynous/neutral appearance
+- Hair: Soft, wavy, warm orange or light brown color
+- Expression: Kind, gentle smile, soft eyes
+- Outfit: Comfortable, cozy clothing (sweater, cardigan)
+- Colors: Warm orange and soft yellow accents
+- Vibe: Nurturing, supportive, calming`,
 };
 
 interface GeneratedAvatar {

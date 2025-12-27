@@ -376,7 +376,7 @@ export function MgCalculator() {
                     >
                       コスパ判定: {ratingConfig.label}
                     </p>
-                    <p className="text-[15px] text-[#86868b] mt-0.5">
+                    <p className="text-[15px] text-[#515154] mt-0.5">
                       {results.mgPrice < 0.1
                         ? "非常にお得な価格です"
                         : results.mgPrice < 0.5

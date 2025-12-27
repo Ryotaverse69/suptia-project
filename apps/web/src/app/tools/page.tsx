@@ -81,7 +81,7 @@ export default function ToolsPage() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-[19px] md:text-[21px] leading-[1.47] text-[#86868b] max-w-2xl mx-auto tracking-[-0.022em]">
+          <p className="text-[19px] md:text-[21px] leading-[1.47] text-[#515154] max-w-2xl mx-auto tracking-[-0.022em]">
             価格だけでは分からない、本当のコスパを計算。
             <br className="hidden md:block" />
             あなたのサプリ選びをサポートする無料ツールです。
@@ -161,7 +161,7 @@ function ToolCard({ tool }: { tool: (typeof tools)[0] }) {
       </h3>
 
       {/* Description */}
-      <p className="text-[15px] text-[#86868b] leading-[1.47] mb-6 tracking-[-0.01em]">
+      <p className="text-[15px] text-[#515154] leading-[1.47] mb-6 tracking-[-0.01em]">
         {tool.description}
       </p>
 

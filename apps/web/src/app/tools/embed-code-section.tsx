@@ -31,7 +31,7 @@ export function EmbedCodeSection() {
           >
             あなたのサイトにも。
           </h2>
-          <p className="text-[17px] md:text-[19px] text-[#86868b] leading-[1.47]">
+          <p className="text-[17px] md:text-[19px] text-[#515154] leading-[1.47]">
             Suptiaのツールは、ブログやWebサイトに無料で埋め込めます。
           </p>
         </div>
@@ -95,7 +95,7 @@ export function EmbedCodeSection() {
           </div>
         </div>
 
-        <p className="text-center text-[15px] text-[#86868b] mt-6">
+        <p className="text-center text-[15px] text-[#515154] mt-6">
           健康・美容系のコンテンツと組み合わせてご活用ください。
         </p>
       </div>

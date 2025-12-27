@@ -48,8 +48,8 @@ export const appleWebColors = {
   pageBackground: "#fbfbfd",
   sectionBackground: "#f5f5f7",
   textPrimary: "#1d1d1f",
-  textSecondary: "#86868b",
-  textTertiary: "rgba(60, 60, 67, 0.3)",
+  textSecondary: "#515154", // コントラスト 8.5:1（元: #86868b = 4.5:1）
+  textTertiary: "#86868b", // コントラスト 4.5:1（元: rgba(60,60,67,0.3) ≈ 2.5:1）
   separator: "rgba(60, 60, 67, 0.29)",
   borderSubtle: "rgba(0, 0, 0, 0.05)",
 } as const;

@@ -64,6 +64,7 @@ export function ChatUI({ className }: ChatUIProps) {
   } = useConcierge();
 
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const prevMessageCountRef = useRef(0);
   const { getAvatarUrl } = useCharacterAvatars();
@@ -129,15 +130,15 @@ export function ChatUI({ className }: ChatUIProps) {
           '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
       }}
     >
-      {/* ヘッダー - すりガラス効果 */}
+      {/* ヘッダー - すりガラス効果（全幅） */}
       <header
-        className="sticky top-0 z-50 backdrop-blur-xl border-b"
+        className="sticky top-0 z-50 backdrop-blur-xl border-b flex-shrink-0"
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.72)",
           borderColor: appleWebColors.borderSubtle,
         }}
       >
-        <div className="max-w-4xl mx-auto px-4 py-3">
+        <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             {/* 左: 戻るボタン + タイトル + キャラクター選択 */}
             <div className="flex items-center gap-2">
@@ -180,10 +181,25 @@ export function ChatUI({ className }: ChatUIProps) {
                 limit={usage?.limit ?? null}
                 plan={userPlan}
               />
+              {/* デスクトップ用：履歴表示/非表示ボタン */}
               <button
                 onClick={() => setShowHistoryPanel(!showHistoryPanel)}
                 className={cn(
-                  "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
+                  "hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors text-[13px] font-medium",
+                  showHistoryPanel
+                    ? "bg-blue-100 text-blue-600"
+                    : "hover:bg-black/5 text-gray-600",
+                )}
+                title={showHistoryPanel ? "履歴を非表示" : "履歴を表示"}
+              >
+                <History size={16} />
+                <span>{showHistoryPanel ? "非表示" : "履歴"}</span>
+              </button>
+              {/* モバイル用：アイコンのみ */}
+              <button
+                onClick={() => setShowHistoryPanel(!showHistoryPanel)}
+                className={cn(
+                  "lg:hidden w-9 h-9 rounded-full flex items-center justify-center transition-colors",
                   showHistoryPanel ? "bg-black/10" : "hover:bg-black/5",
                 )}
                 title="履歴"
@@ -195,178 +211,318 @@ export function ChatUI({ className }: ChatUIProps) {
         </div>
       </header>
 
-      {/* メインコンテンツ */}
-      <main className="flex-1 flex flex-col max-w-4xl mx-auto w-full min-h-0 overflow-hidden">
-        {/* エラー表示 */}
-        {error && (
-          <div className="mx-4 mt-4">
-            <div
-              className={`p-4 rounded-2xl ${liquidGlassClasses.light}`}
-              style={{
-                backgroundColor: `${systemColors.red}10`,
-                border: `1px solid ${systemColors.red}30`,
-              }}
-            >
-              <div className="flex items-start gap-3">
-                <AlertCircle
-                  size={20}
-                  style={{ color: systemColors.red }}
-                  className="flex-shrink-0 mt-0.5"
-                />
-                <div className="flex-1">
-                  <p
-                    className="text-[14px]"
-                    style={{ color: systemColors.red }}
-                  >
-                    {error}
-                  </p>
-                </div>
-                <button
-                  onClick={clearError}
-                  className="p-1 rounded-full hover:bg-black/5 transition-colors"
-                >
-                  <X size={16} style={{ color: systemColors.red }} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* メッセージエリア */}
-        <div
-          ref={messagesContainerRef}
-          className="flex-1 min-h-0 overflow-y-auto"
+      {/* メインエリア（履歴 + チャット + アバター） */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* 左サイドバー - 会話履歴（デスクトップのみ・常にスペース確保） */}
+        <aside
+          className="hidden lg:flex flex-col w-72 flex-shrink-0 border-r"
+          style={{
+            backgroundColor: appleWebColors.sectionBackground,
+            borderColor: appleWebColors.borderSubtle,
+          }}
         >
-          {messages.length === 0 ? (
-            <WelcomeScreen
-              character={character}
-              onQuestionClick={sendMessage}
+          {showHistoryPanel ? (
+            <HistorySidebar
+              sessions={sessions}
+              currentSessionId={currentSession?.id}
+              isLoading={isLoadingSessions}
+              onSelectSession={async (sessionId) => {
+                await loadSession(sessionId);
+              }}
+              onDeleteSession={deleteSession}
+              onNewSession={createSession}
+              userPlan={userPlan}
             />
           ) : (
-            <div className="py-4 space-y-4">
-              {messages.map((message) => (
-                <div key={message.id} data-message-role={message.role}>
-                  <ChatMessage
-                    message={message}
-                    onFeedback={submitFeedback}
-                    showFeedback={message.role === "assistant"}
-                    characterName={character.name}
-                    characterId={characterId}
-                  />
-                </div>
-              ))}
+            /* 非表示時も同じ幅を確保（チャット位置を固定） */
+            <div className="h-full" />
+          )}
+        </aside>
 
-              {/* ローディング表示 */}
-              {isLoading && (
-                <div className="px-4">
-                  <div
-                    className={`p-4 rounded-2xl ${liquidGlassClasses.light}`}
-                    style={{
-                      backgroundColor: appleWebColors.sectionBackground,
-                      maxWidth: "85%",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
+        {/* メインチャットエリア（中央配置） */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* メインコンテンツ */}
+          <main className="flex-1 flex flex-col max-w-4xl mx-auto w-full min-h-0 overflow-hidden px-4">
+            {/* エラー表示 */}
+            {error && (
+              <div className="mx-4 mt-4">
+                <div
+                  className={`p-4 rounded-2xl ${liquidGlassClasses.light}`}
+                  style={{
+                    backgroundColor: `${systemColors.red}10`,
+                    border: `1px solid ${systemColors.red}30`,
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertCircle
+                      size={20}
+                      style={{ color: systemColors.red }}
+                      className="flex-shrink-0 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <p
+                        className="text-[14px]"
+                        style={{ color: systemColors.red }}
+                      >
+                        {error}
+                      </p>
+                    </div>
+                    <button
+                      onClick={clearError}
+                      className="p-1 rounded-full hover:bg-black/5 transition-colors"
+                    >
+                      <X size={16} style={{ color: systemColors.red }} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* メッセージエリア */}
+            <div
+              ref={messagesContainerRef}
+              className="flex-1 min-h-0 overflow-y-auto"
+            >
+              {messages.length === 0 ? (
+                <WelcomeScreen
+                  character={character}
+                  onQuestionClick={sendMessage}
+                />
+              ) : (
+                <div className="py-4 space-y-4">
+                  {messages.map((message) => (
+                    <div key={message.id} data-message-role={message.role}>
+                      <ChatMessage
+                        message={message}
+                        onFeedback={submitFeedback}
+                        showFeedback={message.role === "assistant"}
+                        characterName={character.name}
+                        characterId={characterId}
+                      />
+                    </div>
+                  ))}
+
+                  {/* ローディング表示 */}
+                  {isLoading && (
+                    <div className="px-4">
                       <div
-                        className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden"
+                        className={`p-4 rounded-2xl ${liquidGlassClasses.light}`}
                         style={{
-                          background: avatarUrl
-                            ? undefined
-                            : `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                          backgroundColor: appleWebColors.sectionBackground,
+                          maxWidth: "85%",
                         }}
                       >
-                        {avatarUrl ? (
-                          <Image
-                            src={avatarUrl}
-                            alt={character.name}
-                            width={32}
-                            height={32}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-white text-[12px] font-semibold">
-                            {character.name.charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex gap-1.5">
-                        <div
-                          className="w-2 h-2 rounded-full animate-bounce"
-                          style={{
-                            backgroundColor: systemColors.gray[4],
-                          }}
-                        />
-                        <div
-                          className="w-2 h-2 rounded-full animate-bounce"
-                          style={{
-                            backgroundColor: systemColors.gray[4],
-                            animationDelay: "0.15s",
-                          }}
-                        />
-                        <div
-                          className="w-2 h-2 rounded-full animate-bounce"
-                          style={{
-                            backgroundColor: systemColors.gray[4],
-                            animationDelay: "0.3s",
-                          }}
-                        />
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden"
+                            style={{
+                              background: avatarUrl
+                                ? undefined
+                                : `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                            }}
+                          >
+                            {avatarUrl ? (
+                              <Image
+                                src={avatarUrl}
+                                alt={character.name}
+                                width={32}
+                                height={32}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-white text-[12px] font-semibold">
+                                {character.name.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex gap-1.5">
+                            <div
+                              className="w-2 h-2 rounded-full animate-bounce"
+                              style={{
+                                backgroundColor: systemColors.gray[4],
+                              }}
+                            />
+                            <div
+                              className="w-2 h-2 rounded-full animate-bounce"
+                              style={{
+                                backgroundColor: systemColors.gray[4],
+                                animationDelay: "0.15s",
+                              }}
+                            />
+                            <div
+                              className="w-2 h-2 rounded-full animate-bounce"
+                              style={{
+                                backgroundColor: systemColors.gray[4],
+                                animationDelay: "0.3s",
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+
+            {/* 入力エリア */}
+            <ChatInput
+              onSend={sendMessage}
+              onStop={stopGeneration}
+              disabled={usage?.remaining === 0}
+              isGenerating={isLoading}
+              placeholder={
+                usage?.remaining === 0
+                  ? "本日の質問回数上限に達しました"
+                  : `${character.name}に質問してみましょう...`
+              }
+            />
+          </main>
+
+          {/* 免責事項フッター */}
+          <footer className="py-4 px-4">
+            <div
+              className="max-w-4xl mx-auto text-center space-y-1"
+              style={{ color: appleWebColors.textTertiary }}
+            >
+              <p className="text-[11px]">
+                AIの回答は参考情報であり、医療・健康上のアドバイスではありません。
+              </p>
+              <p className="text-[11px]">
+                持病がある方、妊娠中・授乳中の方は、サプリメント摂取前に医師・薬剤師にご相談ください。
+              </p>
+              <p className="text-[11px] mt-2">© 2024 Suptia</p>
+            </div>
+          </footer>
         </div>
 
-        {/* 入力エリア */}
-        <ChatInput
-          onSend={sendMessage}
-          onStop={stopGeneration}
-          disabled={usage?.remaining === 0}
-          isGenerating={isLoading}
-          placeholder={
-            usage?.remaining === 0
-              ? "本日の質問回数上限に達しました"
-              : `${character.name}に質問してみましょう...`
-          }
-        />
-      </main>
-
-      {/* 免責事項フッター */}
-      <footer className="py-4 px-4">
-        <div
-          className="max-w-4xl mx-auto text-center space-y-1"
-          style={{ color: appleWebColors.textTertiary }}
+        {/* 右サイドバー - 大きなアバター表示（デスクトップのみ） */}
+        <aside
+          className="hidden lg:flex flex-col items-center justify-center w-72 flex-shrink-0 border-l p-6"
+          style={{
+            backgroundColor: appleWebColors.sectionBackground,
+            borderColor: appleWebColors.borderSubtle,
+          }}
         >
-          <p className="text-[11px]">
-            AIの回答は参考情報であり、医療・健康上のアドバイスではありません。
-          </p>
-          <p className="text-[11px]">
-            持病がある方、妊娠中・授乳中の方は、サプリメント摂取前に医師・薬剤師にご相談ください。
-          </p>
-          <p className="text-[11px] mt-2">© 2024 Suptia</p>
-        </div>
-      </footer>
+          {/* アバター（タップで拡大表示）4:5比率 */}
+          <button
+            onClick={() => avatarUrl && setShowAvatarModal(true)}
+            className="w-52 h-[260px] rounded-3xl flex items-center justify-center overflow-hidden shadow-xl mb-6 transition-transform hover:scale-105 active:scale-100 cursor-pointer"
+            style={{
+              background: avatarUrl
+                ? undefined
+                : `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+            }}
+            title="クリックで拡大表示"
+          >
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={character.name}
+                width={208}
+                height={260}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Sparkles size={72} className="text-white" />
+            )}
+          </button>
 
-      {/* 履歴パネル（右からスライドイン） */}
-      <HistoryPanel
-        isOpen={showHistoryPanel}
-        onClose={() => setShowHistoryPanel(false)}
-        sessions={sessions}
-        currentSessionId={currentSession?.id}
-        isLoading={isLoadingSessions}
-        onSelectSession={async (sessionId) => {
-          await loadSession(sessionId);
-          setShowHistoryPanel(false);
-        }}
-        onDeleteSession={deleteSession}
-        onNewSession={async () => {
-          await createSession();
-          setShowHistoryPanel(false);
-        }}
-        userPlan={userPlan}
-      />
+          {/* キャラクター名 */}
+          <h2
+            className="text-xl font-bold mb-2"
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            {character.name}
+          </h2>
+
+          {/* 推薦スタイル */}
+          <p
+            className="text-[13px] text-center leading-relaxed"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            {character.recommendationStyleLabel}
+          </p>
+        </aside>
+      </div>
+
+      {/* 履歴パネル（モバイル用・右からスライドイン） */}
+      <div className="lg:hidden">
+        <HistoryPanel
+          isOpen={showHistoryPanel}
+          onClose={() => setShowHistoryPanel(false)}
+          sessions={sessions}
+          currentSessionId={currentSession?.id}
+          isLoading={isLoadingSessions}
+          onSelectSession={async (sessionId) => {
+            await loadSession(sessionId);
+            setShowHistoryPanel(false);
+          }}
+          onDeleteSession={deleteSession}
+          onNewSession={async () => {
+            await createSession();
+            setShowHistoryPanel(false);
+          }}
+          userPlan={userPlan}
+        />
+      </div>
+
+      {/* アバター拡大モーダル */}
+      {showAvatarModal && avatarUrl && (
+        <div
+          className="fixed z-[100] bg-black/60 backdrop-blur-sm"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+          }}
+          onClick={() => setShowAvatarModal(false)}
+        >
+          <div
+            className="absolute animate-in zoom-in-95 duration-200"
+            style={{
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 閉じるボタン */}
+            <button
+              onClick={() => setShowAvatarModal(false)}
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center z-10 hover:bg-gray-100 transition-colors"
+            >
+              <X size={20} style={{ color: appleWebColors.textSecondary }} />
+            </button>
+
+            {/* アバター画像 */}
+            <div
+              className="w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden shadow-2xl"
+              style={{
+                backgroundColor: appleWebColors.sectionBackground,
+              }}
+            >
+              <Image
+                src={avatarUrl}
+                alt={character.name}
+                width={320}
+                height={320}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* キャラクター情報 */}
+            <div className="mt-4 text-center">
+              <h3 className="text-xl font-bold text-white">{character.name}</h3>
+              <p className="text-sm text-white/70 mt-1">
+                {character.recommendationStyleLabel}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -456,6 +612,233 @@ const EXAMPLE_QUESTIONS = [
   "マルチビタミンを選ぶときのポイントは？",
   "オメガ3とフィッシュオイルの違いは？",
 ];
+
+/**
+ * 履歴サイドバー（デスクトップ用・常時表示）
+ */
+interface HistorySidebarProps {
+  sessions: {
+    id: string;
+    title: string | null;
+    characterId: string;
+    messageCount: number;
+    updatedAt: string;
+  }[];
+  currentSessionId?: string;
+  isLoading: boolean;
+  onSelectSession: (sessionId: string) => Promise<void>;
+  onDeleteSession: (sessionId: string) => Promise<boolean>;
+  onNewSession: () => Promise<unknown>;
+  userPlan: string;
+}
+
+function HistorySidebar({
+  sessions,
+  currentSessionId,
+  isLoading,
+  onSelectSession,
+  onDeleteSession,
+  onNewSession,
+  userPlan,
+}: HistorySidebarProps) {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    setDeletingId(sessionId);
+    await onDeleteSession(sessionId);
+    setDeletingId(null);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return "今日";
+    } else if (diffDays === 1) {
+      return "昨日";
+    } else if (diffDays < 7) {
+      return `${diffDays}日前`;
+    } else {
+      return date.toLocaleDateString("ja-JP", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
+  // ゲストは履歴なし
+  if (userPlan === "guest") {
+    return (
+      <div className="h-full flex flex-col">
+        {/* ヘッダー */}
+        <div
+          className="px-4 py-4 border-b"
+          style={{ borderColor: appleWebColors.borderSubtle }}
+        >
+          <h2
+            className="text-[15px] font-semibold"
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            会話履歴
+          </h2>
+        </div>
+
+        {/* ログイン促進 */}
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <History
+            size={40}
+            style={{ color: appleWebColors.textTertiary }}
+            className="mb-4"
+          />
+          <p
+            className="text-[14px] font-medium mb-2"
+            style={{ color: appleWebColors.textPrimary }}
+          >
+            ログインで履歴を保存
+          </p>
+          <p
+            className="text-[12px] mb-4"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            過去の会話を振り返ったり、
+            <br />
+            続きから再開できます
+          </p>
+          <Link
+            href="/auth/login"
+            className="px-5 py-2 rounded-full text-[13px] font-medium text-white transition-transform active:scale-95"
+            style={{ backgroundColor: systemColors.blue }}
+          >
+            ログイン
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* ヘッダー */}
+      <div
+        className="px-4 py-4 border-b"
+        style={{ borderColor: appleWebColors.borderSubtle }}
+      >
+        <h2
+          className="text-[15px] font-semibold"
+          style={{ color: appleWebColors.textPrimary }}
+        >
+          会話履歴
+        </h2>
+      </div>
+
+      {/* 新規会話ボタン */}
+      <div className="px-3 py-3">
+        <button
+          onClick={onNewSession}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium text-white transition-all hover:opacity-90 active:scale-[0.98]"
+          style={{ backgroundColor: systemColors.blue }}
+        >
+          <Plus size={16} />
+          新しい会話
+        </button>
+      </div>
+
+      {/* セッション一覧 */}
+      <div className="flex-1 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div
+              className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin"
+              style={{ borderColor: `${systemColors.blue} transparent` }}
+            />
+          </div>
+        ) : sessions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+            <MessageCircle
+              size={32}
+              style={{ color: appleWebColors.textTertiary }}
+              className="mb-2"
+            />
+            <p
+              className="text-[12px]"
+              style={{ color: appleWebColors.textSecondary }}
+            >
+              まだ会話履歴がありません
+            </p>
+          </div>
+        ) : (
+          <div className="px-2 space-y-0.5">
+            {sessions.map((session) => {
+              const isActive = session.id === currentSessionId;
+              const characterName =
+                CHARACTERS[session.characterId as keyof typeof CHARACTERS]
+                  ?.name || "ナビ";
+
+              return (
+                <button
+                  key={session.id}
+                  onClick={() => onSelectSession(session.id)}
+                  disabled={deletingId === session.id}
+                  className={cn(
+                    "w-full text-left px-3 py-2.5 rounded-lg transition-all group",
+                    "hover:bg-black/5 active:scale-[0.98]",
+                    isActive && "bg-black/5",
+                    deletingId === session.id && "opacity-50",
+                  )}
+                >
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-[13px] font-medium truncate"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        {session.title || "新しい会話"}
+                      </p>
+                      <p
+                        className="text-[11px] mt-0.5"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        {characterName} · {formatDate(session.updatedAt)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => handleDelete(e, session.id)}
+                      disabled={deletingId === session.id}
+                      className="p-1 rounded hover:bg-black/10 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 size={12} style={{ color: systemColors.red }} />
+                    </button>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* プラン情報 */}
+      <div
+        className="px-3 py-3 border-t"
+        style={{ borderColor: appleWebColors.borderSubtle }}
+      >
+        <p
+          className="text-[10px] text-center"
+          style={{ color: appleWebColors.textTertiary }}
+        >
+          {userPlan === "free"
+            ? "無料プラン: 3日間保存"
+            : userPlan === "pro"
+              ? "Proプラン: 30日間保存"
+              : "Pro+Safety: 無制限保存"}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 /**
  * 履歴パネル（右からスライドイン）

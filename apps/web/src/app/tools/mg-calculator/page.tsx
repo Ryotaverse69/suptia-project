@@ -100,7 +100,7 @@ export default function MgCalculatorPage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-[17px] md:text-[19px] leading-[1.47] text-[#86868b] max-w-xl mx-auto tracking-[-0.022em]">
+            <p className="text-[17px] md:text-[19px] leading-[1.47] text-[#515154] max-w-xl mx-auto tracking-[-0.022em]">
               手持ちのサプリメントの「mg単価」を計算して、
               <br className="hidden md:block" />
               本当にお得かどうかを確認しましょう。
@@ -130,7 +130,7 @@ export default function MgCalculatorPage() {
               >
                 Suptiaで最安値を探す
               </h2>
-              <p className="text-[15px] md:text-[17px] text-[#86868b] leading-[1.47]">
+              <p className="text-[15px] md:text-[17px] text-[#515154] leading-[1.47]">
                 476商品以上の中から、mg単価・安全性・エビデンスで比較できます
               </p>
             </div>
@@ -174,7 +174,7 @@ export default function MgCalculatorPage() {
                 mg単価とは、サプリメントの有効成分
                 <strong>1mgあたりの価格</strong>のことです。
               </p>
-              <p className="text-[17px] leading-[1.65] text-[#86868b]">
+              <p className="text-[17px] leading-[1.65] text-[#515154]">
                 例えば、1,000mgのビタミンCが入った商品が1,000円なら、mg単価は1円/mgになります。
                 この指標を使うことで、内容量や価格が異なる商品同士を公平に比較することができます。
               </p>
@@ -186,7 +186,7 @@ export default function MgCalculatorPage() {
               iconColor="from-[#FF3B30] to-[#FF9500]"
               title="なぜmg単価で比較するのか"
             >
-              <p className="text-[17px] leading-[1.65] text-[#86868b] mb-6">
+              <p className="text-[17px] leading-[1.65] text-[#515154] mb-6">
                 サプリメントのパッケージには「60粒入り」「90日分」などと書かれていますが、
                 実際に含まれる成分量は商品によって大きく異なります。
               </p>
@@ -213,7 +213,7 @@ export default function MgCalculatorPage() {
               iconColor="from-[#34C759] to-[#00C7BE]"
               title="Suptiaの5つの評価軸"
             >
-              <p className="text-[17px] leading-[1.65] text-[#86868b] mb-6">
+              <p className="text-[17px] leading-[1.65] text-[#515154] mb-6">
                 Suptiaでは、mg単価（コスパ）だけでなく、以下の5つの軸で商品を評価しています。
               </p>
 
@@ -338,7 +338,7 @@ function TrapCard({
   return (
     <div className="bg-white/60 backdrop-blur-sm border border-black/[0.04] rounded-[14px] p-4">
       <h4 className="text-[15px] font-semibold text-[#1d1d1f] mb-1">{title}</h4>
-      <p className="text-[15px] text-[#86868b] leading-[1.47]">{description}</p>
+      <p className="text-[15px] text-[#515154] leading-[1.47]">{description}</p>
     </div>
   );
 }
@@ -379,7 +379,7 @@ function FAQItem({
       <h3 className="text-[17px] font-semibold text-[#1d1d1f] mb-2">
         Q. {question}
       </h3>
-      <p className="text-[15px] text-[#86868b] leading-[1.65]">A. {answer}</p>
+      <p className="text-[15px] text-[#515154] leading-[1.65]">A. {answer}</p>
     </div>
   );
 }
