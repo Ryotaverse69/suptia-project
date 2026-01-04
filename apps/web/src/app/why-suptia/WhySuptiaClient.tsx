@@ -30,6 +30,7 @@ import {
   FlaskConical,
   Store,
   LucideIcon,
+  MessageCircle,
 } from "lucide-react";
 import {
   systemColors,
@@ -165,9 +166,14 @@ const pillars = [
 
 const faqData = [
   {
-    question: "AI検索とサプティアを併用すべきですか？",
+    question: "AIコンシェルジュとは何ですか？",
     answer:
-      "はい、併用をおすすめします。AI検索は一般的な情報収集に、サプティアは価格比較・安全性評価・エビデンス確認など購入判断に必要な具体的情報を提供します。",
+      "サプティアのAIコンシェルジュは、悩みを伝えるだけで最適なサプリメントを提案するAI機能です。4人のキャラクターから選べ、あなたの判断スタイル（コスパ重視、安全性重視など）に合わせて提案内容が変わります。「なぜそれが良いか」まで解説するので、根拠を理解した上で選べます。",
+  },
+  {
+    question: "AI検索とサプティアの違いは何ですか？",
+    answer:
+      "AI検索（ChatGPT、Perplexity等）は一般論を返しますが、サプティアのAIコンシェルジュは価格・成分量・コスパ・エビデンス・安全性の5つの視点で具体的な商品を比較し、根拠と注意点まで解説します。",
   },
   {
     question: "サプティアの情報は信頼できますか？",
@@ -177,17 +183,12 @@ const faqData = [
   {
     question: "無料で使えますか？",
     answer:
-      "はい、基本機能は完全無料です。商品検索、価格比較、成分ガイド、診断機能、マイページ、価格アラートなどをお使いいただけます。",
+      "はい、基本機能は完全無料です。AIコンシェルジュ、商品検索、価格比較、成分ガイド、診断機能、マイページ、価格アラートなどをお使いいただけます。",
   },
   {
     question: "サプティアはどうやって収益を得ていますか？",
     answer:
       "ECサイトへのアフィリエイトリンクを通じて収益を得ています。ただし、アフィリエイト収益は推薦順位に一切影響しません。すべての商品は客観的な基準で評価されています。",
-  },
-  {
-    question: "マイページでは何ができますか？",
-    answer:
-      "プロフィール設定、診断履歴の確認、お気に入り商品の管理、価格アラートの設定ができます。健康目標やアレルギー情報を登録することで、より適切な商品推薦を受けられます。",
   },
 ];
 
@@ -838,9 +839,9 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
             ChatGPTやPerplexityは便利。でも、あなたの身体のことは
             <span className="text-white font-medium">
               {" "}
-              根拠を持って判断できるサプティア
+              AIコンシェルジュが根拠と一緒に解説してくれる
             </span>
-            に。
+            サプティアに。
           </motion.p>
 
           {/* CTA Buttons */}
@@ -851,14 +852,14 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
             transition={{ duration: 0.8, delay: 0.8, ease: appleEase }}
           >
             <AppleButton
-              href="/products"
+              href="/concierge"
               variant="primary"
               icon={<ArrowRight className="w-5 h-5" />}
             >
-              商品を探す
+              AIに相談する
             </AppleButton>
             <AppleButton href="/diagnosis" variant="secondary">
-              診断を受ける
+              簡単診断から始める
             </AppleButton>
           </motion.div>
         </motion.div>
@@ -1006,7 +1007,7 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
               transition={{ duration: 0.6, delay: 0.5, ease: appleEase }}
             >
               サプリメント選びは、価格だけでなく、あなたの身体、目的、安全性を総合的に考慮する必要があります。
-              サプティアは、科学的根拠に基づいて「あなたに最適な選択」を支援します。
+              AIコンシェルジュが、あなたの判断スタイルに合わせて一緒に考えます。
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -1015,8 +1016,8 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6, ease: appleEase }}
             >
-              <AppleButton href="/products" variant="primary">
-                商品を探す
+              <AppleButton href="/concierge" variant="primary">
+                AIに相談する
               </AppleButton>
               <AppleButton href="/ingredients" variant="tertiary">
                 成分を学ぶ
@@ -1135,14 +1136,14 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <AppleButton
-                href="/diagnosis"
+                href="/concierge"
                 variant="primary"
                 icon={<ArrowRight className="w-5 h-5" />}
               >
-                無料診断を受ける
+                AIに相談する
               </AppleButton>
-              <AppleButton href="/products" variant="secondary">
-                商品を探す
+              <AppleButton href="/diagnosis" variant="secondary">
+                簡単診断から始める
               </AppleButton>
             </div>
           </motion.div>

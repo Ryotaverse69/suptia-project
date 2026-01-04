@@ -10,7 +10,7 @@ import type { UserPlan } from "@/contexts/UserProfileContext";
 // キャラクター関連
 // ============================================
 
-export type CharacterId = "navi" | "mint" | "doc" | "haru";
+export type CharacterId = "core" | "mint" | "repha" | "haku";
 
 export type RecommendationStyle = "balanced" | "evidence" | "cost" | "safety";
 
@@ -25,12 +25,17 @@ export interface RecommendationWeights {
 export interface Character {
   id: CharacterId;
   name: string;
+  nameEn: string;
   avatar: string;
   personality: string;
   tone: string;
   greeting: string;
   recommendationStyle: RecommendationStyle;
   recommendationStyleLabel: string;
+  /** こんな人向け - ユーザーが一瞬で選べるための説明 */
+  targetAudience: string;
+  /** 判断軸（内部コンセプト）- 例: "バランス｜価格・成分・安全・根拠・続けやすさ" */
+  focusAxis: string;
   weights: RecommendationWeights;
   availablePlans: UserPlan[];
 }
@@ -189,7 +194,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     historyRetentionDays: 3,
     maxSessions: 5,
     contextMessages: 4,
-    availableCharacters: ["navi"],
+    availableCharacters: ["core"],
     characterChangeLimit: null,
     canUseCustomName: false,
     canViewWeights: false,
@@ -201,7 +206,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     historyRetentionDays: 30,
     maxSessions: 50,
     contextMessages: 10,
-    availableCharacters: ["navi", "mint", "doc", "haru"],
+    availableCharacters: ["core", "mint", "repha", "haku"],
     characterChangeLimit: 3,
     canUseCustomName: false,
     canViewWeights: true,
@@ -213,7 +218,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     historyRetentionDays: null,
     maxSessions: null,
     contextMessages: 20,
-    availableCharacters: ["navi", "mint", "doc", "haru"],
+    availableCharacters: ["core", "mint", "repha", "haku"],
     characterChangeLimit: null,
     canUseCustomName: true,
     canViewWeights: true,
@@ -225,7 +230,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     historyRetentionDays: null,
     maxSessions: null,
     contextMessages: 20,
-    availableCharacters: ["navi", "mint", "doc", "haru"],
+    availableCharacters: ["core", "mint", "repha", "haku"],
     characterChangeLimit: null,
     canUseCustomName: true,
     canViewWeights: true,
@@ -240,5 +245,5 @@ export const GUEST_CONFIG = {
   chatLimit: 3,
   followupLimit: 0,
   contextMessages: 2,
-  availableCharacters: ["navi"] as CharacterId[],
+  availableCharacters: ["core"] as CharacterId[],
 };

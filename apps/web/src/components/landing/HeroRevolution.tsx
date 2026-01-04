@@ -6,8 +6,9 @@ import {
   useScroll,
   useTransform,
   useReducedMotion,
+  AnimatePresence,
 } from "framer-motion";
-import { Search, ArrowRight, Shield } from "lucide-react";
+import { Sparkles, ArrowRight, Shield, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -19,6 +20,7 @@ import {
   subtleSpring,
   bouncySpring,
 } from "@/lib/design-system";
+import { classifyIntent } from "@/lib/intent";
 
 // Mobile detection using CSS media query
 const useIsMobile = () => {
@@ -49,16 +51,35 @@ interface HeroRevolutionProps {
   popularSearches?: Array<{ name: string }>;
 }
 
+// プレースホルダーの質問例（ローテーション用）
+const PLACEHOLDER_QUESTIONS = [
+  "妊娠中にビタミンDを飲んでも大丈夫？",
+  "疲れやすいんだけど、何がいい？",
+  "このサプリ、安全性は？",
+  "コスパの良いマルチビタミンは？",
+];
+
 export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLFormElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const router = useRouter();
   const isMobile = useIsMobile();
   const isIOS = useIsIOS();
   const prefersReducedMotion = useReducedMotion();
+
+  // プレースホルダーのローテーション（5秒ごと）
+  useEffect(() => {
+    if (isFocused || searchQuery) return; // フォーカス中・入力中は停止
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDER_QUESTIONS.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isFocused, searchQuery]);
 
   // iOS keyboard handling - scroll input into view
   const handleIOSFocus = useCallback(() => {
@@ -89,8 +110,18 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    const query = searchQuery.trim();
+    if (!query) return;
+
+    const result = classifyIntent(query);
+    const encodedQuery = encodeURIComponent(query);
+
+    if (result.destination === "concierge") {
+      // 悩み・疑問・条件 → AIコンシェルジュへ（クエリパラメータ付き）
+      router.push(`/concierge?q=${encodedQuery}`);
+    } else {
+      // 成分名・商品名 → 検索ページへ
+      router.push(`/search?q=${encodedQuery}`);
     }
   };
 
@@ -171,7 +202,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
               }}
             >
               <Shield className="w-4 h-4" aria-hidden="true" />
-              サプリ比較
+              AI × サプリ比較
             </span>
           </motion.div>
 
@@ -211,13 +242,13 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
             initial="hidden"
             animate="visible"
           >
-            価格、成分、エビデンス。
+            根拠が見える。
             <br className="hidden sm:block" />
-            すべてを比較して、最適な一つを。
+            AIがなぜそれが良いかまで説明。
           </motion.p>
         </div>
 
-        {/* Search Box - Apple style clean */}
+        {/* AI Input - AIに判断材料を渡すための入力欄 */}
         <motion.form
           ref={searchContainerRef}
           onSubmit={handleSearch}
@@ -248,7 +279,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
               }}
             >
               <div className="pl-6 pr-3">
-                <Search
+                <Sparkles
                   className="transition-colors duration-200"
                   style={{
                     color: isFocused
@@ -259,25 +290,54 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
                   aria-hidden="true"
                 />
               </div>
-              <input
-                ref={inputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => {
-                  setIsFocused(true);
-                  handleIOSFocus();
-                }}
-                onBlur={() => setIsFocused(false)}
-                placeholder="サプリ名・成分名で検索..."
-                className={`flex-1 py-4 px-2 ${typography.body} bg-transparent outline-none transition-colors duration-200 placeholder:text-[#86868b]`}
-                style={{
-                  color: appleWebColors.textPrimary,
-                  // iOS: prevent zoom on focus
-                  fontSize: "16px",
-                }}
-                aria-label="サプリメントを検索"
-              />
+              {/* Input wrapper with custom animated placeholder */}
+              <div className="relative flex-1">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    setIsFocused(true);
+                    handleIOSFocus();
+                  }}
+                  onBlur={() => setIsFocused(false)}
+                  className={`w-full py-4 px-2 ${typography.body} bg-transparent outline-none transition-colors duration-200`}
+                  style={{
+                    color: appleWebColors.textPrimary,
+                    // iOS: prevent zoom on focus
+                    fontSize: "16px",
+                  }}
+                  aria-label="AIに質問する"
+                />
+                {/* Custom animated placeholder overlay */}
+                {!searchQuery && !isFocused && (
+                  <div
+                    className="absolute inset-0 flex items-center px-2 pointer-events-none overflow-hidden"
+                    aria-hidden="true"
+                  >
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={placeholderIndex}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{
+                          duration: prefersReducedMotion ? 0 : 0.4,
+                          ease: appleEase,
+                        }}
+                        className={`${typography.body} truncate`}
+                        style={{
+                          color: "#86868b",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {PLACEHOLDER_QUESTIONS[placeholderIndex]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+                )}
+              </div>
               <motion.button
                 type="submit"
                 className={`m-1.5 px-6 py-3 rounded-full ${typography.headline} text-white min-h-[44px]`}
@@ -288,7 +348,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
                 whileTap={{ scale: 0.97 }}
                 transition={bouncySpring}
               >
-                検索
+                AIに聞く
               </motion.button>
             </motion.div>
           </motion.div>
@@ -315,7 +375,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
             className={`${isMobile ? "text-[11px] mr-0.5 flex-shrink-0" : "text-[13px] mr-1"}`}
             style={{ color: appleWebColors.textSecondary }}
           >
-            人気:
+            よく調べられている成分:
           </span>
           {popularSearches.slice(0, isMobile ? 4 : 5).map((search, index) => (
             <motion.button
@@ -355,40 +415,50 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
           ))}
         </motion.div>
 
-        {/* CTA Button - Apple style clean */}
+        {/* CTA Buttons - Apple style clean */}
         <motion.div
-          className="flex justify-center"
+          className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4"
           custom={6}
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
         >
+          {/* 主CTA: AIコンシェルジュボタン - Apple Intelligence風グロー */}
+          <div className="flex flex-col items-center">
+            <Link href="/concierge">
+              <div
+                className={`glow-wrapper ${isAIButtonHovered ? "glow-active" : ""}`}
+                onMouseEnter={() => setIsAIButtonHovered(true)}
+                onMouseLeave={() => setIsAIButtonHovered(false)}
+              >
+                {/* グローレイヤー（実際のdiv要素） */}
+                <div className="glow-layer" />
+                {/* ボタン本体 */}
+                <div className="glow-button-inner">
+                  <MessageCircle className="w-5 h-5" aria-hidden="true" />
+                  <span>AIに相談する</span>
+                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                </div>
+              </div>
+            </Link>
+            <span
+              className="mt-1.5 text-[12px]"
+              style={{ color: appleWebColors.textTertiary }}
+            >
+              理由・注意点まで解説
+            </span>
+          </div>
+
+          {/* 副CTA: 診断ボタン - 控えめなテキストリンク風 */}
           <Link href="/diagnosis">
             <motion.div
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-white font-semibold min-h-[56px] text-[17px]"
-              style={{ backgroundColor: systemColors.blue }}
-              whileHover={
-                isMobile
-                  ? {}
-                  : { scale: 1.03, y: -2, backgroundColor: "#0066CC" }
-              }
-              whileTap={{ scale: 0.97 }}
-              transition={bouncySpring}
+              className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-medium"
+              style={{ color: appleWebColors.textSecondary }}
+              whileHover={isMobile ? {} : { color: systemColors.blue }}
+              transition={{ duration: 0.2 }}
             >
-              <span>診断する</span>
-              <motion.span
-                className="inline-flex"
-                animate={
-                  !isMobile && !prefersReducedMotion ? { x: [0, 4, 0] } : {}
-                }
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <ArrowRight className="w-5 h-5" aria-hidden="true" />
-              </motion.span>
+              <span>簡単診断から始める</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </motion.div>
           </Link>
         </motion.div>

@@ -140,7 +140,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const [characterId, setCharacterId] = useState<CharacterId>("navi");
+  const [characterId, setCharacterId] = useState<CharacterId>("core");
   const [usage, setUsage] = useState<UsageStats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -224,7 +224,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       const guestSession: ChatSession = {
         id: `guest-${Date.now()}`,
         userId: "guest",
-        characterId: "navi",
+        characterId: "core",
         title: null,
         summary: null,
         messageCount: 0,
@@ -675,7 +675,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       setSessions([]);
       setCurrentSession(null);
       setMessages([]);
-      setCharacterId("navi");
+      setCharacterId("core");
       setUsage(null);
     }
   }, [user, supabase, refreshSessions, refreshUsage]);

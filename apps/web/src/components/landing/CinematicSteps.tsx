@@ -8,7 +8,7 @@ import {
   useInView,
   useReducedMotion,
 } from "framer-motion";
-import { Search, BarChart3, CheckCircle2 } from "lucide-react";
+import { MessageCircle, Sparkles, CheckCircle2 } from "lucide-react";
 import {
   systemColors,
   appleWebColors,
@@ -44,27 +44,27 @@ interface Step {
 const steps: Step[] = [
   {
     number: "01",
-    title: "検索・発見",
+    title: "AIに相談",
     description:
-      "Tierランク（S+〜D）で瞬時にサプリの実力を把握。科学的根拠に基づいた評価で、本当に価値のある商品を見つけられます。",
-    icon: Search,
+      "悩みを伝えるだけ。AIコンシェルジュが、あなたの判断スタイルに合わせて一緒に考えます。",
+    icon: MessageCircle,
     color: systemColors.blue,
     gradient: `from-[${systemColors.blue}] to-[${systemColors.teal}]`,
   },
   {
     number: "02",
-    title: "比較・分析",
+    title: "理由を理解",
     description:
-      "成分・コスパ・安全性を5軸チャートで徹底比較。複数のECサイトから最安値を自動取得し、賢い選択をサポートします。",
-    icon: BarChart3,
+      "なぜおすすめなのか、理由がわかる。健康判断に必要な5つの視点で、選んだ根拠と注意点を解説します。",
+    icon: Sparkles,
     color: systemColors.indigo,
     gradient: `from-[${systemColors.indigo}] to-[${systemColors.blue}]`,
   },
   {
     number: "03",
-    title: "選択・購入",
+    title: "安心して選べる",
     description:
-      "最適なサプリを見つけて最安値で購入。あなたの健康目標に合った、理由を理解した選択ができます。",
+      "後悔しない選択を。理由がわかるから安心できる。最安値も自動で見つけて比較できます。",
     icon: CheckCircle2,
     color: systemColors.green,
     gradient: `from-[${systemColors.green}] to-[${systemColors.teal}]`,

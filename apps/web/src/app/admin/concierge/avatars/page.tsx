@@ -15,9 +15,18 @@ import {
   RefreshCw,
   Save,
   User,
+  X,
 } from "lucide-react";
 import { CHARACTERS } from "@/lib/concierge/characters";
 import type { CharacterId } from "@/lib/concierge/types";
+
+// 新ID → 旧ID のマッピング（DB互換性）
+const NEW_TO_LEGACY_MAP: Record<CharacterId, string> = {
+  core: "navi",
+  mint: "mint",
+  repha: "doc",
+  haku: "haru",
+};
 
 // 共通スタイルガイド（統一感のため）
 const COMMON_STYLE = `Common Style:
@@ -29,7 +38,7 @@ const COMMON_STYLE = `Common Style:
 
 // キャラクター別のデフォルトプロンプト（日本アニメ風で統一）
 const DEFAULT_PROMPTS: Record<CharacterId, string> = {
-  navi: `Create a Japanese anime style avatar of a friendly wellness guide.
+  core: `Create a Japanese anime style avatar of a friendly wellness guide.
 
 ${COMMON_STYLE}
 - Square avatar icon, clean mint-green gradient background
@@ -56,7 +65,7 @@ Character Specifics:
 - Vibe: Energetic, friendly, youthful
 - Optional: Small sparkle effects around`,
 
-  doc: `Create a Japanese anime style avatar of a scholarly researcher.
+  repha: `Create a Japanese anime style avatar of a scholarly researcher.
 
 ${COMMON_STYLE}
 - Square avatar icon, clean deep blue gradient background
@@ -70,7 +79,7 @@ Character Specifics:
 - Colors: Deep blue and purple accents
 - Vibe: Knowledgeable, analytical, trustworthy`,
 
-  haru: `Create a Japanese anime style avatar of a gentle caring companion.
+  haku: `Create a Japanese anime style avatar of a gentle caring companion.
 
 ${COMMON_STYLE}
 - Square avatar icon, clean warm orange gradient background
@@ -97,7 +106,7 @@ interface SavedAvatar {
 
 export default function CharacterAvatarsPage() {
   const [selectedCharacter, setSelectedCharacter] =
-    useState<CharacterId>("navi");
+    useState<CharacterId>("core");
   const [customPrompt, setCustomPrompt] = useState("");
   const [generatedAvatar, setGeneratedAvatar] =
     useState<GeneratedAvatar | null>(null);
@@ -106,6 +115,10 @@ export default function CharacterAvatarsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [previewAvatar, setPreviewAvatar] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
 
   // 保存済みアバターを取得
   useEffect(() => {
@@ -207,6 +220,20 @@ export default function CharacterAvatarsPage() {
 
   const character = CHARACTERS[selectedCharacter];
 
+  // 新IDでアバターURLを取得（旧IDへのフォールバック付き）
+  const getAvatarUrl = (id: CharacterId): string | undefined => {
+    // まず新IDで検索
+    if (savedAvatars[id]) {
+      return savedAvatars[id];
+    }
+    // なければ旧IDで検索
+    const legacyId = NEW_TO_LEGACY_MAP[id];
+    if (legacyId && savedAvatars[legacyId]) {
+      return savedAvatars[legacyId];
+    }
+    return undefined;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -256,7 +283,8 @@ export default function CharacterAvatarsPage() {
             {(Object.keys(CHARACTERS) as CharacterId[]).map((id) => {
               const char = CHARACTERS[id];
               const isSelected = selectedCharacter === id;
-              const hasSavedAvatar = !!savedAvatars[id];
+              const avatarUrl = getAvatarUrl(id);
+              const hasSavedAvatar = !!avatarUrl;
 
               return (
                 <button
@@ -269,10 +297,21 @@ export default function CharacterAvatarsPage() {
                   }`}
                 >
                   {/* アバター表示 */}
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-                    {hasSavedAvatar ? (
+                  <div
+                    className={`w-16 h-16 mx-auto mb-3 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center ${hasSavedAvatar ? "cursor-zoom-in hover:ring-2 hover:ring-green-400 transition-all" : ""}`}
+                    onClick={(e) => {
+                      if (hasSavedAvatar && avatarUrl) {
+                        e.stopPropagation();
+                        setPreviewAvatar({
+                          url: avatarUrl,
+                          name: char.name,
+                        });
+                      }
+                    }}
+                  >
+                    {hasSavedAvatar && avatarUrl ? (
                       <Image
-                        src={savedAvatars[id]}
+                        src={avatarUrl}
                         alt={char.name}
                         width={64}
                         height={64}
@@ -433,11 +472,21 @@ export default function CharacterAvatarsPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {(Object.keys(CHARACTERS) as CharacterId[]).map((id) => {
                 const char = CHARACTERS[id];
-                const avatarUrl = savedAvatars[id];
+                const avatarUrl = getAvatarUrl(id);
 
                 return (
                   <div key={id} className="text-center">
-                    <div className="w-20 h-20 mx-auto mb-2 rounded-xl overflow-hidden bg-gray-100">
+                    <div
+                      className={`w-20 h-20 mx-auto mb-2 rounded-xl overflow-hidden bg-gray-100 ${avatarUrl ? "cursor-zoom-in hover:ring-2 hover:ring-green-400 transition-all" : ""}`}
+                      onClick={() => {
+                        if (avatarUrl) {
+                          setPreviewAvatar({
+                            url: avatarUrl,
+                            name: char.name,
+                          });
+                        }
+                      }}
+                    >
                       {avatarUrl ? (
                         <Image
                           src={avatarUrl}
@@ -482,6 +531,45 @@ export default function CharacterAvatarsPage() {
           </p>
         </div>
       </div>
+
+      {/* アバター拡大プレビューモーダル */}
+      {previewAvatar && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          onClick={() => setPreviewAvatar(null)}
+        >
+          <div
+            className="relative bg-white rounded-2xl p-4 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 閉じるボタン */}
+            <button
+              onClick={() => setPreviewAvatar(null)}
+              className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {/* キャラクター名 */}
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                {previewAvatar.name}
+              </h3>
+            </div>
+
+            {/* 拡大画像 */}
+            <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100">
+              <Image
+                src={previewAvatar.url}
+                alt={previewAvatar.name}
+                width={400}
+                height={400}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
   ArrowRight,
   BookOpen,
   FlaskConical,
+  MessageCircle,
 } from "lucide-react";
 import {
   systemColors,
@@ -402,7 +403,7 @@ export default function PurposesGuidePage() {
           <div
             className="rounded-[24px] p-8 sm:p-12 border"
             style={{
-              background: `linear-gradient(135deg, ${systemColors.blue}10 0%, ${systemColors.green}10 100%)`,
+              background: `linear-gradient(135deg, ${systemColors.blue}10 0%, ${systemColors.indigo}10 100%)`,
               borderColor: appleWebColors.borderSubtle,
             }}
           >
@@ -416,33 +417,35 @@ export default function PurposesGuidePage() {
               className="text-[17px] mb-8 max-w-2xl mx-auto leading-relaxed"
               style={{ color: appleWebColors.textSecondary }}
             >
-              成分ガイドで各栄養素の効果を学んだり、
-              危険成分ガイドで避けるべき成分を確認することもできます。
+              AIコンシェルジュに相談すれば、悩みを伝えるだけで最適なサプリメントを提案。
+              <br className="hidden sm:block" />
+              なぜおすすめなのか、理由と注意点まで解説します。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/ingredients"
+                href="/concierge"
                 className="group flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-full text-white transition-all hover:scale-[1.02] min-h-[48px]"
                 style={{
-                  background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+                  background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
                   boxShadow: `0 4px 16px ${systemColors.blue}40`,
                 }}
               >
-                成分ガイドを見る
+                <MessageCircle size={18} />
+                AIに相談する
                 <ArrowRight
                   size={18}
                   className="transition-transform group-hover:translate-x-1"
                 />
               </Link>
               <Link
-                href="/guide/dangerous-ingredients"
+                href="/ingredients"
                 className={`group flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-full transition-all hover:scale-[1.02] min-h-[48px] border ${liquidGlassClasses.light}`}
                 style={{
                   borderColor: appleWebColors.borderSubtle,
                   color: appleWebColors.textPrimary,
                 }}
               >
-                危険成分ガイドを見る
+                成分ガイドを見る
                 <ArrowRight
                   size={18}
                   className="transition-transform group-hover:translate-x-1"

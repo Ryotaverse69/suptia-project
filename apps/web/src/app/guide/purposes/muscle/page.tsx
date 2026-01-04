@@ -11,6 +11,7 @@ import {
   Flame,
   Clock,
   ChevronRight,
+  MessageCircle,
 } from "lucide-react";
 import {
   systemColors,
@@ -539,7 +540,7 @@ export default function MuscleGuidePage() {
           <div
             className="rounded-[24px] p-8 border"
             style={{
-              background: `linear-gradient(135deg, ${systemColors.orange}10 0%, ${systemColors.blue}10 100%)`,
+              background: `linear-gradient(135deg, ${systemColors.blue}10 0%, ${systemColors.indigo}10 100%)`,
               borderColor: appleWebColors.borderSubtle,
             }}
           >
@@ -547,9 +548,40 @@ export default function MuscleGuidePage() {
               className="text-[24px] font-bold mb-6"
               style={{ color: appleWebColors.textPrimary }}
             >
-              関連ガイド
+              次のステップ
             </h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Link
+                href="/concierge"
+                className="group p-5 rounded-[16px] border transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.blue}15 0%, ${systemColors.indigo}15 100%)`,
+                  borderColor: `${systemColors.blue}30`,
+                }}
+              >
+                <MessageCircle
+                  size={20}
+                  className="mb-2"
+                  style={{ color: systemColors.blue }}
+                />
+                <h4
+                  className="font-bold mb-2 transition-colors"
+                  style={{ color: appleWebColors.textPrimary }}
+                >
+                  AIに相談する
+                </h4>
+                <p
+                  className="text-[14px] mb-3"
+                  style={{ color: appleWebColors.textSecondary }}
+                >
+                  悩みを伝えて最適な提案を受ける
+                </p>
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-all"
+                  style={{ color: systemColors.blue }}
+                />
+              </Link>
               <Link
                 href="/guide/purposes"
                 className={`group p-5 rounded-[16px] border transition-all duration-300 hover:-translate-y-1 ${liquidGlassClasses.light}`}

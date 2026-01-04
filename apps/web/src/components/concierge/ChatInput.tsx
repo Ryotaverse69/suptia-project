@@ -22,6 +22,7 @@ interface ChatInputProps {
   placeholder?: string;
   maxLength?: number;
   isGenerating?: boolean;
+  initialValue?: string;
 }
 
 export function ChatInput({
@@ -31,8 +32,9 @@ export function ChatInput({
   placeholder = "サプリメントについて質問してください...",
   maxLength = 2000,
   isGenerating = false,
+  initialValue = "",
 }: ChatInputProps) {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(initialValue);
   const [isComposing, setIsComposing] = useState(false); // IME変換中フラグ
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -240,13 +242,13 @@ export function ChatInput({
           border-radius: 16px;
           background: linear-gradient(
             90deg,
-            #ff6b6b,
-            #feca57,
-            #48dbfb,
-            #ff9ff3,
-            #54a0ff,
-            #5f27cd,
-            #ff6b6b
+            #bc82f3,
+            #f5b9ea,
+            #8d9fff,
+            #ff6778,
+            #ffba71,
+            #c686ff,
+            #bc82f3
           );
           background-size: 300% 100%;
           opacity: 0;
@@ -269,9 +271,9 @@ export function ChatInput({
             rainbow-shift 4s ease infinite,
             glow-pulse 2s ease-in-out infinite;
           box-shadow:
-            0 0 15px rgba(255, 107, 107, 0.4),
-            0 0 30px rgba(72, 219, 251, 0.3),
-            0 0 45px rgba(84, 160, 255, 0.2);
+            0 0 15px rgba(188, 130, 243, 0.4),
+            0 0 30px rgba(141, 159, 255, 0.3),
+            0 0 45px rgba(198, 134, 255, 0.2);
         }
 
         @keyframes rainbow-shift {
@@ -290,15 +292,15 @@ export function ChatInput({
           0%,
           100% {
             box-shadow:
-              0 0 15px rgba(255, 107, 107, 0.4),
-              0 0 30px rgba(72, 219, 251, 0.3),
-              0 0 45px rgba(84, 160, 255, 0.2);
+              0 0 15px rgba(188, 130, 243, 0.4),
+              0 0 30px rgba(141, 159, 255, 0.3),
+              0 0 45px rgba(198, 134, 255, 0.2);
           }
           50% {
             box-shadow:
-              0 0 20px rgba(255, 159, 243, 0.5),
-              0 0 40px rgba(95, 39, 205, 0.4),
-              0 0 60px rgba(254, 202, 87, 0.3);
+              0 0 20px rgba(245, 185, 234, 0.5),
+              0 0 40px rgba(255, 103, 120, 0.4),
+              0 0 60px rgba(255, 186, 113, 0.3);
           }
         }
       `}</style>

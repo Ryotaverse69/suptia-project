@@ -12,6 +12,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -35,7 +36,7 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { CharacterSelector } from "./CharacterSelector";
 import { UsageBadge } from "./UsageBadge";
-import { CHARACTERS } from "@/lib/concierge/characters";
+import { CHARACTERS, getCharacter } from "@/lib/concierge/characters";
 import { useCharacterAvatars } from "@/lib/concierge/useCharacterAvatars";
 
 interface ChatUIProps {
@@ -66,9 +67,29 @@ export function ChatUI({ className }: ChatUIProps) {
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // クエリパラメータから初期メッセージを取得
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const hasAutoSentRef = useRef(false);
+  const sendMessageRef = useRef(sendMessage);
+  const mountedRef = useRef(true);
   const prevMessageCountRef = useRef(0);
   const { getAvatarUrl } = useCharacterAvatars();
   const avatarUrl = getAvatarUrl(characterId);
+
+  // マウント状態を追跡
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // sendMessageの最新参照を保持（依存配列から外すため）
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   // 新しいメッセージが追加されたらスクロール
   useEffect(() => {
@@ -119,7 +140,28 @@ export function ChatUI({ className }: ChatUIProps) {
     }
   }, [messages]);
 
-  const character = CHARACTERS[characterId];
+  // クエリパラメータがある場合は自動送信
+  // ヒーローから「AIに聞く」ボタンで来た場合 = 明示的な意思表示
+  useEffect(() => {
+    if (
+      initialQuery &&
+      !hasAutoSentRef.current &&
+      messages.length === 0 &&
+      !isLoading &&
+      usage?.remaining !== 0
+    ) {
+      hasAutoSentRef.current = true;
+      // 少し遅延させてUIが安定してから送信
+      // クリーンアップでタイマーをキャンセルしない（状態変化でキャンセルされるのを防ぐ）
+      setTimeout(() => {
+        if (mountedRef.current) {
+          sendMessageRef.current(initialQuery);
+        }
+      }, 300);
+    }
+  }, [initialQuery, messages.length, isLoading, usage?.remaining]);
+
+  const character = getCharacter(characterId);
 
   return (
     <div
@@ -290,17 +332,25 @@ export function ChatUI({ className }: ChatUIProps) {
                 />
               ) : (
                 <div className="py-4 space-y-4">
-                  {messages.map((message) => (
-                    <div key={message.id} data-message-role={message.role}>
-                      <ChatMessage
-                        message={message}
-                        onFeedback={submitFeedback}
-                        showFeedback={message.role === "assistant"}
-                        characterName={character.name}
-                        characterId={characterId}
-                      />
-                    </div>
-                  ))}
+                  {messages.map((message) => {
+                    // メッセージに保存されたキャラ情報を優先使用（キャラ変更対応）
+                    const msgCharacterId =
+                      message.metadata?.characterId || characterId;
+                    const msgCharacterName =
+                      message.metadata?.characterName || character.name;
+
+                    return (
+                      <div key={message.id} data-message-role={message.role}>
+                        <ChatMessage
+                          message={message}
+                          onFeedback={submitFeedback}
+                          showFeedback={message.role === "assistant"}
+                          characterName={msgCharacterName}
+                          characterId={msgCharacterId}
+                        />
+                      </div>
+                    );
+                  })}
 
                   {/* ローディング表示 */}
                   {isLoading && (
@@ -430,19 +480,55 @@ export function ChatUI({ className }: ChatUIProps) {
 
           {/* キャラクター名 */}
           <h2
-            className="text-xl font-bold mb-2"
+            className="text-xl font-bold mb-0.5"
             style={{ color: appleWebColors.textPrimary }}
           >
             {character.name}
           </h2>
+          <p
+            className="text-[13px] mb-4"
+            style={{ color: appleWebColors.textTertiary }}
+          >
+            {character.nameEn}
+          </p>
+
+          {/* 性格 */}
+          <div
+            className="w-full px-3 py-2.5 rounded-xl mb-3"
+            style={{ backgroundColor: appleWebColors.sectionBackground }}
+          >
+            <p
+              className="text-[13px] text-center font-medium leading-relaxed"
+              style={{ color: appleWebColors.textPrimary }}
+            >
+              {character.personality}
+            </p>
+          </div>
+
+          {/* 挨拶（キャラクターの口調を見せる） */}
+          <p
+            className="text-[12px] text-center leading-relaxed mb-3 italic"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            「{character.greeting}」
+          </p>
 
           {/* 推薦スタイル */}
           <p
-            className="text-[13px] text-center leading-relaxed"
-            style={{ color: appleWebColors.textSecondary }}
+            className="text-[12px] text-center leading-relaxed mb-4"
+            style={{ color: appleWebColors.textTertiary }}
           >
             {character.recommendationStyleLabel}
           </p>
+
+          {/* キャラクター変更ボタン */}
+          <CharacterSelector
+            selectedCharacterId={characterId}
+            onSelect={setCharacterId}
+            userPlan={userPlan}
+            disabled={isLoading}
+            buttonLabel="コンシェルジュを変更"
+          />
         </aside>
       </div>
 
@@ -776,7 +862,7 @@ function HistorySidebar({
               const isActive = session.id === currentSessionId;
               const characterName =
                 CHARACTERS[session.characterId as keyof typeof CHARACTERS]
-                  ?.name || "ナビ";
+                  ?.name || "コア";
 
               return (
                 <button
@@ -1061,7 +1147,7 @@ function HistoryPanel({
                   const isActive = session.id === currentSessionId;
                   const characterName =
                     CHARACTERS[session.characterId as keyof typeof CHARACTERS]
-                      ?.name || "ナビ";
+                      ?.name || "コア";
 
                   return (
                     <button

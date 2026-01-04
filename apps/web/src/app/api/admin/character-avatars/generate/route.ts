@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     if (
       !characterId ||
-      !["navi", "mint", "doc", "haru"].includes(characterId)
+      !["core", "mint", "repha", "haku"].includes(characterId)
     ) {
       return NextResponse.json(
         { error: "有効なキャラクターIDが必要です" },

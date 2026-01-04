@@ -44,6 +44,19 @@ const SUPPLEMENT_WHITELIST_EXCEPTIONS = [
   'BCAA', 'EAA', 'HMB', 'クレアチン', 'グルタミン',
 ];
 
+// ペット用商品キーワード（最優先除外 - サプリ表記があっても必ず除外）
+// 注意: 「ネコポス」（配送方法）や「イヌリン」（成分名）は誤検出になるため除外パターンを使用
+const PET_PRODUCT_PATTERNS = [
+  /犬用/, /猫用/, /ペット用/, /動物用/,
+  /犬\s*(・|＆|&|,|、)\s*猫/, /猫\s*(・|＆|&|,|、)\s*犬/,
+  /ドッグ/, /キャット/,
+  /\bdog\b/i, /\bcat\b/i, /\bpet\b/i,
+  /愛犬/, /愛猫/,
+  /わんちゃん/, /ねこちゃん/, /にゃんこ/,
+  /ペットサプリ/, /ペットフード/,
+  /シニア犬/, /シニア猫/, /老犬/, /老猫/, /子犬/, /子猫/,
+];
+
 // 絶対除外キーワード（ホワイトリスト例外があっても必ず除外）
 const ABSOLUTE_BLACKLIST = [
   // ふるさと納税商品（通常価格ではないため除外）
@@ -146,6 +159,17 @@ export function isSupplement(productName) {
       score: -100,
       reason: '絶対除外: ふるさと納税商品（価格が寄付金のため）',
     };
+  }
+
+  // ペット用商品は絶対除外（サプリ/プロテイン表記があっても人間用ではないため除外）
+  for (const pattern of PET_PRODUCT_PATTERNS) {
+    if (pattern.test(cleanedName)) {
+      return {
+        isSupplement: false,
+        score: -100,
+        reason: `絶対除外: ペット用商品（パターン: ${pattern})`,
+      };
+    }
   }
 
   // 明示的なサプリメント・プロテイン表記があるかチェック

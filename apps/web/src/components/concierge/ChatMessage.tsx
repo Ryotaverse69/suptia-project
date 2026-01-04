@@ -13,6 +13,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import {
   ThumbsUp,
   ThumbsDown,
@@ -25,6 +27,7 @@ import {
   Zap,
   FlaskConical,
   Shield,
+  ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -55,7 +58,7 @@ export function ChatMessage({
   onFeedback,
   showFeedback = true,
   characterName = "AI",
-  characterId = "navi",
+  characterId = "core",
 }: ChatMessageProps) {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<
@@ -161,10 +164,90 @@ export function ChatMessage({
               }}
             >
               <div
-                className="whitespace-pre-wrap text-[15px] leading-relaxed"
+                className="prose prose-sm max-w-none text-[15px] leading-relaxed"
                 style={{ color: appleWebColors.textPrimary }}
               >
-                {message.content}
+                <ReactMarkdown
+                  components={{
+                    // 見出し
+                    h1: ({ children }) => (
+                      <h1 className="text-lg font-bold mt-4 mb-2">
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-base font-bold mt-3 mb-2">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-[15px] font-bold mt-2 mb-1">
+                        {children}
+                      </h3>
+                    ),
+                    // 段落
+                    p: ({ children }) => (
+                      <p className="mb-2 last:mb-0">{children}</p>
+                    ),
+                    // 太字
+                    strong: ({ children }) => (
+                      <strong className="font-semibold">{children}</strong>
+                    ),
+                    // リスト
+                    ul: ({ children }) => (
+                      <ul className="list-disc list-inside mb-2 space-y-1">
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="list-decimal list-inside mb-2 space-y-1">
+                        {children}
+                      </ol>
+                    ),
+                    li: ({ children }) => <li>{children}</li>,
+                    // コードブロック
+                    code: ({ children }) => (
+                      <code
+                        className="px-1 py-0.5 rounded text-[13px]"
+                        style={{ backgroundColor: appleWebColors.borderSubtle }}
+                      >
+                        {children}
+                      </code>
+                    ),
+                    // リンク（すべて別ウィンドウで開く）
+                    a: ({ href, children }) => {
+                      // 内部リンク（/で始まる）
+                      if (href?.startsWith("/")) {
+                        return (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-0.5 font-medium underline underline-offset-2 hover:no-underline transition-all"
+                            style={{ color: systemColors.blue }}
+                          >
+                            {children}
+                            <ArrowUpRight size={14} strokeWidth={2.5} />
+                          </a>
+                        );
+                      }
+                      // 外部リンク
+                      return (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium underline underline-offset-2 hover:no-underline"
+                          style={{ color: systemColors.blue }}
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
               </div>
 
               {/* 5つの柱の推薦理由（折りたたみ可能） */}

@@ -15,6 +15,8 @@ import {
   BarChart3,
   ArrowRight,
   Zap,
+  MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import {
   systemColors,
@@ -91,14 +93,13 @@ const websiteSchema = {
 };
 
 export const metadata: Metadata = {
-  title:
-    "サプティアとは｜科学的エビデンスに基づくサプリメント比較プラットフォーム",
+  title: "サプティアとは｜AIコンシェルジュで「根拠」がわかるサプリ選び",
   description:
-    "サプティアは、科学的エビデンス・価格比較・安全性評価を統合した次世代サプリメント意思決定エンジンです。楽天・Amazon・Yahoo!の価格を一括比較し、あなたに最適なサプリメントを見つけます。",
+    "サプティアは、AIコンシェルジュに相談するだけで「なぜそれが良いか」まで説明してくれるAI意思決定エンジンです。価格・成分量・コスパ・エビデンス・安全性の5つの視点で、あなたの判断をサポートします。",
   openGraph: {
-    title: "サプティアとは｜次世代サプリメント比較プラットフォーム",
+    title: "サプティアとは｜AIコンシェルジュで根拠がわかるサプリ選び",
     description:
-      "科学的根拠、価格比較、安全性評価を統合。理由を理解して選べるサプリメント体験を提供します。",
+      "悩みを伝えるだけ。AIコンシェルジュが5つの視点で根拠と注意点を解説します。",
     type: "website",
   },
 };
@@ -143,12 +144,12 @@ export default function AboutPage() {
                 border: `1px solid ${appleWebColors.borderSubtle}`,
               }}
             >
-              <Building2 size={16} style={{ color: systemColors.blue }} />
+              <Sparkles size={16} style={{ color: systemColors.blue }} />
               <span
                 className="text-[13px] font-semibold"
                 style={{ color: appleWebColors.textPrimary }}
               >
-                次世代サプリメント比較プラットフォーム
+                AI × サプリメント比較
               </span>
             </div>
 
@@ -163,24 +164,25 @@ export default function AboutPage() {
               className="mx-auto mb-10 max-w-3xl text-[17px] lg:text-[22px] leading-relaxed"
               style={{ color: appleWebColors.textSecondary }}
             >
-              科学的エビデンス × 価格比較 × 安全性評価を統合した、
+              AIコンシェルジュに相談するだけ。
               <br className="hidden sm:block" />
               <span
                 className="font-semibold"
                 style={{ color: appleWebColors.textPrimary }}
               >
-                「理由を理解して選べる」
+                「なぜそれが良いか」まで説明してくれる
               </span>
-              AIサプリメント意思決定エンジンです。
+              AI意思決定エンジンです。
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/products"
+                href="/concierge"
                 className="group flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
                 style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
               >
-                今すぐ商品を探す
+                <MessageCircle size={18} />
+                AIに相談する
                 <ArrowRight
                   size={20}
                   className="transition-transform group-hover:translate-x-1"
@@ -315,15 +317,15 @@ export default function AboutPage() {
                 className="mb-4 text-[28px] lg:text-[40px] font-bold"
                 style={{ color: appleWebColors.textPrimary }}
               >
-                5つの柱で、意思決定を科学する
+                健康判断に必要な5つの視点
               </h2>
               <p
                 className="mx-auto max-w-2xl text-[17px]"
                 style={{ color: appleWebColors.textSecondary }}
               >
-                サプティアは、サプリメント選びに必要な5つの情報を、
+                AIコンシェルジュは、この5つの視点であなたの判断をサポート。
                 <br className="hidden sm:block" />
-                すべての商品に対して必ず表示します。
+                選んだ根拠と注意点を、わかりやすく解説します。
               </p>
             </div>
 
@@ -674,34 +676,33 @@ export default function AboutPage() {
               className="mb-4 text-[28px] lg:text-[40px] font-bold"
               style={{ color: appleWebColors.textPrimary }}
             >
-              さあ、あなたにぴったりの
-              <br />
-              サプリメントを見つけましょう
+              まずはAIに相談してみましょう
             </h2>
             <p
               className="mb-8 text-[17px]"
               style={{ color: appleWebColors.textSecondary }}
             >
-              科学的根拠に基づいた、安全でコスパの良いサプリメント選びを今すぐ始めましょう。
+              悩みを伝えるだけ。AIコンシェルジュが一緒に考えます。
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/products"
+                href="/concierge"
                 className="group flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
                 style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
               >
-                商品を探す
+                <MessageCircle size={18} />
+                AIに相談する
                 <ArrowRight
                   size={20}
                   className="transition-transform group-hover:translate-x-1"
                 />
               </Link>
               <Link
-                href="/how-to-use"
+                href="/diagnosis"
                 className={`group flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80 ${liquidGlassClasses.light}`}
                 style={{ color: appleWebColors.textPrimary }}
               >
-                使い方ガイドを見る
+                簡単診断から始める
                 <ArrowRight
                   size={20}
                   className="transition-transform group-hover:translate-x-1"

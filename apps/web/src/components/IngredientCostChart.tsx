@@ -156,23 +156,25 @@ export function CostPerServingCard({
         コストパフォーマンス
       </h4>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <p className="text-xs text-gray-600">1日あたり</p>
-          <p className="text-xl font-bold text-blue-600">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="text-center sm:text-left">
+          <p className="text-[10px] sm:text-xs text-gray-600">1日あたり</p>
+          <p className="text-lg sm:text-xl font-bold text-blue-600">
             ¥{dailyCost.toFixed(0)}
           </p>
         </div>
-        <div>
-          <p className="text-xs text-gray-600">30日分</p>
-          <p className="text-xl font-bold text-purple-600">
+        <div className="text-center sm:text-left">
+          <p className="text-[10px] sm:text-xs text-gray-600">30日分</p>
+          <p className="text-lg sm:text-xl font-bold text-purple-600">
             ¥{monthlyCost.toFixed(0)}
           </p>
         </div>
-        <div>
-          <p className="text-xs text-gray-600">主要成分/mg</p>
-          <p className="text-xl font-bold text-green-600">
-            ¥{costPerMajorIngredient.toFixed(3)}
+        <div className="text-center sm:text-left">
+          <p className="text-[10px] sm:text-xs text-gray-600 truncate">
+            主要成分/mg
+          </p>
+          <p className="text-lg sm:text-xl font-bold text-green-600">
+            ¥{costPerMajorIngredient.toFixed(2)}
           </p>
         </div>
       </div>

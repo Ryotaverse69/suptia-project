@@ -11,6 +11,21 @@ interface CharacterAvatars {
   [key: string]: string;
 }
 
+// 旧ID → 新ID のマッピング（DB移行前の互換性のため）
+const LEGACY_ID_MAP: Record<string, CharacterId> = {
+  navi: "core",
+  doc: "repha",
+  haru: "haku",
+};
+
+// 新ID → 旧ID のマッピング（逆引き）
+const NEW_TO_LEGACY_MAP: Record<CharacterId, string> = {
+  core: "navi",
+  mint: "mint",
+  repha: "doc",
+  haku: "haru",
+};
+
 // グローバルキャッシュ（コンポーネント間で共有）
 let avatarCache: CharacterAvatars | null = null;
 let fetchPromise: Promise<CharacterAvatars> | null = null;
@@ -70,8 +85,18 @@ export function useCharacterAvatars() {
   };
 
   // 特定キャラクターのアバターURLを取得
+  // 新ID（core, repha, haku）と旧ID（navi, doc, haru）の両方をチェック
   const getAvatarUrl = (characterId: CharacterId): string | undefined => {
-    return avatars[characterId];
+    // まず新IDで検索
+    if (avatars[characterId]) {
+      return avatars[characterId];
+    }
+    // なければ旧IDで検索（DB移行前の互換性）
+    const legacyId = NEW_TO_LEGACY_MAP[characterId];
+    if (legacyId && avatars[legacyId]) {
+      return avatars[legacyId];
+    }
+    return undefined;
   };
 
   return {

@@ -8,7 +8,10 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, X, Zap } from "lucide-react";
+import { ArrowRight, X, MessageCircle, Zap } from "lucide-react";
+import Image from "next/image";
+import { useCharacterAvatars } from "@/lib/concierge/useCharacterAvatars";
+import type { CharacterId } from "@/lib/concierge/types";
 import {
   systemColors,
   appleWebColors,
@@ -38,20 +41,61 @@ interface StickyCTAProps {
   href?: string;
   text?: string;
   subtext?: string;
+  buttonText?: string;
 }
+
+// キャラクターID一覧
+const CHARACTER_IDS: CharacterId[] = ["core", "mint", "repha", "haku"];
+
+// localStorage keys for dismiss state
+const DISMISS_COUNT_KEY = "suptia_sticky_cta_dismiss_count";
+const DISMISS_UNTIL_KEY = "suptia_sticky_cta_dismiss_until";
+const DISMISS_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export function StickyCTA({
   showAfterScroll = 0.3,
-  href = "/diagnosis",
-  text = "あなたに最適なサプリを診断",
-  subtext = "無料で今すぐ診断",
+  href = "/concierge",
+  text = "AIに相談する",
+  subtext = "理由・注意点まで一緒に整理",
+  buttonText = "相談してみる",
 }: StickyCTAProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [dismissCount, setDismissCount] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
   const { scrollYProgress } = useScroll();
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
+  const { getAvatarUrl } = useCharacterAvatars();
+
+  // Load dismiss state from localStorage on mount
+  useEffect(() => {
+    try {
+      const dismissUntil = localStorage.getItem(DISMISS_UNTIL_KEY);
+      const count = localStorage.getItem(DISMISS_COUNT_KEY);
+
+      // Check if 24-hour cooldown is active
+      if (dismissUntil) {
+        const until = parseInt(dismissUntil, 10);
+        if (Date.now() < until) {
+          // Still in cooldown period
+          setIsDismissed(true);
+        } else {
+          // Cooldown expired, reset
+          localStorage.removeItem(DISMISS_UNTIL_KEY);
+          localStorage.removeItem(DISMISS_COUNT_KEY);
+        }
+      }
+
+      if (count && !isDismissed) {
+        setDismissCount(parseInt(count, 10));
+      }
+    } catch {
+      // localStorage not available
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (value) => {
@@ -68,7 +112,20 @@ export function StickyCTA({
   const handleDismiss = useCallback(() => {
     setIsDismissed(true);
     setIsVisible(false);
-  }, []);
+    try {
+      const newCount = dismissCount + 1;
+      setDismissCount(newCount);
+      localStorage.setItem(DISMISS_COUNT_KEY, newCount.toString());
+
+      // After 2nd dismiss, set 24-hour cooldown
+      if (newCount >= 2) {
+        const until = Date.now() + DISMISS_DURATION_MS;
+        localStorage.setItem(DISMISS_UNTIL_KEY, until.toString());
+      }
+    } catch {
+      // localStorage not available
+    }
+  }, [dismissCount]);
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -101,17 +158,49 @@ export function StickyCTA({
                 <div className="flex items-center justify-between gap-4">
                   {/* Left Content */}
                   <div className="flex items-center gap-3 sm:gap-4">
-                    {/* Icon */}
-                    <motion.div
-                      className="hidden sm:flex w-12 h-12 rounded-2xl items-center justify-center"
-                      style={{
-                        background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
-                      }}
-                      animate={isMobile ? {} : { scale: isHovered ? 1.05 : 1 }}
-                      transition={{ duration: 0.3, ease: appleEase }}
-                    >
-                      <Zap className="w-6 h-6 text-white" aria-hidden="true" />
-                    </motion.div>
+                    {/* 4人のアバター画像 */}
+                    <div className="hidden sm:flex items-center -space-x-2">
+                      {CHARACTER_IDS.map((charId, index) => {
+                        const avatarUrl = getAvatarUrl(charId);
+                        return (
+                          <motion.div
+                            key={charId}
+                            className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md"
+                            style={{
+                              zIndex: CHARACTER_IDS.length - index,
+                              background: avatarUrl
+                                ? undefined
+                                : `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                            }}
+                            animate={
+                              isMobile ? {} : { scale: isHovered ? 1.05 : 1 }
+                            }
+                            transition={{
+                              duration: 0.3,
+                              ease: appleEase,
+                              delay: index * 0.05,
+                            }}
+                          >
+                            {avatarUrl ? (
+                              <Image
+                                src={avatarUrl}
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <MessageCircle
+                                  className="w-4 h-4 text-white"
+                                  aria-hidden="true"
+                                />
+                              </div>
+                            )}
+                          </motion.div>
+                        );
+                      })}
+                    </div>
                     <div>
                       <p
                         className={`${typography.headline} leading-tight`}
@@ -131,25 +220,37 @@ export function StickyCTA({
                   {/* Right Content */}
                   <div className="flex items-center gap-2">
                     <Link href={href}>
-                      <motion.button
-                        className="relative px-5 sm:px-6 py-2.5 sm:py-3 rounded-full min-h-[44px] overflow-hidden"
-                        style={{
-                          background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
-                        }}
-                        whileHover={isMobile ? {} : { scale: 1.03 }}
-                        whileTap={isMobile ? {} : { scale: 0.97 }}
-                        transition={subtleSpring}
+                      <div
+                        className={`glow-wrapper ${isButtonHovered ? "glow-active" : ""}`}
+                        onMouseEnter={() => setIsButtonHovered(true)}
+                        onMouseLeave={() => setIsButtonHovered(false)}
                       >
-                        <span className="relative z-10 flex items-center gap-2 font-semibold text-[15px] text-white">
-                          診断する
-                          <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                        </span>
-                      </motion.button>
+                        {/* グローレイヤー（実際のdiv要素） */}
+                        <div className="glow-layer" />
+                        {/* ボタン本体 */}
+                        <div className="glow-button-inner-sm">
+                          <span className="relative z-10 flex items-center gap-2 font-semibold text-[15px]">
+                            <MessageCircle
+                              className="w-4 h-4"
+                              aria-hidden="true"
+                            />
+                            {buttonText}
+                            <ArrowRight
+                              className="w-4 h-4"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        </div>
+                      </div>
                     </Link>
 
-                    {/* Dismiss Button */}
+                    {/* Dismiss Button - smaller after first dismiss */}
                     <motion.button
-                      className="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center"
+                      className={`rounded-full flex items-center justify-center ${
+                        dismissCount > 0
+                          ? "p-1.5 min-w-[32px] min-h-[32px] opacity-50"
+                          : "p-2 min-w-[44px] min-h-[44px]"
+                      }`}
                       style={{ backgroundColor: "transparent" }}
                       onClick={handleDismiss}
                       whileHover={
@@ -157,6 +258,7 @@ export function StickyCTA({
                           ? {}
                           : {
                               backgroundColor: appleWebColors.sectionBackground,
+                              opacity: 1,
                             }
                       }
                       whileTap={isMobile ? {} : { scale: 0.95 }}
@@ -164,7 +266,7 @@ export function StickyCTA({
                       aria-label="閉じる"
                     >
                       <X
-                        className="w-5 h-5"
+                        className={dismissCount > 0 ? "w-4 h-4" : "w-5 h-5"}
                         style={{ color: appleWebColors.textSecondary }}
                         aria-hidden="true"
                       />

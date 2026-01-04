@@ -14,6 +14,9 @@ import {
   Trophy,
   Medal,
   Award,
+  MessageSquare,
+  Sparkles,
+  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -88,6 +91,11 @@ export default function DiagnosisHistoryPage() {
   };
 
   const buildResultsUrl = (item: any) => {
+    // AIコンシェルジュの場合はコンシェルジュページへ
+    if (item.diagnosisType === "concierge" && item.sessionId) {
+      return `/concierge?session=${item.sessionId}`;
+    }
+
     const params = new URLSearchParams();
     if (item.diagnosisType) params.set("type", item.diagnosisType);
     if (item.goals?.length) params.set("goals", item.goals.join(","));
@@ -112,6 +120,30 @@ export default function DiagnosisHistoryPage() {
     if (item.currentSupplements?.length)
       params.set("currentSupplements", item.currentSupplements.join(","));
     return `/diagnosis/results?${params.toString()}`;
+  };
+
+  // 診断タイプに応じたスタイルを取得
+  const getDiagnosisTypeStyle = (type: string) => {
+    switch (type) {
+      case "concierge":
+        return {
+          label: "AIコンシェルジュ",
+          background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+          icon: Sparkles,
+        };
+      case "detailed":
+        return {
+          label: "詳細診断",
+          background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+          icon: ClipboardCheck,
+        };
+      default:
+        return {
+          label: "かんたん診断",
+          background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
+          icon: ClipboardCheck,
+        };
+    }
   };
 
   return (
@@ -274,285 +306,398 @@ export default function DiagnosisHistoryPage() {
                 {history.length}件の診断履歴
               </p>
 
-              {history.map((item) => (
-                <div
-                  key={item.id}
-                  className={`group relative overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
-                >
-                  {/* Gradient accent bar */}
+              {history.map((item) => {
+                const typeStyle = getDiagnosisTypeStyle(item.diagnosisType);
+                const TypeIcon = typeStyle.icon;
+                const isConcierge = item.diagnosisType === "concierge";
+
+                return (
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-1"
-                    style={{
-                      background: `linear-gradient(180deg, ${systemColors.purple} 0%, ${systemColors.pink} 50%, ${systemColors.orange} 100%)`,
-                    }}
-                  />
+                    key={item.id}
+                    className={`group relative overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1`}
+                  >
+                    {/* Gradient accent bar */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-1"
+                      style={{
+                        background: isConcierge
+                          ? `linear-gradient(180deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`
+                          : `linear-gradient(180deg, ${systemColors.purple} 0%, ${systemColors.pink} 50%, ${systemColors.orange} 100%)`,
+                      }}
+                    />
 
-                  <div className="p-5 pl-6">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-11 h-11 rounded-xl flex items-center justify-center"
-                          style={{
-                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
-                          }}
-                        >
-                          <ClipboardCheck className="text-white" size={20} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white"
-                              style={{
-                                background:
-                                  item.diagnosisType === "detailed"
-                                    ? `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`
-                                    : `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.teal} 100%)`,
-                              }}
-                            >
-                              {item.diagnosisType === "detailed"
-                                ? "詳細診断"
-                                : "かんたん診断"}
-                            </span>
-                          </div>
+                    <div className="p-5 pl-6">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-4 mb-4">
+                        <div className="flex items-center gap-3">
                           <div
-                            className="flex items-center gap-1.5 text-[13px]"
-                            style={{ color: appleWebColors.textTertiary }}
-                          >
-                            <Calendar size={12} />
-                            <span>{formatDate(item.createdAt)}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          disabled={deletingId === item.id}
-                          className="p-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
-                          style={{ color: appleWebColors.textTertiary }}
-                          title="削除"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                        <Link
-                          href={buildResultsUrl(item)}
-                          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all duration-200 min-h-[44px]"
-                          style={{
-                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
-                          }}
-                        >
-                          結果を見る
-                          <ChevronRight size={14} />
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Goals */}
-                    <div className="mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Target
-                          size={12}
-                          style={{ color: systemColors.blue }}
-                        />
-                        <span
-                          className="text-[11px] font-semibold uppercase tracking-wider"
-                          style={{ color: appleWebColors.textTertiary }}
-                        >
-                          健康目標
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {item.goals.map((goal) => (
-                          <span
-                            key={goal}
-                            className="px-2.5 py-1.5 rounded-lg text-[12px] font-medium"
+                            className="w-11 h-11 rounded-xl flex items-center justify-center"
                             style={{
-                              backgroundColor: `${systemColors.blue}10`,
-                              color: systemColors.blue,
+                              background: typeStyle.background,
                             }}
                           >
-                            {HEALTH_GOAL_LABELS[goal] || goal}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Budget & Priority Cards */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      {item.budget && (
-                        <div
-                          className="flex items-center gap-3 p-3 rounded-xl"
-                          style={{ backgroundColor: `${systemColors.green}10` }}
-                        >
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: systemColors.green }}
-                          >
-                            <DollarSign size={16} className="text-white" />
+                            <TypeIcon className="text-white" size={20} />
                           </div>
                           <div>
-                            <p
-                              className="text-[11px] font-medium"
-                              style={{ color: systemColors.green }}
-                            >
-                              1日の予算
-                            </p>
-                            <p
-                              className="text-[15px] font-bold"
-                              style={{ color: appleWebColors.textPrimary }}
-                            >
-                              ¥{item.budget.toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      {item.priority && (
-                        <div
-                          className="flex items-center gap-3 p-3 rounded-xl"
-                          style={{
-                            backgroundColor: `${systemColors.purple}10`,
-                          }}
-                        >
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: systemColors.purple }}
-                          >
-                            <Shield size={16} className="text-white" />
-                          </div>
-                          <div>
-                            <p
-                              className="text-[11px] font-medium"
-                              style={{ color: systemColors.purple }}
-                            >
-                              優先事項
-                            </p>
-                            <p
-                              className="text-[13px] font-bold"
-                              style={{ color: appleWebColors.textPrimary }}
-                            >
-                              {PRIORITY_LABELS[item.priority] || item.priority}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Conditions */}
-                    {item.conditions &&
-                      item.conditions.length > 0 &&
-                      item.conditions[0] !== "none" && (
-                        <div
-                          className="mb-4 p-3 rounded-xl"
-                          style={{
-                            backgroundColor: `${systemColors.orange}10`,
-                          }}
-                        >
-                          <p
-                            className="text-[11px] font-semibold mb-2"
-                            style={{ color: systemColors.orange }}
-                          >
-                            考慮した健康状態
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {item.conditions.map((condition) => (
+                            <div className="flex items-center gap-2 mb-1">
                               <span
-                                key={condition}
-                                className="px-2 py-1 rounded-lg text-[11px] font-medium"
+                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white"
                                 style={{
-                                  backgroundColor: "rgba(255, 255, 255, 0.8)",
-                                  color: systemColors.orange,
+                                  background: typeStyle.background,
                                 }}
                               >
-                                {HEALTH_CONDITION_LABELS[condition] ||
-                                  condition}
+                                {typeStyle.label}
+                              </span>
+                              {isConcierge && item.characterName && (
+                                <span
+                                  className="px-2 py-0.5 rounded-md text-[11px] font-medium"
+                                  style={{
+                                    backgroundColor: `${systemColors.green}15`,
+                                    color: systemColors.green,
+                                  }}
+                                >
+                                  {item.characterName}
+                                </span>
+                              )}
+                            </div>
+                            <div
+                              className="flex items-center gap-1.5 text-[13px]"
+                              style={{ color: appleWebColors.textTertiary }}
+                            >
+                              <Calendar size={12} />
+                              <span>{formatDate(item.createdAt)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            disabled={deletingId === item.id}
+                            className="p-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                            style={{ color: appleWebColors.textTertiary }}
+                            title="削除"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                          <Link
+                            href={buildResultsUrl(item)}
+                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all duration-200 min-h-[44px]"
+                            style={{
+                              background: isConcierge
+                                ? `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`
+                                : `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                            }}
+                          >
+                            {isConcierge ? "会話を見る" : "結果を見る"}
+                            {isConcierge ? (
+                              <ArrowUpRight size={14} />
+                            ) : (
+                              <ChevronRight size={14} />
+                            )}
+                          </Link>
+                        </div>
+                      </div>
+
+                      {/* AIコンシェルジュ: 質問と回答要約 */}
+                      {isConcierge && (item.query || item.responseSummary) && (
+                        <div
+                          className="mb-4 p-4 rounded-xl"
+                          style={{ backgroundColor: `${systemColors.green}08` }}
+                        >
+                          {item.query && (
+                            <div className="mb-3">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <MessageSquare
+                                  size={12}
+                                  style={{ color: systemColors.green }}
+                                />
+                                <span
+                                  className="text-[11px] font-semibold"
+                                  style={{ color: systemColors.green }}
+                                >
+                                  質問
+                                </span>
+                              </div>
+                              <p
+                                className="text-[13px] leading-relaxed"
+                                style={{ color: appleWebColors.textPrimary }}
+                              >
+                                {item.query}
+                              </p>
+                            </div>
+                          )}
+                          {item.responseSummary && (
+                            <div>
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Sparkles
+                                  size={12}
+                                  style={{ color: systemColors.teal }}
+                                />
+                                <span
+                                  className="text-[11px] font-semibold"
+                                  style={{ color: systemColors.teal }}
+                                >
+                                  回答要約
+                                </span>
+                              </div>
+                              <p
+                                className="text-[13px] leading-relaxed"
+                                style={{ color: appleWebColors.textSecondary }}
+                              >
+                                {item.responseSummary}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Goals - 通常診断とAIコンシェルジュで表示を分ける */}
+                      {!isConcierge && item.goals && item.goals.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Target
+                              size={12}
+                              style={{ color: systemColors.blue }}
+                            />
+                            <span
+                              className="text-[11px] font-semibold uppercase tracking-wider"
+                              style={{ color: appleWebColors.textTertiary }}
+                            >
+                              健康目標
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {item.goals.map((goal) => (
+                              <span
+                                key={goal}
+                                className="px-2.5 py-1.5 rounded-lg text-[12px] font-medium"
+                                style={{
+                                  backgroundColor: `${systemColors.blue}10`,
+                                  color: systemColors.blue,
+                                }}
+                              >
+                                {HEALTH_GOAL_LABELS[goal] || goal}
                               </span>
                             ))}
                           </div>
                         </div>
                       )}
 
-                    {/* Top Recommendations */}
-                    {item.topRecommendations &&
-                      item.topRecommendations.length > 0 && (
-                        <div
-                          className="p-4 rounded-xl"
-                          style={{
-                            backgroundColor: appleWebColors.sectionBackground,
-                          }}
-                        >
-                          <div className="flex items-center gap-2 mb-3">
-                            <Trophy
-                              size={14}
-                              style={{ color: systemColors.yellow }}
+                      {/* AIコンシェルジュ: キーワードタグ */}
+                      {isConcierge && item.goals && item.goals.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Target
+                              size={12}
+                              style={{ color: systemColors.green }}
                             />
                             <span
-                              className="text-[12px] font-bold"
-                              style={{ color: appleWebColors.textSecondary }}
+                              className="text-[11px] font-semibold uppercase tracking-wider"
+                              style={{ color: appleWebColors.textTertiary }}
                             >
-                              おすすめTOP3
+                              関連キーワード
                             </span>
                           </div>
-                          <div className="space-y-2">
-                            {item.topRecommendations
-                              .slice(0, 3)
-                              .map((rec, idx) => {
-                                const RankIcon =
-                                  idx === 0
-                                    ? Trophy
-                                    : idx === 1
-                                      ? Medal
-                                      : Award;
-                                const rankBg =
-                                  idx === 0
-                                    ? `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`
-                                    : idx === 1
-                                      ? `linear-gradient(135deg, ${systemColors.gray[2]} 0%, ${systemColors.gray[3]} 100%)`
-                                      : `linear-gradient(135deg, ${systemColors.orange} 0%, ${systemColors.red} 100%)`;
-                                return (
-                                  <div
-                                    key={rec.productId}
-                                    className="flex items-center gap-2.5 p-2 rounded-lg"
-                                    style={{
-                                      backgroundColor:
-                                        "rgba(255, 255, 255, 0.8)",
-                                    }}
-                                  >
-                                    <div
-                                      className="w-7 h-7 rounded-lg flex items-center justify-center"
-                                      style={{ background: rankBg }}
-                                    >
-                                      <RankIcon
-                                        size={14}
-                                        className="text-white"
-                                      />
-                                    </div>
-                                    <span
-                                      className="text-[13px] font-medium flex-1"
-                                      style={{
-                                        color: appleWebColors.textPrimary,
-                                      }}
-                                    >
-                                      {rec.productName}
-                                    </span>
-                                    <span
-                                      className="text-[11px]"
-                                      style={{
-                                        color: appleWebColors.textTertiary,
-                                      }}
-                                    >
-                                      #{idx + 1}
-                                    </span>
-                                  </div>
-                                );
-                              })}
+                          <div className="flex flex-wrap gap-2">
+                            {item.goals.map((goal) => (
+                              <span
+                                key={goal}
+                                className="px-2.5 py-1.5 rounded-lg text-[12px] font-medium"
+                                style={{
+                                  backgroundColor: `${systemColors.green}10`,
+                                  color: systemColors.green,
+                                }}
+                              >
+                                {goal}
+                              </span>
+                            ))}
                           </div>
                         </div>
                       )}
+
+                      {/* Budget & Priority Cards - 通常診断のみ */}
+                      {!isConcierge && (item.budget || item.priority) && (
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          {item.budget && (
+                            <div
+                              className="flex items-center gap-3 p-3 rounded-xl"
+                              style={{
+                                backgroundColor: `${systemColors.green}10`,
+                              }}
+                            >
+                              <div
+                                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                style={{ backgroundColor: systemColors.green }}
+                              >
+                                <DollarSign size={16} className="text-white" />
+                              </div>
+                              <div>
+                                <p
+                                  className="text-[11px] font-medium"
+                                  style={{ color: systemColors.green }}
+                                >
+                                  1日の予算
+                                </p>
+                                <p
+                                  className="text-[15px] font-bold"
+                                  style={{ color: appleWebColors.textPrimary }}
+                                >
+                                  ¥{item.budget.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                          {item.priority && (
+                            <div
+                              className="flex items-center gap-3 p-3 rounded-xl"
+                              style={{
+                                backgroundColor: `${systemColors.purple}10`,
+                              }}
+                            >
+                              <div
+                                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                style={{ backgroundColor: systemColors.purple }}
+                              >
+                                <Shield size={16} className="text-white" />
+                              </div>
+                              <div>
+                                <p
+                                  className="text-[11px] font-medium"
+                                  style={{ color: systemColors.purple }}
+                                >
+                                  優先事項
+                                </p>
+                                <p
+                                  className="text-[13px] font-bold"
+                                  style={{ color: appleWebColors.textPrimary }}
+                                >
+                                  {PRIORITY_LABELS[item.priority] ||
+                                    item.priority}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Conditions - 通常診断のみ */}
+                      {!isConcierge &&
+                        item.conditions &&
+                        item.conditions.length > 0 &&
+                        item.conditions[0] !== "none" && (
+                          <div
+                            className="mb-4 p-3 rounded-xl"
+                            style={{
+                              backgroundColor: `${systemColors.orange}10`,
+                            }}
+                          >
+                            <p
+                              className="text-[11px] font-semibold mb-2"
+                              style={{ color: systemColors.orange }}
+                            >
+                              考慮した健康状態
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {item.conditions.map((condition) => (
+                                <span
+                                  key={condition}
+                                  className="px-2 py-1 rounded-lg text-[11px] font-medium"
+                                  style={{
+                                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                    color: systemColors.orange,
+                                  }}
+                                >
+                                  {HEALTH_CONDITION_LABELS[condition] ||
+                                    condition}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Top Recommendations */}
+                      {item.topRecommendations &&
+                        item.topRecommendations.length > 0 && (
+                          <div
+                            className="p-4 rounded-xl"
+                            style={{
+                              backgroundColor: appleWebColors.sectionBackground,
+                            }}
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <Trophy
+                                size={14}
+                                style={{ color: systemColors.yellow }}
+                              />
+                              <span
+                                className="text-[12px] font-bold"
+                                style={{ color: appleWebColors.textSecondary }}
+                              >
+                                おすすめTOP3
+                              </span>
+                            </div>
+                            <div className="space-y-2">
+                              {item.topRecommendations
+                                .slice(0, 3)
+                                .map((rec, idx) => {
+                                  const RankIcon =
+                                    idx === 0
+                                      ? Trophy
+                                      : idx === 1
+                                        ? Medal
+                                        : Award;
+                                  const rankBg =
+                                    idx === 0
+                                      ? `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`
+                                      : idx === 1
+                                        ? `linear-gradient(135deg, ${systemColors.gray[2]} 0%, ${systemColors.gray[3]} 100%)`
+                                        : `linear-gradient(135deg, ${systemColors.orange} 0%, ${systemColors.red} 100%)`;
+                                  return (
+                                    <div
+                                      key={rec.productId}
+                                      className="flex items-center gap-2.5 p-2 rounded-lg"
+                                      style={{
+                                        backgroundColor:
+                                          "rgba(255, 255, 255, 0.8)",
+                                      }}
+                                    >
+                                      <div
+                                        className="w-7 h-7 rounded-lg flex items-center justify-center"
+                                        style={{ background: rankBg }}
+                                      >
+                                        <RankIcon
+                                          size={14}
+                                          className="text-white"
+                                        />
+                                      </div>
+                                      <span
+                                        className="text-[13px] font-medium flex-1"
+                                        style={{
+                                          color: appleWebColors.textPrimary,
+                                        }}
+                                      >
+                                        {rec.productName}
+                                      </span>
+                                      <span
+                                        className="text-[11px]"
+                                        style={{
+                                          color: appleWebColors.textTertiary,
+                                        }}
+                                      >
+                                        #{idx + 1}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

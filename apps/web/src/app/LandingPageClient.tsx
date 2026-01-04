@@ -107,9 +107,10 @@ export function LandingPageClient({
       {/* Sticky CTA */}
       <StickyCTA
         showAfterScroll={0.3}
-        href="/diagnosis"
-        text="無料で診断する"
-        subtext="3分で完了"
+        href="/concierge"
+        text="AIに相談する"
+        subtext="理由・注意点まで一緒に整理"
+        buttonText="相談してみる"
       />
     </div>
   );

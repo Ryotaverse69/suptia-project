@@ -142,20 +142,20 @@ export function TierEvaluationDetail({
         </div>
 
         {/* Overall Rank Card */}
-        <div className="mb-8 relative group overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 shadow-lg">
+        <div className="mb-6 sm:mb-8 relative group overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 shadow-lg">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Trophy className="w-32 h-32 text-purple-600 rotate-12" />
+            <Trophy className="w-20 sm:w-32 h-20 sm:h-32 text-purple-600 rotate-12" />
           </div>
-          <div className="p-8 relative z-10">
+          <div className="p-5 sm:p-8 relative z-10">
             <div className="flex items-center justify-center flex-col">
-              <span className="text-xs font-bold text-purple-600 tracking-wider uppercase mb-4 flex items-center gap-2">
+              <span className="text-[10px] sm:text-xs font-bold text-purple-600 tracking-wider uppercase mb-3 sm:mb-4 flex items-center gap-2">
                 <span className="flex h-2 w-2 rounded-full bg-purple-500 animate-pulse" />
                 総合評価ランク
               </span>
-              <div className="text-[8rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-fuchsia-500 to-indigo-600 drop-shadow-2xl mb-4">
+              <div className="text-[5rem] sm:text-[8rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-fuchsia-500 to-indigo-600 drop-shadow-2xl mb-3 sm:mb-4">
                 {overallRank}
               </div>
-              <div className="text-sm text-slate-600 font-medium">
+              <div className="text-xs sm:text-sm text-slate-600 font-medium">
                 全5項目を総合的に評価
               </div>
             </div>

@@ -521,32 +521,40 @@ export function RdaFulfillmentModal({
       </div>
 
       {/* 統計カード */}
-      <div className="p-6 -mt-4">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 mb-6">
-          <div className="grid grid-cols-4 gap-4">
+      <div className="p-4 sm:p-6 -mt-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-3 sm:p-4 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600">
                 {stats.avgFulfillment}%
               </div>
-              <div className="text-xs text-slate-500 mt-1">平均充足率</div>
+              <div className="text-[10px] sm:text-xs text-slate-500 mt-1">
+                平均充足率
+              </div>
             </div>
-            <div className="text-center border-l border-slate-200">
-              <div className="text-3xl font-bold text-emerald-600">
+            <div className="text-center sm:border-l border-slate-200">
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-600">
                 {stats.optimal}
               </div>
-              <div className="text-xs text-slate-500 mt-1">適正範囲</div>
+              <div className="text-[10px] sm:text-xs text-slate-500 mt-1">
+                適正範囲
+              </div>
             </div>
-            <div className="text-center border-l border-slate-200">
-              <div className="text-3xl font-bold text-amber-600">
+            <div className="text-center sm:border-l border-slate-200">
+              <div className="text-2xl sm:text-3xl font-bold text-amber-600">
                 {stats.low}
               </div>
-              <div className="text-xs text-slate-500 mt-1">不足気味</div>
+              <div className="text-[10px] sm:text-xs text-slate-500 mt-1">
+                不足気味
+              </div>
             </div>
-            <div className="text-center border-l border-slate-200">
-              <div className="text-3xl font-bold text-rose-600">
+            <div className="text-center sm:border-l border-slate-200">
+              <div className="text-2xl sm:text-3xl font-bold text-rose-600">
                 {stats.high}
               </div>
-              <div className="text-xs text-slate-500 mt-1">過剰注意</div>
+              <div className="text-[10px] sm:text-xs text-slate-500 mt-1">
+                過剰注意
+              </div>
             </div>
           </div>
         </div>
@@ -666,23 +674,31 @@ export function RdaFulfillmentModal({
                       </div>
 
                       {/* 詳細情報 */}
-                      <div className="grid grid-cols-3 gap-3 text-xs">
+                      <div
+                        className={`grid gap-2 sm:gap-3 text-xs ${ing.ulValue ? "grid-cols-3" : "grid-cols-2"}`}
+                      >
                         <div className="bg-slate-50 rounded-lg p-2 text-center">
-                          <div className="text-slate-500 mb-0.5">この商品</div>
-                          <div className="font-bold text-slate-800">
+                          <div className="text-slate-500 text-[10px] sm:text-xs mb-0.5">
+                            この商品
+                          </div>
+                          <div className="font-bold text-slate-800 text-[11px] sm:text-xs">
                             {formatValue(ing.amount, ing.unit)}
                           </div>
                         </div>
                         <div className="bg-blue-50 rounded-lg p-2 text-center">
-                          <div className="text-blue-500 mb-0.5">推奨量</div>
-                          <div className="font-bold text-blue-800">
+                          <div className="text-blue-500 text-[10px] sm:text-xs mb-0.5">
+                            推奨量
+                          </div>
+                          <div className="font-bold text-blue-800 text-[11px] sm:text-xs">
                             {formatValue(ing.rdaValue, ing.unit)}
                           </div>
                         </div>
                         {ing.ulValue && (
                           <div className="bg-orange-50 rounded-lg p-2 text-center">
-                            <div className="text-orange-500 mb-0.5">上限量</div>
-                            <div className="font-bold text-orange-800">
+                            <div className="text-orange-500 text-[10px] sm:text-xs mb-0.5">
+                              上限量
+                            </div>
+                            <div className="font-bold text-orange-800 text-[11px] sm:text-xs">
                               {formatValue(ing.ulValue, ing.unit)}
                             </div>
                           </div>

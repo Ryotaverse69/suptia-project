@@ -11,6 +11,7 @@ import {
   Clock,
   ChevronRight,
   Heart,
+  MessageCircle,
 } from "lucide-react";
 import {
   systemColors,
@@ -354,8 +355,24 @@ export default function ImmunityGuidePage() {
         {/* 関連ガイド */}
         <section>
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-6">関連ガイド</h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <h3 className="text-2xl font-bold mb-6">次のステップ</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Link
+                href="/concierge"
+                className="group p-5 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-sm rounded-xl hover:from-blue-500/30 hover:to-indigo-500/30 transition-all border border-blue-400/20"
+              >
+                <MessageCircle size={20} className="mb-2 text-blue-300" />
+                <h4 className="font-bold mb-2 group-hover:text-blue-300 transition-colors">
+                  AIに相談する
+                </h4>
+                <p className="text-gray-300 text-sm">
+                  悩みを伝えて最適な提案を受ける
+                </p>
+                <ArrowRight
+                  size={18}
+                  className="mt-3 text-blue-400 group-hover:text-white group-hover:translate-x-1 transition-all"
+                />
+              </Link>
               <Link
                 href="/guide/purposes"
                 className="group p-5 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all"

@@ -8,6 +8,7 @@ import {
   Zap,
   Link as LinkIcon,
   Users,
+  MessageCircle,
 } from "lucide-react";
 import {
   systemColors,
@@ -364,7 +365,7 @@ export default function AudiencesPage() {
           <div
             className="rounded-[24px] p-8 sm:p-12 border"
             style={{
-              background: `linear-gradient(135deg, ${systemColors.purple}10 0%, ${systemColors.blue}10 100%)`,
+              background: `linear-gradient(135deg, ${systemColors.blue}10 0%, ${systemColors.indigo}10 100%)`,
               borderColor: appleWebColors.borderSubtle,
             }}
           >
@@ -378,33 +379,35 @@ export default function AudiencesPage() {
               className="text-[17px] mb-8 max-w-2xl mx-auto leading-relaxed"
               style={{ color: appleWebColors.textSecondary }}
             >
-              上記の対象者別ガイドから、あなたに最適なカテゴリーを選択してください。
-              科学的根拠に基づいた安全で効果的なサプリメント選びをサポートします。
+              AIコンシェルジュに相談すれば、あなたの状況に合わせた最適なサプリメントを提案。
+              <br className="hidden sm:block" />
+              なぜおすすめなのか、理由と注意点まで解説します。
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/guide/purposes"
+                href="/concierge"
                 className="group flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition-all hover:scale-[1.02] min-h-[48px]"
                 style={{
-                  background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.blue} 100%)`,
-                  boxShadow: `0 4px 16px ${systemColors.purple}40`,
+                  background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                  boxShadow: `0 4px 16px ${systemColors.blue}40`,
                 }}
               >
-                目的別ガイドも見る
+                <MessageCircle size={18} />
+                AIに相談する
                 <ArrowRight
                   size={18}
                   className="transition-transform group-hover:translate-x-1"
                 />
               </Link>
               <Link
-                href="/ingredients"
+                href="/guide/purposes"
                 className={`group flex items-center gap-2 rounded-full px-8 py-4 font-semibold transition-all hover:scale-[1.02] min-h-[48px] border ${liquidGlassClasses.light}`}
                 style={{
                   borderColor: appleWebColors.borderSubtle,
                   color: appleWebColors.textPrimary,
                 }}
               >
-                成分一覧を見る
+                目的別ガイドも見る
                 <ArrowRight
                   size={18}
                   className="transition-transform group-hover:translate-x-1"

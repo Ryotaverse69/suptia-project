@@ -22,7 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
  */
 export interface DiagnosisHistoryItem {
   id: string;
-  diagnosisType: "simple" | "detailed";
+  diagnosisType: "simple" | "detailed" | "concierge";
   goals: string[];
   secondaryGoals?: string[];
   conditions: string[];
@@ -45,6 +45,12 @@ export interface DiagnosisHistoryItem {
     productName: string;
     rank: number;
   }>;
+  // AIコンシェルジュ用フィールド
+  sessionId?: string;
+  characterId?: string;
+  characterName?: string;
+  query?: string;
+  responseSummary?: string;
   createdAt: string;
 }
 

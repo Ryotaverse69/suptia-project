@@ -17,6 +17,8 @@ import {
   TrendingUp,
   ChevronRight,
   Info,
+  MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import {
   generateHowToStructuredData,
@@ -33,14 +35,12 @@ import {
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://suptia.com";
 
 export const metadata: Metadata = {
-  title:
-    "サプティアの使い方｜初心者でも簡単3ステップで最適なサプリメントを見つける方法",
+  title: "サプティアの使い方｜AIに相談→理由を理解→安心して選べる",
   description:
-    "サプティアの使い方を初心者にも分かりやすく解説。検索→比較→購入の3ステップで、科学的根拠に基づいた最適なサプリメントを見つけられます。フィルター機能やランクシステムの活用方法も詳しく説明します。",
+    "サプティアの使い方を初心者にも分かりやすく解説。AIコンシェルジュに悩みを伝えるだけ。健康判断に必要な5つの視点で、選んだ根拠と注意点を解説します。",
   openGraph: {
-    title: "サプティアの使い方｜簡単3ステップガイド",
-    description:
-      "初めての方でも簡単にサプリメントを比較・選択できるステップバイステップガイドです。",
+    title: "サプティアの使い方｜AIに相談→理由を理解→安心して選べる",
+    description: "悩みを伝えるだけ。AIコンシェルジュが一緒に考えます。",
     type: "website",
   },
 };
@@ -48,16 +48,16 @@ export const metadata: Metadata = {
 // HowToステップデータ
 const howToSteps = [
   {
-    name: "検索する",
-    text: "成分名（ビタミンC、亜鉛など）や目的（美肌、疲労回復など）でサプリメントを検索します。日本語・英語の両方に対応しており、部分一致でも検索できます。",
+    name: "AIに相談",
+    text: "悩みを伝えるだけ。AIコンシェルジュが、あなたの判断スタイルに合わせて一緒に考えます。",
   },
   {
-    name: "比較する",
-    text: "価格、成分量、コスパ、エビデンス、安全性の5つの指標をS〜Dのランクで比較します。フィルター機能で絞り込み、最適な商品を見つけられます。",
+    name: "理由を理解",
+    text: "なぜおすすめなのか、理由がわかる。健康判断に必要な5つの視点で、選んだ根拠と注意点を解説します。",
   },
   {
-    name: "購入する",
-    text: "楽天市場・Amazon・Yahoo!などの主要ECサイトの価格を自動比較。最安値を確認して、ワンクリックで購入ページへ移動できます。",
+    name: "安心して選べる",
+    text: "後悔しない選択を。理由がわかるから安心できる。最安値も自動で見つけて比較できます。",
   },
 ];
 
@@ -181,18 +181,19 @@ export default function HowToUsePage() {
               className="mx-auto mb-10 max-w-3xl text-[17px] lg:text-[22px] leading-relaxed"
               style={{ color: appleWebColors.textSecondary }}
             >
-              たった3ステップで、あなたにぴったりのサプリメントが見つかります。
+              悩みを伝えるだけ。AIコンシェルジュが、
               <br className="hidden sm:block" />
-              科学的根拠・価格・安全性を比較して、納得の選択を。
+              あなたの判断スタイルに合わせて一緒に考えます。
             </p>
 
             <div>
               <Link
-                href="/products"
+                href="/concierge"
                 className="group inline-flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
                 style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
               >
-                今すぐ商品を探す
+                <MessageCircle size={18} />
+                AIに相談する
                 <ArrowRight
                   size={20}
                   className="transition-transform group-hover:translate-x-1"
@@ -209,26 +210,25 @@ export default function HowToUsePage() {
               {[
                 {
                   step: "STEP 1",
-                  icon: Search,
-                  title: "検索する",
+                  icon: MessageCircle,
+                  title: "AIに相談",
                   description:
-                    "成分名や目的から、欲しいサプリメントを検索します。",
+                    "悩みを伝えるだけ。あなたの判断スタイルに合わせて一緒に考えます。",
                   color: systemColors.blue,
                 },
                 {
                   step: "STEP 2",
-                  icon: Filter,
-                  title: "比較する",
-                  description:
-                    "フィルターやランクで絞り込み、最適な商品を見つけます。",
-                  color: systemColors.purple,
+                  icon: Sparkles,
+                  title: "理由を理解",
+                  description: "5つの視点で、選んだ根拠と注意点を解説します。",
+                  color: systemColors.indigo,
                 },
                 {
                   step: "STEP 3",
-                  icon: MousePointerClick,
-                  title: "購入する",
+                  icon: CheckCircle2,
+                  title: "安心して選べる",
                   description:
-                    "最安値のECサイトを確認して、そのまま購入ページへ。",
+                    "理由がわかるから安心。最安値も自動で比較できます。",
                   color: systemColors.green,
                 },
               ].map((step, index) => {
@@ -283,7 +283,7 @@ export default function HowToUsePage() {
           </div>
         </section>
 
-        {/* STEP 1: 検索する */}
+        {/* STEP 1: AIに相談 */}
         <section
           className="py-20 px-6 lg:px-12"
           style={{ backgroundColor: "#FFFFFF" }}
@@ -298,21 +298,21 @@ export default function HowToUsePage() {
                     color: systemColors.blue,
                   }}
                 >
-                  <Search size={16} />
+                  <MessageCircle size={16} />
                   <span>STEP 1</span>
                 </div>
                 <h2
                   className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
                   style={{ color: appleWebColors.textPrimary }}
                 >
-                  まずは、気になる成分や悩みで
-                  <span style={{ color: systemColors.blue }}>検索</span>
+                  まずは、悩みを
+                  <span style={{ color: systemColors.blue }}>AIに相談</span>
                 </h2>
                 <p
                   className="text-[17px] mb-6 leading-relaxed"
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  「ビタミンC」「亜鉛」などの成分名はもちろん、「美肌」「疲労回復」などの悩みや目的からも検索できます。
+                  「疲れが取れない」「肌荒れが気になる」など、悩みを伝えるだけ。AIコンシェルジュが、あなたの判断スタイルに合わせて一緒に考えます。
                 </p>
 
                 <div className="space-y-3">
@@ -332,13 +332,13 @@ export default function HowToUsePage() {
                         className="font-semibold text-[15px]"
                         style={{ color: appleWebColors.textPrimary }}
                       >
-                        日本語・英語の両方に対応
+                        4人のキャラクターから選べる
                       </p>
                       <p
                         className="text-[14px]"
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        「ビタミンC」でも「Vitamin C」でもOK
+                        コスパ重視、安全性重視など、あなたの判断スタイルに合わせて
                       </p>
                     </div>
                   </div>
@@ -358,13 +358,13 @@ export default function HowToUsePage() {
                         className="font-semibold text-[15px]"
                         style={{ color: appleWebColors.textPrimary }}
                       >
-                        部分一致で検索可能
+                        自然な言葉で質問OK
                       </p>
                       <p
                         className="text-[14px]"
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        「ビタミン」だけでも関連成分を表示します
+                        成分名がわからなくても、悩みを伝えれば大丈夫
                       </p>
                     </div>
                   </div>
@@ -372,7 +372,7 @@ export default function HowToUsePage() {
               </div>
 
               <div className="lg:w-1/2 w-full">
-                {/* Mock Search UI */}
+                {/* Mock Chat UI */}
                 <div
                   className="relative rounded-2xl p-6"
                   style={{
@@ -381,61 +381,39 @@ export default function HowToUsePage() {
                     border: `1px solid ${appleWebColors.borderSubtle}`,
                   }}
                 >
-                  <div
-                    className="flex items-center gap-4 mb-5 p-3 rounded-xl"
-                    style={{
-                      backgroundColor: appleWebColors.pageBackground,
-                      border: `1px solid ${appleWebColors.borderSubtle}`,
-                    }}
-                  >
-                    <Search
-                      size={20}
-                      style={{ color: appleWebColors.textTertiary }}
-                    />
-                    <span
-                      className="text-[15px]"
-                      style={{ color: appleWebColors.textTertiary }}
-                    >
-                      ビタミンC...
-                    </span>
-                    <span
-                      className="ml-auto text-[11px] font-medium px-2 py-1 rounded"
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        color: appleWebColors.textTertiary,
-                        border: `1px solid ${appleWebColors.borderSubtle}`,
-                      }}
-                    >
-                      Enter
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p
-                      className="text-[11px] font-semibold tracking-wider"
-                      style={{ color: appleWebColors.textTertiary }}
-                    >
-                      人気のカテゴリ
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        "ビタミン",
-                        "ミネラル",
-                        "アミノ酸",
-                        "美容",
-                        "疲労回復",
-                      ].map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1.5 rounded-full text-[13px] font-medium"
-                          style={{
-                            backgroundColor: `${systemColors.blue}10`,
-                            color: systemColors.blue,
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  <div className="space-y-4">
+                    {/* User message */}
+                    <div className="flex justify-end">
+                      <div
+                        className="max-w-[80%] p-3 rounded-2xl rounded-br-md text-[15px]"
+                        style={{
+                          backgroundColor: systemColors.blue,
+                          color: "#FFFFFF",
+                        }}
+                      >
+                        最近疲れが取れなくて...
+                      </div>
+                    </div>
+                    {/* AI response */}
+                    <div className="flex gap-3">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: `${systemColors.blue}15` }}
+                      >
+                        <MessageCircle
+                          size={16}
+                          style={{ color: systemColors.blue }}
+                        />
+                      </div>
+                      <div
+                        className="max-w-[80%] p-3 rounded-2xl rounded-bl-md text-[15px]"
+                        style={{
+                          backgroundColor: appleWebColors.pageBackground,
+                          color: appleWebColors.textPrimary,
+                        }}
+                      >
+                        疲労回復には、ビタミンB群やCoQ10が科学的に効果が認められています。あなたの生活スタイルを教えていただけますか？
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -444,7 +422,7 @@ export default function HowToUsePage() {
           </div>
         </section>
 
-        {/* STEP 2: 比較する */}
+        {/* STEP 2: 理由を理解 */}
         <section
           className="py-20 px-6 lg:px-12"
           style={{ backgroundColor: appleWebColors.pageBackground }}
@@ -455,37 +433,38 @@ export default function HowToUsePage() {
                 <div
                   className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-[13px]"
                   style={{
-                    backgroundColor: `${systemColors.purple}15`,
-                    color: systemColors.purple,
+                    backgroundColor: `${systemColors.indigo}15`,
+                    color: systemColors.indigo,
                   }}
                 >
-                  <Filter size={16} />
+                  <Sparkles size={16} />
                   <span>STEP 2</span>
                 </div>
                 <h2
                   className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
                   style={{ color: appleWebColors.textPrimary }}
                 >
-                  ランクとデータで
-                  <span style={{ color: systemColors.purple }}>徹底比較</span>
+                  なぜおすすめなのか、
+                  <span style={{ color: systemColors.indigo }}>理由を理解</span>
                 </h2>
                 <p
                   className="text-[17px] mb-6 leading-relaxed"
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  価格、成分量、コスパ、エビデンス、安全性。5つの指標をS〜Dのランクで評価。直感的に「良い商品」が見つかります。
+                  健康判断に必要な5つの視点で、選んだ根拠と注意点を解説します。「なぜこの商品を選んだか」が100%理解できます。
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { title: "価格帯", icon: DollarSign },
-                    { title: "ランク", icon: Award },
-                    { title: "安全性", icon: Shield },
+                    { title: "価格", icon: DollarSign },
+                    { title: "成分量", icon: BarChart3 },
+                    { title: "コスパ", icon: TrendingUp },
                     { title: "エビデンス", icon: Microscope },
+                    { title: "安全性", icon: Shield },
                   ].map((filter, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 p-3 rounded-xl"
+                      className={`flex items-center gap-3 p-3 rounded-xl ${i === 4 ? "col-span-2 md:col-span-1" : ""}`}
                       style={{
                         backgroundColor: "#FFFFFF",
                         border: `1px solid ${appleWebColors.borderSubtle}`,
@@ -493,11 +472,11 @@ export default function HowToUsePage() {
                     >
                       <div
                         className="p-2 rounded-lg"
-                        style={{ backgroundColor: `${systemColors.purple}10` }}
+                        style={{ backgroundColor: `${systemColors.indigo}10` }}
                       >
                         <filter.icon
                           size={18}
-                          style={{ color: systemColors.purple }}
+                          style={{ color: systemColors.indigo }}
                         />
                       </div>
                       <span
@@ -512,7 +491,7 @@ export default function HowToUsePage() {
               </div>
 
               <div className="lg:w-1/2 w-full">
-                {/* Mock Rank UI */}
+                {/* Mock Explanation UI */}
                 <div
                   className="relative rounded-2xl p-6 overflow-hidden"
                   style={{
@@ -521,75 +500,75 @@ export default function HowToUsePage() {
                     border: `1px solid ${appleWebColors.borderSubtle}`,
                   }}
                 >
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3
-                        className="font-semibold text-[17px]"
-                        style={{ color: appleWebColors.textPrimary }}
-                      >
-                        総合評価
-                      </h3>
+                  <div className="relative z-10 space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
                       <div
-                        className="px-3 py-1 rounded-full text-[13px] font-semibold"
-                        style={{
-                          backgroundColor: `${systemColors.purple}15`,
-                          color: systemColors.purple,
-                        }}
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: `${systemColors.indigo}15` }}
                       >
-                        Sランク
+                        <Sparkles
+                          size={20}
+                          style={{ color: systemColors.indigo }}
+                        />
+                      </div>
+                      <div>
+                        <h3
+                          className="font-semibold text-[17px]"
+                          style={{ color: appleWebColors.textPrimary }}
+                        >
+                          おすすめの理由
+                        </h3>
+                        <p
+                          className="text-[13px]"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
+                          5つの視点から解説
+                        </p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="space-y-3">
                       {[
-                        { label: "価格", rank: "S", color: systemColors.green },
                         {
-                          label: "含有量",
-                          rank: "A",
-                          color: systemColors.blue,
+                          icon: "🔬",
+                          title: "エビデンス",
+                          text: "大規模RCTで効果が確認されています",
                         },
                         {
-                          label: "コスパ",
-                          rank: "S",
-                          color: systemColors.purple,
+                          icon: "💡",
+                          title: "コスパ",
+                          text: "1日あたり約30円、成分量あたり価格も最安",
                         },
                         {
-                          label: "根拠",
-                          rank: "S",
-                          color: systemColors.indigo,
+                          icon: "⚠️",
+                          title: "注意点",
+                          text: "ビタミンE併用時は吸収に注意",
                         },
-                        { label: "安全", rank: "A", color: systemColors.pink },
-                      ].map((stat, i) => (
+                      ].map((item, i) => (
                         <div
                           key={i}
-                          className="flex flex-col items-center gap-2"
+                          className="p-3 rounded-xl"
+                          style={{
+                            backgroundColor: appleWebColors.pageBackground,
+                          }}
                         >
-                          <div
-                            className="w-full h-20 rounded-lg relative overflow-hidden flex items-end justify-center pb-2"
-                            style={{
-                              backgroundColor: appleWebColors.pageBackground,
-                            }}
-                          >
-                            <div
-                              className="w-2/3 rounded-t-sm transition-all duration-1000"
-                              style={{
-                                backgroundColor: stat.color,
-                                height: stat.rank === "S" ? "85%" : "65%",
-                              }}
-                            />
+                          <div className="flex items-start gap-2">
+                            <span className="text-[16px]">{item.icon}</span>
+                            <div>
+                              <p
+                                className="font-medium text-[14px]"
+                                style={{ color: appleWebColors.textPrimary }}
+                              >
+                                {item.title}
+                              </p>
+                              <p
+                                className="text-[13px]"
+                                style={{ color: appleWebColors.textSecondary }}
+                              >
+                                {item.text}
+                              </p>
+                            </div>
                           </div>
-                          <span
-                            className="text-[11px] font-medium"
-                            style={{ color: appleWebColors.textTertiary }}
-                          >
-                            {stat.label}
-                          </span>
-                          <span
-                            className="text-[17px] font-bold"
-                            style={{ color: appleWebColors.textPrimary }}
-                          >
-                            {stat.rank}
-                          </span>
                         </div>
                       ))}
                     </div>
@@ -600,7 +579,7 @@ export default function HowToUsePage() {
           </div>
         </section>
 
-        {/* STEP 3: 購入する */}
+        {/* STEP 3: 安心して選べる */}
         <section
           className="py-20 px-6 lg:px-12"
           style={{ backgroundColor: "#FFFFFF" }}
@@ -615,24 +594,23 @@ export default function HowToUsePage() {
                     color: systemColors.green,
                   }}
                 >
-                  <MousePointerClick size={16} />
+                  <CheckCircle2 size={16} />
                   <span>STEP 3</span>
                 </div>
                 <h2
                   className="mb-4 text-[28px] lg:text-[34px] font-bold leading-tight"
                   style={{ color: appleWebColors.textPrimary }}
                 >
-                  最安値を
+                  後悔しない選択を。
                   <span style={{ color: systemColors.green }}>
-                    ワンクリック
+                    安心して選べる
                   </span>
-                  で購入
                 </h2>
                 <p
                   className="text-[17px] mb-6 leading-relaxed"
                   style={{ color: appleWebColors.textSecondary }}
                 >
-                  楽天・Amazon・Yahoo!など、主要ECサイトの価格を自動比較。その日の最安値がすぐに分かります。
+                  理由がわかるから安心できる。最安値も自動で見つけて比較できます。
                 </p>
 
                 <div className="space-y-3">
@@ -652,13 +630,13 @@ export default function HowToUsePage() {
                         className="font-semibold text-[15px]"
                         style={{ color: appleWebColors.textPrimary }}
                       >
-                        価格は毎日自動更新
+                        根拠がわかるから安心
                       </p>
                       <p
                         className="text-[14px]"
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        常に最新の価格情報を表示しています
+                        「なぜこれがいいのか」を理解した上で選べます
                       </p>
                     </div>
                   </div>
@@ -678,13 +656,13 @@ export default function HowToUsePage() {
                         className="font-semibold text-[15px]"
                         style={{ color: appleWebColors.textPrimary }}
                       >
-                        ワンクリックで商品ページへ
+                        最安値を自動比較
                       </p>
                       <p
                         className="text-[14px]"
                         style={{ color: appleWebColors.textSecondary }}
                       >
-                        面倒な検索は不要。そのまま購入できます
+                        楽天・Amazon・Yahoo!の価格を毎日更新
                       </p>
                     </div>
                   </div>
@@ -892,20 +870,21 @@ export default function HowToUsePage() {
               className="mb-4 text-[28px] lg:text-[40px] font-bold"
               style={{ color: appleWebColors.textPrimary }}
             >
-              さあ、サプティアを使ってみましょう
+              まずはAIに相談してみましょう
             </h2>
             <p
               className="mb-8 text-[17px]"
               style={{ color: appleWebColors.textSecondary }}
             >
-              3ステップで、あなたにぴったりのサプリメントが見つかります。
+              悩みを伝えるだけ。AIコンシェルジュが一緒に考えます。
             </p>
             <Link
-              href="/products"
+              href="/concierge"
               className="group inline-flex items-center gap-2 rounded-full px-8 py-3 min-h-[48px] font-semibold text-[17px] transition-all hover:opacity-80"
               style={{ backgroundColor: systemColors.blue, color: "#FFFFFF" }}
             >
-              商品を探す
+              <MessageCircle size={18} />
+              AIに相談する
               <ArrowRight
                 size={20}
                 className="transition-transform group-hover:translate-x-1"

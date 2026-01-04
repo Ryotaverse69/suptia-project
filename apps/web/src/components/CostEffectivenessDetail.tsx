@@ -552,7 +552,7 @@ export function CostEffectivenessDetail({
 
                       {/* 詳細情報テーブル */}
                       <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-                        <div className="grid grid-cols-4 gap-2 text-xs">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                           <div className="text-center">
                             <div className="text-gray-500 mb-0.5">
                               1回あたり
@@ -561,13 +561,13 @@ export function CostEffectivenessDetail({
                               {product.ingredientAmount.toLocaleString()}mg
                             </div>
                           </div>
-                          <div className="text-center border-x border-gray-200">
+                          <div className="text-center sm:border-x border-gray-200">
                             <div className="text-gray-500 mb-0.5">摂取回数</div>
                             <div className="font-bold text-primary-800">
                               {product.servingsPerDay}回/日
                             </div>
                           </div>
-                          <div className="text-center border-r border-gray-200">
+                          <div className="text-center sm:border-r border-gray-200">
                             <div className="text-gray-500 mb-0.5">
                               1日あたり
                             </div>

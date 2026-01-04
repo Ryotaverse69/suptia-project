@@ -13,6 +13,7 @@ import {
   Home,
   History,
   Search,
+  MessageCircle,
   BookOpen,
   Shield,
   Target,
@@ -195,20 +196,34 @@ export function Header() {
                         ホーム
                       </Link>
 
-                      {/* Diagnosis CTA */}
+                      {/* AI Concierge CTA - ホバー時虹色グロー */}
                       <div className="px-2 py-1">
                         <Link
-                          href="/diagnosis"
+                          href="/concierge"
                           onClick={() => setDesktopMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-[10px] text-white font-semibold min-h-[48px]"
-                          style={{
-                            background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
-                          }}
+                          className="glow-wrapper-transparent block"
                         >
-                          <Search size={18} aria-hidden="true" />
-                          診断する
+                          <div className="glow-layer" />
+                          <span className="glow-button-inner-transparent font-semibold">
+                            <MessageCircle size={18} aria-hidden="true" />
+                            AIに相談する
+                          </span>
                         </Link>
                       </div>
+
+                      <Link
+                        href="/diagnosis"
+                        onClick={() => setDesktopMenuOpen(false)}
+                        className={menuItemClasses}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Search
+                          size={18}
+                          style={{ color: systemColors.purple }}
+                          aria-hidden="true"
+                        />
+                        簡易診断
+                      </Link>
 
                       <Link
                         href="/favorites"
@@ -676,17 +691,31 @@ export function Header() {
                   ホーム
                 </Link>
 
-                {/* Diagnosis CTA */}
+                {/* AI Concierge CTA - ホバー時虹色グロー */}
+                <Link
+                  href="/concierge"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="glow-wrapper-transparent block"
+                >
+                  <div className="glow-layer" />
+                  <span className="glow-button-inner-transparent font-semibold">
+                    <MessageCircle size={20} aria-hidden="true" />
+                    AIに相談する
+                  </span>
+                </Link>
+
                 <Link
                   href="/diagnosis"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-4 rounded-[12px] text-white font-semibold"
-                  style={{
-                    background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
-                  }}
+                  className={menuItemClasses}
+                  style={{ color: appleWebColors.textPrimary }}
                 >
-                  <Search size={20} aria-hidden="true" />
-                  診断する
+                  <Search
+                    size={20}
+                    style={{ color: systemColors.purple }}
+                    aria-hidden="true"
+                  />
+                  簡易診断
                 </Link>
 
                 {/* Divider */}

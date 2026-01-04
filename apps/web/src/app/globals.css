@@ -330,4 +330,223 @@
   .animate-mist-gather {
     animation: mist-gather 0.5s ease-out forwards;
   }
+
+  /* Apple Intelligence風グローアニメーション */
+  @keyframes glow-slide {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+
+  .animate-glow-slide {
+    background-size: 200% 100%;
+    animation: glow-slide 3s linear infinite;
+  }
+
+}
+
+/* ========================================
+   Apple Intelligence風 虹色グローエフェクト
+   実際のdiv要素を使用してz-index問題を回避
+   ======================================== */
+
+.glow-wrapper {
+  position: relative;
+  padding: 2px;
+  margin: 1px;
+  border-radius: 9999px;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper.glow-active {
+  padding: 3px;
+  margin: 0;
+}
+
+/* グローレイヤー（実際のdiv要素） */
+.glow-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #007AFF;
+  z-index: 0;
+  pointer-events: none;
+  transition:
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper.glow-active .glow-layer {
+  background: linear-gradient(
+    90deg,
+    #BC82F3,
+    #F5B9EA,
+    #8D9FFF,
+    #FF6778,
+    #FFBA71,
+    #C686FF,
+    #BC82F3
+  );
+  background-size: 300% 100%;
+  animation: rainbow-shift 4s ease infinite;
+  box-shadow:
+    0 0 8px rgba(188, 130, 243, 0.5),
+    0 0 16px rgba(141, 159, 255, 0.3);
+}
+
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ボタン用内側コンテナ */
+.glow-button-inner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-weight: 600;
+  min-height: 52px;
+  font-size: 16px;
+  background-color: #ffffff;
+  border: none;
+  color: #007AFF;
+  z-index: 1;
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper.glow-active .glow-button-inner {
+  color: #1d1d1f;
+}
+
+/* 小さいボタン用 */
+.glow-button-inner-sm {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  min-height: 44px;
+  background-color: #ffffff;
+  border: none;
+  color: #007AFF;
+  z-index: 1;
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 640px) {
+  .glow-button-inner-sm {
+    padding: 12px 24px;
+  }
+}
+
+.glow-wrapper.glow-active .glow-button-inner-sm {
+  color: #1d1d1f;
+}
+
+/* ホバー時のみグローを適用 */
+.glow-wrapper:hover .glow-layer {
+  background: linear-gradient(
+    90deg,
+    #BC82F3,
+    #F5B9EA,
+    #8D9FFF,
+    #81E7D4,
+    #FFBA71,
+    #C686FF,
+    #BC82F3
+  );
+  background-size: 300% 100%;
+  animation: rainbow-shift 4s ease infinite;
+  box-shadow:
+    0 0 8px rgba(188, 130, 243, 0.5),
+    0 0 16px rgba(141, 159, 255, 0.3);
+}
+
+.glow-wrapper:hover {
+  padding: 3px;
+  margin: 0;
+}
+
+.glow-wrapper:hover .glow-button-inner,
+.glow-wrapper:hover .glow-button-inner-sm {
+  color: #1d1d1f;
+}
+
+/* ========================================
+   ヘッダー用: 背景透明 + ホバーで虹色グロー
+   ======================================== */
+
+.glow-wrapper-transparent {
+  position: relative;
+  padding: 1px;
+  border-radius: 9999px;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-transparent .glow-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #BC82F3,
+    #F5B9EA,
+    #8D9FFF,
+    #81E7D4,
+    #FFBA71,
+    #C686FF,
+    #BC82F3
+  );
+  background-size: 300% 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-transparent:hover {
+  padding: 2px;
+}
+
+.glow-wrapper-transparent:hover .glow-layer {
+  opacity: 1;
+  animation: rainbow-shift 4s ease infinite;
+  box-shadow:
+    0 0 8px rgba(188, 130, 243, 0.5),
+    0 0 16px rgba(141, 159, 255, 0.3);
+}
+
+.glow-wrapper-transparent .glow-button-inner-transparent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  min-height: 44px;
+  width: 100%;
+  background-color: transparent;
+  color: #1d1d1f;
+  font-size: 15px;
+  z-index: 1;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-transparent:hover .glow-button-inner-transparent {
+  background-color: #ffffff;
 }

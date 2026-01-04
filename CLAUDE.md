@@ -129,6 +129,7 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 
 | トピック             | ファイル                                                                           |
 | -------------------- | ---------------------------------------------------------------------------------- |
+| ヒーロー×AI設計      | [docs/HERO_AI_DESIGN.md](docs/HERO_AI_DESIGN.md)                                   |
 | AIコンシェルジュ仕様 | [docs/AI_CONCIERGE_SPEC.md](docs/AI_CONCIERGE_SPEC.md)                             |
 | AI検索共存戦略       | [docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt](docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt) |
 | EC統合ロードマップ   | [docs/ROADMAP_EC_INTEGRATION.md](docs/ROADMAP_EC_INTEGRATION.md)                   |

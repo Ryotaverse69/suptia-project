@@ -137,9 +137,8 @@ describe("Home Page", () => {
     const HomeComponent = await Home();
     render(<TestWrapper>{HomeComponent}</TestWrapper>);
     const heading = screen.getByRole("heading", { level: 1 });
-    // The heading text is split across multiple spans
-    expect(heading).toHaveTextContent(/あなたに最適な/);
-    expect(heading).toHaveTextContent(/サプリを見つけよう/);
+    // Phase Aで変更されたヒーローのメインコピー
+    expect(heading).toHaveTextContent(/選ぶ理由が、見える/);
   });
 
   it("renders the recommended products section", async () => {

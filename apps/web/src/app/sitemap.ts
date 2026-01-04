@@ -80,7 +80,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/diagnosis`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.85,
+      priority: 0.8,
+    },
+    // AIコンシェルジュ：サービスの主役（AI意思決定エンジン）
+    {
+      url: `${siteUrl}/concierge`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.95, // トップに次ぐ最高優先度
     },
     {
       url: `${siteUrl}/about`,

@@ -29,34 +29,65 @@ import {
   liquidGlassClasses,
 } from "@/lib/design-system";
 
-// 既往歴オプション
+// 既往歴オプション（サプリメント選択に影響するもの）
 const CONDITIONS = [
+  // 循環器系
   { value: "hypertension", label: "高血圧", icon: "💉" },
   { value: "hypotension", label: "低血圧", icon: "📉" },
-  { value: "diabetes", label: "糖尿病", icon: "🩸" },
   { value: "heart-disease", label: "心臓疾患", icon: "❤️" },
+  { value: "high-cholesterol", label: "高コレステロール", icon: "🩺" },
+  { value: "blood-clotting", label: "血液凝固障害", icon: "🩸" },
+  // 代謝系
+  { value: "diabetes", label: "糖尿病", icon: "💧" },
+  { value: "gout", label: "痛風", icon: "🦶" },
+  { value: "thyroid-disorder", label: "甲状腺疾患", icon: "🦋" },
+  // 内臓系
   { value: "liver-disease", label: "肝臓疾患", icon: "🫀" },
   { value: "kidney-disease", label: "腎臓疾患", icon: "🫘" },
-  { value: "thyroid-disorder", label: "甲状腺疾患", icon: "🦋" },
-  { value: "autoimmune-disease", label: "自己免疫疾患", icon: "🛡️" },
   { value: "digestive-disorder", label: "消化器疾患", icon: "🌿" },
+  // 骨・筋肉系
+  { value: "osteoporosis", label: "骨粗しょう症", icon: "🦴" },
+  { value: "anemia", label: "貧血", icon: "🔴" },
+  // 精神・神経系
   { value: "mental-disorder", label: "精神疾患", icon: "🧠" },
+  { value: "insomnia", label: "不眠症", icon: "😴" },
+  // その他
+  { value: "autoimmune-disease", label: "自己免疫疾患", icon: "🛡️" },
+  { value: "hormone-sensitive", label: "ホルモン感受性疾患", icon: "⚖️" },
+  { value: "eye-disease", label: "眼疾患", icon: "👁️" },
+  { value: "respiratory-disease", label: "呼吸器疾患", icon: "🫁" },
+  { value: "cancer-treatment", label: "がん治療中", icon: "🏥" },
+  // 特別な状態
   { value: "pregnant", label: "妊娠中", icon: "🤰" },
   { value: "breastfeeding", label: "授乳中", icon: "👶" },
+  { value: "surgery-planned", label: "手術予定（2週間以内）", icon: "🔪" },
+  { value: "elderly", label: "高齢者（65歳以上）", icon: "👴" },
 ];
 
-// アレルギーオプション
+// アレルギーオプション（サプリメントに含まれる可能性のあるもの）
 const ALLERGIES = [
+  // 食品由来（特定原材料等28品目）
   { value: "soy", label: "大豆", icon: "🫘" },
   { value: "dairy", label: "乳製品", icon: "🥛" },
-  { value: "gluten", label: "グルテン", icon: "🌾" },
   { value: "egg", label: "卵", icon: "🥚" },
-  { value: "shellfish", label: "甲殻類", icon: "🦐" },
-  { value: "fish", label: "魚", icon: "🐟" },
+  { value: "wheat", label: "小麦", icon: "🌾" },
+  { value: "gluten", label: "グルテン", icon: "🍞" },
   { value: "peanut", label: "ピーナッツ", icon: "🥜" },
   { value: "tree-nuts", label: "ナッツ類", icon: "🌰" },
+  { value: "shellfish", label: "甲殻類", icon: "🦐" },
+  { value: "fish", label: "魚", icon: "🐟" },
   { value: "sesame", label: "ごま", icon: "⚫" },
-  { value: "wheat", label: "小麦", icon: "🌿" },
+  { value: "corn", label: "とうもろこし", icon: "🌽" },
+  // サプリメント特有
+  { value: "bee-products", label: "ハチ製品（プロポリス等）", icon: "🐝" },
+  { value: "gelatin", label: "ゼラチン（カプセル）", icon: "💊" },
+  { value: "yeast", label: "酵母", icon: "🍄" },
+  // 添加物
+  { value: "artificial-colors", label: "人工着色料", icon: "🎨" },
+  { value: "preservatives", label: "保存料", icon: "🧪" },
+  { value: "sulfites", label: "亜硫酸塩", icon: "⚗️" },
+  // クロスリアクション
+  { value: "latex", label: "ラテックス（交差反応）", icon: "🧤" },
 ];
 
 export default function HealthInfoPage() {

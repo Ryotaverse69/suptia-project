@@ -8,6 +8,8 @@ import {
   Target,
   ChevronRight,
   Activity,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 
 import { generateBreadcrumbStructuredData } from "@/lib/structured-data";
@@ -20,9 +22,9 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "サプリメント診断 | Suptia",
+  title: "サプリメント診断・AI相談 | Suptia",
   description:
-    "あなたの健康目標と状態に合わせた最適なサプリメントを診断します。かんたん診断と詳細診断の2つの方法から選べます。",
+    "AIコンシェルジュに相談するか、簡単な質問に答えて診断。あなたに最適なサプリメントと「なぜおすすめか」まで解説します。",
 };
 
 export default async function DiagnosisSelectionPage() {
@@ -68,29 +70,93 @@ export default async function DiagnosisSelectionPage() {
               <Activity className="text-white" size={32} />
             </div>
             <h1 className="text-[28px] sm:text-[34px] md:text-[40px] font-bold text-white mb-4 tracking-tight">
-              あなたに最適なサプリメントを診断
+              あなたに最適なサプリメントを見つける
             </h1>
             <p className="text-[15px] sm:text-[17px] text-white/80 max-w-2xl mx-auto leading-relaxed">
-              健康目標や体質に合わせて、科学的根拠に基づいたパーソナライズされた推薦を提供します
+              AIに相談するか、簡単な質問に答えて診断。
+              <br className="hidden sm:block" />
+              科学的根拠に基づいたあなた専用の提案を受けられます。
             </p>
           </div>
         </div>
 
-        {/* 診断方法選択 */}
-        <div className="container mx-auto px-4 py-10 sm:py-14 md:py-20">
+        {/* AI相談推奨セクション */}
+        <div className="container mx-auto px-4 pt-10 sm:pt-14 md:pt-16">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10 sm:mb-14">
+            <Link
+              href="/concierge"
+              className={`group relative block overflow-hidden ${liquidGlassClasses.light} transition-all duration-300 hover:-translate-y-1 mb-8`}
+              style={{
+                background: `linear-gradient(135deg, rgba(0,122,255,0.08) 0%, rgba(88,86,214,0.08) 100%)`,
+                border: `1px solid ${systemColors.blue}30`,
+              }}
+            >
+              <div className="p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                    }}
+                  >
+                    <Sparkles className="text-white" size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3
+                        className="text-[20px] sm:text-[22px] font-bold"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        AIに相談する
+                      </h3>
+                      <span
+                        className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                        style={{
+                          backgroundColor: systemColors.blue,
+                          color: "#FFFFFF",
+                        }}
+                      >
+                        おすすめ
+                      </span>
+                    </div>
+                    <p
+                      className="text-[15px] leading-relaxed"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      悩みを自由に伝えるだけ。AIコンシェルジュがあなたの判断スタイルに合わせて、
+                      最適なサプリメントと「なぜおすすめか」を丁寧に解説します。
+                    </p>
+                  </div>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                    style={{ backgroundColor: `${systemColors.blue}15` }}
+                  >
+                    <ArrowRight
+                      size={18}
+                      style={{ color: systemColors.blue }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* 診断方法選択 */}
+        <div className="container mx-auto px-4 py-6 sm:py-10 md:py-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8 sm:mb-10">
               <h2
-                className="text-[22px] sm:text-[28px] font-bold mb-3"
+                className="text-[20px] sm:text-[24px] font-bold mb-2"
                 style={{ color: appleWebColors.textPrimary }}
               >
-                診断方法を選んでください
+                または、診断で始める
               </h2>
               <p
-                className="text-[15px] sm:text-[17px]"
+                className="text-[15px]"
                 style={{ color: appleWebColors.textSecondary }}
               >
-                お好みの方法でサプリメント診断を受けられます
+                質問に答えて、おすすめのサプリメントを見つけましょう
               </p>
             </div>
 
