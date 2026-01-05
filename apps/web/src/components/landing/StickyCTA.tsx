@@ -134,7 +134,7 @@ export function StickyCTA({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-4 sm:pb-6 pointer-events-none"
+          className="fixed bottom-0 left-0 right-0 z-[100] px-3 sm:px-4 pb-3 sm:pb-6 pointer-events-none"
           style={{ fontFamily: fontStack }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -143,7 +143,7 @@ export function StickyCTA({
         >
           <div className="max-w-2xl mx-auto pointer-events-auto">
             <motion.div
-              className="relative overflow-hidden rounded-[24px] border"
+              className="relative overflow-hidden rounded-[18px] sm:rounded-[24px] border"
               style={{
                 ...liquidGlass.light,
               }}
@@ -154,11 +154,44 @@ export function StickyCTA({
               onMouseLeave={handleMouseLeave}
             >
               {/* Content */}
-              <div className="relative p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-4">
+              <div className="relative p-3 sm:p-5">
+                <div className="flex items-center justify-between gap-2 sm:gap-4">
                   {/* Left Content */}
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    {/* 4人のアバター画像 */}
+                  <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                    {/* モバイル: 1つのアバター */}
+                    <div className="flex sm:hidden items-center flex-shrink-0">
+                      {(() => {
+                        const avatarUrl = getAvatarUrl("core");
+                        return (
+                          <div
+                            className="w-9 h-9 rounded-full border-2 border-white overflow-hidden shadow-md flex-shrink-0"
+                            style={{
+                              background: avatarUrl
+                                ? undefined
+                                : `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                            }}
+                          >
+                            {avatarUrl ? (
+                              <Image
+                                src={avatarUrl}
+                                alt=""
+                                width={36}
+                                height={36}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <MessageCircle
+                                  className="w-4 h-4 text-white"
+                                  aria-hidden="true"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    {/* デスクトップ: 4人のアバター画像 */}
                     <div className="hidden sm:flex items-center -space-x-2">
                       {CHARACTER_IDS.map((charId, index) => {
                         const avatarUrl = getAvatarUrl(charId);
@@ -201,15 +234,15 @@ export function StickyCTA({
                         );
                       })}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p
-                        className={`${typography.headline} leading-tight`}
+                        className="text-[14px] sm:text-[17px] font-semibold leading-tight truncate"
                         style={{ color: appleWebColors.textPrimary }}
                       >
                         {text}
                       </p>
                       <p
-                        className="text-[13px] mt-0.5"
+                        className="text-[11px] sm:text-[13px] mt-0.5 truncate"
                         style={{ color: appleWebColors.textSecondary }}
                       >
                         {subtext}
@@ -218,10 +251,26 @@ export function StickyCTA({
                   </div>
 
                   {/* Right Content */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <Link href={href}>
+                      {/* モバイル: コンパクトボタン */}
+                      <div className="sm:hidden">
+                        <div
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-full font-semibold text-[13px] text-white min-h-[36px]"
+                          style={{
+                            background: `linear-gradient(135deg, ${systemColors.blue} 0%, ${systemColors.indigo} 100%)`,
+                          }}
+                        >
+                          <span>相談</span>
+                          <ArrowRight
+                            className="w-3.5 h-3.5"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </div>
+                      {/* デスクトップ: グロー付きボタン */}
                       <div
-                        className={`glow-wrapper ${isButtonHovered ? "glow-active" : ""}`}
+                        className={`hidden sm:block glow-wrapper ${isButtonHovered ? "glow-active" : ""}`}
                         onMouseEnter={() => setIsButtonHovered(true)}
                         onMouseLeave={() => setIsButtonHovered(false)}
                       >
@@ -244,12 +293,12 @@ export function StickyCTA({
                       </div>
                     </Link>
 
-                    {/* Dismiss Button - smaller after first dismiss */}
+                    {/* Dismiss Button - smaller on mobile and after first dismiss */}
                     <motion.button
                       className={`rounded-full flex items-center justify-center ${
                         dismissCount > 0
-                          ? "p-1.5 min-w-[32px] min-h-[32px] opacity-50"
-                          : "p-2 min-w-[44px] min-h-[44px]"
+                          ? "p-1 sm:p-1.5 min-w-[28px] sm:min-w-[32px] min-h-[28px] sm:min-h-[32px] opacity-50"
+                          : "p-1.5 sm:p-2 min-w-[32px] sm:min-w-[44px] min-h-[32px] sm:min-h-[44px]"
                       }`}
                       style={{ backgroundColor: "transparent" }}
                       onClick={handleDismiss}
@@ -266,7 +315,11 @@ export function StickyCTA({
                       aria-label="閉じる"
                     >
                       <X
-                        className={dismissCount > 0 ? "w-4 h-4" : "w-5 h-5"}
+                        className={
+                          dismissCount > 0
+                            ? "w-3.5 h-3.5 sm:w-4 sm:h-4"
+                            : "w-4 h-4 sm:w-5 sm:h-5"
+                        }
                         style={{ color: appleWebColors.textSecondary }}
                         aria-hidden="true"
                       />

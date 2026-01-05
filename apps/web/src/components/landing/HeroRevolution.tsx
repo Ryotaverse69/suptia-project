@@ -51,12 +51,12 @@ interface HeroRevolutionProps {
   popularSearches?: Array<{ name: string }>;
 }
 
-// プレースホルダーの質問例（ローテーション用）
+// プレースホルダーの質問例（ローテーション用）- 相談形で生活文脈を含める
 const PLACEHOLDER_QUESTIONS = [
-  "妊娠中にビタミンDを飲んでも大丈夫？",
+  "妊娠中でも飲める？",
+  "今の自分に必要？",
+  "このサプリ、安全性は大丈夫？",
   "疲れやすいんだけど、何がいい？",
-  "このサプリ、安全性は？",
-  "コスパの良いマルチビタミンは？",
 ];
 
 export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
@@ -244,7 +244,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
           >
             根拠が見える。
             <br className="hidden sm:block" />
-            AIがなぜそれが良いかまで説明。
+            だから、安心して選べる。
           </motion.p>
         </div>
 

@@ -355,8 +355,8 @@
 
 .glow-wrapper {
   position: relative;
-  padding: 2px;
-  margin: 1px;
+  padding: 0;
+  margin: 3px;
   border-radius: 9999px;
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -371,7 +371,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: #007AFF;
+  background: transparent;
   z-index: 0;
   pointer-events: none;
   transition:
@@ -420,11 +420,11 @@
   font-weight: 600;
   min-height: 52px;
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: #f5f5f7;
   border: none;
-  color: #007AFF;
+  color: #1d1d1f;
   z-index: 1;
-  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glow-wrapper.glow-active .glow-button-inner {
@@ -439,11 +439,11 @@
   padding: 10px 20px;
   border-radius: 9999px;
   min-height: 44px;
-  background-color: #ffffff;
+  background-color: #f5f5f7;
   border: none;
-  color: #007AFF;
+  color: #1d1d1f;
   z-index: 1;
-  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (min-width: 640px) {
@@ -483,6 +483,7 @@
 .glow-wrapper:hover .glow-button-inner,
 .glow-wrapper:hover .glow-button-inner-sm {
   color: #1d1d1f;
+  background-color: #ffffff;
 }
 
 /* ========================================
