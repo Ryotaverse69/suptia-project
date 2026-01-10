@@ -28,9 +28,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const q = searchParams.get("q") || "";
-    const ingredient = searchParams.get("ingredient") || "";
-    const category = searchParams.get("category") || "";
+    // URLエンコードされた日本語パラメータを適切にデコード
+    const q = decodeURIComponent(searchParams.get("q") || "");
+    const ingredient = decodeURIComponent(searchParams.get("ingredient") || "");
+    const category = decodeURIComponent(searchParams.get("category") || "");
     const sort = searchParams.get("sort") || "tier-rank";
     const limit = Math.min(parseInt(searchParams.get("limit") || "10", 10), 50);
 

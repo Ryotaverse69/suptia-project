@@ -89,8 +89,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const goal = searchParams.get("goal")?.toLowerCase() || "";
-    const ingredient = searchParams.get("ingredient") || "";
+    // URLエンコードされた日本語パラメータを適切にデコード
+    const goal = decodeURIComponent(
+      searchParams.get("goal") || "",
+    ).toLowerCase();
+    const ingredient = decodeURIComponent(searchParams.get("ingredient") || "");
     const budgetStr = searchParams.get("budget");
     const priority = searchParams.get("priority") || "cost-effectiveness";
     const limit = Math.min(parseInt(searchParams.get("limit") || "5", 10), 20);

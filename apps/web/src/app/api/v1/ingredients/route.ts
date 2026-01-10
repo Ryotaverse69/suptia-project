@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const category = searchParams.get("category") || "";
-    const q = searchParams.get("q") || "";
+    // URLエンコードされた日本語パラメータを適切にデコード
+    const category = decodeURIComponent(searchParams.get("category") || "");
+    const q = decodeURIComponent(searchParams.get("q") || "");
     const limit = Math.min(
       parseInt(searchParams.get("limit") || "20", 10),
       100,
