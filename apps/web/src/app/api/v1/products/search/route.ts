@@ -6,48 +6,57 @@ function sanitizeForGroq(str: string): string {
   return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\*/g, "\\*");
 }
 
-// 英語成分名→日本語名のマッピング（GPT Actions用）
-const ingredientNameMap: Record<string, string> = {
-  "vitamin-d": "ビタミンD",
-  "vitamin-c": "ビタミンC",
-  "vitamin-b": "ビタミンB",
-  "vitamin-e": "ビタミンE",
-  "vitamin-k": "ビタミンK",
-  "vitamin-a": "ビタミンA",
-  zinc: "亜鉛",
-  iron: "鉄",
-  calcium: "カルシウム",
-  magnesium: "マグネシウム",
-  omega3: "オメガ3",
-  "omega-3": "オメガ3",
+// 英語成分名の正規化マッピング（GPT Actions用）
+// スペースやハイフンのバリエーションを統一
+const ingredientNormalizationMap: Record<string, string> = {
+  "vitamin-d": "Vitamin D",
+  "vitamin d": "Vitamin D",
+  "vitamin-c": "Vitamin C",
+  "vitamin c": "Vitamin C",
+  "vitamin-b": "Vitamin B",
+  "vitamin b": "Vitamin B",
+  "vitamin-e": "Vitamin E",
+  "vitamin e": "Vitamin E",
+  "vitamin-k": "Vitamin K",
+  "vitamin k": "Vitamin K",
+  "vitamin-a": "Vitamin A",
+  "vitamin a": "Vitamin A",
+  zinc: "Zinc",
+  iron: "Iron",
+  calcium: "Calcium",
+  magnesium: "Magnesium",
+  "omega-3": "Omega-3",
+  omega3: "Omega-3",
   dha: "DHA",
   epa: "EPA",
-  "fish-oil": "フィッシュオイル",
-  probiotics: "乳酸菌",
-  "lactic-acid-bacteria": "乳酸菌",
-  collagen: "コラーゲン",
-  "hyaluronic-acid": "ヒアルロン酸",
-  coq10: "コエンザイムQ10",
-  "coenzyme-q10": "コエンザイムQ10",
+  "fish-oil": "Fish Oil",
+  "fish oil": "Fish Oil",
+  probiotics: "Probiotics",
+  collagen: "Collagen",
+  "hyaluronic-acid": "Hyaluronic Acid",
+  "hyaluronic acid": "Hyaluronic Acid",
+  coq10: "CoQ10",
+  "coenzyme-q10": "CoQ10",
   gaba: "GABA",
-  theanine: "テアニン",
-  "l-theanine": "テアニン",
-  glycine: "グリシン",
-  ashwagandha: "アシュワガンダ",
-  glucosamine: "グルコサミン",
-  chondroitin: "コンドロイチン",
-  protein: "プロテイン",
+  theanine: "Theanine",
+  "l-theanine": "L-Theanine",
+  glycine: "Glycine",
+  ashwagandha: "Ashwagandha",
+  glucosamine: "Glucosamine",
+  chondroitin: "Chondroitin",
+  protein: "Protein",
   bcaa: "BCAA",
-  creatine: "クレアチン",
+  creatine: "Creatine",
   hmb: "HMB",
-  carnitine: "カルニチン",
-  "l-carnitine": "カルニチン",
-  multivitamin: "マルチビタミン",
-  "multi-vitamin": "マルチビタミン",
-  fiber: "食物繊維",
-  "dietary-fiber": "食物繊維",
-  "ginkgo-biloba": "イチョウ葉",
-  echinacea: "エキナセア",
+  carnitine: "Carnitine",
+  "l-carnitine": "L-Carnitine",
+  multivitamin: "Multivitamin",
+  "multi-vitamin": "Multivitamin",
+  fiber: "Fiber",
+  "dietary-fiber": "Dietary Fiber",
+  "ginkgo-biloba": "Ginkgo Biloba",
+  "ginkgo biloba": "Ginkgo Biloba",
+  echinacea: "Echinacea",
 };
 
 // CORS headers for GPT Actions
@@ -82,16 +91,17 @@ export async function GET(request: NextRequest) {
     const rawIngredient = searchParams.get("ingredient") || "";
     const rawCategory = searchParams.get("category") || "";
 
-    // 英語キー→日本語名変換（GPT Actions対応）
-    const normalizedIngredient = rawIngredient
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-    const mappedIngredient =
-      ingredientNameMap[normalizedIngredient] || rawIngredient;
+    // 英語成分名の正規化（GPT Actions対応）
+    // nameEnフィールドで検索できる形式に変換
+    const normalizedKey = rawIngredient.toLowerCase().replace(/\s+/g, "-");
+    const normalizedIngredient =
+      ingredientNormalizationMap[normalizedKey] ||
+      ingredientNormalizationMap[rawIngredient.toLowerCase()] ||
+      rawIngredient;
 
     // サニタイズ
     const q = sanitizeForGroq(rawQ);
-    const ingredient = sanitizeForGroq(mappedIngredient);
+    const ingredient = sanitizeForGroq(normalizedIngredient);
     const category = sanitizeForGroq(rawCategory);
     const sort = searchParams.get("sort") || "tier-rank";
     const limit = Math.min(parseInt(searchParams.get("limit") || "10", 10), 50);
