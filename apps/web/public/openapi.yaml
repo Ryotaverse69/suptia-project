@@ -45,10 +45,12 @@ paths:
           example: "ビタミンD"
         - name: ingredient
           in: query
-          description: 成分名（日本語または英語）
+          description: |
+            成分名（英語キーを推奨）
+            例: vitamin-d, vitamin-c, zinc, magnesium, omega-3, probiotics, collagen, coq10, gaba
           schema:
             type: string
-          example: "ビタミンC"
+          example: "vitamin-d"
         - name: category
           in: query
           description: カテゴリ
@@ -187,10 +189,12 @@ paths:
           example: "immunity"
         - name: ingredient
           in: query
-          description: 特定の成分名
+          description: |
+            特定の成分名（英語キーを推奨）
+            例: vitamin-d, vitamin-c, zinc, magnesium, omega-3
           schema:
             type: string
-          example: "ビタミンD"
+          example: "vitamin-d"
         - name: budget
           in: query
           description: 月額予算（円）

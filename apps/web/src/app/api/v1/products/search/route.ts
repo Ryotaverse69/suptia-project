@@ -3,9 +3,52 @@ import { sanityServer } from "@/lib/sanityServer";
 
 // GROQクエリ用のサニタイズ関数
 function sanitizeForGroq(str: string): string {
-  // GROQ特殊文字をエスケープ
   return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\*/g, "\\*");
 }
+
+// 英語成分名→日本語名のマッピング（GPT Actions用）
+const ingredientNameMap: Record<string, string> = {
+  "vitamin-d": "ビタミンD",
+  "vitamin-c": "ビタミンC",
+  "vitamin-b": "ビタミンB",
+  "vitamin-e": "ビタミンE",
+  "vitamin-k": "ビタミンK",
+  "vitamin-a": "ビタミンA",
+  zinc: "亜鉛",
+  iron: "鉄",
+  calcium: "カルシウム",
+  magnesium: "マグネシウム",
+  omega3: "オメガ3",
+  "omega-3": "オメガ3",
+  dha: "DHA",
+  epa: "EPA",
+  "fish-oil": "フィッシュオイル",
+  probiotics: "乳酸菌",
+  "lactic-acid-bacteria": "乳酸菌",
+  collagen: "コラーゲン",
+  "hyaluronic-acid": "ヒアルロン酸",
+  coq10: "コエンザイムQ10",
+  "coenzyme-q10": "コエンザイムQ10",
+  gaba: "GABA",
+  theanine: "テアニン",
+  "l-theanine": "テアニン",
+  glycine: "グリシン",
+  ashwagandha: "アシュワガンダ",
+  glucosamine: "グルコサミン",
+  chondroitin: "コンドロイチン",
+  protein: "プロテイン",
+  bcaa: "BCAA",
+  creatine: "クレアチン",
+  hmb: "HMB",
+  carnitine: "カルニチン",
+  "l-carnitine": "カルニチン",
+  multivitamin: "マルチビタミン",
+  "multi-vitamin": "マルチビタミン",
+  fiber: "食物繊維",
+  "dietary-fiber": "食物繊維",
+  "ginkgo-biloba": "イチョウ葉",
+  echinacea: "エキナセア",
+};
 
 // CORS headers for GPT Actions
 const corsHeaders = {
@@ -34,14 +77,21 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // URLエンコードされた日本語パラメータを適切にデコード・サニタイズ
+    // パラメータ取得
     const rawQ = searchParams.get("q") || "";
     const rawIngredient = searchParams.get("ingredient") || "";
     const rawCategory = searchParams.get("category") || "";
 
-    // デコードとサニタイズ
+    // 英語キー→日本語名変換（GPT Actions対応）
+    const normalizedIngredient = rawIngredient
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+    const mappedIngredient =
+      ingredientNameMap[normalizedIngredient] || rawIngredient;
+
+    // サニタイズ
     const q = sanitizeForGroq(rawQ);
-    const ingredient = sanitizeForGroq(rawIngredient);
+    const ingredient = sanitizeForGroq(mappedIngredient);
     const category = sanitizeForGroq(rawCategory);
     const sort = searchParams.get("sort") || "tier-rank";
     const limit = Math.min(parseInt(searchParams.get("limit") || "10", 10), 50);
