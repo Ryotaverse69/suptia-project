@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityServer } from "@/lib/sanityServer";
 
+// GROQクエリ用のサニタイズ関数
+function sanitizeForGroq(str: string): string {
+  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\*/g, "\\*");
+}
+
 // CORS headers for GPT Actions
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -89,11 +94,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // URLエンコードされた日本語パラメータを適切にデコード
-    const goal = decodeURIComponent(
-      searchParams.get("goal") || "",
-    ).toLowerCase();
-    const ingredient = decodeURIComponent(searchParams.get("ingredient") || "");
+    // URLエンコードされた日本語パラメータを適切にデコード・サニタイズ
+    const goal = (searchParams.get("goal") || "").toLowerCase();
+    const ingredient = sanitizeForGroq(searchParams.get("ingredient") || "");
     const budgetStr = searchParams.get("budget");
     const priority = searchParams.get("priority") || "cost-effectiveness";
     const limit = Math.min(parseInt(searchParams.get("limit") || "5", 10), 20);
