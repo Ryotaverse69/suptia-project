@@ -129,6 +129,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build sort order
+    // GROQはselectでスコア化してソート
     let orderClause = "";
     switch (sort) {
       case "price-asc":
@@ -138,13 +139,28 @@ export async function GET(request: NextRequest) {
         orderClause = "| order(priceJPY desc)";
         break;
       case "cost-effectiveness":
-        orderClause =
-          '| order(tierRatings.costEffectivenessRank == "S" desc, tierRatings.costEffectivenessRank == "A" desc, priceJPY asc)';
+        orderClause = `| order(
+          select(
+            tierRatings.costEffectivenessRank == "S" => 5,
+            tierRatings.costEffectivenessRank == "A" => 4,
+            tierRatings.costEffectivenessRank == "B" => 3,
+            tierRatings.costEffectivenessRank == "C" => 2,
+            tierRatings.costEffectivenessRank == "D" => 1,
+            0
+          ) desc, priceJPY asc)`;
         break;
       case "tier-rank":
       default:
-        orderClause =
-          '| order(tierRatings.overallRank == "S+" desc, tierRatings.overallRank == "S" desc, tierRatings.overallRank == "A" desc, priceJPY asc)';
+        orderClause = `| order(
+          select(
+            tierRatings.overallRank == "S+" => 6,
+            tierRatings.overallRank == "S" => 5,
+            tierRatings.overallRank == "A" => 4,
+            tierRatings.overallRank == "B" => 3,
+            tierRatings.overallRank == "C" => 2,
+            tierRatings.overallRank == "D" => 1,
+            0
+          ) desc, priceJPY asc)`;
         break;
     }
 
