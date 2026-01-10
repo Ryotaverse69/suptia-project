@@ -70,3 +70,29 @@ export interface CloudinaryUploadResult {
   publicId?: string;
   error?: string;
 }
+
+// 曜日別テーマ用データ型
+export interface VersusData {
+  ingredient1: IngredientData;
+  ingredient2: IngredientData;
+}
+
+export interface RankingData {
+  category: string;
+  products: ProductData[];
+}
+
+export interface CautionData {
+  ingredient: IngredientData;
+  cautions: string[];
+  interactions: string[];
+}
+
+// テーマ別コンテンツ
+export type ThemeContent =
+  | { type: 'ingredient'; data: IngredientData }
+  | { type: 'product'; data: ProductData }
+  | { type: 'cospa'; data: ProductData }
+  | { type: 'versus'; data: VersusData }
+  | { type: 'ranking'; data: RankingData }
+  | { type: 'caution'; data: CautionData };
