@@ -1,0 +1,473 @@
+openapi: 3.1.0
+info:
+  title: Suptia API
+  description: |
+    Suptia（サプティア）は日本のサプリメント比較・推薦サービスです。
+    価格比較、成分量、コスパ、エビデンス、安全性の5つの柱でサプリメントを評価します。
+
+    ## 主な機能
+    - サプリメント商品の検索・比較
+    - 成分情報の取得
+    - 目的別おすすめ商品の取得
+
+    ## ティアランク評価
+    商品は以下の基準で S+/S/A/B/C/D のランクで評価されます：
+    - 価格ランク: 他商品との価格比較
+    - コスパランク: 成分量あたりの価格
+    - 含有量ランク: 1日あたりの有効成分量
+    - エビデンスランク: 科学的根拠の強さ
+    - 安全性ランク: 副作用・相互作用リスク
+
+    ## Five Crown（S+）
+    5つすべてがSランクの商品には「Five Crown」バッジが付与されます。
+  version: 1.0.0
+  contact:
+    name: Suptia Support
+    url: https://suptia.com/contact
+servers:
+  - url: https://suptia.com/api/v1
+    description: Production server
+
+paths:
+  /products/search:
+    get:
+      operationId: searchProducts
+      summary: サプリメント商品を検索
+      description: |
+        キーワード、成分名、カテゴリなどの条件でサプリメント商品を検索します。
+        ティアランク順、価格順、コスパ順でソートできます。
+      parameters:
+        - name: q
+          in: query
+          description: 検索キーワード（商品名）
+          schema:
+            type: string
+          example: "ビタミンD"
+        - name: ingredient
+          in: query
+          description: 成分名（日本語または英語）
+          schema:
+            type: string
+          example: "ビタミンC"
+        - name: category
+          in: query
+          description: カテゴリ
+          schema:
+            type: string
+            enum: [vitamin, mineral, amino-acid, fatty-acid, probiotic, herb, other]
+          example: "vitamin"
+        - name: sort
+          in: query
+          description: ソート順
+          schema:
+            type: string
+            enum: [tier-rank, price-asc, price-desc, cost-effectiveness]
+            default: tier-rank
+        - name: limit
+          in: query
+          description: 取得件数（最大50）
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: 検索成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSearchResponse'
+
+  /products/{slug}:
+    get:
+      operationId: getProduct
+      summary: 商品詳細を取得
+      description: |
+        商品の詳細情報を取得します。
+        価格比較、成分情報、ティアランク、購入リンクを含みます。
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: 商品のスラッグ（URL識別子）
+          schema:
+            type: string
+          example: "now-foods-vitamin-d3-5000iu"
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailResponse'
+        '404':
+          description: 商品が見つかりません
+
+  /ingredients:
+    get:
+      operationId: listIngredients
+      summary: 成分一覧を取得
+      description: サプリメント成分の一覧を取得します。
+      parameters:
+        - name: category
+          in: query
+          description: カテゴリでフィルター
+          schema:
+            type: string
+            enum: [vitamin, mineral, amino-acid, fatty-acid, probiotic, herb, other]
+        - name: q
+          in: query
+          description: 検索キーワード（成分名）
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: 取得件数（最大100）
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngredientsListResponse'
+
+  /ingredients/{slug}:
+    get:
+      operationId: getIngredient
+      summary: 成分詳細を取得
+      description: |
+        成分の詳細情報と関連商品を取得します。
+        エビデンスレベル、推奨摂取量、注意事項などを含みます。
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: 成分のスラッグ
+          schema:
+            type: string
+          example: "vitamin-d"
+        - name: products_limit
+          in: query
+          description: 関連商品の取得件数（最大20）
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 5
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngredientDetailResponse'
+        '404':
+          description: 成分が見つかりません
+
+  /recommendations:
+    get:
+      operationId: getRecommendations
+      summary: おすすめ商品を取得
+      description: |
+        目的や予算に応じたおすすめ商品を取得します。
+        「免疫力向上」「疲労回復」「睡眠改善」などの目的から最適な商品を提案します。
+      parameters:
+        - name: goal
+          in: query
+          description: 目的（日本語または英語）
+          schema:
+            type: string
+            enum: [immunity, energy, sleep, skin, bone, joint, muscle, focus, stress, diet, gut, general, 免疫, 疲労, 睡眠, 美容, 骨, 関節, 筋肉, 集中, ストレス, ダイエット, 腸, 総合]
+          example: "immunity"
+        - name: ingredient
+          in: query
+          description: 特定の成分名
+          schema:
+            type: string
+          example: "ビタミンD"
+        - name: budget
+          in: query
+          description: 月額予算（円）
+          schema:
+            type: integer
+            minimum: 500
+          example: 3000
+        - name: priority
+          in: query
+          description: 優先項目
+          schema:
+            type: string
+            enum: [cost-effectiveness, safety, evidence, content]
+            default: cost-effectiveness
+        - name: limit
+          in: query
+          description: 取得件数（最大20）
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 5
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsResponse'
+
+components:
+  schemas:
+    TierRank:
+      type: string
+      enum: ["S+", "S", "A", "B", "C", "D"]
+      description: ティアランク評価
+
+    ProductSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 商品名
+        slug:
+          type: string
+          description: URL識別子
+        url:
+          type: string
+          format: uri
+          description: Suptiaの商品ページURL
+        price:
+          type: object
+          properties:
+            amount:
+              type: integer
+              description: 価格（円）
+            currency:
+              type: string
+              default: "JPY"
+            perDay:
+              type: integer
+              description: 1日あたりの価格（円）
+        image:
+          type: string
+          format: uri
+        source:
+          type: string
+          description: 販売元（rakuten, amazon, yahoo等）
+        tierRanks:
+          type: object
+          properties:
+            overall:
+              $ref: '#/components/schemas/TierRank'
+            price:
+              $ref: '#/components/schemas/TierRank'
+            costEffectiveness:
+              $ref: '#/components/schemas/TierRank'
+            content:
+              $ref: '#/components/schemas/TierRank'
+            evidence:
+              $ref: '#/components/schemas/TierRank'
+            safety:
+              $ref: '#/components/schemas/TierRank'
+        badges:
+          type: array
+          items:
+            type: string
+          description: 獲得バッジ（five-crown等）
+        mainIngredients:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              nameEn:
+                type: string
+              amountMg:
+                type: number
+
+    ProductSearchResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        count:
+          type: integer
+        query:
+          type: object
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSummary'
+
+    ProductDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        product:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            slug:
+              type: string
+            url:
+              type: string
+              format: uri
+            description:
+              type: string
+            pricing:
+              type: object
+              properties:
+                basePrice:
+                  type: integer
+                pricePerDay:
+                  type: integer
+                daysSupply:
+                  type: integer
+                lowestPrice:
+                  type: object
+                  properties:
+                    amount:
+                      type: integer
+                    source:
+                      type: string
+                    url:
+                      type: string
+                      format: uri
+                priceComparison:
+                  type: array
+                  items:
+                    type: object
+            tierRanks:
+              type: object
+            ingredients:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  amountMgPerServing:
+                    type: number
+                  evidenceLevel:
+                    type: string
+                  safetyScore:
+                    type: integer
+
+    IngredientsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        count:
+          type: integer
+        availableCategories:
+          type: array
+          items:
+            type: string
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              nameEn:
+                type: string
+              slug:
+                type: string
+              category:
+                type: string
+              url:
+                type: string
+                format: uri
+              evidenceLevel:
+                type: string
+              safetyScore:
+                type: integer
+              productCount:
+                type: integer
+
+    IngredientDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        ingredient:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            nameEn:
+              type: string
+            description:
+              type: string
+            evidenceLevel:
+              type: string
+            safetyScore:
+              type: integer
+            dosage:
+              type: object
+              properties:
+                dailyRecommended:
+                  type: string
+                dailyUpperLimit:
+                  type: string
+            benefits:
+              type: array
+              items:
+                type: string
+            sideEffects:
+              type: array
+              items:
+                type: string
+        relatedProducts:
+          type: object
+          properties:
+            total:
+              type: integer
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductSummary'
+
+    RecommendationsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        count:
+          type: integer
+        query:
+          type: object
+        targetIngredients:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ProductSummary'
+              - type: object
+                properties:
+                  recommendationReasons:
+                    type: array
+                    items:
+                      type: string
+                    description: おすすめ理由

@@ -156,11 +156,13 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 
 - AIコンシェルジュ Phase 1（チャットUI、プラン別制限）
 - 有料会員機能（Free / Pro ¥490 / Pro+Safety ¥980）
+- **GPT Actions準備**（公開API設計、OpenAPI仕様書作成、llms.txt v3.0強化）
 
 ### 2026年2月
 
 - AIコンシェルジュ Phase 2（価格履歴統合、推薦ロジック可視化）
 - Amazon PA-API統合
+- **GPT Actions公開**（GPT Store登録、ChatGPT Health対応）
 
 ### 2026年3月
 
@@ -170,7 +172,7 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 ### 2026年4月〜
 
 - 英語版リリース準備
-- GPT Actions連携
+- GPT Actions改善（利用データ分析、機能拡充）
 
 ---
 
@@ -183,4 +185,4 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 
 ---
 
-**最終更新**: 2025-12-10 | **バージョン**: 3.1.0
+**最終更新**: 2026-01-10 | **バージョン**: 3.2.0

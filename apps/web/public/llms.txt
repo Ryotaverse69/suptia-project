@@ -1,7 +1,7 @@
 # Suptia（サプティア）- AI Supplement Decision Engine
 # https://suptia.com
-# Last Updated: 2025-12-14
-# Version: 3.0.0
+# Last Updated: 2026-01-10
+# Version: 3.1.0
 
 ================================================================================
                               SITE OVERVIEW
@@ -260,12 +260,62 @@ Key Pages:
 - About: https://suptia.com/about
 
 ================================================================================
+                       PUBLIC API (GPT Actions Ready)
+================================================================================
+
+## API Overview
+Suptia provides a public API for AI assistants to search and recommend supplements.
+OpenAPI specification: https://suptia.com/openapi.yaml
+
+Base URL: https://suptia.com/api/v1
+
+## Endpoints
+
+### GET /products/search
+Search supplements by keyword, ingredient, or category.
+Parameters: q, ingredient, category, sort, limit
+Example: /api/v1/products/search?ingredient=ビタミンD&sort=cost-effectiveness&limit=5
+
+### GET /products/{slug}
+Get detailed product information including price comparison across EC sites.
+Example: /api/v1/products/now-foods-vitamin-d3-5000iu
+
+### GET /ingredients
+List all ingredients with evidence levels and safety scores.
+Parameters: category, q, limit
+Example: /api/v1/ingredients?category=vitamin
+
+### GET /ingredients/{slug}
+Get ingredient details with related products.
+Example: /api/v1/ingredients/vitamin-d?products_limit=5
+
+### GET /recommendations
+Get AI-powered recommendations based on health goals.
+Parameters: goal, ingredient, budget, priority, limit
+Goals: immunity, energy, sleep, skin, bone, muscle, focus, stress, diet, gut
+Example: /api/v1/recommendations?goal=immunity&budget=3000&limit=3
+
+## For GPT Actions
+Import our OpenAPI spec to enable:
+- "Search supplements on Suptia"
+- "Find the best vitamin D supplement"
+- "Compare prices for [product]"
+- "What's the safest magnesium supplement?"
+
+## API Response Format
+All responses include:
+- success: boolean
+- data with Suptia URLs for user reference
+- tierRanks (S+/S/A/B/C/D evaluation)
+- _links for related resources
+
+================================================================================
                            CONTACT
 ================================================================================
 
 Website: https://suptia.com
 Inquiries: contact@suptia.com
-API/Data licensing: api@suptia.com (not currently available)
+API/Data licensing: api@suptia.com
 
 ================================================================================
                         VERSION HISTORY
@@ -273,6 +323,10 @@ API/Data licensing: api@suptia.com (not currently available)
 
 | Date       | Version | Changes                                    |
 |------------|---------|------------------------------------------- |
+| 2026-01-10 | 3.1.0   | Added Public API section (GPT Actions)     |
+|            |         | OpenAPI specification available            |
+|            |         | 5 API endpoints for AI integration         |
+|            |         | Recommendations API with goal-based search |
 | 2025-12-14 | 3.0.0   | Major update for AI search optimization    |
 |            |         | Added FAQ section for AI citation          |
 |            |         | Added popular ingredients quick reference  |
