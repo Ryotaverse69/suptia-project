@@ -10,6 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { getCharacter, CHARACTER_WEIGHTS } from "@/lib/concierge/characters";
@@ -23,6 +25,18 @@ import {
 import type { UserPlan } from "@/contexts/UserProfileContext";
 import { checkCompliance, autoFixViolations } from "@/lib/compliance/checker";
 import { sanityServer } from "@/lib/sanityServer";
+// Safety Guardian（Phase 3）
+import {
+  performSafetyCheck,
+  shouldEscalateToOpus,
+  generateSafetyPromptSection,
+  isProductBlocked,
+  type UserHealthProfile,
+} from "@/lib/concierge/safety/checker";
+import type {
+  SafetyCheckResult,
+  BlockedIngredient,
+} from "@/lib/concierge/safety/types";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -152,14 +166,93 @@ function getTomorrowResetTime(): string {
 }
 
 /**
- * モデルを選択（安全優先ルール適用）
+ * ゲストセッションIDを取得または生成
+ * 仕様書: Cookie識別（7日間有効）
+ */
+async function getOrCreateGuestSessionId(): Promise<string> {
+  const cookieStore = await cookies();
+  const existingId = cookieStore.get("guest_session_id")?.value;
+
+  if (existingId) {
+    return existingId;
+  }
+
+  // 新規セッションID生成
+  const newId = `guest_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+
+  // Cookieに保存（7日間有効）
+  cookieStore.set("guest_session_id", newId, {
+    maxAge: 60 * 60 * 24 * 7, // 7日間
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  });
+
+  return newId;
+}
+
+/**
+ * ゲストの本日の使用回数を取得
+ */
+async function getGuestUsageCount(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  guestSessionId: string,
+  todayJST: string,
+): Promise<number> {
+  const { count } = await supabase
+    .from("guest_usage_logs")
+    .select("*", { count: "exact", head: true })
+    .eq("guest_session_id", guestSessionId)
+    .eq("usage_date", todayJST);
+
+  return count || 0;
+}
+
+/**
+ * ゲストの使用ログを記録
+ */
+async function recordGuestUsage(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  guestSessionId: string,
+  todayJST: string,
+): Promise<void> {
+  await supabase.from("guest_usage_logs").insert({
+    guest_session_id: guestSessionId,
+    action: "chat",
+    usage_date: todayJST,
+  });
+}
+
+/**
+ * モデルを選択（安全優先ルール適用 + Opus昇格ロジック）
+ *
+ * 仕様書6.2準拠:
+ * - 相互作用が3系統以上 → Opus
+ * - 危険フラグが2つ以上重複 → Opus
+ * - 確信度が低い（<0.7） → Opus
  */
 function selectModel(
   plan: UserPlan | "guest",
   hasSafetyContext: boolean,
+  safetyResult?: SafetyCheckResult,
 ): AIModel {
-  // Safety強制フラグ: 健康リスクが絡む場合はOpus
-  if (hasSafetyContext && plan === "pro_safety") {
+  // Safety Guardian: Opus昇格判定（Pro+Safety, Admin限定）
+  if (
+    safetyResult &&
+    (plan === "pro_safety" || plan === "admin") &&
+    shouldEscalateToOpus(safetyResult)
+  ) {
+    console.log("[Concierge API] Opus escalation triggered:", {
+      interactionCount: safetyResult.interactionCount,
+      dangerFlags: safetyResult.dangerFlags,
+      confidenceScore: safetyResult.confidenceScore,
+    });
+    return "opus";
+  }
+
+  // Safety強制フラグ: 健康リスクが絡む場合はOpus（Pro+Safety, Admin）
+  if (hasSafetyContext && (plan === "pro_safety" || plan === "admin")) {
     return "opus";
   }
 
@@ -185,13 +278,13 @@ function selectModel(
 function getAnthropicModel(model: AIModel): string {
   switch (model) {
     case "haiku":
-      return "claude-3-haiku-20240307";
+      return "claude-haiku-4-5-20251001";
     case "sonnet":
-      return "claude-sonnet-4-20250514";
+      return "claude-sonnet-4-5-20250929";
     case "opus":
-      return "claude-opus-4-20250514";
+      return "claude-opus-4-5-20251101";
     default:
-      return "claude-3-haiku-20240307";
+      return "claude-haiku-4-5-20251001";
   }
 }
 
@@ -199,12 +292,19 @@ function getAnthropicModel(model: AIModel): string {
 // Suptiaデータ取得（商品・成分）
 // ============================================
 
+interface PriceHistoryEntry {
+  source: string;
+  amount: number;
+  recordedAt: string;
+}
+
 interface SuptiaProduct {
   name: string;
   slug: string;
   brandName: string;
   priceJPY: number;
   ingredientNames: string[];
+  priceHistory?: PriceHistoryEntry[];
 }
 
 interface SuptiaIngredient {
@@ -214,24 +314,80 @@ interface SuptiaIngredient {
 }
 
 /**
- * Suptiaの商品データを取得（人気順・最新順で上位を取得）
+ * 価格履歴をプラン別の期間でフィルタリング
+ */
+function filterPriceHistory(
+  history: PriceHistoryEntry[] | undefined,
+  daysLimit: number | null,
+): PriceHistoryEntry[] {
+  if (!history || history.length === 0) return [];
+
+  // 無制限の場合は全件返す
+  if (daysLimit === null) return history;
+
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - daysLimit);
+
+  return history.filter((entry) => {
+    const recordedDate = new Date(entry.recordedAt);
+    return recordedDate >= cutoffDate;
+  });
+}
+
+/**
+ * 価格履歴から傾向分析メッセージを生成（仕様書7.2準拠）
+ */
+function getPriceTrendMessage(
+  currentPrice: number,
+  history: PriceHistoryEntry[],
+): string | null {
+  if (!history || history.length < 3) return null;
+
+  // 過去90日間の平均を計算
+  const avg = history.reduce((sum, h) => sum + h.amount, 0) / history.length;
+  const percentDiff = ((currentPrice - avg) / avg) * 100;
+
+  if (percentDiff <= -15) {
+    return `現在の価格は過去データの平均より約${Math.abs(Math.round(percentDiff))}%低い水準です。（参考情報）`;
+  }
+  if (percentDiff >= 15) {
+    return `現在の価格は過去データの平均より約${Math.round(percentDiff)}%高い水準です。`;
+  }
+  return null; // 平均的な水準の場合はメッセージなし
+}
+
+/**
+ * Suptiaの人気商品データを取得（1時間キャッシュ）
+ */
+const fetchPopularProducts = unstable_cache(
+  async (): Promise<SuptiaProduct[]> => {
+    try {
+      const query = `*[_type == "product"] | order(viewCount desc, _createdAt desc)[0...50]{
+        name,
+        "slug": slug.current,
+        "brandName": brand->name,
+        priceJPY,
+        "ingredientNames": ingredients[].ingredient->name,
+        priceHistory
+      }`;
+
+      const products = await sanityServer.fetch(query);
+      return products || [];
+    } catch (error) {
+      console.error("Failed to fetch Suptia products:", error);
+      return [];
+    }
+  },
+  ["concierge-popular-products"],
+  { revalidate: 60 * 60, tags: ["concierge-products"] }, // 1時間
+);
+
+/**
+ * Suptiaの商品データを取得（キャッシュ経由）
  */
 async function fetchSuptiaProducts(limit = 50): Promise<SuptiaProduct[]> {
-  try {
-    const query = `*[_type == "product"] | order(viewCount desc, _createdAt desc)[0...${limit}]{
-      name,
-      "slug": slug.current,
-      "brandName": brand->name,
-      priceJPY,
-      "ingredientNames": ingredients[].ingredient->name
-    }`;
-
-    const products = await sanityServer.fetch(query);
-    return products || [];
-  } catch (error) {
-    console.error("Failed to fetch Suptia products:", error);
-    return [];
-  }
+  const products = await fetchPopularProducts();
+  return products.slice(0, limit);
 }
 
 /**
@@ -252,7 +408,8 @@ async function searchSuptiaProducts(
       "slug": slug.current,
       "brandName": brand->name,
       priceJPY,
-      "ingredientNames": ingredients[].ingredient->name
+      "ingredientNames": ingredients[].ingredient->name,
+      priceHistory
     }`;
 
     const products = await sanityServer.fetch(query);
@@ -264,23 +421,27 @@ async function searchSuptiaProducts(
 }
 
 /**
- * Suptiaの成分データを取得
+ * Suptiaの成分データを取得（24時間キャッシュ）
  */
-async function fetchSuptiaIngredients(): Promise<SuptiaIngredient[]> {
-  try {
-    const query = `*[_type == "ingredient"] | order(viewCount desc)[0...100]{
-      name,
-      "slug": slug.current,
-      "category": category->name
-    }`;
+const fetchSuptiaIngredients = unstable_cache(
+  async (): Promise<SuptiaIngredient[]> => {
+    try {
+      const query = `*[_type == "ingredient"] | order(viewCount desc)[0...100]{
+        name,
+        "slug": slug.current,
+        "category": category->name
+      }`;
 
-    const ingredients = await sanityServer.fetch(query);
-    return ingredients || [];
-  } catch (error) {
-    console.error("Failed to fetch Suptia ingredients:", error);
-    return [];
-  }
-}
+      const ingredients = await sanityServer.fetch(query);
+      return ingredients || [];
+    } catch (error) {
+      console.error("Failed to fetch Suptia ingredients:", error);
+      return [];
+    }
+  },
+  ["concierge-ingredients"],
+  { revalidate: 60 * 60 * 24, tags: ["concierge-ingredients"] }, // 24時間
+);
 
 /**
  * ユーザーメッセージからキーワードを抽出
@@ -339,6 +500,8 @@ function buildSystemPrompt(
     ingredients: SuptiaIngredient[];
   },
   healthInfo?: UserHealthInfo | null,
+  priceHistoryDays?: number | null,
+  safetyResult?: SafetyCheckResult | null,
 ): string {
   const character = getCharacter(characterId);
   const weights = CHARACTER_WEIGHTS[characterId];
@@ -482,12 +645,48 @@ ${character.recommendationStyleLabel}
   let suptiaDataSection = "";
   if (suptiaData) {
     if (suptiaData.products.length > 0) {
+      // 商品リストを価格履歴情報付きで生成
+      const productList = suptiaData.products
+        .map((p) => {
+          const baseInfo = `- ${p.name} (${p.brandName}) / slug: ${p.slug} / 価格: ¥${p.priceJPY?.toLocaleString() || "未定"}`;
+
+          // 価格履歴がある場合は傾向分析を追加（Pro以上のみ）
+          if (priceHistoryDays !== undefined && p.priceHistory && p.priceJPY) {
+            const filteredHistory = filterPriceHistory(
+              p.priceHistory,
+              priceHistoryDays,
+            );
+            const trendMessage = getPriceTrendMessage(
+              p.priceJPY,
+              filteredHistory,
+            );
+            if (trendMessage) {
+              return `${baseInfo} 📈 ${trendMessage}`;
+            }
+          }
+          return baseInfo;
+        })
+        .join("\n");
+
       suptiaDataSection += `
 【Suptia取扱商品リスト】
 以下の商品のみ推薦可能です。
 
-${suptiaData.products.map((p) => `- ${p.name} (${p.brandName}) / slug: ${p.slug} / 価格: ¥${p.priceJPY?.toLocaleString() || "未定"}`).join("\n")}
+${productList}
 `;
+
+      // 価格履歴アクセス権限に応じたディスクレーマー
+      if (priceHistoryDays !== undefined) {
+        const historyLabel =
+          priceHistoryDays === null
+            ? "全期間"
+            : priceHistoryDays === 365
+              ? "1年間"
+              : `${priceHistoryDays}日間`;
+        suptiaDataSection += `
+※価格傾向は${historyLabel}のデータに基づく参考情報です。価格は常に変動します。購入前に各ECサイトで最新価格をご確認ください。
+`;
+      }
     }
 
     if (suptiaData.ingredients.length > 0) {
@@ -585,7 +784,83 @@ ${suptiaData.ingredients.map((i) => `- ${i.name} / slug: ${i.slug}`).join("\n")}
     }
   }
 
-  return basePrompt + suptiaDataSection + healthSection;
+  // Safety Guardian セクション（Pro+Safety, Admin限定）
+  let safetySection = "";
+  if (safetyResult && safetyResult.blockedIngredients.length > 0) {
+    safetySection = generateSafetyPromptSection(safetyResult);
+  }
+
+  return basePrompt + suptiaDataSection + healthSection + safetySection;
+}
+
+/**
+ * 危険成分を含む商品をフィルタリング（商品リストから除外）
+ *
+ * 仕様書6.4準拠:
+ * - 高リスク成分を含む商品はリストから除外
+ * - 中リスク成分を含む商品は警告付きで残す
+ */
+function filterProductsByBlockedIngredients(
+  products: SuptiaProduct[],
+  blockedIngredients: BlockedIngredient[],
+): {
+  safeProducts: SuptiaProduct[];
+  warningProducts: Array<{
+    product: SuptiaProduct;
+    warnings: BlockedIngredient[];
+  }>;
+  blockedProducts: Array<{
+    product: SuptiaProduct;
+    reasons: BlockedIngredient[];
+  }>;
+} {
+  const safeProducts: SuptiaProduct[] = [];
+  const warningProducts: Array<{
+    product: SuptiaProduct;
+    warnings: BlockedIngredient[];
+  }> = [];
+  const blockedProducts: Array<{
+    product: SuptiaProduct;
+    reasons: BlockedIngredient[];
+  }> = [];
+
+  // 成分名からslugへのマッピングを作成（簡易版）
+  // 実際の運用では成分マスターからslugを取得する
+  const ingredientNameToSlug = (name: string): string => {
+    return name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[ａ-ｚＡ-Ｚ０-９]/g, (char) =>
+        String.fromCharCode(char.charCodeAt(0) - 0xfee0),
+      );
+  };
+
+  for (const product of products) {
+    const productIngredientSlugs = (product.ingredientNames || []).map(
+      ingredientNameToSlug,
+    );
+
+    const result = isProductBlocked(productIngredientSlugs, blockedIngredients);
+
+    if (result.isBlocked) {
+      // 高リスク成分を含む → 除外
+      blockedProducts.push({
+        product,
+        reasons: result.matchedIngredients.filter((m) => m.severity === "high"),
+      });
+    } else if (result.matchedIngredients.length > 0) {
+      // 中・低リスク成分を含む → 警告付き
+      warningProducts.push({
+        product,
+        warnings: result.matchedIngredients,
+      });
+    } else {
+      // 問題なし
+      safeProducts.push(product);
+    }
+  }
+
+  return { safeProducts, warningProducts, blockedProducts };
 }
 
 /**
@@ -685,7 +960,8 @@ export async function POST(request: NextRequest) {
 
     // プラン情報取得
     let userPlan: UserPlan | "guest" = "guest";
-    let planConfig = GUEST_CONFIG;
+    let planConfig: typeof GUEST_CONFIG | (typeof PLAN_CONFIGS)[UserPlan] =
+      GUEST_CONFIG;
 
     // ユーザーの健康情報
     let userHealthInfo: {
@@ -721,6 +997,7 @@ export async function POST(request: NextRequest) {
     // 利用回数チェック
     const todayJST = getTodayJST();
     let todayUsage = 0;
+    let guestSessionId: string | null = null;
 
     if (user) {
       const { count } = await supabase
@@ -732,30 +1009,32 @@ export async function POST(request: NextRequest) {
 
       todayUsage = count || 0;
     } else {
-      // ゲストはIPベースで制限（簡易実装）
-      const clientIP =
-        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-        request.headers.get("x-real-ip") ||
-        "unknown";
-
-      // TODO: Redis等で管理。現在はメモリ内で管理できないため制限なし扱い
-      todayUsage = 0;
+      // ゲスト: Cookie識別 + Supabaseでレート制限
+      guestSessionId = await getOrCreateGuestSessionId();
+      todayUsage = await getGuestUsageCount(supabase, guestSessionId, todayJST);
     }
 
-    const limit = planConfig.chatLimit;
+    const limit =
+      userPlan === "guest" ? GUEST_CONFIG.chatLimit : planConfig.chatLimit;
     const remaining = Math.max(0, limit - todayUsage);
 
     if (remaining <= 0 && limit !== Infinity) {
+      // 仕様書準拠のアップグレードメッセージ
       const upgradeMessage =
         userPlan === "guest"
-          ? "ログインすると1日10回まで質問できます。"
+          ? "ログインすると週5回まで質問できます。"
           : userPlan === "free"
-            ? "Proプランにアップグレードすると1日50回まで質問できます。"
+            ? "Proプランにアップグレードすると週25回まで質問できます。"
             : "";
+
+      const limitLabel =
+        userPlan === "guest"
+          ? `本日の質問回数上限（${limit}回/日）`
+          : `今週の質問回数上限（${limit}回/週）`;
 
       return NextResponse.json(
         {
-          error: `本日の質問回数上限（${limit}回）に達しました。${upgradeMessage}`,
+          error: `${limitLabel}に達しました。${upgradeMessage}`,
           usage: {
             remaining: 0,
             limit,
@@ -837,6 +1116,44 @@ export async function POST(request: NextRequest) {
         } else {
           sessionTitle = existingSession.title;
         }
+
+        // フォローアップ制限チェック（Pro以上のみ適用）
+        // Guest/Freeはフォローアップ機能なし = 制限チェックもなし
+        const followupLimit = planConfig.followupLimit;
+
+        if (followupLimit > 0 && followupLimit !== Infinity) {
+          // ユーザーメッセージは message_count / 2（ユーザー + アシスタントで1セット）
+          const userMessageCount = Math.floor(
+            existingSession.message_count / 2,
+          );
+
+          // 既に質問があるセッション = これはフォローアップ
+          if (userMessageCount >= followupLimit) {
+            const upgradeMessage =
+              userPlan === "pro"
+                ? "Pro+Safetyプランなら無制限にフォローアップできます。"
+                : "";
+
+            return NextResponse.json(
+              {
+                error: `この会話でのフォローアップ上限（${followupLimit}回）に達しました。新しい会話を開始してください。${upgradeMessage}`,
+                usage: {
+                  remaining,
+                  limit,
+                  resetAt: getTomorrowResetTime(),
+                },
+                upgradePrompt:
+                  userPlan === "pro"
+                    ? {
+                        type: "feature_locked",
+                        message: upgradeMessage,
+                      }
+                    : undefined,
+              },
+              { status: 429 },
+            );
+          }
+        }
       }
     }
 
@@ -889,8 +1206,33 @@ export async function POST(request: NextRequest) {
       /相互作用|副作用|禁忌|既往|服用中|アレルギー|妊娠|授乳|薬|持病/;
     const hasSafetyContext = healthKeywords.test(body.message);
 
-    // モデル選択
-    const model = selectModel(userPlan, hasSafetyContext);
+    // Safety Guardian: 健康情報からSafetyチェックを実行（Pro+Safety, Admin限定）
+    let safetyResult: SafetyCheckResult | null = null;
+    let blockedIngredientsForFilter: BlockedIngredient[] = [];
+
+    if (userHealthInfo && (userPlan === "pro_safety" || userPlan === "admin")) {
+      const healthProfile: UserHealthProfile = {
+        conditions: userHealthInfo.conditions,
+        allergies: userHealthInfo.allergies,
+        medications: userHealthInfo.medications,
+      };
+      safetyResult = performSafetyCheck(healthProfile);
+      blockedIngredientsForFilter = safetyResult.blockedIngredients;
+
+      console.log("[Concierge API] Safety check performed:", {
+        blockedCount: safetyResult.blockedIngredients.length,
+        interactionCount: safetyResult.interactionCount,
+        dangerFlags: safetyResult.dangerFlags,
+        confidenceScore: safetyResult.confidenceScore,
+      });
+    }
+
+    // モデル選択（Safety結果に基づいてOpus昇格判定）
+    const model = selectModel(
+      userPlan,
+      hasSafetyContext,
+      safetyResult ?? undefined,
+    );
     const anthropicModel = getAnthropicModel(model);
 
     // Suptiaの商品・成分データを取得
@@ -912,6 +1254,41 @@ export async function POST(request: NextRequest) {
       suptiaProducts = [...suptiaProducts, ...additionalProducts].slice(0, 30);
     }
 
+    // 危険成分オートブロック: 高リスク商品をフィルタリング（Pro+Safety, Admin限定）
+    let warningProductInfo: Array<{
+      productName: string;
+      warnings: string[];
+    }> = [];
+
+    if (blockedIngredientsForFilter.length > 0) {
+      const filtered = filterProductsByBlockedIngredients(
+        suptiaProducts,
+        blockedIngredientsForFilter,
+      );
+
+      // 高リスク商品を除外
+      suptiaProducts = [
+        ...filtered.safeProducts,
+        ...filtered.warningProducts.map((wp) => wp.product),
+      ];
+
+      // 警告付き商品の情報を保存（ログ用）
+      warningProductInfo = filtered.warningProducts.map((wp) => ({
+        productName: wp.product.name,
+        warnings: wp.warnings.map((w) => w.ingredientName),
+      }));
+
+      if (filtered.blockedProducts.length > 0) {
+        console.log("[Concierge API] Auto-blocked products:", {
+          count: filtered.blockedProducts.length,
+          products: filtered.blockedProducts.map((bp) => ({
+            name: bp.product.name,
+            reasons: bp.reasons.map((r) => r.ingredientName),
+          })),
+        });
+      }
+    }
+
     // 成分データを取得
     suptiaIngredients = await fetchSuptiaIngredients();
 
@@ -919,6 +1296,12 @@ export async function POST(request: NextRequest) {
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
+
+    // 価格履歴期間を取得
+    const priceHistoryDays =
+      userPlan === "guest"
+        ? GUEST_CONFIG.priceHistoryDays
+        : planConfig.priceHistoryDays;
 
     const systemPrompt = buildSystemPrompt(
       characterId,
@@ -928,6 +1311,8 @@ export async function POST(request: NextRequest) {
         ingredients: suptiaIngredients,
       },
       userHealthInfo,
+      priceHistoryDays,
+      safetyResult,
     );
 
     const messages: Anthropic.MessageParam[] = [
@@ -963,13 +1348,23 @@ export async function POST(request: NextRequest) {
     let assistantMessageId: string | undefined;
 
     if (sessionId && user) {
-      const metadata = {
+      const metadata: Record<string, unknown> = {
         characterId,
         characterName: character.name,
         recommendationStyle: character.recommendationStyle,
         model,
         tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
       };
+
+      // Safety情報があればメタデータに追加
+      if (safetyResult && safetyResult.blockedIngredients.length > 0) {
+        metadata.safetyCheck = {
+          blockedIngredientCount: safetyResult.blockedIngredients.length,
+          interactionCount: safetyResult.interactionCount,
+          dangerFlags: safetyResult.dangerFlags,
+          opusEscalated: model === "opus",
+        };
+      }
 
       const { data: savedAssistant, error: assistantError } = await supabase
         .from("chat_messages")
@@ -1040,6 +1435,9 @@ export async function POST(request: NextRequest) {
         tokens_output: response.usage.output_tokens,
         response_time_ms: responseTime,
       });
+    } else if (guestSessionId) {
+      // ゲストの使用ログを記録
+      await recordGuestUsage(supabase, guestSessionId, todayJST);
     }
 
     // セッションのメッセージカウントを更新

@@ -36,7 +36,9 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { CharacterSelector } from "./CharacterSelector";
 import { UsageBadge } from "./UsageBadge";
+import { WeightsVisualization } from "./WeightsVisualization";
 import { CHARACTERS, getCharacter } from "@/lib/concierge/characters";
+import { GUEST_CONFIG } from "@/lib/concierge/types";
 import { useCharacterAvatars } from "@/lib/concierge/useCharacterAvatars";
 
 interface ChatUIProps {
@@ -53,7 +55,9 @@ export function ChatUI({ className }: ChatUIProps) {
     error,
     usage,
     userPlan,
+    isGuest,
     characterId,
+    availableCharacters,
     sendMessage,
     setCharacterId,
     submitFeedback,
@@ -211,6 +215,7 @@ export function ChatUI({ className }: ChatUIProps) {
                 selectedCharacterId={characterId}
                 onSelect={setCharacterId}
                 userPlan={userPlan}
+                availableCharacters={availableCharacters}
                 disabled={isLoading}
                 compact
               />
@@ -219,9 +224,15 @@ export function ChatUI({ className }: ChatUIProps) {
             {/* 右: 利用状況 + 履歴ボタン */}
             <div className="flex items-center gap-2">
               <UsageBadge
-                remaining={usage?.remaining ?? null}
-                limit={usage?.limit ?? null}
-                plan={userPlan}
+                remaining={
+                  isGuest
+                    ? (usage?.remaining ?? GUEST_CONFIG.chatLimit)
+                    : (usage?.remaining ?? null)
+                }
+                limit={
+                  isGuest ? GUEST_CONFIG.chatLimit : (usage?.limit ?? null)
+                }
+                plan={isGuest ? "guest" : userPlan}
               />
               {/* デスクトップ用：履歴表示/非表示ボタン */}
               <button
@@ -521,11 +532,21 @@ export function ChatUI({ className }: ChatUIProps) {
             {character.recommendationStyleLabel}
           </p>
 
+          {/* 推薦ロジック可視化（Pro以上） */}
+          {(userPlan === "pro" ||
+            userPlan === "pro_safety" ||
+            userPlan === "admin") && (
+            <div className="w-full mb-4">
+              <WeightsVisualization characterId={characterId} />
+            </div>
+          )}
+
           {/* キャラクター変更ボタン */}
           <CharacterSelector
             selectedCharacterId={characterId}
             onSelect={setCharacterId}
             userPlan={userPlan}
+            availableCharacters={availableCharacters}
             disabled={isLoading}
             buttonLabel="コンシェルジュを変更"
           />

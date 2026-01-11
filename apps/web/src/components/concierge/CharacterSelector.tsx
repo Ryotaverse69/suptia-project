@@ -20,7 +20,7 @@ import {
   appleWebColors,
   liquidGlassClasses,
 } from "@/lib/design-system";
-import type { CharacterId } from "@/lib/concierge/types";
+import type { CharacterId, Character } from "@/lib/concierge/types";
 import {
   CHARACTERS,
   getAvailableCharacters,
@@ -40,6 +40,7 @@ interface CharacterSelectorProps {
   selectedCharacterId: CharacterId;
   onSelect: (characterId: CharacterId) => void;
   userPlan: string;
+  availableCharacters?: Character[]; // 利用可能なキャラクター（指定時はuserPlanより優先）
   disabled?: boolean;
   compact?: boolean; // ヘッダー用コンパクト表示
   buttonLabel?: string; // カスタムボタンラベル（設定時はアバター/名前の代わりにテキストボタン表示）
@@ -49,6 +50,7 @@ export function CharacterSelector({
   selectedCharacterId,
   onSelect,
   userPlan,
+  availableCharacters: availableCharactersProp,
   disabled = false,
   compact = false,
   buttonLabel,
@@ -59,7 +61,9 @@ export function CharacterSelector({
   );
   const [mounted, setMounted] = useState(false);
   const selectedCharacter = CHARACTERS[selectedCharacterId];
-  const availableCharacters = getAvailableCharacters(userPlan);
+  // propsで渡された場合はそれを優先、なければuserPlanから計算
+  const availableCharacters =
+    availableCharactersProp ?? getAvailableCharacters(userPlan);
   const allCharacters = Object.values(CHARACTERS);
   const gradient = CHARACTER_GRADIENTS[selectedCharacterId];
   const { getAvatarUrl } = useCharacterAvatars();
@@ -248,16 +252,16 @@ export function CharacterSelector({
                         </div>
                       )}
 
-                      {/* Pro限定バッジ */}
+                      {/* ログイン限定バッジ（ゲストのみ表示） */}
                       {!isAvailable && (
                         <div
                           className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[11px] font-medium"
                           style={{
-                            backgroundColor: systemColors.purple,
+                            backgroundColor: systemColors.blue,
                             color: "white",
                           }}
                         >
-                          Pro限定
+                          ログインで解放
                         </div>
                       )}
 

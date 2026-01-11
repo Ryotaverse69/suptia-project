@@ -184,24 +184,27 @@ export interface PlanConfig {
   characterChangeLimit: number | null;
   canUseCustomName: boolean;
   canViewWeights: boolean;
+  /** 価格履歴アクセス期間（日数）。nullは無制限 */
+  priceHistoryDays: number | null;
 }
 
 export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
   free: {
     plan: "free",
-    chatLimit: 10,
+    chatLimit: 5, // 仕様書: 5回/週
     followupLimit: 0,
     historyRetentionDays: 3,
     maxSessions: 5,
     contextMessages: 4,
-    availableCharacters: ["core"],
+    availableCharacters: ["core", "mint", "repha", "haku"],
     characterChangeLimit: null,
     canUseCustomName: false,
     canViewWeights: false,
+    priceHistoryDays: 30, // 仕様書: 30日
   },
   pro: {
     plan: "pro",
-    chatLimit: 50,
+    chatLimit: 25, // 仕様書: 25回/週
     followupLimit: 3,
     historyRetentionDays: 30,
     maxSessions: 50,
@@ -210,6 +213,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     characterChangeLimit: 3,
     canUseCustomName: false,
     canViewWeights: true,
+    priceHistoryDays: 365, // 仕様書: 1年
   },
   pro_safety: {
     plan: "pro_safety",
@@ -222,6 +226,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     characterChangeLimit: null,
     canUseCustomName: true,
     canViewWeights: true,
+    priceHistoryDays: null, // 仕様書: 全期間（無制限）
   },
   admin: {
     plan: "admin",
@@ -234,6 +239,7 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
     characterChangeLimit: null,
     canUseCustomName: true,
     canViewWeights: true,
+    priceHistoryDays: null, // 無制限
   },
 };
 
@@ -242,8 +248,9 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
 // ============================================
 
 export const GUEST_CONFIG = {
-  chatLimit: 3,
+  chatLimit: 2, // 仕様書: 2回/日
   followupLimit: 0,
   contextMessages: 2,
   availableCharacters: ["core"] as CharacterId[],
+  priceHistoryDays: 7, // 仕様書: 7日
 };

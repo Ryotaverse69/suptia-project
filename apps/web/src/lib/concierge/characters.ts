@@ -89,7 +89,7 @@ export const CHARACTERS: Record<CharacterId, Character> = {
     targetAudience: "できるだけ無駄なく選びたい人向け",
     focusAxis: "価格重視｜コスパ最優先",
     weights: CHARACTER_WEIGHTS.mint,
-    availablePlans: ["pro", "pro_safety", "admin"],
+    availablePlans: ["free", "pro", "pro_safety", "admin"],
   },
 
   repha: {
@@ -111,7 +111,7 @@ export const CHARACTERS: Record<CharacterId, Character> = {
     targetAudience: "論文・根拠を重視したい人向け",
     focusAxis: "根拠重視｜エビデンス最優先",
     weights: CHARACTER_WEIGHTS.repha,
-    availablePlans: ["pro", "pro_safety", "admin"],
+    availablePlans: ["free", "pro", "pro_safety", "admin"],
   },
 
   haku: {
@@ -132,7 +132,7 @@ export const CHARACTERS: Record<CharacterId, Character> = {
     targetAudience: "安全性が一番気になる人向け",
     focusAxis: "安全重視｜リスク最小化",
     weights: CHARACTER_WEIGHTS.haku,
-    availablePlans: ["pro", "pro_safety", "admin"],
+    availablePlans: ["free", "pro", "pro_safety", "admin"],
   },
 };
 

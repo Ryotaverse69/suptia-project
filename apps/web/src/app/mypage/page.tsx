@@ -23,6 +23,7 @@ import {
   Image as ImageIcon,
   MessageCircle,
   Sparkles,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
@@ -804,6 +805,68 @@ export default function MyPage() {
                       </div>
                     </Link>
 
+                    <Link href="/admin/note-images">
+                      <div
+                        className="flex items-center gap-4 p-5 sm:p-6 transition-all duration-200 group min-h-[72px] hover:bg-white/50 hover:backdrop-blur-[12px]"
+                        style={{
+                          borderBottom: `1px solid ${appleWebColors.borderSubtle}`,
+                        }}
+                      >
+                        {/* Icon with gradient */}
+                        <div
+                          className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+                          style={{
+                            background: `linear-gradient(135deg, #10B981 0%, #34D399 100%)`,
+                          }}
+                        >
+                          <FileText
+                            size={24}
+                            className="text-white sm:w-7 sm:h-7"
+                          />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4
+                              className="font-semibold text-[15px] transition-colors group-hover:opacity-70"
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              note画像生成
+                            </h4>
+                            <span
+                              className="px-2 py-0.5 text-[11px] font-semibold rounded-full"
+                              style={{
+                                backgroundColor: "#10B98115",
+                                color: "#10B981",
+                              }}
+                            >
+                              Admin
+                            </span>
+                          </div>
+                          <p
+                            className="text-[13px]"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            note記事用の画像プロンプト生成
+                          </p>
+                        </div>
+
+                        {/* Arrow */}
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center"
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
+                        >
+                          <ChevronRight
+                            size={18}
+                            style={{ color: appleWebColors.textTertiary }}
+                          />
+                        </div>
+                      </div>
+                    </Link>
+
                     {/* Plan Preview */}
                     <div className="flex items-center gap-4 p-5 sm:p-6">
                       {/* Icon */}
@@ -906,7 +969,7 @@ export default function MyPage() {
                         color: systemColors.orange,
                       }}
                     >
-                      2026年1月リリース予定
+                      Coming Soon
                     </span>
                   </div>
                 </div>
@@ -960,55 +1023,125 @@ export default function MyPage() {
                           </span>
                         </p>
                       </div>
-                      <ul className="space-y-2 text-[13px]">
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>AI質問 5回/月</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>基本的な商品比較</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>お気に入り保存</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
+
+                      {/* AIコンシェルジュ */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
                           style={{ color: appleWebColors.textTertiary }}
                         >
-                          <X size={16} className="flex-shrink-0" />
-                          <span>価格履歴</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
+                          AIコンシェルジュ
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>AI質問 5回/週</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>フォローアップ質問</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>4キャラクター選択可</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>高速応答モデル (Haiku)</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 価格・履歴 */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
                           style={{ color: appleWebColors.textTertiary }}
                         >
-                          <X size={16} className="flex-shrink-0" />
-                          <span>詳細分析</span>
-                        </li>
-                      </ul>
+                          価格・履歴
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>価格履歴 30日間</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>会話履歴 3日間保存</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>推薦理由の重み付け表示</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Safety */}
+                      <div>
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          Safety機能
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>相互作用チェック</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>危険成分オートブロック</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
 
                     {/* Pro Plan */}
@@ -1048,7 +1181,7 @@ export default function MyPage() {
                           className="text-[28px] font-bold"
                           style={{ color: appleWebColors.textPrimary }}
                         >
-                          ¥490
+                          ¥590
                           <span
                             className="text-[13px] font-normal ml-1"
                             style={{ color: appleWebColors.textSecondary }}
@@ -1057,61 +1190,139 @@ export default function MyPage() {
                           </span>
                         </p>
                       </div>
-                      <ul className="space-y-2 text-[13px]">
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>
-                            AI質問 <strong>無制限</strong>
-                          </span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>価格履歴グラフ</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>詳細な推薦理由</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>優先サポート</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
+
+                      {/* AIコンシェルジュ */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
                           style={{ color: appleWebColors.textTertiary }}
                         >
-                          <X size={16} className="flex-shrink-0" />
-                          <span>Safety Guardian</span>
-                        </li>
-                      </ul>
+                          AIコンシェルジュ
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              AI質問 <strong>25回/週</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>フォローアップ 3回/会話</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>4キャラクター選択可</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              高精度モデル (<strong>Sonnet</strong>)
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 価格・履歴 */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          価格・履歴
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              価格履歴 <strong>1年間</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>会話履歴 30日間保存</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>推薦理由の重み付け表示</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Safety */}
+                      <div>
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: appleWebColors.textTertiary }}
+                        >
+                          Safety機能
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>相互作用チェック</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            <X size={14} className="flex-shrink-0" />
+                            <span>危険成分オートブロック</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
 
                     {/* Pro + Safety Plan */}
@@ -1153,7 +1364,7 @@ export default function MyPage() {
                           className="text-[28px] font-bold"
                           style={{ color: appleWebColors.textPrimary }}
                         >
-                          ¥980
+                          ¥1,280
                           <span
                             className="text-[13px] font-normal ml-1"
                             style={{ color: appleWebColors.textSecondary }}
@@ -1162,68 +1373,426 @@ export default function MyPage() {
                           </span>
                         </p>
                       </div>
-                      <ul className="space-y-2 text-[13px]">
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
+
+                      {/* AIコンシェルジュ */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: appleWebColors.textTertiary }}
                         >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>Proの全機能</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
+                          AIコンシェルジュ
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              AI質問 <strong>無制限</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              フォローアップ <strong>無制限</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>4キャラ + カスタム名</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              最高精度モデル (<strong>Sonnet+Opus</strong>)
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 価格・履歴 */}
+                      <div className="mb-3">
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: appleWebColors.textTertiary }}
                         >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>
-                            <strong>相互作用チェック</strong>
-                          </span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
+                          価格・履歴
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              価格履歴 <strong>全期間</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              会話履歴 <strong>無制限</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>推薦理由の重み付け表示</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Safety */}
+                      <div>
+                        <p
+                          className="text-[11px] font-semibold mb-1.5 uppercase tracking-wide"
+                          style={{ color: systemColors.green }}
                         >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>
-                            <strong>Safety Guardian</strong>
-                          </span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>服薬・既往歴考慮</span>
-                        </li>
-                        <li
-                          className="flex items-center gap-2"
-                          style={{ color: appleWebColors.textSecondary }}
-                        >
-                          <Check
-                            size={16}
-                            className="flex-shrink-0"
-                            style={{ color: systemColors.green }}
-                          />
-                          <span>アレルギー警告</span>
-                        </li>
-                      </ul>
+                          Safety Guardian
+                        </p>
+                        <ul className="space-y-1.5 text-[13px]">
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              <strong>相互作用チェック</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>
+                              <strong>危険成分オートブロック</strong>
+                            </span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>既往歴・服薬情報考慮</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>アレルギー警告</span>
+                          </li>
+                          <li
+                            className="flex items-center gap-2"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            <Check
+                              size={14}
+                              className="flex-shrink-0"
+                              style={{ color: systemColors.green }}
+                            />
+                            <span>複雑ケースはOpus 4.5昇格</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Feature Comparison Table */}
+                  <div
+                    className="mt-6 rounded-[12px] overflow-hidden border"
+                    style={{ borderColor: appleWebColors.borderSubtle }}
+                  >
+                    <table className="w-full text-[12px]">
+                      <thead>
+                        <tr
+                          style={{
+                            backgroundColor: appleWebColors.sectionBackground,
+                          }}
+                        >
+                          <th
+                            className="text-left p-3 font-semibold"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            機能詳細
+                          </th>
+                          <th
+                            className="text-center p-3 font-semibold"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            Free
+                          </th>
+                          <th
+                            className="text-center p-3 font-semibold"
+                            style={{ color: systemColors.purple }}
+                          >
+                            Pro
+                          </th>
+                          <th
+                            className="text-center p-3 font-semibold"
+                            style={{ color: systemColors.green }}
+                          >
+                            Pro+Safety
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                          }}
+                        >
+                          <td
+                            className="p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            週間AI質問回数
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            5回
+                          </td>
+                          <td
+                            className="text-center p-3 font-medium"
+                            style={{ color: systemColors.purple }}
+                          >
+                            25回
+                          </td>
+                          <td
+                            className="text-center p-3 font-bold"
+                            style={{ color: systemColors.green }}
+                          >
+                            無制限
+                          </td>
+                        </tr>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                          }}
+                        >
+                          <td
+                            className="p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            フォローアップ質問
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            -
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            3回/会話
+                          </td>
+                          <td
+                            className="text-center p-3 font-bold"
+                            style={{ color: systemColors.green }}
+                          >
+                            無制限
+                          </td>
+                        </tr>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                          }}
+                        >
+                          <td
+                            className="p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            価格履歴期間
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            30日
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            1年
+                          </td>
+                          <td
+                            className="text-center p-3 font-bold"
+                            style={{ color: systemColors.green }}
+                          >
+                            全期間
+                          </td>
+                        </tr>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                          }}
+                        >
+                          <td
+                            className="p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            会話コンテキスト数
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            4件
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            10件
+                          </td>
+                          <td
+                            className="text-center p-3 font-bold"
+                            style={{ color: systemColors.green }}
+                          >
+                            20件
+                          </td>
+                        </tr>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                          }}
+                        >
+                          <td
+                            className="p-3"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            AIモデル
+                          </td>
+                          <td
+                            className="text-center p-3 text-[12px]"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            高速応答
+                            <br />
+                            <span className="text-[10px] opacity-70">
+                              (Haiku)
+                            </span>
+                          </td>
+                          <td
+                            className="text-center p-3 font-medium text-[12px]"
+                            style={{ color: systemColors.purple }}
+                          >
+                            高精度
+                            <br />
+                            <span className="text-[10px] opacity-70">
+                              (Sonnet)
+                            </span>
+                          </td>
+                          <td
+                            className="text-center p-3 font-bold text-[12px]"
+                            style={{ color: systemColors.green }}
+                          >
+                            最高精度
+                            <br />
+                            <span className="text-[10px] opacity-70">
+                              (Sonnet+Opus)
+                            </span>
+                          </td>
+                        </tr>
+                        <tr
+                          style={{
+                            borderTop: `1px solid ${appleWebColors.borderSubtle}`,
+                            backgroundColor: `${systemColors.green}08`,
+                          }}
+                        >
+                          <td
+                            className="p-3 font-medium"
+                            style={{ color: systemColors.green }}
+                          >
+                            Safety Guardian
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            -
+                          </td>
+                          <td
+                            className="text-center p-3"
+                            style={{ color: appleWebColors.textTertiary }}
+                          >
+                            -
+                          </td>
+                          <td className="text-center p-3">
+                            <Check
+                              size={16}
+                              className="inline"
+                              style={{ color: systemColors.green }}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   {/* Note */}
@@ -1231,8 +1800,7 @@ export default function MyPage() {
                     className="text-center text-[12px] mt-6"
                     style={{ color: appleWebColors.textTertiary }}
                   >
-                    ※
-                    有料プランは2026年1月リリース予定です。現在は無料でご利用いただけます。
+                    ※ Coming Soon - 現在は無料でご利用いただけます。
                   </p>
                 </div>
               </div>

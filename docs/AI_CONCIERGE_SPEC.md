@@ -1,7 +1,7 @@
 # Suptia AIコンシェルジュ 機能仕様書
 
 作成日: 2025年12月10日
-バージョン: 1.1.0
+バージョン: 2.0.0
 ステータス: 設計完了・実装待ち
 
 ---
@@ -22,64 +22,139 @@ Suptia AIコンシェルジュは、サプリメント選びを対話形式で�
 
 ## 2. プラン構造
 
-### 2軸モデル（将来対応）
+### 4段階モデル
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  軸A: AIアシストの深度（無料 → Pro）                        │
-│  軸B: 安全性レイヤ（Safety Add-on）                         │
-│                                                             │
-│  Pro（¥490）+ Safety Add-on（+¥490）= Pro+Safety（¥980）   │
+│  Guest（未ログイン）  → Cookie識別、お試し体験             │
+│  Free（ログイン済み） → 基本機能、ログインへの導線         │
+│  Pro（¥490/月）       → 本格利用、推薦ロジック可視化       │
+│  Pro+Safety（¥980/月）→ 相互作用チェッカー、完全サポート   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### プラン一覧
+
+| プラン         | 状態         | 月額 | 識別方法      | AIモデル                       |
+| -------------- | ------------ | ---- | ------------- | ------------------------------ |
+| **Guest**      | 未ログイン   | ¥0   | Cookie        | Haiku 4.5                      |
+| **Free**       | ログイン済み | ¥0   | Supabase Auth | Haiku 4.5                      |
+| **Pro**        | 有料会員     | ¥490 | Supabase Auth | Sonnet 4.5                     |
+| **Pro+Safety** | 有料会員     | ¥980 | Supabase Auth | Sonnet 4.5（条件付きOpus昇格） |
 
 ### 価値提供の明確化
 
 | プラン     | 核心価値               | ターゲット               |
 | ---------- | ---------------------- | ------------------------ |
-| 無料       | 基本的な情報収集       | 情報収集段階のユーザー   |
+| Guest      | お試し体験             | 初回訪問者               |
+| Free       | 基本的な情報収集       | 情報収集段階のユーザー   |
 | Pro        | 透明性と意思決定支援   | 購入を検討中のユーザー   |
 | Pro+Safety | パーソナライズド安全性 | 既往歴・服薬中のユーザー |
+
+### アップグレード導線
+
+```
+Guest → Free: 「ログインでお気に入り・診断履歴を保存」
+Free → Pro:   「週25回のAI質問 + 推薦ロジック可視化」
+Pro → Pro+Safety: 「相互作用チェッカーで安心」
+```
 
 ---
 
 ## 3. 機能比較表
 
-| 機能カテゴリ       | 機能                 | 未ログイン      | 無料会員            | Pro ¥490          | Pro+Safety ¥980        |
-| ------------------ | -------------------- | --------------- | ------------------- | ----------------- | ---------------------- |
-| **基本**           | 質問回数/日          | 3回             | 10回                | 50回              | 無制限                 |
-|                    | 回答の深さ           | 概要のみ        | 基本回答            | 詳細回答          | 科学論文ベース※1       |
-|                    | 会話履歴             | ❌              | 3日間               | 30日間            | 無制限                 |
-|                    | フォローアップ       | ❌              | ❌                  | 3回/会話          | 無制限                 |
-| **商品推薦**       | 推薦数               | トップ3         | トップ3+理由概要    | 全商品            | 全商品                 |
-|                    | 推薦ロジック可視化   | ❌              | ❌                  | ✅ 5つの柱で表示  | ✅ +パーソナル重み付け |
-|                    | エビデンス表示       | なし            | S/A/Bのみ           | 全ランク+出典     | 全ランク+論文リンク    |
-| **価格**           | 現在価格             | ✅              | ✅                  | ✅                | ✅                     |
-|                    | 価格履歴（90日）     | ❌              | ❌                  | ✅                | ✅                     |
-|                    | 価格傾向分析※2       | ❌              | ❌                  | ❌                | ✅ 参考情報として      |
-| **パーソナライズ** | 健康目標             | ✅ 一般的な提案 | ✅ 目標に応じた提案 | ✅ 詳細な目標分析 | ✅ 目標+体質考慮       |
-|                    | 予算考慮             | ❌              | ❌                  | ✅                | ✅                     |
-|                    | 既往歴登録           | ❌              | ❌                  | ❌                | ✅                     |
-|                    | 服用中の薬登録       | ❌              | ❌                  | ❌                | ✅                     |
-|                    | アレルギー登録       | ❌              | ❌                  | ❌                | ✅                     |
-| **Safety専用**     | 相互作用アラート※3   | ❌              | ❌                  | ❌                | ✅                     |
-|                    | 禁忌スクリーニング   | ❌              | ❌                  | ❌                | ✅                     |
-|                    | 避けるべき成分リスト | ❌              | ❌                  | ❌                | ✅ 自動生成            |
-|                    | Safetyレポート出力   | ❌              | ❌                  | ❌                | ✅ PDF                 |
-|                    | 専門家相談リンク     | ❌              | ❌                  | ❌                | ✅                     |
+| 機能カテゴリ       | 機能                   | Guest           | Free                | Pro ¥490          | Pro+Safety ¥980        |
+| ------------------ | ---------------------- | --------------- | ------------------- | ----------------- | ---------------------- |
+| **基本**           | AI質問回数             | 2回/日          | 5回/週              | 25回/週           | 無制限（フェアユース） |
+|                    | AIモデル               | Haiku 4.5       | Haiku 4.5           | Sonnet 4.5        | Sonnet 4.5 + Opus昇格  |
+|                    | 回答の深さ             | 概要のみ        | 基本回答            | 詳細回答          | 科学論文ベース※1       |
+|                    | 会話履歴               | ❌              | 3日間               | 30日間            | 無制限                 |
+|                    | フォローアップ         | ❌              | ❌                  | 3回/会話          | 無制限                 |
+| **保存機能**       | お気に入り             | ローカルのみ    | 10件                | 100件             | 無制限                 |
+|                    | 価格アラート           | ❌              | 3件                 | 50件              | 無制限                 |
+|                    | 診断履歴保存           | ❌              | ✅                  | ✅                | ✅                     |
+| **商品推薦**       | 推薦数                 | トップ3         | トップ3+理由概要    | 全商品            | 全商品                 |
+|                    | 推薦ロジック可視化     | ❌              | ❌                  | ✅ 5つの柱で表示  | ✅ +パーソナル重み付け |
+|                    | エビデンス表示         | なし            | S/A/Bのみ           | 全ランク+出典     | 全ランク+論文リンク    |
+| **価格**           | 現在価格               | ✅              | ✅                  | ✅                | ✅                     |
+|                    | 価格履歴               | 7日             | 30日                | 1年               | 全期間                 |
+|                    | 価格傾向分析※2         | ❌              | ❌                  | ❌                | ✅ 参考情報として      |
+| **パーソナライズ** | 健康目標               | ✅ 一般的な提案 | ✅ 目標に応じた提案 | ✅ 詳細な目標分析 | ✅ 目標+体質考慮       |
+|                    | 予算考慮               | ❌              | ❌                  | ✅                | ✅                     |
+|                    | 既往歴登録             | ❌              | ❌                  | ❌                | ✅                     |
+|                    | 服用中の薬登録         | ❌              | ❌                  | ❌                | ✅                     |
+|                    | アレルギー登録         | ❌              | ❌                  | ❌                | ✅                     |
+| **Safety専用**     | 相互作用アラート※3     | ❌              | ❌                  | ❌                | ✅                     |
+|                    | 禁忌スクリーニング     | ❌              | ❌                  | ❌                | ✅                     |
+|                    | 避けるべき成分リスト   | ❌              | ❌                  | ❌                | ✅ 自動生成            |
+|                    | 危険成分オートブロック | ❌              | ❌                  | ❌                | ✅                     |
+|                    | 健康リスクスコア       | ❌              | ❌                  | ❌                | ✅                     |
+|                    | Safetyレポート出力     | ❌              | ❌                  | ❌                | ✅ PDF                 |
+|                    | 専門家相談リンク       | ❌              | ❌                  | ❌                | ✅                     |
 
 ---
 
-## 4. パーソナライズ分岐ロジック
+## 4. Guest識別方法
 
-### 4.1 分岐フロー
+### Cookie + レート制限
+
+未ログインユーザー（Guest）はCookieベースで識別し、レート制限を適用。
+
+```typescript
+// Cookie識別フロー
+const getGuestSession = async (cookies: RequestCookies) => {
+  const sessionId = cookies.get("guest_session_id")?.value;
+
+  if (!sessionId) {
+    // 新規セッション発行
+    const newSessionId = generateUUID();
+    // Cookieに保存（7日間有効）
+    cookies.set("guest_session_id", newSessionId, {
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: true,
+      secure: true,
+    });
+    return { sessionId: newSessionId, isNew: true };
+  }
+
+  return { sessionId, isNew: false };
+};
+
+// レート制限チェック
+const checkGuestRateLimit = async (sessionId: string): Promise<boolean> => {
+  const key = `guest_ai_usage:${sessionId}:${getTodayJST()}`;
+  const count = await redis.incr(key);
+
+  if (count === 1) {
+    await redis.expire(key, 60 * 60 * 24); // 24時間で失効
+  }
+
+  return count <= 2; // 1日2回まで
+};
+```
+
+### 設計思想
+
+- **目的**: 厳密な乱用防止ではなく、ログインへの自然な導線
+- **許容**: Cookie削除による回数リセットは許容
+- **UX重視**: 制限到達時に「ログインで週5回使える」と訴求
+
+---
+
+## 5. パーソナライズ分岐ロジック
+
+### 5.1 分岐フロー
 
 ```
 ユーザー入力
     │
-    ├─ 未ログイン/無料
+    ├─ Guest（未ログイン）
     │   └─ 一般的な情報のみ（パーソナライズなし）
     │      「ビタミンCは一般的に免疫機能をサポートすると言われています」
+    │
+    ├─ Free（ログイン済み）
+    │   └─ 目標ベースの一般提案
+    │      「免疫力強化を目標とされているので、ビタミンCをおすすめします」
     │
     ├─ Pro
     │   └─ 目標・予算に基づく推薦（軽度パーソナライズ）
@@ -93,17 +168,19 @@ Suptia AIコンシェルジュは、サプリメント選びを対話形式で�
             代替として...」
 ```
 
-### 4.2 パーソナライズレベル定義
+### 5.2 パーソナライズレベル定義
 
 ```typescript
 export enum PersonalizationLevel {
-  NONE = "none", // 未ログイン: 一般情報のみ
-  BASIC = "basic", // 無料: 目標ベースの一般提案
+  NONE = "none", // Guest: 一般情報のみ
+  BASIC = "basic", // Free: 目標ベースの一般提案
   CONTEXTUAL = "contextual", // Pro: 目標+予算+履歴
   FULL = "full", // Pro+Safety: 全データ考慮
 }
 
-export const getPersonalizationLevel = (user: User): PersonalizationLevel => {
+export const getPersonalizationLevel = (
+  user: User | null,
+): PersonalizationLevel => {
   if (!user) return PersonalizationLevel.NONE;
   if (user.plan === "pro_safety") return PersonalizationLevel.FULL;
   if (user.plan === "pro") return PersonalizationLevel.CONTEXTUAL;
@@ -113,12 +190,102 @@ export const getPersonalizationLevel = (user: User): PersonalizationLevel => {
 
 ---
 
-## 5. 価格トレンド分析（法務安全設計）
+## 6. AIモデル選択ロジック
+
+### 6.1 基本ルール
+
+| プラン     | 通常モデル | 条件付き昇格 |
+| ---------- | ---------- | ------------ |
+| Guest      | Haiku 4.5  | なし         |
+| Free       | Haiku 4.5  | なし         |
+| Pro        | Sonnet 4.5 | なし         |
+| Pro+Safety | Sonnet 4.5 | Opus 4.5     |
+
+### 6.2 Pro+Safety: 条件付きOpus昇格
+
+Pro+Safetyプランでは、以下の条件を満たす場合のみOpus 4.5に昇格:
+
+```typescript
+interface SafetyCheckResult {
+  interactionCount: number; // 検出された相互作用の系統数
+  dangerFlags: string[]; // 危険フラグのリスト
+  confidenceScore: number; // Sonnetの確信度（0-1）
+}
+
+const shouldEscalateToOpus = (result: SafetyCheckResult): boolean => {
+  // 条件1: 相互作用が3系統以上
+  if (result.interactionCount >= 3) return true;
+
+  // 条件2: 危険フラグが2つ以上重複
+  if (result.dangerFlags.length >= 2) return true;
+
+  // 条件3: Sonnetの確信度が低い（判断不能ケース）
+  if (result.confidenceScore < 0.7) return true;
+
+  return false;
+};
+```
+
+### 6.3 モデル選択実装
+
+```typescript
+export const selectModel = (
+  plan: UserPlan,
+  queryType: QueryType,
+  safetyCheck?: SafetyCheckResult,
+): AIModel => {
+  switch (plan) {
+    case "guest":
+    case "free":
+      return "claude-haiku-4-5";
+
+    case "pro":
+      return "claude-sonnet-4-5";
+
+    case "pro_safety":
+      // Safety機能使用時のみOpus昇格判定
+      if (queryType === "safety_check" && safetyCheck) {
+        if (shouldEscalateToOpus(safetyCheck)) {
+          return "claude-opus-4-5";
+        }
+      }
+      return "claude-sonnet-4-5";
+
+    default:
+      return "claude-haiku-4-5";
+  }
+};
+```
+
+### 6.4 コスト比較（100万トークンあたり）
+
+| モデル     | 入力  | 出力   |
+| ---------- | ----- | ------ |
+| Haiku 4.5  | $1.00 | $5.00  |
+| Sonnet 4.5 | $3.00 | $15.00 |
+| Opus 4.5   | $5.00 | $25.00 |
+
+### 6.5 コスト試算
+
+**1回のAI質問あたり**（入力2,000トークン + 出力500トークン想定）
+
+| プラン         | モデル     | 1回あたりコスト |
+| -------------- | ---------- | --------------- |
+| Guest/Free     | Haiku 4.5  | 約¥0.6          |
+| Pro            | Sonnet 4.5 | 約¥1.8          |
+| Pro+Safety通常 | Sonnet 4.5 | 約¥1.8          |
+| Pro+Safety昇格 | Opus 4.5   | 約¥3.0          |
+
+**設計思想**: Safetyユーザーは少数なので、1人あたりコストは高くても全体収益に貢献。信頼最大化が正解。
+
+---
+
+## 7. 価格トレンド分析（法務安全設計）
 
 > **重要**: 「買い時予測」という表現は法務的にグレーゾーン。
 > 「価格トレンド分析」に統一することで、安全かつ説得力を維持。
 
-### 5.1 表現ガイドライン
+### 7.1 表現ガイドライン
 
 **❌ 禁止表現（予測・断定・購買誘導）**
 
@@ -134,7 +301,7 @@ export const getPersonalizationLevel = (user: User): PersonalizationLevel => {
 - 「過去のデータでは、この時期に価格が下がる傾向が見られました（参考情報）」
 - 「価格変動の履歴をご参考までにお知らせします」
 
-### 5.2 実装
+### 7.2 実装
 
 ```typescript
 export const getPriceTrendMessage = (
@@ -154,7 +321,7 @@ export const getPriceTrendMessage = (
 };
 ```
 
-### 5.3 必須ディスクレーマー
+### 7.3 必須ディスクレーマー
 
 ```
 ※価格は常に変動します。表示される傾向分析は過去データに基づく
@@ -164,9 +331,9 @@ export const getPriceTrendMessage = (
 
 ---
 
-## 6. Safety プランの特別感強化
+## 8. Safety プランの特別感強化
 
-### 6.1 価値提案の可視化（CVR向上の鍵）
+### 8.1 価値提案の可視化（CVR向上の鍵）
 
 **コアメッセージ**: 「あなただけの安全を、目に見える形で」
 
@@ -182,7 +349,7 @@ export const getPriceTrendMessage = (
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 6.2 Safety専用ダッシュボード
+### 8.2 Safety専用ダッシュボード
 
 ```typescript
 export const SafetyDashboard = {
@@ -222,7 +389,7 @@ export const SafetyDashboard = {
 };
 ```
 
-### 6.3 専用UI要素
+### 8.3 専用UI要素
 
 ```typescript
 export const SafetyPlanUI = {
@@ -256,7 +423,7 @@ export const SafetyPlanUI = {
 };
 ```
 
-### 6.4 Safety専用機能（詳細）
+### 8.4 Safety専用機能（詳細）
 
 1. **あなた専用 健康リスクスコア**
    - 登録情報に基づくリアルタイムスコア算出
@@ -288,7 +455,7 @@ export const SafetyPlanUI = {
    - オンライン薬剤師相談サービスへの連携（将来）
    - 近隣薬局検索
 
-### 6.5 Safety専用アップセルメッセージ
+### 8.5 Safety専用アップセルメッセージ
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -296,7 +463,7 @@ export const SafetyPlanUI = {
 │                                                             │
 │  「高血圧」を登録されていますね。                          │
 │                                                             │
-│  Safety Add-on（+¥490/月）で：                             │
+│  Pro+Safety（¥980/月）で：                                 │
 │  • 📊 あなた専用の健康リスクスコアを表示                   │
 │  • 🚫 危険成分（甘草等）を自動でブロック                   │
 │  • ⚠️ 服薬との相互作用を常時監視                          │
@@ -309,12 +476,12 @@ export const SafetyPlanUI = {
 
 ---
 
-## 7. 相互作用データ管理
+## 9. 相互作用データ管理
 
 > **重要原則**: AIがhallucinationすると健康被害リスク。
 > 相互作用の基礎データは厳格に固定し、AIは**結論を作らず、出典の意味説明のみ**に徹する。
 
-### 7.1 AIの役割定義（最重要）
+### 9.1 AIの役割定義（最重要）
 
 ```typescript
 /**
@@ -350,7 +517,7 @@ export const AI_ROLE_IN_SAFETY = {
 };
 ```
 
-### 7.2 データソース（厳格に固定）
+### 9.2 データソース（厳格に固定）
 
 ```typescript
 export const INTERACTION_DATA_SOURCES = {
@@ -423,7 +590,7 @@ export const INTERACTION_DATA_SOURCES = {
 };
 ```
 
-### 7.3 AIレスポンステンプレート
+### 9.3 AIレスポンステンプレート
 
 ```typescript
 /**
@@ -474,7 +641,7 @@ export const INTERACTION_RESPONSE_TEMPLATE = {
 };
 ```
 
-### 7.4 二重ディスクレーマー
+### 9.4 二重ディスクレーマー
 
 **レベル1: 機能説明時**
 
@@ -502,7 +669,7 @@ PMDA（医薬品医療機器総合機構）等の信頼性の高い医療デー�
 出典: [具体的なソース名とリンク]
 ```
 
-### 7.5 相互作用データ構造
+### 9.5 相互作用データ構造
 
 ```typescript
 interface InteractionData {
@@ -534,9 +701,9 @@ interface InteractionData {
 
 ---
 
-## 8. AIコスト最適化
+## 10. AIコスト最適化
 
-### 8.1 キャッシュ戦略
+### 10.1 キャッシュ戦略
 
 ```typescript
 export const CACHE_CONFIG = {
@@ -555,58 +722,43 @@ export const CACHE_CONFIG = {
 };
 ```
 
-### 8.2 モデル選択ロジック
+### 10.2 月間コスト試算
 
-```typescript
-export const selectModel = (
-  plan: UserPlan,
-  queryType: QueryType,
-  cacheHit: boolean,
-): AIModel => {
-  // キャッシュヒット時は軽量モデル
-  if (cacheHit) return "haiku";
+**想定ユーザー構成**
 
-  // プラン別
-  switch (plan) {
-    case "guest":
-    case "free":
-      return "haiku";
-    case "pro":
-      return queryType === "simple" ? "haiku" : "sonnet";
-    case "pro_safety":
-      return queryType === "safety_check" ? "opus" : "sonnet";
-    default:
-      return "haiku";
-  }
-};
-```
+| プラン     | ユーザー数 | 月間AI使用回数/人    | モデル            |
+| ---------- | ---------- | -------------------- | ----------------- |
+| Guest      | 1,000人    | 60回（2回/日×30日）  | Haiku 4.5         |
+| Free       | 500人      | 20回（5回/週×4週）   | Haiku 4.5         |
+| Pro        | 100人      | 100回（25回/週×4週） | Sonnet 4.5        |
+| Pro+Safety | 30人       | 150回                | Sonnet 4.5 + Opus |
 
-### 8.3 コスト試算（最終版）
-
-| レベル     | モデル       | キャッシュ率 | 実効コスト/回答 |
-| ---------- | ------------ | ------------ | --------------- |
-| 未ログイン | Haiku        | 80%          | ~$0.0002        |
-| 無料       | Haiku        | 70%          | ~$0.0003        |
-| Pro        | Sonnet/Haiku | 60%          | ~$0.003         |
-| Pro+Safety | Opus/Sonnet  | 50%          | ~$0.02          |
-
-**月間コスト試算（1,000ユーザー想定）**
+**月間コスト試算**
 
 ```
-無料: 10回×1,000人×30日×$0.0003×0.3 = $27
-Pro: 50回×100人×30日×$0.003×0.4 = $180
-Pro+Safety: 20回×50人×30日×$0.02×0.5 = $300
+Guest:      60回×1,000人×¥0.6×0.5（キャッシュ率）= ¥18,000
+Free:       20回×500人×¥0.6×0.5 = ¥3,000
+Pro:        100回×100人×¥1.8×0.4 = ¥7,200
+Pro+Safety: 150回×30人×¥2.2（平均）×0.4 = ¥3,960
 
-合計: $507/月
-収益: Pro 100人×$4.90 + Pro+Safety 50人×$9.80 = $980/月
-利益: $473/月 ✅
+合計: 約¥32,160/月
+```
+
+**月間収益試算**
+
+```
+Pro:        100人×¥490 = ¥49,000
+Pro+Safety: 30人×¥980 = ¥29,400
+
+合計: ¥78,400/月
+利益: ¥46,240/月 ✅
 ```
 
 ---
 
-## 9. 法務対応
+## 11. 法務対応
 
-### 9.1 ディスクレーマー体系
+### 11.1 ディスクレーマー体系
 
 ```typescript
 export const DISCLAIMERS = {
@@ -646,7 +798,7 @@ export const DISCLAIMERS = {
 };
 ```
 
-### 9.2 禁止表現チェッカー
+### 11.2 禁止表現チェッカー
 
 ```typescript
 export const PROHIBITED_EXPRESSIONS = [
@@ -669,19 +821,26 @@ export const PROHIBITED_EXPRESSIONS = [
 
 ---
 
-## 10. アップセル導線
+## 12. アップセル導線
 
-### 10.1 トリガーポイント
+### 12.1 トリガーポイント
 
 ```typescript
 export const UPSELL_TRIGGERS = {
-  // 無料 → Pro
-  freeToP: [
+  // Guest → Free
+  guestToFree: [
+    { trigger: "daily_limit_reached", message: "ログインで週5回使えます" },
+    { trigger: "favorite_attempt", message: "ログインでお気に入りを保存" },
+    { trigger: "history_view", message: "ログインで履歴を保存" },
+  ],
+
+  // Free → Pro
+  freeToPro: [
+    { trigger: "weekly_limit_reached", message: "Proなら週25回" },
     {
       trigger: "price_history_request",
       message: "価格履歴を見るにはProプランへ",
     },
-    { trigger: "daily_limit_reached", message: "残り0回。Proなら50回/日" },
     { trigger: "recommendation_reason", message: "詳しい理由はProで確認" },
   ],
 
@@ -703,18 +862,23 @@ export const UPSELL_TRIGGERS = {
 };
 ```
 
-### 10.2 導線メッセージ
+### 12.2 導線メッセージ
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 【無料 → Pro】                                              │
+│ 【Guest → Free】                                            │
+│ 「本日の無料回数を使い切りました」                          │
+│ 「ログインすると週5回まで質問できます」                     │
+│ [ログイン] [今はスキップ]                                   │
+├─────────────────────────────────────────────────────────────┤
+│ 【Free → Pro】                                              │
 │ 「この商品の価格履歴を見てみませんか？」                    │
-│ 「Proプラン（¥490/月）で90日間の価格推移が確認できます」   │
+│ 「Proプラン（¥490/月）で1年間の価格推移が確認できます」    │
 │ [詳しく見る] [今はスキップ]                                 │
 ├─────────────────────────────────────────────────────────────┤
 │ 【Pro → Pro+Safety】                                        │
 │ 「高血圧とおっしゃっていましたね」                          │
-│ 「Safety Add-on（+¥490/月）で、あなたの体質に合わない      │
+│ 「Pro+Safety（¥980/月）で、あなたの体質に合わない          │
 │  成分を自動でフィルタリングできます」                       │
 │ 「"AIは一般論。Suptiaはあなた専用。"」                     │
 │ [Safety機能を試す] [今はスキップ]                           │
@@ -723,18 +887,19 @@ export const UPSELL_TRIGGERS = {
 
 ---
 
-## 11. 実装ロードマップ
+## 13. 実装ロードマップ
 
 ### Phase 1: 基盤構築（2026年1月）
 
 - [ ] AIコンシェルジュUI（チャット形式）
-- [ ] プラン別回答制限
+- [ ] 4段階プラン別回答制限（Guest/Free/Pro/Pro+Safety）
+- [ ] Guest識別（Cookie + レート制限）
 - [ ] 基本キャッシュ機構
-- [ ] Haiku/Sonnetモデル切り替え
+- [ ] Haiku 4.5/Sonnet 4.5モデル切り替え
 
 ### Phase 2: Pro機能（2026年2月）
 
-- [ ] 価格履歴統合
+- [ ] 価格履歴統合（1年間）
 - [ ] 推薦ロジック可視化
 - [ ] 会話履歴保存（Supabase）
 - [ ] フォローアップ機能
@@ -744,23 +909,26 @@ export const UPSELL_TRIGGERS = {
 - [ ] 既往歴・服薬登録UI
 - [ ] 相互作用データベース構築
 - [ ] 相互作用チェッカー
+- [ ] 条件付きOpus 4.5昇格ロジック
+- [ ] 危険成分オートブロック
 - [ ] 避けるべき成分リスト自動生成
 
 ### Phase 4: 最適化（2026年4月）
 
 - [ ] コスト最適化（キャッシュ強化）
-- [ ] Safetyレポート出力
+- [ ] Safetyレポート出力（PDF）
 - [ ] アップセル導線A/Bテスト
 - [ ] 専門家相談リンク連携
 
 ---
 
-## 12. 更新履歴
+## 14. 更新履歴
 
-| 日付       | バージョン | 内容                                                                       |
-| ---------- | ---------- | -------------------------------------------------------------------------- |
-| 2025-12-10 | 1.1.0      | Safety価値提案強化、価格トレンド分析表現統一、相互作用DB拡充・AI役割明確化 |
-| 2025-12-10 | 1.0.0      | 初版作成                                                                   |
+| 日付       | バージョン | 内容                                                                                  |
+| ---------- | ---------- | ------------------------------------------------------------------------------------- |
+| 2026-01-11 | 2.0.0      | 4段階プラン構成に変更（Guest追加）、AIモデル4.5系に統一、条件付きOpus昇格ロジック追加 |
+| 2025-12-10 | 1.1.0      | Safety価値提案強化、価格トレンド分析表現統一、相互作用DB拡充・AI役割明確化            |
+| 2025-12-10 | 1.0.0      | 初版作成                                                                              |
 
 ---
 

@@ -64,6 +64,7 @@ interface ConciergeState {
   // 利用状況
   usage: UsageStats | null;
   userPlan: UserPlan;
+  isGuest: boolean;
 
   // 設定
   planConfig: PlanConfig;
@@ -152,9 +153,11 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
   const planConfig = PLAN_CONFIGS[userPlan] ?? PLAN_CONFIGS.free;
   const isGuest = !user;
 
-  // キャラクター
+  // キャラクター（ゲストはcoreのみ）
   const currentCharacter = getCharacter(characterId);
-  const availableCharacters = getAvailableCharacters(userPlan);
+  const availableCharacters = isGuest
+    ? [getCharacter("core")]
+    : getAvailableCharacters(userPlan);
 
   // ============================================
   // セッション操作
@@ -701,6 +704,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
     characterId,
     usage,
     userPlan,
+    isGuest,
     planConfig,
     error,
 

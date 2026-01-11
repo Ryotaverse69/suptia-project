@@ -17,6 +17,10 @@ import {
   Zap,
   MessageCircle,
   Sparkles,
+  X,
+  Check,
+  Crown,
+  Bot,
 } from "lucide-react";
 import {
   systemColors,
@@ -663,6 +667,455 @@ export default function AboutPage() {
                 );
               })}
             </div>
+          </div>
+        </section>
+
+        {/* AI検索との違い */}
+        <section
+          className="py-24 px-6 lg:px-12"
+          style={{ backgroundColor: appleWebColors.pageBackground }}
+        >
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-16 text-center">
+              <div
+                className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2"
+                style={{
+                  backgroundColor: `${systemColors.indigo}10`,
+                  border: `1px solid ${systemColors.indigo}20`,
+                }}
+              >
+                <Bot size={16} style={{ color: systemColors.indigo }} />
+                <span
+                  className="text-[13px] font-semibold"
+                  style={{ color: systemColors.indigo }}
+                >
+                  AI検索との違い
+                </span>
+              </div>
+              <h2
+                className="mb-4 text-[28px] lg:text-[40px] font-bold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                ChatGPTやPerplexityとは何が違う？
+              </h2>
+              <p
+                className="mx-auto max-w-3xl text-[17px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                汎用AIは一般的な情報を提供しますが、サプティアは
+                <strong>あなた専用のデータベース</strong>
+                を持ち、リアルタイムの価格・安全性情報を提供します。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* 一般的なAI検索 */}
+              <div
+                className={`rounded-2xl p-6 ${liquidGlassClasses.light}`}
+                style={{ border: `1px solid ${appleWebColors.borderSubtle}` }}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: appleWebColors.pageBackground }}
+                  >
+                    <Bot
+                      size={24}
+                      style={{ color: appleWebColors.textTertiary }}
+                    />
+                  </div>
+                  <div>
+                    <h3
+                      className="text-[19px] font-semibold"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      一般的なAI検索
+                    </h3>
+                    <p
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      ChatGPT / Perplexity / Gemini
+                    </p>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    "一般的な知識に基づく回答",
+                    "価格情報は古いか不正確",
+                    "日本の薬機法に非対応",
+                    "あなたの健康情報を考慮しない",
+                    "出典が不明確なことが多い",
+                    "商品の具体的な比較が困難",
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3"
+                      style={{ color: appleWebColors.textSecondary }}
+                    >
+                      <X
+                        size={16}
+                        className="flex-shrink-0 mt-0.5"
+                        style={{ color: appleWebColors.textTertiary }}
+                      />
+                      <span className="text-[15px]">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* サプティア */}
+              <div
+                className="rounded-2xl p-6"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.blue}08 0%, ${systemColors.purple}08 100%)`,
+                  border: `2px solid ${systemColors.blue}30`,
+                }}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: systemColors.blue }}
+                  >
+                    <Sparkles size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h3
+                      className="text-[19px] font-semibold"
+                      style={{ color: systemColors.blue }}
+                    >
+                      サプティア
+                    </h3>
+                    <p
+                      className="text-[13px]"
+                      style={{ color: appleWebColors.textTertiary }}
+                    >
+                      サプリメント特化AI
+                    </p>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    "476商品のリアルタイム価格データ",
+                    "毎日更新される最新価格",
+                    "薬機法コンプライアンス対応",
+                    "あなたの健康情報を考慮した推薦",
+                    "PMDA等の信頼性の高い出典を明示",
+                    "5つの視点で具体的に商品を比較",
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      <Check
+                        size={16}
+                        className="flex-shrink-0 mt-0.5"
+                        style={{ color: systemColors.green }}
+                      />
+                      <span className="text-[15px] font-medium">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div
+              className="mt-8 p-5 rounded-2xl text-center"
+              style={{
+                backgroundColor: `${systemColors.blue}08`,
+                border: `1px solid ${systemColors.blue}15`,
+              }}
+            >
+              <p
+                className="text-[17px] font-semibold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                「AIは一般論。サプティアはあなた専用。」
+              </p>
+              <p
+                className="text-[15px] mt-2"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                AIが答えを出す時代だからこそ、サプティアはその根拠を示します。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* プラン比較 */}
+        <section
+          className="py-24 px-6 lg:px-12"
+          style={{ backgroundColor: "#FFFFFF" }}
+        >
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-16 text-center">
+              <div
+                className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2"
+                style={{
+                  backgroundColor: `${systemColors.purple}10`,
+                  border: `1px solid ${systemColors.purple}20`,
+                }}
+              >
+                <Crown size={16} style={{ color: systemColors.purple }} />
+                <span
+                  className="text-[13px] font-semibold"
+                  style={{ color: systemColors.purple }}
+                >
+                  プラン比較
+                </span>
+              </div>
+              <h2
+                className="mb-4 text-[28px] lg:text-[40px] font-bold"
+                style={{ color: appleWebColors.textPrimary }}
+              >
+                あなたに合ったプランを選べます
+              </h2>
+              <p
+                className="mx-auto max-w-2xl text-[17px]"
+                style={{ color: appleWebColors.textSecondary }}
+              >
+                基本機能は無料。より高度なAIや安全性機能が必要な方には有料プランをご用意。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {/* Free */}
+              <div
+                className={`flex flex-col rounded-2xl p-6 ${liquidGlassClasses.light}`}
+                style={{ border: `1px solid ${appleWebColors.borderSubtle}` }}
+              >
+                <div className="flex-1">
+                  <div className="text-center mb-6">
+                    <h3
+                      className="text-[22px] font-bold mb-2"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      Free
+                    </h3>
+                    <p
+                      className="text-[34px] font-bold"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      ¥0
+                      <span
+                        className="text-[15px] font-normal ml-1"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        /月
+                      </span>
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      "AI質問 5回/週",
+                      "4キャラクター選択",
+                      "価格履歴 30日間",
+                      "高速応答モデル (Haiku)",
+                    ].map((item, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-[15px]"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        <Check
+                          size={16}
+                          className="flex-shrink-0"
+                          style={{ color: systemColors.green }}
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <Link
+                  href="/concierge"
+                  className="block w-full text-center py-3 rounded-full font-semibold text-[15px] transition-all hover:opacity-80 mt-6"
+                  style={{
+                    backgroundColor: appleWebColors.pageBackground,
+                    color: appleWebColors.textPrimary,
+                    border: `1px solid ${appleWebColors.borderSubtle}`,
+                  }}
+                >
+                  無料で始める
+                </Link>
+              </div>
+
+              {/* Pro */}
+              <div
+                className="relative flex flex-col rounded-2xl p-6"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.purple}10 0%, ${systemColors.pink}10 100%)`,
+                  border: `2px solid ${systemColors.purple}`,
+                }}
+              >
+                <div
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[12px] font-bold text-white"
+                  style={{
+                    background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                  }}
+                >
+                  おすすめ
+                </div>
+                <div className="flex-1">
+                  <div className="text-center mb-6 pt-2">
+                    <h3
+                      className="text-[22px] font-bold mb-2 flex items-center justify-center gap-2"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      <Crown size={20} style={{ color: systemColors.yellow }} />
+                      Pro
+                    </h3>
+                    <p
+                      className="text-[34px] font-bold"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      ¥590
+                      <span
+                        className="text-[15px] font-normal ml-1"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        /月
+                      </span>
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      "AI質問 25回/週",
+                      "フォローアップ 3回/会話",
+                      "価格履歴 1年間",
+                      "高精度モデル (Sonnet)",
+                      "推薦理由の重み付け表示",
+                    ].map((item, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Check
+                          size={16}
+                          className="flex-shrink-0"
+                          style={{ color: systemColors.green }}
+                        />
+                        <span className="font-medium">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <Link
+                  href="/mypage#plans"
+                  className="block w-full text-center py-3 rounded-full font-semibold text-[15px] transition-all hover:opacity-80 text-white mt-6"
+                  style={{
+                    background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                  }}
+                >
+                  Proにアップグレード
+                </Link>
+              </div>
+
+              {/* Pro+Safety */}
+              <div
+                className="flex flex-col rounded-2xl p-6"
+                style={{
+                  background: `linear-gradient(135deg, ${systemColors.green}10 0%, ${systemColors.teal}10 100%)`,
+                  border: `2px solid ${systemColors.green}`,
+                }}
+              >
+                <div className="flex-1">
+                  <div className="text-center mb-6">
+                    <h3
+                      className="text-[22px] font-bold mb-2 flex items-center justify-center gap-2"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      <Shield size={20} style={{ color: systemColors.green }} />
+                      Pro + Safety
+                    </h3>
+                    <p
+                      className="text-[34px] font-bold"
+                      style={{ color: appleWebColors.textPrimary }}
+                    >
+                      ¥1,280
+                      <span
+                        className="text-[15px] font-normal ml-1"
+                        style={{ color: appleWebColors.textSecondary }}
+                      >
+                        /月
+                      </span>
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      "AI質問 無制限",
+                      "フォローアップ 無制限",
+                      "価格履歴 全期間",
+                      "最高精度モデル (Sonnet+Opus)",
+                    ].map((item, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-[15px]"
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Check
+                          size={16}
+                          className="flex-shrink-0"
+                          style={{ color: systemColors.green }}
+                        />
+                        <span className="font-medium">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div
+                    className="p-3 rounded-xl mt-4"
+                    style={{
+                      backgroundColor: `${systemColors.green}10`,
+                      border: `1px solid ${systemColors.green}30`,
+                    }}
+                  >
+                    <p
+                      className="text-[12px] font-semibold mb-2"
+                      style={{ color: systemColors.green }}
+                    >
+                      Safety Guardian機能
+                    </p>
+                    <ul className="space-y-1.5">
+                      {[
+                        "相互作用チェック",
+                        "危険成分オートブロック",
+                        "既往歴・服薬情報考慮",
+                      ].map((item, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-[13px]"
+                          style={{ color: appleWebColors.textSecondary }}
+                        >
+                          <Shield
+                            size={12}
+                            style={{ color: systemColors.green }}
+                          />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <Link
+                  href="/mypage#plans"
+                  className="block w-full text-center py-3 rounded-full font-semibold text-[15px] transition-all hover:opacity-80 text-white mt-6"
+                  style={{
+                    background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                  }}
+                >
+                  Pro+Safetyにアップグレード
+                </Link>
+              </div>
+            </div>
+
+            <p
+              className="text-center text-[13px] mt-8"
+              style={{ color: appleWebColors.textTertiary }}
+            >
+              Coming Soon
+            </p>
           </div>
         </section>
 
