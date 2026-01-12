@@ -156,6 +156,7 @@ export function calculateWeightPercentages(
 
 /**
  * キャラクターの利用可否をチェック
+ * guest（未ログイン）は core のみ使用可能
  */
 export function isCharacterAvailable(
   characterId: CharacterId,
@@ -163,6 +164,11 @@ export function isCharacterAvailable(
 ): boolean {
   const character = CHARACTERS[characterId];
   if (!character) return false;
+
+  // guest（未ログイン）は core のみ使用可能
+  if (userPlan === "guest") {
+    return characterId === "core";
+  }
 
   return character.availablePlans.includes(
     userPlan as Character["availablePlans"][number],

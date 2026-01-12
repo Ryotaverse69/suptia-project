@@ -1057,7 +1057,15 @@ export async function POST(request: NextRequest) {
     const character = getCharacter(characterId);
 
     // キャラクター利用可否チェック
-    if (
+    // guest（未ログイン）はcoreのみ使用可能
+    if (userPlan === "guest") {
+      if (characterId !== "core") {
+        return NextResponse.json(
+          { error: "このキャラクターはご利用いただけません" },
+          { status: 403 },
+        );
+      }
+    } else if (
       userPlan !== "admin" &&
       !character.availablePlans.includes(userPlan as UserPlan)
     ) {

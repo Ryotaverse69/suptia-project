@@ -908,7 +908,7 @@ export default function AboutPage() {
                   </div>
                   <ul className="space-y-3">
                     {[
-                      "AI質問 5回/週",
+                      "新規質問 週5回",
                       "4キャラクター選択",
                       "価格履歴 30日間",
                       "高速応答モデル (Haiku)",
@@ -981,8 +981,8 @@ export default function AboutPage() {
                   </div>
                   <ul className="space-y-3">
                     {[
-                      "AI質問 25回/週",
-                      "フォローアップ 3回/会話",
+                      "新規質問 週25回",
+                      "追加質問（深掘り） 1会話3回まで",
                       "価格履歴 1年間",
                       "高精度モデル (Sonnet)",
                       "推薦理由の重み付け表示",
@@ -1045,8 +1045,8 @@ export default function AboutPage() {
                   </div>
                   <ul className="space-y-3">
                     {[
-                      "AI質問 無制限",
-                      "フォローアップ 無制限",
+                      "新規質問 無制限",
+                      "追加質問（深掘り） 無制限",
                       "価格履歴 全期間",
                       "最高精度モデル (Sonnet+Opus)",
                     ].map((item, i) => (

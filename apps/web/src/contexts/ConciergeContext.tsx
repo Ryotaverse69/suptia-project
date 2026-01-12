@@ -635,7 +635,9 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       const response = await fetch("/api/concierge/usage");
       if (response.ok) {
         const data = await response.json();
-        setUsage(data);
+        // APIレスポンスは { plan, usage, stats, features } 構造
+        // usage フィールドのみをセット
+        setUsage(data.usage);
       }
     } catch (err) {
       console.error("[ConciergeContext] Refresh usage error:", err);

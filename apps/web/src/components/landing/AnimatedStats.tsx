@@ -34,6 +34,7 @@ interface StatItemProps {
   color?: string;
   delay?: number;
   icon?: React.ElementType;
+  skipAnimation?: boolean;
 }
 
 function AnimatedNumber({
@@ -90,6 +91,7 @@ function StatCard({
   color = systemColors.blue,
   delay = 0,
   icon: Icon,
+  skipAnimation = false,
 }: StatItemProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
@@ -141,7 +143,14 @@ function StatCard({
             className="text-[48px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.015em] tabular-nums"
             style={{ color }}
           >
-            <AnimatedNumber value={value} suffix={suffix} />
+            {skipAnimation ? (
+              <span className="tabular-nums">
+                {value.toLocaleString()}
+                {suffix}
+              </span>
+            ) : (
+              <AnimatedNumber value={value} suffix={suffix} />
+            )}
           </span>
         </div>
 
@@ -209,6 +218,7 @@ export function AnimatedStats({
       sublabel: "価格・成分・コスパ・根拠・安全性",
       color: systemColors.indigo,
       icon: BarChart3,
+      skipAnimation: true,
     },
     {
       key: "free",
@@ -271,6 +281,7 @@ export function AnimatedStats({
               color={stat.color}
               icon={stat.icon}
               delay={0.3 + index * 0.12}
+              skipAnimation={stat.skipAnimation}
             />
           ))}
         </div>
