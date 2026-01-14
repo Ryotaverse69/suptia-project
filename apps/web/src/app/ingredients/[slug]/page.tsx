@@ -112,7 +112,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性 | Suptia成分ガイド`;
+  const title = `${ingredient.name}（${ingredient.nameEn}）の効果・摂取量・安全性 | サプティア成分ガイド`;
   const description =
     ingredient.description ||
     `${ingredient.name}の科学的エビデンス、推奨摂取量、副作用、相互作用について詳しく解説。`;
@@ -122,7 +122,7 @@ export async function generateMetadata({
   const ogImageUrl = getIngredientOGImage(params.slug);
   const ogImage = generateOGImageMeta(
     ogImageUrl,
-    `${ingredient.name}（${ingredient.nameEn}）- Suptia成分ガイド`,
+    `${ingredient.name}（${ingredient.nameEn}）- サプティア成分ガイド`,
   );
 
   return {
@@ -135,7 +135,7 @@ export async function generateMetadata({
       title,
       description,
       url: pageUrl,
-      siteName: "Suptia（サプティア）",
+      siteName: "サプティア（Suptia）",
       type: "article",
       images: [ogImage],
       locale: "ja_JP",

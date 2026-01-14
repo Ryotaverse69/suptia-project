@@ -188,7 +188,7 @@ export function ComparisonArticleTemplate({
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
             <span className="text-primary font-bold">✓</span>
-            <span>Suptia独自の5軸評価による{ingredientName}サプリ比較</span>
+            <span>サプティア独自の5軸評価による{ingredientName}サプリ比較</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary font-bold">✓</span>
@@ -205,13 +205,13 @@ export function ComparisonArticleTemplate({
         </ul>
       </section>
 
-      {/* Suptiaの5つの評価軸とは */}
+      {/* サプティアの5つの評価軸とは */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Suptiaの5つの評価軸とは
+          サプティアの5つの評価軸とは
         </h2>
         <p className="text-gray-600 mb-6">
-          Suptiaでは、単純な価格比較ではなく、以下の5つの観点から
+          サプティアでは、単純な価格比較ではなく、以下の5つの観点から
           サプリメントを総合的に評価しています。
         </p>
         <div className="grid md:grid-cols-5 gap-4">
@@ -352,7 +352,7 @@ export function ComparisonArticleTemplate({
           {ingredientName}サプリをもっと詳しく比較
         </h2>
         <p className="mb-6 opacity-90">
-          Suptiaでは、5つの評価軸で{products.length}商品以上を比較できます
+          サプティアでは、5つの評価軸で{products.length}商品以上を比較できます
         </p>
         <Link
           href={`/products?ingredient=${ingredientSlug}`}

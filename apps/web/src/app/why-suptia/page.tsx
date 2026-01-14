@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "なぜサプティア？｜AI時代のサプリメント選び",
     description:
-      "AIが答えを出す時代。Suptiaはその根拠を示す。科学的根拠に基づいた、あなたに最適なサプリメント選びを。",
+      "AIが答えを出す時代。サプティアはその根拠を示す。科学的根拠に基づいた、あなたに最適なサプリメント選びを。",
     type: "website",
   },
 };

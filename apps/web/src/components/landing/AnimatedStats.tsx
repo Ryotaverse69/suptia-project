@@ -265,7 +265,7 @@ export function AnimatedStats({
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
           >
-            Suptiaの実績
+            サプティアの実績
           </motion.h2>
         </motion.div>
 

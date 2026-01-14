@@ -20,7 +20,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "ビジネスパーソン向けサプリメントガイド | Suptia",
+  title: "ビジネスパーソン向けサプリメントガイド | サプティア",
   description:
     "仕事のパフォーマンス向上に効果的なサプリメントを科学的根拠に基づいて解説。ストレス対策、集中力、エネルギーをサポートする成分をご紹介します。",
 };

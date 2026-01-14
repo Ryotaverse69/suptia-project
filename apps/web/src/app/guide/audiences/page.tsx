@@ -18,7 +18,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "対象者別サプリメントガイド | Suptia",
+  title: "対象者別サプリメントガイド | サプティア",
   description:
     "妊婦・授乳婦、高齢者、アスリート、学生、ビジネスパーソン、更年期の方など、対象者別に最適なサプリメントをご紹介。科学的根拠に基づいた安全で効果的な選び方を解説します。",
 };

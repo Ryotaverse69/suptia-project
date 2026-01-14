@@ -16,12 +16,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "サプリのコスパ計算機 - mg単価で本当のお得を知る | Suptia",
+  title: "サプリのコスパ計算機 - mg単価で本当のお得を知る | サプティア",
   description:
     "サプリメントの1mgあたりの価格（mg単価）を計算して、本当にコスパが良いか確認できる無料ツール。30日分・90日分のコストも自動計算。",
   keywords: ["サプリ", "コスパ", "計算", "mg単価", "比較", "価格"],
   openGraph: {
-    title: "サプリのコスパ計算機 | Suptia",
+    title: "サプリのコスパ計算機 | サプティア",
     description: "mg単価を計算して本当にお得なサプリを見つけよう",
     type: "website",
   },
@@ -43,7 +43,7 @@ const jsonLd = {
   },
   provider: {
     "@type": "Organization",
-    name: "Suptia",
+    name: "サプティア",
     url: "https://suptia.com",
   },
 };
@@ -128,7 +128,7 @@ export default function MgCalculatorPage() {
                     '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
                 }}
               >
-                Suptiaで最安値を探す
+                サプティアで最安値を探す
               </h2>
               <p className="text-[15px] md:text-[17px] text-[#515154] leading-[1.47]">
                 476商品以上の中から、mg単価・安全性・エビデンスで比較できます
@@ -207,14 +207,14 @@ export default function MgCalculatorPage() {
               </div>
             </ContentBlock>
 
-            {/* Suptiaの5つの評価軸 */}
+            {/* サプティアの5つの評価軸 */}
             <ContentBlock
               icon={<CheckCircle2 size={24} />}
               iconColor="from-[#34C759] to-[#00C7BE]"
-              title="Suptiaの5つの評価軸"
+              title="サプティアの5つの評価軸"
             >
               <p className="text-[17px] leading-[1.65] text-[#515154] mb-6">
-                Suptiaでは、mg単価（コスパ）だけでなく、以下の5つの軸で商品を評価しています。
+                サプティアでは、mg単価（コスパ）だけでなく、以下の5つの軸で商品を評価しています。
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -255,7 +255,7 @@ export default function MgCalculatorPage() {
               <div className="space-y-6">
                 <FAQItem
                   question="mg単価が低ければ良い商品ですか？"
-                  answer="mg単価はコストパフォーマンスの指標であり、品質や安全性は別の観点で評価する必要があります。Suptiaでは、mg単価に加えてエビデンスレベルや安全性スコアも確認できます。"
+                  answer="mg単価はコストパフォーマンスの指標であり、品質や安全性は別の観点で評価する必要があります。サプティアでは、mg単価に加えてエビデンスレベルや安全性スコアも確認できます。"
                 />
                 <FAQItem
                   question="計算結果をシェアできますか？"

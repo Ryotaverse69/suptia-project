@@ -32,7 +32,7 @@ export function EmbedCodeSection() {
             あなたのサイトにも。
           </h2>
           <p className="text-[17px] md:text-[19px] text-[#515154] leading-[1.47]">
-            Suptiaのツールは、ブログやWebサイトに無料で埋め込めます。
+            サプティアのツールは、ブログやWebサイトに無料で埋め込めます。
           </p>
         </div>
 

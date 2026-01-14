@@ -94,7 +94,7 @@ function mapDbToProfile(row: Record<string, unknown>): UserProfile {
     conditions: (row.conditions as string[]) || [],
     medications: (row.medications as string[]) || [],
     concerns: (row.concerns as string[]) || [],
-    plan: ((row.plan as string) || "free") as UserPlan,
+    plan: ((row.plan as string) || "free").toLowerCase() as UserPlan,
     is_admin: (row.is_admin as boolean) || false,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,

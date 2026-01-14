@@ -23,7 +23,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "高齢者向けサプリメントガイド | Suptia",
+  title: "高齢者向けサプリメントガイド | サプティア",
   description:
     "加齢に伴う健康課題に対応するサプリメントを科学的根拠に基づいて解説。骨密度、認知機能、心血管の健康をサポートする成分をご紹介します。",
 };

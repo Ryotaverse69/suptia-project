@@ -23,7 +23,7 @@ import {
  * サイト基本情報
  */
 export const SITE_CONFIG = {
-  name: "Suptia（サプティア）",
+  name: "サプティア（Suptia）",
   description:
     "科学的エビデンスに基づく、安全で信頼できるサプリメント比較・推薦プラットフォーム",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://suptia.com",

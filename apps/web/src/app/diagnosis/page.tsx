@@ -22,7 +22,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "サプリメント診断・AI相談 | Suptia",
+  title: "サプリメント診断・AI相談 | サプティア",
   description:
     "AIコンシェルジュに相談するか、簡単な質問に答えて診断。あなたに最適なサプリメントと「なぜおすすめか」まで解説します。",
 };

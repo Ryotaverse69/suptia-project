@@ -72,7 +72,7 @@ const organizationSchema = {
     "科学的エビデンス",
     "薬機法",
   ],
-  slogan: "AIが答えを出す時代。Suptiaはその根拠を示す。",
+  slogan: "AIが答えを出す時代。サプティアはその根拠を示す。",
 };
 
 // WebSite Schema with SearchAction

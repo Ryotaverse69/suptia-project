@@ -452,7 +452,7 @@ export function ChatUI({ className }: ChatUIProps) {
               <p className="text-[11px]">
                 持病がある方、妊娠中・授乳中の方は、サプリメント摂取前に医師・薬剤師にご相談ください。
               </p>
-              <p className="text-[11px] mt-2">© 2024 Suptia</p>
+              <p className="text-[11px] mt-2">© 2024 サプティア</p>
             </div>
           </footer>
         </div>

@@ -170,7 +170,7 @@ export function MgCalculator() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "サプリのコスパ計算結果 | Suptia",
+          title: "サプリのコスパ計算結果 | サプティア",
           text: results
             ? `mg単価: ${results.mgPrice.toFixed(2)}円/mg（${results.ratingLabel}）`
             : "サプリのコスパを計算してみよう",

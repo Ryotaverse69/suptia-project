@@ -20,7 +20,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "妊婦・授乳婦向けサプリメントガイド | Suptia",
+  title: "妊婦・授乳婦向けサプリメントガイド | サプティア",
   description:
     "妊娠・授乳期に安全な成分と避けるべき成分を科学的根拠に基づいて解説。葉酸、鉄、カルシウム、DHAなど、母体と赤ちゃんの健康をサポートする成分をご紹介します。",
 };

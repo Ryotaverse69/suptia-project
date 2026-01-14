@@ -21,7 +21,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "学生向けサプリメントガイド | Suptia",
+  title: "学生向けサプリメントガイド | サプティア",
   description:
     "学業のパフォーマンス向上に効果的なサプリメントを科学的根拠に基づいて解説。集中力、記憶力、ストレス対策をサポートする成分をご紹介します。",
 };

@@ -101,7 +101,7 @@ export function LandingPageClient({
       <SpringAccordion
         items={faqData}
         title="よくある質問"
-        subtitle="Suptiaについてよくいただくご質問をまとめました"
+        subtitle="サプティアについてよくいただくご質問をまとめました"
       />
 
       {/* Sticky CTA */}

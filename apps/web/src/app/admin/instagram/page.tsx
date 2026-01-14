@@ -372,7 +372,7 @@ export default function InstagramDashboard() {
             className="text-[28px] font-bold"
             style={{ color: appleWebColors.textPrimary }}
           >
-            Suptia Instagram 投稿システム
+            サプティア Instagram 投稿システム
           </h1>
           <p
             className="mt-2 text-[15px]"

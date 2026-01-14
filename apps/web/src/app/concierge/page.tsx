@@ -9,11 +9,11 @@ import { ConciergeProvider } from "@/contexts/ConciergeContext";
 import { ChatUI } from "@/components/concierge";
 
 export const metadata: Metadata = {
-  title: "AIコンシェルジュ | Suptia",
+  title: "AIコンシェルジュ | サプティア",
   description:
     "サプリメント選びをAIがサポート。安全・コスト・エビデンスの観点から、あなたに合った選択肢をご提案します。",
   openGraph: {
-    title: "AIコンシェルジュ | Suptia",
+    title: "AIコンシェルジュ | サプティア",
     description:
       "サプリメント選びをAIがサポート。安全・コスト・エビデンスの観点から、あなたに合った選択肢をご提案します。",
   },

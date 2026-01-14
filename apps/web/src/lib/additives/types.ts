@@ -106,7 +106,7 @@ export const DATA_SOURCE_LABELS: Record<DataSource, string> = {
   jecfa: "JECFA (FAO/WHO)",
   efsa: "EFSA (欧州食品安全機関)",
   ewg: "EWG (環境ワーキンググループ)",
-  suptia: "Suptia独自評価",
+  suptia: "サプティア独自評価",
 };
 
 /**

@@ -8,7 +8,7 @@ import { getSiteUrl } from "@/lib/runtimeConfig";
 import { systemColors, appleWebColors, fontStack } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "かんたん診断 | サプリメント診断 | Suptia",
+  title: "かんたん診断 | サプリメント診断 | サプティア",
   description:
     "約1分で完了！基本的な質問に答えるだけで、あなたに最適なサプリメントを診断します。",
 };

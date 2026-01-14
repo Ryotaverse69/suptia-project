@@ -22,7 +22,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "アスリート向けサプリメントガイド | Suptia",
+  title: "アスリート向けサプリメントガイド | サプティア",
   description:
     "パフォーマンス向上と回復促進に効果的なサプリメントを科学的根拠に基づいて解説。筋力、持久力、回復力をサポートする成分をご紹介します。",
 };

@@ -22,7 +22,7 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "更年期の方向けサプリメントガイド | Suptia",
+  title: "更年期の方向けサプリメントガイド | サプティア",
   description:
     "更年期の症状緩和に効果的なサプリメントを科学的根拠に基づいて解説。ホルモンバランス、骨密度、心血管の健康をサポートする成分をご紹介します。",
 };

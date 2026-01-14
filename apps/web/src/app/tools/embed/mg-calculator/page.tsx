@@ -8,7 +8,7 @@ import { Suspense } from "react";
 import { EmbedCalculator } from "./embed-calculator";
 
 export const metadata: Metadata = {
-  title: "サプリのコスパ計算機 | Suptia",
+  title: "サプリのコスパ計算機 | サプティア",
   description: "サプリメントのmg単価を計算するツール",
   robots: "noindex, nofollow",
 };
@@ -20,7 +20,7 @@ export default function EmbedMgCalculatorPage() {
         <EmbedCalculator />
       </Suspense>
 
-      {/* Suptia へのリンク */}
+      {/* サプティア へのリンク */}
       <div className="mt-3 pt-2 border-t border-black/[0.06]">
         <a
           href="https://suptia.com/tools/mg-calculator"

@@ -127,7 +127,7 @@ const IMAGE_TYPES: ImageTypeOption[] = [
   {
     id: "insert-5axis",
     name: "5つの評価軸",
-    description: "Suptiaの評価軸を示すアイコン図",
+    description: "サプティアの評価軸を示すアイコン図",
     size: "1200×630px",
     apiType: "insert",
   },
@@ -534,7 +534,7 @@ AVOID: ${styleConfig.avoid}`;
               type="text"
               value={articleTitle}
               onChange={(e) => setArticleTitle(e.target.value)}
-              placeholder="例: サプリ選びに「根拠」を。Suptia（サプティア）とは"
+              placeholder="例: サプリ選びに「根拠」を。サプティア（Suptia）とは"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>

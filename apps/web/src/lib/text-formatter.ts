@@ -4,6 +4,18 @@
  */
 
 /**
+ * XSS対策: HTMLエスケープ（マークダウン変換前に実行）
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+/**
  * マークダウンをHTMLに変換（段落処理あり）
  */
 export function formatTextWithParagraphs(
@@ -20,6 +32,9 @@ export function formatTextWithParagraphs(
   if (typeof text !== "string") {
     text = String(text);
   }
+
+  // XSS対策: HTMLエスケープ（マークダウン変換前に実行）
+  text = escapeHtml(text);
 
   // 箇条書きマーカーを削除（◦、•、・など）
   text = text
@@ -118,8 +133,11 @@ export function formatList(
   if (!items || items.length === 0) return "";
 
   const formattedItems = items.map((item, index) => {
+    // XSS対策: HTMLエスケープ
+    let cleanedItem = escapeHtml(item);
+
     // 箇条書きマーカーを削除
-    let cleanedItem = item
+    cleanedItem = cleanedItem
       .replace(/^[•◦・]\s*/gm, "") // 行頭のマーカーを削除
       .replace(/\s*[•◦・]\s*/g, " ") // 文中のマーカーをスペースに
       .trim();

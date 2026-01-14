@@ -204,9 +204,9 @@ Requirements:
 - MUST include text "${data.name}" prominently displayed in the image
 - Text should be in white or light color with good contrast
 - Text position: bottom-left area with semi-transparent dark overlay behind it
-- Also include small subtitle "Suptia成分ガイド" below the main title
+- Also include small subtitle "サプティア成分ガイド" below the main title
 - Clean, professional health/wellness aesthetic
-- Suptia brand feel (modern, trustworthy, scientific)`;
+- サプティア brand feel (modern, trustworthy, scientific)`;
 
     case "article":
       return `Create an OGP image for a supplement comparison article.
@@ -235,7 +235,7 @@ ${baseStyle}
 Requirements:
 - Visual elements suggesting calculation/analysis
 - MUST include the tool name "${data.name}" prominently in the image
-- Include small subtitle "無料ツール | Suptia"
+- Include small subtitle "無料ツール | サプティア"
 - Text should be in white or light color with good contrast
 - Text position: bottom-left or center with semi-transparent dark overlay
 - Abstract icons representing the tool's function

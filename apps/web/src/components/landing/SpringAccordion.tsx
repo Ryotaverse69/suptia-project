@@ -140,7 +140,7 @@ function AccordionItem({
 export function SpringAccordion({
   items,
   title = "よくある質問",
-  subtitle = "Suptiaについてよくいただくご質問をまとめました",
+  subtitle = "サプティアについてよくいただくご質問をまとめました",
 }: SpringAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const ref = useRef(null);

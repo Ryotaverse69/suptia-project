@@ -19,11 +19,11 @@ import {
 } from "@/lib/design-system";
 
 export const metadata: Metadata = {
-  title: "危険成分ガイド | Suptia（サプティア）",
+  title: "危険成分ガイド | サプティア（Suptia）",
   description:
     "サプリメント成分の危険性・注意事項を科学的根拠に基づいて解説。妊娠中・授乳中の方、持病のある方、薬を服用中の方は必ずチェックしてください。",
   openGraph: {
-    title: "危険成分ガイド | Suptia",
+    title: "危険成分ガイド | サプティア",
     description: "サプリメント成分の危険性・注意事項を科学的根拠に基づいて解説",
     type: "website",
   },

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   User,
   Heart,
@@ -39,6 +40,12 @@ import {
   liquidGlass,
   liquidGlassClasses,
 } from "@/lib/design-system";
+import {
+  UpgradeButton,
+  ManageSubscriptionButton,
+} from "@/components/subscription";
+import UpgradeSuccessModal from "@/components/subscription/UpgradeSuccessModal";
+import type { SubscriptionPlan } from "@/lib/stripe";
 
 // プランバッジの設定
 const PLAN_BADGES = {
@@ -86,6 +93,32 @@ const PREVIEW_PLANS = [
 export default function MyPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [previewPlan, setPreviewPlan] = useState<string | null>(null);
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
+  const [upgradedPlan, setUpgradedPlan] = useState<SubscriptionPlan | null>(
+    null,
+  );
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // アップグレード成功時のモーダル表示
+  useEffect(() => {
+    const upgraded = searchParams.get("upgraded");
+    const downgradeScheduled = searchParams.get("downgrade_scheduled");
+
+    if (upgraded === "pro" || upgraded === "pro_safety") {
+      setUpgradedPlan(upgraded);
+      setShowUpgradeSuccess(true);
+      // URLからクエリパラメータを削除
+      router.replace("/mypage", { scroll: false });
+    } else if (
+      downgradeScheduled === "pro" ||
+      downgradeScheduled === "pro_safety"
+    ) {
+      // ダウングレード予約完了 - URLパラメータのみ削除（メッセージはalertで表示済み）
+      router.replace("/mypage", { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const { user, isLoading: authLoading } = useAuth();
   const {
@@ -164,8 +197,9 @@ export default function MyPage() {
     },
   ];
 
-  const planConfig = PLAN_BADGES[displayPlan as keyof typeof PLAN_BADGES];
-  const PlanIcon = planConfig.icon;
+  const planConfig =
+    PLAN_BADGES[displayPlan as keyof typeof PLAN_BADGES] || PLAN_BADGES.free;
+  const PlanIcon = planConfig?.icon;
 
   return (
     <div
@@ -962,15 +996,12 @@ export default function MyPage() {
                       <Crown size={20} style={{ color: systemColors.yellow }} />
                       プラン比較
                     </h3>
-                    <span
-                      className="px-3 py-1 text-[11px] font-semibold rounded-full"
-                      style={{
-                        backgroundColor: `${systemColors.yellow}15`,
-                        color: systemColors.orange,
-                      }}
-                    >
-                      Coming Soon
-                    </span>
+                    {(displayPlan === "pro" ||
+                      displayPlan === "pro_safety") && (
+                      <ManageSubscriptionButton variant="link" size="sm">
+                        サブスクリプション管理
+                      </ManageSubscriptionButton>
+                    )}
                   </div>
                 </div>
 
@@ -1042,14 +1073,14 @@ export default function MyPage() {
                               className="flex-shrink-0"
                               style={{ color: systemColors.green }}
                             />
-                            <span>AI質問 5回/週</span>
+                            <span>新規質問 週5回</span>
                           </li>
                           <li
                             className="flex items-center gap-2"
                             style={{ color: appleWebColors.textTertiary }}
                           >
                             <X size={14} className="flex-shrink-0" />
-                            <span>フォローアップ質問</span>
+                            <span>追加質問（深掘り）</span>
                           </li>
                           <li
                             className="flex items-center gap-2"
@@ -1210,7 +1241,7 @@ export default function MyPage() {
                               style={{ color: systemColors.green }}
                             />
                             <span>
-                              AI質問 <strong>25回/週</strong>
+                              新規質問 <strong>週25回</strong>
                             </span>
                           </li>
                           <li
@@ -1222,7 +1253,7 @@ export default function MyPage() {
                               className="flex-shrink-0"
                               style={{ color: systemColors.green }}
                             />
-                            <span>フォローアップ 3回/会話</span>
+                            <span>追加質問（深掘り） 1会話3回</span>
                           </li>
                           <li
                             className="flex items-center gap-2"
@@ -1393,7 +1424,7 @@ export default function MyPage() {
                               style={{ color: systemColors.green }}
                             />
                             <span>
-                              AI質問 <strong>無制限</strong>
+                              新規質問 <strong>無制限</strong>
                             </span>
                           </li>
                           <li
@@ -1406,7 +1437,7 @@ export default function MyPage() {
                               style={{ color: systemColors.green }}
                             />
                             <span>
-                              フォローアップ <strong>無制限</strong>
+                              追加質問（深掘り） <strong>無制限</strong>
                             </span>
                           </li>
                           <li
@@ -1795,12 +1826,71 @@ export default function MyPage() {
                     </table>
                   </div>
 
-                  {/* Note */}
+                  {/* Upgrade/Downgrade Buttons */}
+                  {displayPlan === "free" && (
+                    <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                      <UpgradeButton
+                        plan="pro"
+                        currentPlan="free"
+                        variant="primary"
+                        size="lg"
+                        className="w-full sm:w-auto"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
+                        }}
+                      >
+                        <Crown size={18} />
+                        Proにアップグレード - ¥590/月
+                      </UpgradeButton>
+                      <UpgradeButton
+                        plan="pro_safety"
+                        currentPlan="free"
+                        variant="primary"
+                        size="lg"
+                        className="w-full sm:w-auto"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                        }}
+                      >
+                        <Shield size={18} />
+                        Pro+Safetyにアップグレード - ¥1,280/月
+                      </UpgradeButton>
+                    </div>
+                  )}
+                  {displayPlan === "pro" && (
+                    <div className="mt-6 flex justify-center">
+                      <UpgradeButton
+                        plan="pro_safety"
+                        currentPlan="pro"
+                        variant="primary"
+                        size="lg"
+                        style={{
+                          background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
+                        }}
+                      >
+                        <Shield size={18} />
+                        Pro+Safetyにアップグレード - ¥1,280/月
+                      </UpgradeButton>
+                    </div>
+                  )}
+                  {displayPlan === "pro_safety" && (
+                    <div className="mt-6 flex justify-center">
+                      <UpgradeButton
+                        plan="pro"
+                        currentPlan="pro_safety"
+                        variant="outline"
+                        size="md"
+                        className="text-gray-600"
+                      >
+                        Proにダウングレード（次回更新時から適用）
+                      </UpgradeButton>
+                    </div>
+                  )}
                   <p
-                    className="text-center text-[12px] mt-6"
+                    className="text-center text-[11px] mt-4"
                     style={{ color: appleWebColors.textTertiary }}
                   >
-                    ※ Coming Soon - 現在は無料でご利用いただけます。
+                    いつでもキャンセル可能 ・ 月額自動更新
                   </p>
                 </div>
               </div>
@@ -1814,6 +1904,15 @@ export default function MyPage() {
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
+
+      {/* Upgrade Success Modal */}
+      {upgradedPlan && (
+        <UpgradeSuccessModal
+          isOpen={showUpgradeSuccess}
+          onClose={() => setShowUpgradeSuccess(false)}
+          plan={upgradedPlan}
+        />
+      )}
     </div>
   );
 }

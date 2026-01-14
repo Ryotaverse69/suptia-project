@@ -825,7 +825,7 @@ export function WhySuptiaClient({ stats }: { stats: WhySuptiaStats }) {
                 backgroundImage: `linear-gradient(90deg, ${systemColors.teal}, ${systemColors.blue}, ${systemColors.indigo})`,
               }}
             >
-              Suptiaはその根拠を示す。
+              サプティアはその根拠を示す。
             </span>
           </motion.h1>
 

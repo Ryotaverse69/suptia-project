@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `あなたはSuptia（サプティア）というサプリメント比較サイトのSNSマーケティング担当です。
+          content: `あなたはサプティア（Suptia）というサプリメント比較サイトのSNSマーケティング担当です。
 Instagramのカルーセル投稿（複数画像投稿）用のコンテンツを作成してください。
 
 【投稿構成】

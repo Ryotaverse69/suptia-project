@@ -148,7 +148,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="p-2.5 rounded-full border border-white/80 transition-all hover:scale-105 group"
                   style={liquidGlass.light}
-                  aria-label="XでSuptiaをフォロー"
+                  aria-label="Xでサプティアをフォロー"
                 >
                   <svg
                     className="w-5 h-5 transition-colors"
@@ -169,7 +169,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="p-2.5 rounded-full border border-white/80 transition-all hover:scale-105 group"
                   style={liquidGlass.light}
-                  aria-label="InstagramでSuptiaをフォロー"
+                  aria-label="Instagramでサプティアをフォロー"
                 >
                   <svg
                     className="w-5 h-5 transition-colors group-hover:text-pink-500"
@@ -190,7 +190,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="p-2.5 rounded-full border border-white/80 transition-all hover:scale-105 group"
                   style={liquidGlass.light}
-                  aria-label="ThreadsでSuptiaをフォロー"
+                  aria-label="Threadsでサプティアをフォロー"
                 >
                   <svg
                     className="w-5 h-5 transition-colors"

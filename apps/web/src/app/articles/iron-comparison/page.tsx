@@ -49,7 +49,7 @@ const ARTICLE_DATA = {
 };
 
 const ogImageUrl = getArticleOGImage("iron-comparison");
-const ogImage = generateOGImageMeta(ogImageUrl, "鉄分サプリ比較 - Suptia");
+const ogImage = generateOGImageMeta(ogImageUrl, "鉄分サプリ比較 - サプティア");
 
 export const metadata: Metadata = {
   title: ARTICLE_DATA.title,
@@ -1272,7 +1272,7 @@ export default async function IronComparisonPage() {
             鉄分サプリをもっと詳しく比較
           </h2>
           <p className="text-[15px] opacity-90 mb-6">
-            Suptiaでは、5つの評価軸で商品を比較できます
+            サプティアでは、5つの評価軸で商品を比較できます
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link

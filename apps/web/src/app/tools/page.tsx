@@ -14,7 +14,7 @@ import {
 import { EmbedCodeSection } from "./embed-code-section";
 
 export const metadata: Metadata = {
-  title: "無料ツール | Suptia",
+  title: "無料ツール | サプティア",
   description:
     "サプリメント選びに役立つ無料ツール。mg単価計算機、サプリ比較ツール、栄養素チェックツールなど。",
 };
