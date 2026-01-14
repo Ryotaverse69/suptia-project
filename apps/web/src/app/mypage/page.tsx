@@ -40,12 +40,14 @@ import {
   liquidGlass,
   liquidGlassClasses,
 } from "@/lib/design-system";
-import {
-  UpgradeButton,
-  ManageSubscriptionButton,
-} from "@/components/subscription";
-import UpgradeSuccessModal from "@/components/subscription/UpgradeSuccessModal";
-import type { SubscriptionPlan } from "@/lib/stripe";
+// TODO: Stripe統合後に有効化
+// import {
+//   UpgradeButton,
+//   ManageSubscriptionButton,
+// } from "@/components/subscription";
+// import UpgradeSuccessModal from "@/components/subscription/UpgradeSuccessModal";
+// import type { SubscriptionPlan } from "@/lib/stripe";
+type SubscriptionPlan = "pro" | "pro_safety";
 
 // プランバッジの設定
 const PLAN_BADGES = {
@@ -996,12 +998,13 @@ export default function MyPage() {
                       <Crown size={20} style={{ color: systemColors.yellow }} />
                       プラン比較
                     </h3>
-                    {(displayPlan === "pro" ||
+                    {/* TODO: Stripe統合後に有効化 */}
+                    {/* {(displayPlan === "pro" ||
                       displayPlan === "pro_safety") && (
                       <ManageSubscriptionButton variant="link" size="sm">
                         サブスクリプション管理
                       </ManageSubscriptionButton>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -1826,64 +1829,56 @@ export default function MyPage() {
                     </table>
                   </div>
 
-                  {/* Upgrade/Downgrade Buttons */}
+                  {/* Upgrade/Downgrade Buttons - TODO: Stripe統合後に有効化 */}
                   {displayPlan === "free" && (
                     <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                      <UpgradeButton
-                        plan="pro"
-                        currentPlan="free"
-                        variant="primary"
-                        size="lg"
-                        className="w-full sm:w-auto"
+                      <button
+                        disabled
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[15px] font-semibold text-white opacity-50 cursor-not-allowed w-full sm:w-auto"
                         style={{
                           background: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.pink} 100%)`,
                         }}
                       >
                         <Crown size={18} />
-                        Proにアップグレード - ¥590/月
-                      </UpgradeButton>
-                      <UpgradeButton
-                        plan="pro_safety"
-                        currentPlan="free"
-                        variant="primary"
-                        size="lg"
-                        className="w-full sm:w-auto"
+                        Proにアップグレード - ¥590/月（準備中）
+                      </button>
+                      <button
+                        disabled
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[15px] font-semibold text-white opacity-50 cursor-not-allowed w-full sm:w-auto"
                         style={{
                           background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
                         }}
                       >
                         <Shield size={18} />
-                        Pro+Safetyにアップグレード - ¥1,280/月
-                      </UpgradeButton>
+                        Pro+Safetyにアップグレード - ¥1,280/月（準備中）
+                      </button>
                     </div>
                   )}
                   {displayPlan === "pro" && (
                     <div className="mt-6 flex justify-center">
-                      <UpgradeButton
-                        plan="pro_safety"
-                        currentPlan="pro"
-                        variant="primary"
-                        size="lg"
+                      <button
+                        disabled
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[15px] font-semibold text-white opacity-50 cursor-not-allowed"
                         style={{
                           background: `linear-gradient(135deg, ${systemColors.green} 0%, ${systemColors.teal} 100%)`,
                         }}
                       >
                         <Shield size={18} />
-                        Pro+Safetyにアップグレード - ¥1,280/月
-                      </UpgradeButton>
+                        Pro+Safetyにアップグレード - ¥1,280/月（準備中）
+                      </button>
                     </div>
                   )}
                   {displayPlan === "pro_safety" && (
                     <div className="mt-6 flex justify-center">
-                      <UpgradeButton
-                        plan="pro"
-                        currentPlan="pro_safety"
-                        variant="outline"
-                        size="md"
-                        className="text-gray-600"
+                      <button
+                        disabled
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-[14px] font-medium border opacity-50 cursor-not-allowed text-gray-600"
+                        style={{
+                          borderColor: appleWebColors.borderSubtle,
+                        }}
                       >
-                        Proにダウングレード（次回更新時から適用）
-                      </UpgradeButton>
+                        Proにダウングレード（準備中）
+                      </button>
                     </div>
                   )}
                   <p
@@ -1905,14 +1900,14 @@ export default function MyPage() {
         onClose={() => setShowLoginModal(false)}
       />
 
-      {/* Upgrade Success Modal */}
-      {upgradedPlan && (
+      {/* Upgrade Success Modal - TODO: Stripe統合後に有効化 */}
+      {/* {upgradedPlan && (
         <UpgradeSuccessModal
           isOpen={showUpgradeSuccess}
           onClose={() => setShowUpgradeSuccess(false)}
           plan={upgradedPlan}
         />
-      )}
+      )} */}
     </div>
   );
 }
