@@ -340,15 +340,16 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
               </div>
               <motion.button
                 type="submit"
-                className={`m-1.5 px-6 py-3 rounded-full ${typography.headline} text-white min-h-[44px]`}
-                style={{ backgroundColor: systemColors.blue }}
-                whileHover={
-                  isMobile ? {} : { backgroundColor: "#0066CC", scale: 1.02 }
-                }
+                className="glow-wrapper-hero m-1.5"
                 whileTap={{ scale: 0.97 }}
                 transition={bouncySpring}
               >
-                AIに聞く
+                <div className="glow-layer" />
+                <span
+                  className={`glow-button-inner-hero ${typography.headline}`}
+                >
+                  AIに聞く
+                </span>
               </motion.button>
             </motion.div>
           </motion.div>

@@ -121,6 +121,21 @@ node scripts/sync-yahoo-products.mjs
 
 ---
 
+## ブラウザ自動化（agent-browser）
+
+AIエージェント向けヘッドレスブラウザCLI。以下の場面で活用する:
+
+| 場面               | コマンド例                                                              |
+| ------------------ | ----------------------------------------------------------------------- |
+| UI修正後の確認     | `agent-browser open http://localhost:3000 && agent-browser snapshot -i` |
+| スクリーンショット | `agent-browser screenshot --full page.png`                              |
+| フォーム動作テスト | `agent-browser fill @e3 "test" && agent-browser click @e5`              |
+| レスポンシブ確認   | `agent-browser set viewport 375 812`                                    |
+
+**使用判断**: 複数ページの確認、動作テスト、エビデンス取得時に使用。単純な目視確認には使わない。
+
+---
+
 ## 環境変数（主要）
 
 ```bash
@@ -209,4 +224,4 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 
 ---
 
-**最終更新**: 2026-01-14 | **バージョン**: 3.3.0
+**最終更新**: 2026-01-15 | **バージョン**: 3.4.0

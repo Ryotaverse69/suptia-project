@@ -551,3 +551,68 @@
 .glow-wrapper-transparent:hover .glow-button-inner-transparent {
   background-color: #ffffff;
 }
+
+/* ========================================
+   ヒーロー用: 常に枠線表示 + ホバーで虹色グロー（拡大なし）
+   ======================================== */
+
+.glow-wrapper-hero {
+  position: relative;
+  padding: 2px;
+  border-radius: 9999px;
+}
+
+.glow-wrapper-hero .glow-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 122, 255, 0.3),
+    rgba(88, 86, 214, 0.3),
+    rgba(175, 82, 222, 0.3)
+  );
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-hero:hover .glow-layer {
+  background: linear-gradient(
+    90deg,
+    #BC82F3,
+    #F5B9EA,
+    #8D9FFF,
+    #81E7D4,
+    #FFBA71,
+    #C686FF,
+    #BC82F3
+  );
+  background-size: 300% 100%;
+  animation: rainbow-shift 4s ease infinite;
+  box-shadow:
+    0 0 12px rgba(188, 130, 243, 0.4),
+    0 0 24px rgba(141, 159, 255, 0.25);
+}
+
+.glow-wrapper-hero .glow-button-inner-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #007AFF;
+  font-size: 15px;
+  z-index: 1;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-hero:hover .glow-button-inner-hero {
+  background-color: #ffffff;
+}

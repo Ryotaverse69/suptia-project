@@ -89,7 +89,7 @@ export function Header() {
     <>
       {/* Apple-style Navigation Bar (44pt height) */}
       <header
-        className="sticky top-0 z-50 w-full border-b"
+        className="sticky top-0 z-[1000] w-full border-b"
         style={{
           ...liquidGlass.light,
           borderRadius: 0,
@@ -173,7 +173,7 @@ export function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: appleEase }}
-                      className="absolute right-0 top-full mt-2 w-72 py-2 z-[100] overflow-hidden"
+                      className="absolute right-0 top-full mt-2 w-72 py-2 z-[1100] overflow-hidden"
                       style={{
                         ...liquidGlass.light,
                         boxShadow:
@@ -537,7 +537,7 @@ export function Header() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.2, ease: appleEase }}
-                        className="absolute right-0 top-full mt-2 w-56 py-2 z-[100] overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-56 py-2 z-[1100] overflow-hidden"
                         style={{
                           ...liquidGlass.light,
                           boxShadow:
@@ -640,7 +640,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="hidden md:block fixed inset-0 z-[45]"
+            className="hidden md:block fixed inset-0 z-[999]"
             onClick={() => {
               setDesktopMenuOpen(false);
               setUserMenuOpen(false);
@@ -658,7 +658,7 @@ export function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden fixed inset-0 z-[45]"
+              className="md:hidden fixed inset-0 z-[999]"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
               onClick={() => setMobileMenuOpen(false)}
             />
@@ -667,7 +667,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: appleEase }}
-              className="md:hidden fixed top-16 left-0 right-0 z-[48] border-b overflow-hidden"
+              className="md:hidden fixed top-16 left-0 right-0 z-[1080] border-b overflow-hidden"
               style={{
                 ...liquidGlass.light,
                 borderRadius: 0,

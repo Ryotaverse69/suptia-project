@@ -9,7 +9,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAuth, type AuthProvider } from "@/contexts/AuthContext";
-import { liquidGlassClasses } from "@/lib/design-system";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -122,9 +121,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       />
 
       {/* モーダル */}
-      <div
-        className={`relative ${liquidGlassClasses.light} w-full max-w-md mx-4 p-8`}
-      >
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md mx-4 p-8 rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
         {/* 閉じるボタン */}
         <button
           onClick={handleClose}
