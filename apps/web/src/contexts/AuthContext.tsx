@@ -22,11 +22,20 @@ import type {
   AuthError,
   AuthChangeEvent,
 } from "@supabase/supabase-js";
+import { needsMFAVerification, verifyMFALogin } from "@/lib/supabase/mfa";
 
 /**
  * 認証プロバイダーの種類
  */
 export type AuthProvider = "google" | "email";
+
+/**
+ * MFA検証状態
+ */
+interface MFAState {
+  required: boolean;
+  factorId: string | null;
+}
 
 /**
  * 認証状態
@@ -36,6 +45,7 @@ interface AuthState {
   session: Session | null;
   isLoading: boolean;
   error: AuthError | null;
+  mfa: MFAState;
 }
 
 /**
@@ -47,6 +57,8 @@ interface AuthContextValue extends AuthState {
   verifyOtp: (email: string, token: string) => Promise<boolean>;
   signOut: () => Promise<void>;
   clearError: () => void;
+  verifyMFA: (code: string) => Promise<boolean>;
+  cancelMFA: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -60,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session: null,
     isLoading: true,
     error: null,
+    mfa: { required: false, factorId: null },
   });
   const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
@@ -68,8 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       return createClient();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Supabase接続エラー";
+      const message = err instanceof Error ? err.message : "Supabase接続エラー";
       console.error("[AuthContext] Supabase client error:", message);
       setSupabaseError(message);
       return null;
@@ -96,12 +108,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        setState({
+        setState((prev) => ({
+          ...prev,
           user: session?.user ?? null,
           session,
           isLoading: false,
           error: null,
-        });
+        }));
       } catch (err) {
         console.error("[AuthContext] Unexpected error:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
@@ -110,17 +123,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     getInitialSession();
 
+    // MFA検証が必要かチェック
+    const checkMFARequirement = async () => {
+      try {
+        const mfaCheck = await needsMFAVerification();
+        if (mfaCheck.required && mfaCheck.factorId) {
+          setState((prev) => ({
+            ...prev,
+            mfa: { required: true, factorId: mfaCheck.factorId || null },
+          }));
+        }
+      } catch (err) {
+        console.error("[AuthContext] MFA check error:", err);
+      }
+    };
+
     // 認証状態の変更を監視
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
-      (_event: AuthChangeEvent, session: Session | null) => {
-        setState({
+      async (_event: AuthChangeEvent, session: Session | null) => {
+        setState((prev) => ({
+          ...prev,
           user: session?.user ?? null,
           session,
           isLoading: false,
           error: null,
-        });
+        }));
+
+        // ログイン成功時にMFA検証が必要かチェック
+        if (session?.user && _event === "SIGNED_IN") {
+          await checkMFARequirement();
+        }
       },
     );
 
@@ -231,12 +265,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) {
       console.error("[AuthContext] Supabase not available for signOut");
       // Supabaseがなくてもローカルステートはリセット
-      setState({
+      setState((prev) => ({
+        ...prev,
         user: null,
         session: null,
         isLoading: false,
         error: null,
-      });
+      }));
       window.location.href = "/";
       return;
     }
@@ -250,12 +285,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, error, isLoading: false }));
     } else {
       // ログアウト成功時、ステートをリセット
-      setState({
+      setState((prev) => ({
+        ...prev,
         user: null,
         session: null,
         isLoading: false,
         error: null,
-      });
+      }));
       // ページをリロードしてキャッシュをクリア
       window.location.href = "/";
     }
@@ -268,6 +304,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
 
+  /**
+   * MFA検証
+   */
+  const verifyMFA = useCallback(
+    async (code: string): Promise<boolean> => {
+      if (!state.mfa.factorId) {
+        console.error("[AuthContext] No MFA factor ID available");
+        return false;
+      }
+
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+      const result = await verifyMFALogin(state.mfa.factorId, code);
+
+      if (result.success) {
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          mfa: { required: false, factorId: null },
+        }));
+        return true;
+      } else {
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: {
+            message: result.error || "MFA検証に失敗しました",
+          } as AuthError,
+        }));
+        return false;
+      }
+    },
+    [state.mfa.factorId],
+  );
+
+  /**
+   * MFA検証をキャンセル（ログアウト）
+   */
+  const cancelMFA = useCallback(async () => {
+    setState((prev) => ({
+      ...prev,
+      mfa: { required: false, factorId: null },
+    }));
+    await signOut();
+  }, [signOut]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -277,6 +359,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         verifyOtp,
         signOut,
         clearError,
+        verifyMFA,
+        cancelMFA,
       }}
     >
       {children}

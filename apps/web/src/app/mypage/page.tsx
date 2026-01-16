@@ -32,6 +32,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useDiagnosisHistory } from "@/contexts/DiagnosisHistoryContext";
 import { usePriceAlerts } from "@/contexts/PriceAlertsContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { MFASetupSection } from "@/components/auth/MFASetup";
 import { Avatar } from "@/components/Avatar";
 import {
   systemColors,
@@ -572,6 +573,13 @@ export default function MyPage() {
               </div>
 
               {/* Admin Section - Only visible to admins */}
+              {profile?.is_admin && (
+                <>
+                  {/* Security Settings - MFA (管理者のみ) */}
+                  <MFASetupSection />
+                </>
+              )}
+
               {profile?.is_admin && (
                 <div className={`overflow-hidden ${liquidGlassClasses.light}`}>
                   <div

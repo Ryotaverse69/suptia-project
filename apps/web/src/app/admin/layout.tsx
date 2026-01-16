@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { AdminMFAGuard } from "@/components/auth/AdminMFAGuard";
 
 // 動的レンダリングを強制（認証チェックを毎回実行）
 export const dynamic = "force-dynamic";
@@ -43,5 +44,6 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  return <>{children}</>;
+  // MFA検証ガード（管理者がMFAを有効にしている場合のみ検証を要求）
+  return <AdminMFAGuard>{children}</AdminMFAGuard>;
 }
