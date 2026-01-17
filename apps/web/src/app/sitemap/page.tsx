@@ -404,6 +404,17 @@ export default function SitemapPage() {
               <div className="ml-4">├─ 📄 /sitemap (サイトマップ)</div>
               <div className="ml-4">├─ 📄 /faq (FAQ)</div>
               <div className="ml-4">├─ 📄 /how-it-works (使い方)</div>
+              <div className="ml-4">├─ 📁 /guide (ガイド)</div>
+              <div className="ml-8">
+                ├─ 📄 /guide/dangerous-ingredients (危険成分ガイド)
+              </div>
+              <div className="ml-8">
+                ├─ 📄 /guide/supplement-safety (サプリメント安全ガイド)
+              </div>
+              <div className="ml-8">├─ 📄 /guide/purposes (目的別ガイド)</div>
+              <div className="ml-8">
+                └─ 📄 /guide/audiences (対象者別ガイド)
+              </div>
               <div className="ml-4">└─ 📁 /legal (法的情報)</div>
               <div className="ml-8">├─ 📄 /legal/terms (利用規約)</div>
               <div className="ml-8">

@@ -16,6 +16,7 @@ const footerSections = [
     links: [
       { href: "/ingredients", label: "成分ガイド" },
       { href: "/guide/dangerous-ingredients", label: "危険成分ガイド" },
+      { href: "/guide/supplement-safety", label: "サプリメント安全ガイド" },
       { href: "/guide/purposes", label: "目的別ガイド" },
       { href: "/guide/audiences", label: "対象者別ガイド" },
       { href: "/tools", label: "無料ツール" },

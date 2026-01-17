@@ -262,6 +262,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${siteUrl}/guide/supplement-safety`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.75, // 紅麹事件を題材にした安全性LP（SEO重要）
+    },
     // 無料ツール
     {
       url: `${siteUrl}/tools`,
