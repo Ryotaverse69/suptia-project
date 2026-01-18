@@ -27,8 +27,9 @@ import {
 } from "@/lib/design-system";
 import { getIngredientOGImage } from "@/lib/og-image";
 
-// ISR: 1時間ごとにページを再生成
-export const revalidate = 3600;
+// キャッシュ無効化（常に最新データを取得）
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "成分ガイド｜サプリメント成分の効果と科学的根拠 - サプティア",
@@ -79,16 +80,14 @@ interface Ingredient {
   sampleImageUrl?: string; // 関連商品の画像URL
 }
 
-// カテゴリーの表示順序（整理済み）
+// カテゴリーの表示順序（スキーマ準拠の7カテゴリ）
 const categoryOrder = [
   "ビタミン",
   "ミネラル",
-  "アミノ酸・タンパク質",
+  "アミノ酸",
   "脂肪酸",
-  "ハーブ・植物エキス",
-  "抗酸化物質",
-  "プロバイオティクス・消化サポート",
-  "ホルモン・睡眠",
+  "ハーブ",
+  "プロバイオティクス",
   "その他",
 ];
 
