@@ -87,8 +87,8 @@ async function getRelatedProducts(ingredientId: string) {
     _id,
     name,
     slug,
-    priceJpy,
-    imageUrl,
+    "priceJpy": coalesce(priceJPY, priceJpy),
+    "imageUrl": coalesce(externalImageUrl, imageUrl),
     brand->{
       name
     },
