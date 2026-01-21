@@ -421,7 +421,7 @@ async function searchSuptiaProducts(
 }
 
 /**
- * Suptiaの成分データを取得（24時間キャッシュ）
+ * Suptiaの成分データを取得（30分キャッシュ + webhook無効化）
  */
 const fetchSuptiaIngredients = unstable_cache(
   async (): Promise<SuptiaIngredient[]> => {
@@ -440,80 +440,32 @@ const fetchSuptiaIngredients = unstable_cache(
     }
   },
   ["concierge-ingredients"],
-  { revalidate: 60 * 60 * 24, tags: ["concierge-ingredients"] }, // 24時間
+  { revalidate: 60 * 30, tags: ["concierge-ingredients"] }, // 30分（webhook経由で即時無効化可能）
 );
 
 /**
- * ユーザーメッセージからキーワードを抽出
+ * ユーザーメッセージからキーワードを抽出（静的パターン + 動的成分名）
  */
-function extractKeywords(message: string): string[] {
-  // サプリ関連のキーワードパターン
+function extractKeywords(
+  message: string,
+  dynamicIngredientNames?: string[],
+): string[] {
+  // 基本パターン（汎用的なもの）
   const patterns = [
-    // ビタミン系
+    // ビタミン系（パターンマッチが必要なもの）
     /ビタミン[A-Za-z0-9]*/g,
     /マルチビタミン/g,
-    // ミネラル系
-    /ミネラル/g,
-    /鉄|鉄分/g,
-    /亜鉛/g,
-    /カルシウム/g,
-    /マグネシウム/g,
-    /セレン/g,
-    /クロム/g,
-    // 脂肪酸・オイル系
+    // オメガ系
     /オメガ[0-9]*/g,
-    /DHA|EPA/g,
-    /フィッシュオイル|魚油/g,
-    // アミノ酸・プロテイン系
-    /プロテイン/g,
-    /アミノ酸/g,
-    /BCAA/g,
-    /クレアチン/g,
-    /アルギニン/g,
-    /シトルリン/g,
-    /グルタミン/g,
-    // 腸内環境系
-    /乳酸菌/g,
-    /プロバイオ/g,
-    /ビフィズス菌/g,
-    // 美容系
-    /コラーゲン/g,
-    /ヒアルロン酸/g,
-    /プラセンタ/g,
-    // 目の健康
-    /ルテイン/g,
-    /アスタキサンチン/g,
-    /ブルーベリー/g,
-    // 関節・骨
-    /グルコサミン/g,
-    /コンドロイチン/g,
-    /MSM/g,
-    // エネルギー・抗酸化
-    /コエンザイム|CoQ10/g,
-    /αリポ酸|アルファリポ酸/g,
-    // 女性向け
-    /葉酸/g,
-    /イソフラボン/g,
-    /エクオール/g,
-    // 男性向け・ハーブ系
-    /トンカットアリ|Tongkat Ali/gi,
-    /マカ/g,
-    /アシュワガンダ/g,
-    /高麗人参|朝鮮人参/g,
-    /ノコギリヤシ/g,
-    /テストステロン/g,
-    // その他ハーブ
-    /エキナセア/g,
-    /バレリアン/g,
-    /セントジョーンズワート/g,
-    /ミルクシスル/g,
-    /ウコン|ターメリック|クルクミン/g,
-    /ニンニク|ガーリック/g,
+    // 英語略称
+    /DHA|EPA|BCAA|CoQ10|MSM/gi,
     // ブランド名
     /DHC|ネイチャーメイド|ディアナチュラ|FANCL|ファンケル|小林製薬|大塚製薬|アサヒ|NOW Foods|Swanson|スワンソン|Solaray|ソラレー|iHerb/gi,
   ];
 
   const keywords: string[] = [];
+
+  // 静的パターンによるマッチ
   for (const pattern of patterns) {
     const matches = message.match(pattern);
     if (matches) {
@@ -521,7 +473,33 @@ function extractKeywords(message: string): string[] {
     }
   }
 
+  // 動的成分名によるマッチ（Sanityから取得した成分名）
+  if (dynamicIngredientNames && dynamicIngredientNames.length > 0) {
+    const lowerMessage = message.toLowerCase();
+    for (const ingredientName of dynamicIngredientNames) {
+      // 日本語名でのマッチ
+      if (message.includes(ingredientName)) {
+        keywords.push(ingredientName);
+      }
+      // 英語名（小文字）でのマッチも試行
+      if (lowerMessage.includes(ingredientName.toLowerCase())) {
+        keywords.push(ingredientName);
+      }
+    }
+  }
+
   return [...new Set(keywords)];
+}
+
+/**
+ * 成分名リストからキーワード検索用の名前リストを生成
+ */
+function getIngredientNamesForKeywordSearch(
+  ingredients: SuptiaIngredient[],
+): string[] {
+  return ingredients
+    .map((i) => i.name)
+    .filter((name) => name && name.length > 1);
 }
 
 /**
@@ -1288,9 +1266,14 @@ export async function POST(request: NextRequest) {
     const anthropicModel = getAnthropicModel(model);
 
     // Suptiaの商品・成分データを取得
-    const keywords = extractKeywords(body.message);
+    // 成分を先に取得（動的キーワード抽出に使用）
+    const suptiaIngredients = await fetchSuptiaIngredients();
+    const dynamicIngredientNames =
+      getIngredientNamesForKeywordSearch(suptiaIngredients);
+
+    // キーワード抽出（静的パターン + 動的成分名）
+    const keywords = extractKeywords(body.message, dynamicIngredientNames);
     let suptiaProducts: SuptiaProduct[] = [];
-    let suptiaIngredients: SuptiaIngredient[] = [];
 
     // キーワードがあれば関連商品を検索、なければ人気商品を取得
     if (keywords.length > 0) {
@@ -1340,9 +1323,6 @@ export async function POST(request: NextRequest) {
         });
       }
     }
-
-    // 成分データを取得
-    suptiaIngredients = await fetchSuptiaIngredients();
 
     // Anthropic API呼び出し
     const anthropic = new Anthropic({
