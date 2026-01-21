@@ -20,8 +20,8 @@ import {
   liquidGlassClasses,
 } from "@/lib/design-system";
 
-// ISR設定: 1時間ごとにページを再生成
-export const revalidate = 3600; // 3600秒 = 1時間
+// ISR設定: 5分ごとにページを再生成
+export const revalidate = 300; // 300秒 = 5分
 
 export const metadata: Metadata = {
   title: "サプリメント商品一覧｜価格比較・成分量・コスパで選ぶ - サプティア",
