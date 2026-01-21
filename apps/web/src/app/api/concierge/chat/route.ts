@@ -379,7 +379,7 @@ const fetchPopularProducts = unstable_cache(
     }
   },
   ["concierge-popular-products"],
-  { revalidate: 60 * 60, tags: ["concierge-products"] }, // 1時間
+  { revalidate: 60 * 5, tags: ["concierge-products"] }, // 5分
 );
 
 /**
@@ -449,24 +449,68 @@ const fetchSuptiaIngredients = unstable_cache(
 function extractKeywords(message: string): string[] {
   // サプリ関連のキーワードパターン
   const patterns = [
+    // ビタミン系
     /ビタミン[A-Za-z0-9]*/g,
     /マルチビタミン/g,
+    // ミネラル系
     /ミネラル/g,
-    /プロテイン/g,
-    /オメガ[0-9]*/g,
-    /DHA|EPA/g,
     /鉄|鉄分/g,
     /亜鉛/g,
     /カルシウム/g,
     /マグネシウム/g,
+    /セレン/g,
+    /クロム/g,
+    // 脂肪酸・オイル系
+    /オメガ[0-9]*/g,
+    /DHA|EPA/g,
+    /フィッシュオイル|魚油/g,
+    // アミノ酸・プロテイン系
+    /プロテイン/g,
+    /アミノ酸/g,
+    /BCAA/g,
+    /クレアチン/g,
+    /アルギニン/g,
+    /シトルリン/g,
+    /グルタミン/g,
+    // 腸内環境系
     /乳酸菌/g,
     /プロバイオ/g,
+    /ビフィズス菌/g,
+    // 美容系
     /コラーゲン/g,
-    /葉酸/g,
+    /ヒアルロン酸/g,
+    /プラセンタ/g,
+    // 目の健康
     /ルテイン/g,
+    /アスタキサンチン/g,
+    /ブルーベリー/g,
+    // 関節・骨
     /グルコサミン/g,
+    /コンドロイチン/g,
+    /MSM/g,
+    // エネルギー・抗酸化
     /コエンザイム|CoQ10/g,
-    /DHC|ネイチャーメイド|ディアナチュラ|FANCL|ファンケル|小林製薬|大塚製薬|アサヒ|NOW Foods/gi,
+    /αリポ酸|アルファリポ酸/g,
+    // 女性向け
+    /葉酸/g,
+    /イソフラボン/g,
+    /エクオール/g,
+    // 男性向け・ハーブ系
+    /トンカットアリ|Tongkat Ali/gi,
+    /マカ/g,
+    /アシュワガンダ/g,
+    /高麗人参|朝鮮人参/g,
+    /ノコギリヤシ/g,
+    /テストステロン/g,
+    // その他ハーブ
+    /エキナセア/g,
+    /バレリアン/g,
+    /セントジョーンズワート/g,
+    /ミルクシスル/g,
+    /ウコン|ターメリック|クルクミン/g,
+    /ニンニク|ガーリック/g,
+    // ブランド名
+    /DHC|ネイチャーメイド|ディアナチュラ|FANCL|ファンケル|小林製薬|大塚製薬|アサヒ|NOW Foods|Swanson|スワンソン|Solaray|ソラレー|iHerb/gi,
   ];
 
   const keywords: string[] = [];
