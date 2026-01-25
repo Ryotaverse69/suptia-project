@@ -19,6 +19,7 @@ import {
   appleEase,
   subtleSpring,
   bouncySpring,
+  duration,
 } from "@/lib/design-system";
 import { classifyIntent } from "@/lib/intent";
 
@@ -133,7 +134,7 @@ export function HeroRevolution({ popularSearches = [] }: HeroRevolutionProps) {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
+        duration: duration.scrollFadeIn,
         delay: i * staggerDelay,
         ease: appleEase,
       },

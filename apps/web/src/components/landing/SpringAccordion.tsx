@@ -17,6 +17,7 @@ import {
   appleEase,
   subtleSpring,
   liquidGlassClasses,
+  duration,
 } from "@/lib/design-system";
 
 // Mobile detection
@@ -68,8 +69,8 @@ function AccordionItem({
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: 0.5,
-        delay: index * 0.08,
+        duration: duration.scrollFadeIn,
+        delay: index * 0.06,
         ease: appleEase,
       }}
     >
@@ -168,14 +169,18 @@ export function SpringAccordion({
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: appleEase }}
+          transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
         >
           {/* Icon */}
           <motion.div
             className="inline-flex items-center justify-center mb-6"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.12,
+              ease: appleEase,
+            }}
           >
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center"
@@ -193,7 +198,11 @@ export function SpringAccordion({
             style={{ color: appleWebColors.textPrimary }}
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.18,
+              ease: appleEase,
+            }}
           >
             {title}
           </motion.h2>
@@ -204,7 +213,11 @@ export function SpringAccordion({
             style={{ color: appleWebColors.textSecondary }}
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.24,
+              ease: appleEase,
+            }}
           >
             {subtitle}
           </motion.p>
@@ -215,7 +228,11 @@ export function SpringAccordion({
           className={`overflow-hidden ${liquidGlassClasses.light}`}
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3, ease: appleEase }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.18,
+            ease: appleEase,
+          }}
         >
           <div className="px-6 md:px-8">
             {items.map((item, index) => (
@@ -236,7 +253,11 @@ export function SpringAccordion({
           className="mt-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.5, ease: appleEase }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.3,
+            ease: appleEase,
+          }}
         >
           <p
             className={`${typography.subhead} mb-6`}

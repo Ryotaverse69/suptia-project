@@ -60,6 +60,8 @@ type SortOption =
   | "rating"
   | "reviews";
 
+const PRODUCTS_PER_PAGE = 20;
+
 export function ProductsSection({ products }: ProductsSectionProps) {
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -69,6 +71,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
   );
   const [ecSiteFilter, setEcSiteFilter] = useState<string | null>(null);
   const [badgeFilters, setBadgeFilters] = useState<string[]>([]);
+  const [displayCount, setDisplayCount] = useState(PRODUCTS_PER_PAGE);
 
   // フィルタリングとソート
   const filteredAndSortedProducts = useMemo(() => {
@@ -182,6 +185,8 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       setEvidenceLevelFilter(filters.evidenceLevel);
     if (filters.ecSite !== undefined) setEcSiteFilter(filters.ecSite);
     if (filters.badges !== undefined) setBadgeFilters(filters.badges);
+    // フィルター変更時は表示件数をリセット
+    setDisplayCount(PRODUCTS_PER_PAGE);
   };
 
   const handleClearFilters = () => {
@@ -190,7 +195,18 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     setEvidenceLevelFilter(null);
     setEcSiteFilter(null);
     setBadgeFilters([]);
+    setDisplayCount(PRODUCTS_PER_PAGE);
   };
+
+  const handleShowMore = () => {
+    setDisplayCount((prev) =>
+      Math.min(prev + PRODUCTS_PER_PAGE, filteredAndSortedProducts.length),
+    );
+  };
+
+  const displayedProducts = filteredAndSortedProducts.slice(0, displayCount);
+  const hasMore = displayCount < filteredAndSortedProducts.length;
+  const remainingCount = filteredAndSortedProducts.length - displayCount;
 
   return (
     <div
@@ -255,7 +271,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
 
           {filteredAndSortedProducts.length > 0 ? (
             <div className="flex flex-col gap-3">
-              {filteredAndSortedProducts.map((product, index) => (
+              {displayedProducts.map((product, index) => (
                 <ProductListItem key={index} product={product} />
               ))}
             </div>
@@ -294,16 +310,30 @@ export function ProductsSection({ products }: ProductsSectionProps) {
           )}
 
           {/* Load More Button */}
-          {filteredAndSortedProducts.length > 0 && (
+          {hasMore && (
             <div className="mt-10 text-center">
               <button
-                className={`px-10 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 min-h-[44px] ${liquidGlassClasses.light}`}
+                onClick={handleShowMore}
+                className={`px-10 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 min-h-[44px] hover:opacity-80 ${liquidGlassClasses.light}`}
                 style={{
                   color: appleWebColors.textPrimary,
                 }}
               >
-                もっと見る
+                もっと見る（残り{remainingCount}件）
               </button>
+            </div>
+          )}
+
+          {/* 表示件数 */}
+          {filteredAndSortedProducts.length > 0 && (
+            <div className="mt-4 text-center">
+              <p
+                className="text-[13px]"
+                style={{ color: appleWebColors.textTertiary }}
+              >
+                {displayedProducts.length}件 / 全
+                {filteredAndSortedProducts.length}件を表示中
+              </p>
             </div>
           )}
         </main>

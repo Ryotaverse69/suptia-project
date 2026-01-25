@@ -20,6 +20,7 @@ import {
   appleEase,
   subtleSpring,
   liquidGlassClasses,
+  duration,
 } from "@/lib/design-system";
 import { getIngredientOGImage } from "@/lib/og-image";
 
@@ -411,8 +412,8 @@ function BentoCard({
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{
-        duration: 0.6,
-        delay: index * 0.08,
+        duration: duration.scrollFadeIn,
+        delay: index * 0.06,
         ease: appleEase,
       }}
     >
@@ -631,14 +632,18 @@ export function MasonryIngredients({
           className="flex items-center justify-between mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: appleEase }}
+          transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
         >
           <div>
             <motion.div
               className="flex items-center gap-2 mb-3"
               initial={{ opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
+              transition={{
+                duration: duration.scrollFadeIn,
+                delay: 0.08,
+                ease: appleEase,
+              }}
             >
               <span
                 className="text-[13px] font-semibold tracking-[0.2em] uppercase"
@@ -664,7 +669,11 @@ export function MasonryIngredients({
               style={{ color: appleWebColors.textPrimary }}
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
+              transition={{
+                duration: duration.scrollFadeIn,
+                delay: 0.15,
+                ease: appleEase,
+              }}
             >
               {title}
             </motion.h2>

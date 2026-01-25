@@ -3,7 +3,12 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useRef, useState, useCallback } from "react";
-import { appleWebColors, typography, appleEase } from "@/lib/design-system";
+import {
+  appleWebColors,
+  typography,
+  appleEase,
+  duration,
+} from "@/lib/design-system";
 import { GlassCard } from "./GlassCard";
 
 interface FAQItem {
@@ -40,7 +45,11 @@ function FAQItemComponent({
       className={isLast ? "" : "border-b border-black/5"}
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: appleEase }}
+      transition={{
+        duration: duration.scrollFadeIn,
+        delay: index * 0.06,
+        ease: appleEase,
+      }}
     >
       <button
         className="w-full flex items-center justify-between py-5 md:py-6 text-left min-h-[56px] group"

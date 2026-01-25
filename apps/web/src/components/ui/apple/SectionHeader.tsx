@@ -7,6 +7,7 @@ import {
   fontStack,
   typography,
   appleEase,
+  duration,
 } from "@/lib/design-system";
 
 interface SectionHeaderProps {
@@ -41,7 +42,7 @@ export function SectionHeader({
       className={`mb-16 md:mb-20 ${align === "center" ? "text-center" : ""} ${className}`}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: appleEase }}
+      transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
     >
       {eyebrow && (
         <motion.p
@@ -53,7 +54,11 @@ export function SectionHeader({
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.08,
+            ease: appleEase,
+          }}
         >
           {eyebrow}
         </motion.p>

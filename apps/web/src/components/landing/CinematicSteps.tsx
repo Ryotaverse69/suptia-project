@@ -17,6 +17,7 @@ import {
   appleEase,
   subtleSpring,
   liquidGlassClasses,
+  duration,
 } from "@/lib/design-system";
 
 // Apple式：モバイル検出
@@ -91,7 +92,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
       className="relative min-h-screen flex items-center justify-center snap-start px-4 sm:px-8 will-change-transform"
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: duration.scrollFadeIn, ease: [0.22, 1, 0.36, 1] }}
       style={{ transform: "translateZ(0)" }}
     >
       {/* Background Number - GPU最適化 */}
@@ -114,7 +115,11 @@ function StepCard({ step, index }: { step: Step; index: number }) {
           className="mb-8 will-change-transform"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.2,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           style={{ transform: "translateZ(0)" }}
         >
           <span
@@ -130,8 +135,8 @@ function StepCard({ step, index }: { step: Step; index: number }) {
           initial={{ opacity: 0, scale: 0 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{
-            duration: 0.6,
-            delay: 0.4,
+            duration: duration.scrollFadeIn,
+            delay: 0.25,
             type: "spring",
             stiffness: 200,
           }}
@@ -169,7 +174,11 @@ function StepCard({ step, index }: { step: Step; index: number }) {
           className="text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 will-change-transform"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.3,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           style={{ transform: "translateZ(0)" }}
         >
           {step.title}
@@ -180,7 +189,11 @@ function StepCard({ step, index }: { step: Step; index: number }) {
           className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed will-change-transform"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: 0.35,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           style={{ transform: "translateZ(0)" }}
         >
           {step.description}
@@ -298,8 +311,8 @@ function CompactStepCard({
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: 0.6,
-        delay: 0.2 + index * 0.12,
+        duration: duration.scrollFadeIn,
+        delay: 0.15 + index * 0.08,
         ease: appleEase,
       }}
       onMouseEnter={handleMouseEnter}
@@ -315,8 +328,8 @@ function CompactStepCard({
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
           transition={{
-            duration: 0.8,
-            delay: 0.4 + index * 0.12,
+            duration: duration.scrollFadeIn,
+            delay: 0.25 + index * 0.08,
             ease: appleEase,
           }}
         />
@@ -420,14 +433,18 @@ export function CompactSteps() {
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: appleEase }}
+          transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
         >
           <motion.span
             className="inline-block text-[13px] font-semibold tracking-[0.2em] uppercase mb-4"
             style={{ color: appleWebColors.textTertiary }}
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.08,
+              ease: appleEase,
+            }}
           >
             使い方
           </motion.span>
@@ -436,7 +453,11 @@ export function CompactSteps() {
             style={{ color: appleWebColors.textPrimary }}
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.15,
+              ease: appleEase,
+            }}
           >
             3ステップで完了
           </motion.h2>

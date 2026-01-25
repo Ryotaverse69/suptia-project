@@ -11,6 +11,7 @@ import {
   appleEase,
   subtleSpring,
   liquidGlassClasses,
+  duration,
 } from "@/lib/design-system";
 
 // Apple式：モバイル検出
@@ -108,7 +109,7 @@ function StatCard({
       className="relative group will-change-transform"
       initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay, ease: appleEase }}
+      transition={{ duration: duration.scrollFadeIn, delay, ease: appleEase }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -158,7 +159,11 @@ function StatCard({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: delay + 0.2, ease: appleEase }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            delay: delay + 0.15,
+            ease: appleEase,
+          }}
         >
           <p
             className={typography.headline}
@@ -247,14 +252,18 @@ export function AnimatedStats({
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: appleEase }}
+          transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
         >
           <motion.span
             className="inline-block text-[13px] font-semibold tracking-[0.2em] uppercase mb-4"
             style={{ color: appleWebColors.textTertiary }}
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.08,
+              ease: appleEase,
+            }}
           >
             データで示す
           </motion.span>
@@ -263,7 +272,11 @@ export function AnimatedStats({
             style={{ color: appleWebColors.textPrimary }}
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.15,
+              ease: appleEase,
+            }}
           >
             サプティアの実績
           </motion.h2>

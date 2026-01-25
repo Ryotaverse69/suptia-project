@@ -362,8 +362,8 @@
 }
 
 .glow-wrapper.glow-active {
-  padding: 3px;
-  margin: 0;
+  padding: 2px;
+  margin: 1px;
 }
 
 /* グローレイヤー（実際のdiv要素） */
@@ -476,8 +476,8 @@
 }
 
 .glow-wrapper:hover {
-  padding: 3px;
-  margin: 0;
+  padding: 2px;
+  margin: 1px;
 }
 
 .glow-wrapper:hover .glow-button-inner,
@@ -492,15 +492,23 @@
 
 .glow-wrapper-transparent {
   position: relative;
-  padding: 1px;
+  padding: 2px;
   border-radius: 9999px;
-  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glow-wrapper-transparent .glow-layer {
   position: absolute;
   inset: 0;
   border-radius: inherit;
+  background: transparent;
+  z-index: 0;
+  pointer-events: none;
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-wrapper-transparent:hover .glow-layer {
   background: linear-gradient(
     90deg,
     #BC82F3,
@@ -512,20 +520,6 @@
     #BC82F3
   );
   background-size: 300% 100%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition:
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glow-wrapper-transparent:hover {
-  padding: 2px;
-}
-
-.glow-wrapper-transparent:hover .glow-layer {
-  opacity: 1;
   animation: rainbow-shift 4s ease infinite;
   box-shadow:
     0 0 8px rgba(188, 130, 243, 0.5),
@@ -541,15 +535,10 @@
   border-radius: 9999px;
   min-height: 44px;
   width: 100%;
-  background-color: transparent;
+  background-color: #ffffff;
   color: #1d1d1f;
   font-size: 15px;
   z-index: 1;
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glow-wrapper-transparent:hover .glow-button-inner-transparent {
-  background-color: #ffffff;
 }
 
 /* ========================================

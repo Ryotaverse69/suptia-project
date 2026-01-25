@@ -255,6 +255,8 @@ export const duration = {
   slow: 0.4,
   /** Page transitions (400-600ms) */
   page: 0.5,
+  /** Scroll fade-in animations (unified) */
+  scrollFadeIn: 0.5,
 } as const;
 
 // ============================================================

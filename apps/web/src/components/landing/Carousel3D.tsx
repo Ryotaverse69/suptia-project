@@ -22,6 +22,7 @@ import {
   tierColors as designTierColors,
   liquidGlass,
   liquidGlassClasses,
+  duration,
 } from "@/lib/design-system";
 
 // Apple式：モバイル検出
@@ -318,7 +319,10 @@ export function Carousel3D({
           className="flex items-center justify-between mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: duration.scrollFadeIn,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         >
           <div>
             <motion.span
@@ -586,7 +590,7 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
           className="flex items-center justify-between mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: appleEase }}
+          transition={{ duration: duration.scrollFadeIn, ease: appleEase }}
         >
           <div>
             <motion.span
@@ -594,7 +598,11 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
               style={{ color: appleWebColors.textTertiary }}
               initial={{ opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1, ease: appleEase }}
+              transition={{
+                duration: duration.scrollFadeIn,
+                delay: 0.08,
+                ease: appleEase,
+              }}
             >
               おすすめ
             </motion.span>
@@ -603,7 +611,11 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
               style={{ color: appleWebColors.textPrimary }}
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2, ease: appleEase }}
+              transition={{
+                duration: duration.scrollFadeIn,
+                delay: 0.15,
+                ease: appleEase,
+              }}
             >
               {title || "おすすめのサプリメント"}
             </motion.h2>
@@ -643,7 +655,11 @@ export function FlatCarousel({ products, title, subtitle }: Carousel3DProps) {
             className="flex gap-6 pb-4"
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: appleEase }}
+            transition={{
+              duration: duration.scrollFadeIn,
+              delay: 0.15,
+              ease: appleEase,
+            }}
           >
             {products.map((product, index) => (
               <ProductCardFlat
