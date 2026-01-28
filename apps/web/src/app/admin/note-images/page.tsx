@@ -20,6 +20,8 @@ import {
   Clipboard,
   ClipboardPaste,
   Trash2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -172,6 +174,7 @@ export default function NoteImagesAdminPage() {
   const [copied, setCopied] = useState(false);
   const [imageCopied, setImageCopied] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isPromptExpanded, setIsPromptExpanded] = useState(false);
 
   // 画像生成状態
   const [isGenerating, setIsGenerating] = useState(false);
@@ -183,6 +186,9 @@ export default function NoteImagesAdminPage() {
 
   // 生成中止用のAbortController
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // テキストエリアのref
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // アクセストークンを取得
   const getAccessToken = useCallback(async () => {
@@ -231,14 +237,19 @@ Aspect ratio: 1280x670px (wide rectangle for hero image)`
     }
   };
 
-  // クリップボードから貼り付け
+  // クリップボードから貼り付け（1クリック）
   const pasteFromClipboard = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      setPrompt(text);
+      if (text) {
+        setPrompt(text);
+      }
     } catch (err) {
       console.error("Failed to paste:", err);
-      setError("クリップボードからの貼り付けに失敗しました");
+      // フォールバック: テキストエリアにフォーカス
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }
   };
 
@@ -442,34 +453,32 @@ Aspect ratio: 1280x670px (wide rectangle for hero image)`
             <label className="text-sm font-medium text-gray-700">
               プロンプト（何を描くか）
             </label>
-            <div className="flex gap-2">
-              <button
-                onClick={pasteFromClipboard}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
-                title="クリップボードから貼り付け"
-              >
-                <ClipboardPaste className="w-4 h-4" />
-                貼り付け
-              </button>
+            {prompt && (
               <button
                 onClick={clearPrompt}
-                disabled={!prompt}
-                className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition ${
-                  prompt
-                    ? "bg-red-50 text-red-600 hover:bg-red-100"
-                    : "bg-gray-50 text-gray-400 cursor-not-allowed"
-                }`}
+                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
                 title="プロンプトをクリア"
               >
                 <Trash2 className="w-4 h-4" />
                 クリア
               </button>
-            </div>
+            )}
           </div>
+          {/* 貼り付けボタン（プロンプトが空の時に大きく表示） */}
+          {!prompt && (
+            <button
+              onClick={pasteFromClipboard}
+              className="w-full mb-3 flex items-center justify-center gap-2 px-6 py-4 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow-md hover:shadow-lg"
+            >
+              <ClipboardPaste className="w-6 h-6" />
+              貼り付け
+            </button>
+          )}
           <textarea
+            ref={textareaRef}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="例: Create a hero image for a vitamin C supplement comparison article. Show stylized orange slices and capsules floating in space."
+            placeholder="プロンプトを入力..."
             rows={4}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
           />
@@ -478,39 +487,61 @@ Aspect ratio: 1280x670px (wide rectangle for hero image)`
           </p>
         </div>
 
-        {/* 出力 */}
+        {/* 出力（折りたたみ可能） */}
         {fullPrompt && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium text-gray-700">
-                生成プロンプト
-              </label>
-              <button
-                onClick={copyToClipboard}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
-                  copied
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    コピー完了
-                  </>
+          <div className="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+            <button
+              onClick={() => setIsPromptExpanded(!isPromptExpanded)}
+              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">
+                  生成プロンプト
+                </span>
+                <span className="text-xs text-gray-400">
+                  ({fullPrompt.length}文字)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    copyToClipboard();
+                  }}
+                  className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg font-medium transition ${
+                    copied
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      コピー完了
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      コピー
+                    </>
+                  )}
+                </span>
+                {isPromptExpanded ? (
+                  <ChevronUp className="w-5 h-5 text-gray-400" />
                 ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    コピー
-                  </>
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
                 )}
-              </button>
-            </div>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto max-h-48 overflow-y-auto">
-              <pre className="text-sm text-gray-100 whitespace-pre-wrap font-mono">
-                {fullPrompt}
-              </pre>
-            </div>
+              </div>
+            </button>
+            {isPromptExpanded && (
+              <div className="px-6 pb-6">
+                <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto max-h-48 overflow-y-auto">
+                  <pre className="text-sm text-gray-100 whitespace-pre-wrap font-mono">
+                    {fullPrompt}
+                  </pre>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

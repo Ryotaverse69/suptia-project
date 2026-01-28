@@ -76,9 +76,10 @@ export function Header() {
   }, [mobileMenuOpen]);
 
   // Liquid Glass hover effect for menu items (WWDC 2025)
+  // AIボタンと同じホバー範囲（ボタン自体のサイズ）
   const menuItemClasses = `
     flex items-center gap-3 px-4 py-3 text-[15px] font-medium
-    rounded-[12px] min-h-[44px]
+    rounded-full min-h-[44px]
     transition-all duration-200
     hover:bg-white/50 hover:backdrop-blur-[12px] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]
   `

@@ -247,11 +247,49 @@ async function getFeaturedProducts(): Promise<Product[]> {
     type ProductWithScore = Product & { _calculatedScore: number };
 
     // 配列が存在することを確認
-    const safeAmazonProducts = amazonProducts || [];
-    const safeOtherProducts = otherProducts || [];
+    const safeAmazonProducts: Product[] = amazonProducts || [];
+    const safeOtherProducts: Product[] = otherProducts || [];
 
-    // Amazon商品のスコアリング（Tier + 成分人気度）
-    const amazonWithScore: ProductWithScore[] = safeAmazonProducts.map(
+    // ビタミンCを含むかどうか判定する関数
+    const containsVitaminC = (product: Product): boolean => {
+      if (!product.ingredients) return false;
+      return product.ingredients.some((ing) => {
+        const name = ing.ingredient?.name?.toLowerCase() || "";
+        const nameEn = ing.ingredient?.nameEn?.toLowerCase() || "";
+        return (
+          name.includes("ビタミンc") ||
+          name.includes("アスコルビン酸") ||
+          nameEn.includes("vitamin c") ||
+          nameEn.includes("ascorbic")
+        );
+      });
+    };
+
+    // Amazon商品からビタミンC以外をフィルタリングしてランダムシャッフル
+    const amazonNonVitaminC: Product[] = safeAmazonProducts.filter(
+      (product: Product) => !containsVitaminC(product),
+    );
+
+    // Fisher-Yatesシャッフル（ランダム化）
+    const shuffleArray = <T,>(array: T[]): T[] => {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
+
+    // Amazon商品をランダムシャッフル
+    const amazonShuffled: Product[] = shuffleArray(amazonNonVitaminC);
+
+    // ビタミンCを含むAmazon商品は後回し（ランダム枠が余った場合のみ）
+    const amazonVitaminC: Product[] = safeAmazonProducts.filter(
+      (product: Product) => containsVitaminC(product),
+    );
+
+    // Amazon商品のスコアリング（ビタミンC商品用、フォールバック）
+    const amazonWithScore: ProductWithScore[] = amazonVitaminC.map(
       (product: Product) => {
         const tierScore = getTierScore(product.tierRatings?.overallRank);
         const ingredientScore = getIngredientPopularityScore(product);
@@ -280,8 +318,8 @@ async function getFeaturedProducts(): Promise<Product[]> {
     const seenSlugs = new Set<string>();
     const seenNormalizedNames = new Set<string>();
 
-    // まずAmazon商品を上位5件まで追加（名前の正規化チェックはスキップ）
-    for (const product of amazonWithScore) {
+    // まずAmazon商品（ビタミンC以外）をランダムで上位5件まで追加
+    for (const product of amazonShuffled) {
       const slugCurrent = product.slug?.current;
 
       if (!slugCurrent || seenSlugs.has(slugCurrent)) continue;
@@ -296,6 +334,25 @@ async function getFeaturedProducts(): Promise<Product[]> {
       });
 
       if (uniqueProducts.length >= 5) break;
+    }
+
+    // Amazon商品が5件未満の場合、ビタミンC商品で埋める（フォールバック）
+    if (uniqueProducts.length < 5) {
+      for (const product of amazonWithScore) {
+        const slugCurrent = product.slug?.current;
+
+        if (!slugCurrent || seenSlugs.has(slugCurrent)) continue;
+
+        seenSlugs.add(slugCurrent);
+        const normalizedName = normalizeProductName(product.name);
+        seenNormalizedNames.add(normalizedName);
+        uniqueProducts.push({
+          ...product,
+          badges: Array.isArray(product.badges) ? product.badges : [],
+        });
+
+        if (uniqueProducts.length >= 5) break;
+      }
     }
 
     // 残りの枠をその他商品で埋める

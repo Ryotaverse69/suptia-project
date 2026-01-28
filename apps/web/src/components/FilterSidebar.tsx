@@ -1,69 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, SlidersHorizontal, Search, Check, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import { TierRank } from "@/lib/tier-colors";
-import { BadgeType } from "@/lib/badges";
-import {
-  systemColors,
-  appleWebColors,
-  tierColors,
-  fontStack,
-  liquidGlassClasses,
-} from "@/lib/design-system";
+import { fontStack } from "@/lib/design-system";
+
+// 人気の成分（アイコンなし、クリーンなデザイン）
+const popularIngredients = [
+  { label: "ビタミンC", value: "ビタミンC（アスコルビン酸）" },
+  { label: "ビタミンD", value: "ビタミンD" },
+  { label: "マグネシウム", value: "マグネシウム" },
+  { label: "カルシウム", value: "カルシウム" },
+  { label: "オメガ3", value: "オメガ3脂肪酸（EPA・DHA）" },
+  { label: "亜鉛", value: "亜鉛" },
+  { label: "葉酸", value: "葉酸" },
+  { label: "鉄分", value: "鉄分" },
+  { label: "NMN", value: "NMN" },
+  { label: "コラーゲン", value: "コラーゲン" },
+];
+
+// 特徴バッジ（アイコンなし）
+const badgeOptions = [
+  { label: "5冠達成", value: "perfect" },
+  { label: "最適価格", value: "lowest-price" },
+  { label: "高含有", value: "highest-content" },
+  { label: "高コスパ", value: "best-value" },
+  { label: "高エビデンス", value: "evidence-s" },
+  { label: "高安全性", value: "high-safety" },
+];
 
 interface FilterSection {
   title: string;
-  filterKey: "priceRange" | "evidenceLevel" | "ecSite" | "badges";
-  options: { label: string; value: string; count?: number; icon?: string }[];
+  filterKey:
+    | "priceRange"
+    | "evidenceLevel"
+    | "ecSite"
+    | "badges"
+    | "ingredient";
+  options: { label: string; value: string; count?: number }[];
 }
-
-const filterSections: FilterSection[] = [
-  {
-    title: "Tierランク",
-    filterKey: "evidenceLevel",
-    options: [
-      { label: "S+", value: "S+" },
-      { label: "S", value: "S" },
-      { label: "A", value: "A" },
-      { label: "B", value: "B" },
-      { label: "C", value: "C" },
-      { label: "D", value: "D" },
-    ],
-  },
-  {
-    title: "特徴・バッジ",
-    filterKey: "badges",
-    options: [
-      { label: "5冠達成", value: "perfect", icon: "🏆" },
-      { label: "最適価格", value: "lowest-price", icon: "💰" },
-      { label: "高含有", value: "highest-content", icon: "📊" },
-      { label: "高コスパ", value: "best-value", icon: "💡" },
-      { label: "高エビデンス", value: "evidence-s", icon: "🔬" },
-      { label: "高安全性", value: "high-safety", icon: "🛡️" },
-    ],
-  },
-  {
-    title: "価格帯",
-    filterKey: "priceRange",
-    options: [
-      { label: "〜¥2,000", value: "0-2000" },
-      { label: "¥2,000〜5,000", value: "2000-5000" },
-      { label: "¥5,000〜10,000", value: "5000-10000" },
-      { label: "¥10,000〜", value: "10000+" },
-    ],
-  },
-  {
-    title: "購入サイト",
-    filterKey: "ecSite",
-    options: [
-      { label: "Amazon", value: "amazon", icon: "📦" },
-      { label: "楽天", value: "rakuten", icon: "🛍️" },
-      { label: "Yahoo!", value: "yahoo", icon: "🟣" },
-      { label: "iHerb", value: "iherb", icon: "🌿" },
-    ],
-  },
-];
 
 interface FilterSidebarProps {
   onFilterChange?: (filters: {
@@ -72,6 +47,7 @@ interface FilterSidebarProps {
     evidenceLevel?: string | null;
     ecSite?: string | null;
     badges?: string[];
+    ingredient?: string | null;
   }) => void;
   onClearFilters?: () => void;
   activeFilters?: {
@@ -80,6 +56,13 @@ interface FilterSidebarProps {
     evidenceLevel?: string | null;
     ecSite?: string | null;
     badges?: string[];
+    ingredient?: string | null;
+  };
+  filterCounts?: {
+    ingredients: Record<string, number>;
+    sources: Record<string, number>;
+    priceRanges: Record<string, number>;
+    tiers: Record<string, number>;
   };
 }
 
@@ -87,7 +70,84 @@ export function FilterSidebar({
   onFilterChange,
   onClearFilters,
   activeFilters = {},
+  filterCounts,
 }: FilterSidebarProps) {
+  // フィルターセクションの定義
+  const filterSections: FilterSection[] = [
+    {
+      title: "成分",
+      filterKey: "ingredient",
+      options: popularIngredients.map((ing) => ({
+        ...ing,
+        count: filterCounts?.ingredients[ing.value],
+      })),
+    },
+    {
+      title: "Tier",
+      filterKey: "evidenceLevel",
+      options: [
+        { label: "S+", value: "S+", count: filterCounts?.tiers["S+"] },
+        { label: "S", value: "S", count: filterCounts?.tiers["S"] },
+        { label: "A", value: "A", count: filterCounts?.tiers["A"] },
+        { label: "B", value: "B", count: filterCounts?.tiers["B"] },
+        { label: "C", value: "C", count: filterCounts?.tiers["C"] },
+        { label: "D", value: "D", count: filterCounts?.tiers["D"] },
+      ],
+    },
+    {
+      title: "特徴",
+      filterKey: "badges",
+      options: badgeOptions,
+    },
+    {
+      title: "価格帯",
+      filterKey: "priceRange",
+      options: [
+        {
+          label: "〜¥2,000",
+          value: "0-2000",
+          count: filterCounts?.priceRanges["0-2000"],
+        },
+        {
+          label: "¥2,000〜5,000",
+          value: "2000-5000",
+          count: filterCounts?.priceRanges["2000-5000"],
+        },
+        {
+          label: "¥5,000〜10,000",
+          value: "5000-10000",
+          count: filterCounts?.priceRanges["5000-10000"],
+        },
+        {
+          label: "¥10,000〜",
+          value: "10000+",
+          count: filterCounts?.priceRanges["10000+"],
+        },
+      ],
+    },
+    {
+      title: "購入サイト",
+      filterKey: "ecSite",
+      options: [
+        {
+          label: "Amazon",
+          value: "amazon",
+          count: filterCounts?.sources["amazon"],
+        },
+        {
+          label: "楽天市場",
+          value: "rakuten",
+          count: filterCounts?.sources["rakuten"],
+        },
+        {
+          label: "Yahoo!",
+          value: "yahoo",
+          count: filterCounts?.sources["yahoo"],
+        },
+      ],
+    },
+  ];
+
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(filterSections.map((s) => s.title)),
   );
@@ -106,7 +166,12 @@ export function FilterSidebar({
   };
 
   const handleFilterToggle = (
-    filterKey: "priceRange" | "evidenceLevel" | "ecSite" | "badges",
+    filterKey:
+      | "priceRange"
+      | "evidenceLevel"
+      | "ecSite"
+      | "badges"
+      | "ingredient",
     value: string,
   ) => {
     if (!onFilterChange) return;
@@ -143,6 +208,13 @@ export function FilterSidebar({
     }
   };
 
+  const clearSearch = () => {
+    setSearchQuery("");
+    if (onFilterChange) {
+      onFilterChange({ searchQuery: "" });
+    }
+  };
+
   const clearFilters = () => {
     setSearchQuery("");
     if (onClearFilters) {
@@ -157,176 +229,168 @@ export function FilterSidebar({
       return value !== null && value !== undefined;
     }).length + (activeFilters.searchQuery ? 1 : 0);
 
-  // Apple HIG式ランクスタイル定義
-  const getTierGradient = (tier: TierRank): string => {
-    const gradients: Record<TierRank, string> = {
-      "S+": tierColors["S+"].bg, // Already a gradient
-      S: `linear-gradient(135deg, ${tierColors.S.border} 0%, ${systemColors.teal} 100%)`,
-      A: `linear-gradient(135deg, ${tierColors.A.border} 0%, ${systemColors.indigo} 100%)`,
-      B: `linear-gradient(135deg, ${tierColors.B.border} 0%, ${systemColors.blue} 100%)`,
-      C: `linear-gradient(135deg, ${tierColors.C.border} 0%, ${systemColors.yellow} 100%)`,
-      D: `linear-gradient(135deg, ${tierColors.D.border} 0%, ${systemColors.gray[2]} 100%)`,
+  // Tier colors - minimal and sophisticated
+  const getTierColor = (tier: TierRank) => {
+    const colors: Record<TierRank, string> = {
+      "S+": "#D4AF37",
+      S: "#22C55E",
+      A: "#6366F1",
+      B: "#3B82F6",
+      C: "#F59E0B",
+      D: "#9CA3AF",
     };
-    return gradients[tier] || gradients.D;
-  };
-
-  // Get tier text color for unselected state
-  const getTierTextColor = (tier: TierRank): string => {
-    return tierColors[tier].border;
+    return colors[tier] || colors.D;
   };
 
   return (
     <div
-      className={`w-full lg:w-72 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide ${liquidGlassClasses.light}`}
+      className="w-full lg:w-[280px] rounded-2xl overflow-hidden"
       style={{
         fontFamily: fontStack,
+        backgroundColor: "#FAFAFA",
+        border: "1px solid rgba(0, 0, 0, 0.06)",
       }}
     >
       {/* Header */}
-      <div
-        className="p-5 border-b sticky top-0 z-20 backdrop-blur-[20px] backdrop-saturate-[180%] border-white/80"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <h2
-            className="text-[15px] font-semibold flex items-center gap-2"
-            style={{ color: appleWebColors.textPrimary }}
+      <div className="px-5 py-4 flex items-center justify-between">
+        <h2
+          className="text-[15px] font-semibold tracking-[-0.01em]"
+          style={{ color: "#1D1D1F" }}
+        >
+          フィルター
+        </h2>
+        {activeFilterCount > 0 && (
+          <button
+            onClick={clearFilters}
+            className="text-[13px] font-medium transition-opacity hover:opacity-70"
+            style={{ color: "#007AFF" }}
           >
-            <SlidersHorizontal
-              size={18}
-              style={{ color: appleWebColors.textSecondary }}
-            />
-            絞り込み
-          </h2>
-          {activeFilterCount > 0 && (
-            <button
-              onClick={clearFilters}
-              className="text-[13px] font-medium transition-all duration-300 flex items-center gap-1 px-2.5 py-1.5 rounded-full min-h-[32px]"
-              style={{
-                color: systemColors.pink,
-                backgroundColor: `${systemColors.pink}10`,
-              }}
-            >
-              <X size={12} />
-              クリア
-            </button>
-          )}
-        </div>
+            すべてクリア
+          </button>
+        )}
       </div>
 
-      {/* Search Input */}
-      <div className="p-5 border-b border-white/80">
-        <div className="relative group">
+      {/* Search */}
+      <div className="px-5 pb-4">
+        <div className="relative">
           <Search
-            size={16}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors"
-            style={{ color: appleWebColors.textTertiary }}
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2"
+            style={{ color: "#8E8E93" }}
           />
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="キーワードで検索"
-            className="w-full pl-10 pr-4 py-3 rounded-xl text-[15px] transition-all border min-h-[44px]"
+            placeholder="検索"
+            className="w-full pl-9 pr-9 py-2 rounded-lg text-[14px] transition-all duration-150 outline-none"
             style={{
-              backgroundColor: appleWebColors.sectionBackground,
-              borderColor: appleWebColors.borderSubtle,
-              color: appleWebColors.textPrimary,
+              backgroundColor: "#FFFFFF",
+              color: "#1D1D1F",
+              border: "1px solid rgba(0, 0, 0, 0.08)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#007AFF";
+              e.target.style.boxShadow = "0 0 0 3px rgba(0, 122, 255, 0.1)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "rgba(0, 0, 0, 0.08)";
+              e.target.style.boxShadow = "none";
             }}
           />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X size={14} style={{ color: "#8E8E93" }} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Filter Sections */}
-      <div>
+      {/* Sections */}
+      <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
         {filterSections.map((section) => {
           const isExpanded = expandedSections.has(section.title);
 
           return (
-            <div key={section.title} className="p-5 border-b border-white/80">
+            <div
+              key={section.title}
+              className="border-t"
+              style={{ borderColor: "rgba(0, 0, 0, 0.06)" }}
+            >
+              {/* Section Header */}
               <button
                 onClick={() => toggleSection(section.title)}
-                className="w-full flex items-center justify-between mb-4 group min-h-[36px]"
+                className="w-full px-5 py-3 flex items-center justify-between transition-colors hover:bg-white/50"
               >
-                <h3
-                  className="text-[14px] font-semibold transition-colors"
-                  style={{ color: appleWebColors.textPrimary }}
+                <span
+                  className="text-[13px] font-medium"
+                  style={{ color: "#1D1D1F" }}
                 >
                   {section.title}
-                </h3>
-                <div
-                  className={`p-1.5 rounded-full transition-all duration-300 ${isExpanded ? "rotate-180" : ""}`}
-                  style={{
-                    backgroundColor: appleWebColors.sectionBackground,
-                    color: appleWebColors.textSecondary,
-                  }}
-                >
-                  <ChevronDown size={14} />
-                </div>
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  style={{ color: "#8E8E93" }}
+                />
               </button>
 
+              {/* Section Content */}
               {isExpanded && (
-                <div className="animate-in slide-in-from-top-2 duration-200">
-                  {section.title === "Tierランク" ? (
-                    <div className="grid grid-cols-3 gap-2">
+                <div className="px-5 pb-4">
+                  {section.title === "Tier" ? (
+                    // Tier Rank - Horizontal compact design
+                    <div className="flex gap-1.5">
                       {section.options.map((option) => {
                         const isSelected =
-                          activeFilters[section.filterKey] === option.value;
+                          activeFilters.evidenceLevel === option.value;
                         const rank = option.value as TierRank;
+                        const color = getTierColor(rank);
+                        const hasProducts = option.count && option.count > 0;
 
                         return (
                           <button
                             key={option.value}
                             onClick={() =>
-                              handleFilterToggle(
-                                section.filterKey,
-                                option.value,
-                              )
+                              handleFilterToggle("evidenceLevel", option.value)
                             }
-                            className="relative h-11 rounded-xl font-bold text-[15px] transition-all duration-300 flex items-center justify-center min-h-[44px]"
+                            disabled={!hasProducts}
+                            className="flex-1 py-2 rounded-lg text-[13px] font-semibold transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed"
                             style={{
-                              background: isSelected
-                                ? getTierGradient(rank)
-                                : appleWebColors.sectionBackground,
-                              color: isSelected
-                                ? "white"
-                                : getTierTextColor(rank),
-                              boxShadow: isSelected
-                                ? "0 4px 12px rgba(0, 0, 0, 0.15)"
-                                : "none",
+                              backgroundColor: isSelected
+                                ? color
+                                : "transparent",
+                              color: isSelected ? "#FFFFFF" : color,
+                              border: `1.5px solid ${isSelected ? color : "rgba(0, 0, 0, 0.08)"}`,
                             }}
                           >
                             {option.value}
-                            {isSelected && (
-                              <div
-                                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full shadow-sm flex items-center justify-center"
-                                style={{
-                                  backgroundColor: "white",
-                                  border: `1px solid ${appleWebColors.borderSubtle}`,
-                                }}
-                              >
-                                <Check
-                                  size={12}
-                                  className="stroke-[3]"
-                                  style={{ color: systemColors.blue }}
-                                />
-                              </div>
-                            )}
                           </button>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="flex flex-wrap gap-2">
+                    // Standard list layout
+                    <div className="space-y-1">
                       {section.options.map((option) => {
                         const isSelected =
                           section.filterKey === "badges"
                             ? (activeFilters.badges || []).includes(
                                 option.value,
                               )
-                            : activeFilters[section.filterKey] === option.value;
+                            : section.filterKey === "ingredient"
+                              ? activeFilters.ingredient === option.value
+                              : activeFilters[section.filterKey] ===
+                                option.value;
+
+                        const hasProducts =
+                          section.filterKey === "badges" ||
+                          (option.count !== undefined
+                            ? option.count > 0
+                            : true);
 
                         const isPerfect = option.value === "perfect";
 
@@ -339,23 +403,32 @@ export function FilterSidebar({
                                 option.value,
                               )
                             }
-                            className="px-3 py-2 rounded-xl text-[13px] font-semibold transition-all duration-300 flex items-center gap-1.5 min-h-[36px]"
+                            disabled={!hasProducts}
+                            className="w-full px-3 py-2 rounded-lg text-[13px] text-left transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-between group"
                             style={{
-                              background: isSelected
+                              backgroundColor: isSelected
                                 ? isPerfect
-                                  ? `linear-gradient(135deg, ${systemColors.yellow} 0%, ${systemColors.orange} 100%)`
-                                  : systemColors.blue
-                                : appleWebColors.sectionBackground,
-                              color: isSelected
-                                ? "white"
-                                : appleWebColors.textSecondary,
-                              boxShadow: isSelected
-                                ? "0 4px 12px rgba(0, 0, 0, 0.15)"
-                                : "none",
+                                  ? "#D4AF37"
+                                  : "#007AFF"
+                                : "transparent",
+                              color: isSelected ? "#FFFFFF" : "#1D1D1F",
                             }}
                           >
-                            {option.icon && <span>{option.icon}</span>}
-                            {option.label}
+                            <span className={isSelected ? "font-medium" : ""}>
+                              {option.label}
+                            </span>
+                            {option.count !== undefined && option.count > 0 && (
+                              <span
+                                className="text-[11px] tabular-nums"
+                                style={{
+                                  color: isSelected
+                                    ? "rgba(255,255,255,0.7)"
+                                    : "#8E8E93",
+                                }}
+                              >
+                                {option.count}
+                              </span>
+                            )}
                           </button>
                         );
                       })}
@@ -367,6 +440,18 @@ export function FilterSidebar({
           );
         })}
       </div>
+
+      {/* Active Filter Count */}
+      {activeFilterCount > 0 && (
+        <div
+          className="px-5 py-3 border-t"
+          style={{ borderColor: "rgba(0, 0, 0, 0.06)" }}
+        >
+          <p className="text-[12px]" style={{ color: "#8E8E93" }}>
+            {activeFilterCount}件の条件で絞り込み中
+          </p>
+        </div>
+      )}
     </div>
   );
 }

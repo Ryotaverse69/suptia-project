@@ -4,7 +4,7 @@
 function buildDevCSP() {
   const policies = [
     "default-src 'self' 'unsafe-inline' 'unsafe-eval'",
-    "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp https://*.supabase.co https://res.cloudinary.com data: blob:",
+    "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp https://*.supabase.co https://res.cloudinary.com https://m.media-amazon.com https://images-na.ssl-images-amazon.com data: blob:",
     "connect-src 'self' https://*.sanity.io https://*.supabase.co ws: wss:",
     "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
     "font-src 'self' data:",
@@ -46,6 +46,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images-na.ssl-images-amazon.com",
       },
     ],
   },

@@ -19,6 +19,7 @@ interface Product {
   name: string;
   priceJPY: number;
   source?: string;
+  brand?: string;
   slug: {
     current: string;
   };
@@ -71,16 +72,87 @@ export function ProductsSection({ products }: ProductsSectionProps) {
   );
   const [ecSiteFilter, setEcSiteFilter] = useState<string | null>(null);
   const [badgeFilters, setBadgeFilters] = useState<string[]>([]);
+  const [ingredientFilter, setIngredientFilter] = useState<string | null>(null);
   const [displayCount, setDisplayCount] = useState(PRODUCTS_PER_PAGE);
+
+  // フィルターカウントを計算
+  const filterCounts = useMemo(() => {
+    const counts = {
+      ingredients: {} as Record<string, number>,
+      sources: {} as Record<string, number>,
+      priceRanges: {} as Record<string, number>,
+      tiers: {} as Record<string, number>,
+    };
+
+    products.forEach((product) => {
+      // 成分カウント
+      product.ingredients?.forEach((ing) => {
+        if (ing.ingredient?.name) {
+          counts.ingredients[ing.ingredient.name] =
+            (counts.ingredients[ing.ingredient.name] || 0) + 1;
+        }
+      });
+
+      // ソースカウント
+      if (product.source) {
+        counts.sources[product.source] =
+          (counts.sources[product.source] || 0) + 1;
+      }
+
+      // 価格帯カウント
+      if (product.priceJPY <= 2000) {
+        counts.priceRanges["0-2000"] = (counts.priceRanges["0-2000"] || 0) + 1;
+      } else if (product.priceJPY <= 5000) {
+        counts.priceRanges["2000-5000"] =
+          (counts.priceRanges["2000-5000"] || 0) + 1;
+      } else if (product.priceJPY <= 10000) {
+        counts.priceRanges["5000-10000"] =
+          (counts.priceRanges["5000-10000"] || 0) + 1;
+      } else {
+        counts.priceRanges["10000+"] = (counts.priceRanges["10000+"] || 0) + 1;
+      }
+
+      // Tierカウント
+      if (product.tierRatings?.overallRank) {
+        counts.tiers[product.tierRatings.overallRank] =
+          (counts.tiers[product.tierRatings.overallRank] || 0) + 1;
+      }
+    });
+
+    return counts;
+  }, [products]);
 
   // フィルタリングとソート
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
 
-    // 検索クエリフィルター
+    // 検索クエリフィルター（商品名、ブランド名、成分名に対応）
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((product) => {
+        // 商品名
+        if (product.name.toLowerCase().includes(query)) return true;
+        // ブランド名
+        if (product.brand?.toLowerCase().includes(query)) return true;
+        // 成分名
+        if (
+          product.ingredients?.some(
+            (ing) =>
+              ing.ingredient?.name.toLowerCase().includes(query) ||
+              ing.ingredient?.nameEn?.toLowerCase().includes(query),
+          )
+        )
+          return true;
+        return false;
+      });
+    }
+
+    // 成分フィルター
+    if (ingredientFilter) {
       filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        product.ingredients?.some(
+          (ing) => ing.ingredient?.name === ingredientFilter,
+        ),
       );
     }
 
@@ -170,6 +242,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     evidenceLevelFilter,
     ecSiteFilter,
     badgeFilters,
+    ingredientFilter,
   ]);
 
   const handleFilterChange = (filters: {
@@ -178,6 +251,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     evidenceLevel?: string | null;
     ecSite?: string | null;
     badges?: string[];
+    ingredient?: string | null;
   }) => {
     if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
     if (filters.priceRange !== undefined) setPriceRange(filters.priceRange);
@@ -185,6 +259,8 @@ export function ProductsSection({ products }: ProductsSectionProps) {
       setEvidenceLevelFilter(filters.evidenceLevel);
     if (filters.ecSite !== undefined) setEcSiteFilter(filters.ecSite);
     if (filters.badges !== undefined) setBadgeFilters(filters.badges);
+    if (filters.ingredient !== undefined)
+      setIngredientFilter(filters.ingredient);
     // フィルター変更時は表示件数をリセット
     setDisplayCount(PRODUCTS_PER_PAGE);
   };
@@ -195,6 +271,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
     setEvidenceLevelFilter(null);
     setEcSiteFilter(null);
     setBadgeFilters([]);
+    setIngredientFilter(null);
     setDisplayCount(PRODUCTS_PER_PAGE);
   };
 
@@ -225,7 +302,9 @@ export function ProductsSection({ products }: ProductsSectionProps) {
               evidenceLevel: evidenceLevelFilter,
               ecSite: ecSiteFilter,
               badges: badgeFilters,
+              ingredient: ingredientFilter,
             }}
+            filterCounts={filterCounts}
           />
         </aside>
 

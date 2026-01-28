@@ -81,19 +81,24 @@ async function getIngredient(slug: string) {
   return await sanityServer.fetch(query, { slug });
 }
 
-// 関連商品取得
+// 関連商品取得（Amazon優先、最大12件）
 async function getRelatedProducts(ingredientId: string) {
-  const query = `*[_type == "product" && references($ingredientId)][0...6]{
+  const query = `*[_type == "product" && references($ingredientId)] | order(
+    select(source == "amazon" => 0, 1),
+    priceJPY asc
+  )[0...12]{
     _id,
     name,
     slug,
+    source,
     "priceJpy": coalesce(priceJPY, priceJpy),
     "imageUrl": coalesce(externalImageUrl, imageUrl),
     brand->{
       name
     },
     ingredients[ingredient._ref == $ingredientId][0]{
-      amountMgPerServing
+      amountMgPerServing,
+      amountMcgPerServing
     }
   }`;
 
