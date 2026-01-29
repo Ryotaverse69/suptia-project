@@ -21,7 +21,7 @@ export function middleware(req: NextRequest) {
   if (process.env.NODE_ENV === "production") {
     const csp = [
       "default-src 'self'",
-      "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp https://*.supabase.co https://res.cloudinary.com data: blob:",
+      "img-src 'self' https://cdn.sanity.io https://thumbnail.image.rakuten.co.jp https://tshop.r10s.jp https://item-shopping.c.yimg.jp https://shopping.c.yimg.jp https://*.supabase.co https://res.cloudinary.com https://m.media-amazon.com https://images-na.ssl-images-amazon.com data: blob:",
       "connect-src 'self' https://*.sanity.io https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://vercel.live",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
