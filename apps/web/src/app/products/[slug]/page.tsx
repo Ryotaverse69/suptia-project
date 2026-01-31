@@ -23,7 +23,11 @@ import {
   generateProductJsonLd,
   generateBreadcrumbJsonLd,
 } from "@/lib/seo";
+import { generateFAQStructuredData } from "@/lib/structured-data";
+import { ProductFAQ } from "@/components/ProductFAQ";
+import { generateProductFAQs } from "@/lib/product-faq";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { isValidSlug } from "@/lib/sanitize";
 import { headers } from "next/headers";
 import { evaluateBadges, ProductForBadgeEvaluation } from "@/lib/badges";
@@ -433,11 +437,12 @@ function extractAllergyInfo(
 
 // --- Main Page Component ---
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const product = await getProduct(params.slug);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) notFound();
 
@@ -708,6 +713,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
     { name: "商品", url: "/products" },
     { name: product.name, url: `/products/${product.slug.current}` },
   ]);
+
+  // FAQ構造化データを生成
+  const faqData = generateProductFAQs({
+    productName: product.name,
+    brandName: product.brandName,
+    mainIngredient: mainIngredientInfo?.name,
+    servingsPerDay: product.servingsPerDay,
+    priceJPY: product.priceJPY,
+    evidenceLevel,
+    sideEffects: product.warnings?.join("。"),
+  });
+  const faqJsonLd = generateFAQStructuredData(faqData);
+
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
 
@@ -724,6 +742,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
         type="application/ld+json"
         nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        id="faq-jsonld"
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* Apple HIG Container */}
@@ -748,13 +772,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
             >
               <ol className="flex items-center space-x-2">
                 <li>
-                  <a
+                  <Link
                     href="/"
                     className="hover:opacity-70 transition-opacity"
                     style={{ color: appleWebColors.blue }}
                   >
                     HOME
-                  </a>
+                  </Link>
                 </li>
                 <li>/</li>
                 <li
@@ -1287,6 +1311,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </SeamlessModalContent>
               </SeamlessModal>
 
+              {/* FAQ Section for SEO/AI Search Optimization */}
+              <div className="mt-8">
+                <ProductFAQ
+                  productName={product.name}
+                  brandName={product.brandName}
+                  mainIngredient={mainIngredientInfo?.name}
+                  servingsPerDay={product.servingsPerDay}
+                  priceJPY={product.priceJPY}
+                  evidenceLevel={evidenceLevel}
+                  sideEffects={product.warnings?.join("。")}
+                />
+              </div>
+
               {/* Related Ingredients (Moved to Bottom) */}
               <div className="mt-8">
                 <RelatedIngredients ingredients={product.ingredients || []} />
@@ -1302,7 +1339,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: PageProps) {
-  const product = await getProduct(params.slug);
+  const { slug } = await params;
+  const product = await getProduct(slug);
   if (!product) return { title: "商品が見つかりません" };
   const relatedPrices = await getRelatedProductsByJan(product.janCode || null);
   const normalizedPriceData = normalizePriceData(product.priceData);

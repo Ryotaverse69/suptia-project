@@ -31,6 +31,7 @@ import {
   generateArticleStructuredData,
   generateBreadcrumbStructuredData,
   generateIngredientStructuredData,
+  generateItemListStructuredData,
 } from "@/lib/structured-data";
 import {
   systemColors,
@@ -42,9 +43,9 @@ import {
 import { getIngredientOGImage, generateOGImageMeta } from "@/lib/og-image";
 
 interface IngredientPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // サイトURL
@@ -109,7 +110,8 @@ async function getRelatedProducts(ingredientId: string) {
 export async function generateMetadata({
   params,
 }: IngredientPageProps): Promise<Metadata> {
-  const ingredient = await getIngredient(params.slug);
+  const { slug } = await params;
+  const ingredient = await getIngredient(slug);
 
   if (!ingredient) {
     return {
@@ -121,10 +123,10 @@ export async function generateMetadata({
   const description =
     ingredient.description ||
     `${ingredient.name}の科学的エビデンス、推奨摂取量、副作用、相互作用について詳しく解説。`;
-  const pageUrl = `${siteUrl}/ingredients/${params.slug}`;
+  const pageUrl = `${siteUrl}/ingredients/${slug}`;
 
   // OGP画像を取得（Cloudinaryから自動生成された画像を使用）
-  const ogImageUrl = getIngredientOGImage(params.slug);
+  const ogImageUrl = getIngredientOGImage(slug);
   const ogImage = generateOGImageMeta(
     ogImageUrl,
     `${ingredient.name}（${ingredient.nameEn}）- サプティア成分ガイド`,
@@ -155,7 +157,8 @@ export async function generateMetadata({
 }
 
 export default async function IngredientPage({ params }: IngredientPageProps) {
-  const ingredient = await getIngredient(params.slug);
+  const { slug } = await params;
+  const ingredient = await getIngredient(slug);
 
   if (!ingredient) {
     notFound();
@@ -215,6 +218,20 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
             answer: faq.answer,
           })),
         )
+      : null;
+
+  // 関連商品のItemListスキーマ（AI検索でのランキング表示最適化）
+  const relatedProductsItemListJsonLd =
+    relatedProducts && relatedProducts.length > 0
+      ? generateItemListStructuredData({
+          name: `${ingredient.name}を含むサプリメントランキング`,
+          description: `${ingredient.name}（${ingredient.nameEn}）を含むおすすめサプリメント。価格・成分量・コスパで比較。`,
+          items: relatedProducts.map((product: any, index: number) => ({
+            name: product.name,
+            url: `${siteUrl}/products/${product.slug.current}`,
+            position: index + 1,
+          })),
+        })
       : null;
 
   // 目次アイテムを動的に生成
@@ -292,6 +309,16 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
           id="faq-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+      {/* 関連商品ランキング（ItemList） - AI検索でのリスト表示最適化 */}
+      {relatedProductsItemListJsonLd && (
+        <Script
+          id="related-products-itemlist-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(relatedProductsItemListJsonLd),
+          }}
         />
       )}
 
