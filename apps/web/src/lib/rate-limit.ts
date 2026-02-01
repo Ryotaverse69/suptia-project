@@ -31,7 +31,7 @@ function getClientIP(req: NextRequest): string {
   }
 
   // Fallback for development
-  return req.ip || "127.0.0.1";
+  return "127.0.0.1";
 }
 
 function refillBucket(bucket: TokenBucket): void {

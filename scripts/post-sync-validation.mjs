@@ -83,6 +83,7 @@ async function main() {
 
   const results = {
     ingredientLink: { success: false, count: 0 },
+    zeroAmountFix: { success: false, fixed: 0 },
     amountValidation: { success: false, fixed: 0 },
     tierRank: { success: false, updated: 0 },
     errors: [],
@@ -110,8 +111,43 @@ async function main() {
     console.log(`   ❌ エラー: ${error.message}`);
   }
 
-  // 2. 成分量の異常値チェック・修正
-  console.log('📌 Step 2: 成分量の異常値チェック...');
+  // 2. ゼロ含有量の自動修正（allIngredientsと商品名から抽出）
+  console.log('📌 Step 2: ゼロ含有量の自動修正...');
+  try {
+    let totalFixed = 0;
+
+    // 2a. allIngredientsから成分量を抽出
+    const args1 = shouldFix ? ['--execute'] : [];
+    const result1 = await runScript('scripts/extract-amounts-from-all-ingredients.mjs', args1);
+
+    if (result1.code === 0) {
+      const match1 = result1.output?.match(/(\d+)件の成分量を更新/);
+      if (match1) {
+        totalFixed += parseInt(match1[1], 10);
+      }
+    }
+
+    // 2b. 商品名から成分量を抽出
+    const args2 = shouldFix ? ['--execute'] : [];
+    const result2 = await runScript('scripts/extract-amounts-from-names.mjs', args2);
+
+    if (result2.code === 0) {
+      const match2 = result2.output?.match(/(\d+)件の商品を更新/);
+      if (match2) {
+        totalFixed += parseInt(match2[1], 10);
+      }
+    }
+
+    results.zeroAmountFix.success = true;
+    results.zeroAmountFix.fixed = totalFixed;
+    console.log(`   ✅ 完了${totalFixed > 0 ? ` (${totalFixed}件修正)` : ''}`);
+  } catch (error) {
+    results.errors.push(`ゼロ含有量修正: ${error.message}`);
+    console.log(`   ❌ エラー: ${error.message}`);
+  }
+
+  // 3. 成分量の異常値チェック・修正
+  console.log('📌 Step 3: 成分量の異常値チェック...');
   try {
     const args = shouldFix ? ['--fix'] : [];
     const result = await runScript('scripts/validate-and-fix-ingredient-amounts.mjs', args);
@@ -132,9 +168,9 @@ async function main() {
     console.log(`   ❌ エラー: ${error.message}`);
   }
 
-  // 3. Tierランクの計算・更新（quickモードではスキップ）
+  // 4. Tierランクの計算・更新（quickモードではスキップ）
   if (!quickMode) {
-    console.log('📌 Step 3: Tierランクの計算・更新...');
+    console.log('📌 Step 4: Tierランクの計算・更新...');
     try {
       const args = shouldFix ? ['--fix'] : [];
       const result = await runScript('scripts/auto-calculate-tier-ranks.mjs', args);
@@ -155,7 +191,7 @@ async function main() {
       console.log(`   ❌ エラー: ${error.message}`);
     }
   } else {
-    console.log('📌 Step 3: Tierランクの計算・更新... スキップ (--quick)');
+    console.log('📌 Step 4: Tierランクの計算・更新... スキップ (--quick)');
   }
 
   // サマリー出力
@@ -165,6 +201,7 @@ async function main() {
   console.log('━'.repeat(60));
 
   const allSuccess = results.ingredientLink.success &&
+    results.zeroAmountFix.success &&
     results.amountValidation.success &&
     (quickMode || results.tierRank.success);
 
@@ -182,7 +219,8 @@ async function main() {
   console.log('');
   console.log('処理件数:');
   console.log(`   成分リンク: ${results.ingredientLink.count}件`);
-  console.log(`   成分量修正: ${results.amountValidation.fixed}件`);
+  console.log(`   ゼロ含有量修正: ${results.zeroAmountFix.fixed}件`);
+  console.log(`   成分量異常値修正: ${results.amountValidation.fixed}件`);
   if (!quickMode) {
     console.log(`   Tierランク更新: ${results.tierRank.updated}件`);
   }
@@ -190,7 +228,7 @@ async function main() {
   console.log('');
   console.log('━'.repeat(60));
 
-  if (!shouldFix && (results.ingredientLink.count > 0 || results.amountValidation.fixed > 0 || results.tierRank.updated > 0)) {
+  if (!shouldFix && (results.ingredientLink.count > 0 || results.zeroAmountFix.fixed > 0 || results.amountValidation.fixed > 0 || results.tierRank.updated > 0)) {
     console.log('💡 実際に修正を適用するには --fix オプションを付けて実行してください');
     console.log('   node scripts/post-sync-validation.mjs --fix');
   }

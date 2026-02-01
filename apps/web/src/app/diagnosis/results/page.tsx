@@ -70,33 +70,30 @@ const CONDITION_LABELS: Record<ContraindicationTag, string> = {
 export default async function DiagnosisResultsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // URLパラメータから診断情報を取得
-  const diagnosisType = searchParams.type as string | undefined; // "simple" or "detailed"
-  const goalsParam = searchParams.goals as string | undefined;
-  const conditionsParam = searchParams.conditions as string | undefined;
-  const budgetStr = searchParams.budget as string | undefined;
-  const priorityParam = searchParams.priority as string | undefined;
+  const params = await searchParams;
+  const diagnosisType = params.type as string | undefined; // "simple" or "detailed"
+  const goalsParam = params.goals as string | undefined;
+  const conditionsParam = params.conditions as string | undefined;
+  const budgetStr = params.budget as string | undefined;
+  const priorityParam = params.priority as string | undefined;
 
   // 詳細診断の追加パラメータ
-  const secondaryGoalsParam = searchParams.secondaryGoals as string | undefined;
-  const ageGroup = searchParams.ageGroup as string | undefined;
-  const lifestyle = searchParams.lifestyle as string | undefined;
-  const exerciseFrequency = searchParams.exerciseFrequency as
+  const secondaryGoalsParam = params.secondaryGoals as string | undefined;
+  const ageGroup = params.ageGroup as string | undefined;
+  const lifestyle = params.lifestyle as string | undefined;
+  const exerciseFrequency = params.exerciseFrequency as string | undefined;
+  const stressLevel = params.stressLevel as string | undefined;
+  const sleepQuality = params.sleepQuality as string | undefined;
+  const dietQuality = params.dietQuality as string | undefined;
+  const alcoholConsumption = params.alcoholConsumption as string | undefined;
+  const mainConcern = params.mainConcern as string | undefined;
+  const supplementExperience = params.supplementExperience as
     | string
     | undefined;
-  const stressLevel = searchParams.stressLevel as string | undefined;
-  const sleepQuality = searchParams.sleepQuality as string | undefined;
-  const dietQuality = searchParams.dietQuality as string | undefined;
-  const alcoholConsumption = searchParams.alcoholConsumption as
-    | string
-    | undefined;
-  const mainConcern = searchParams.mainConcern as string | undefined;
-  const supplementExperience = searchParams.supplementExperience as
-    | string
-    | undefined;
-  const currentSupplementsParam = searchParams.currentSupplements as
+  const currentSupplementsParam = params.currentSupplements as
     | string
     | undefined;
 

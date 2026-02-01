@@ -4,7 +4,8 @@
  * 商品の主成分を一貫した方法で判定する
  * 優先順位:
  * 1. isPrimary: true が設定された成分
- * 2. 配列の最初（0番目）の成分
+ * 2. 含有量（amountMgPerServing）が最も多い成分
+ * 3. 配列の最初（0番目）の成分
  */
 
 export interface IngredientItem {
@@ -39,8 +40,14 @@ export function getPrimaryIngredient<T extends IngredientItem>(
     return primaryMarked;
   }
 
-  // なければ配列の最初の成分
-  return ingredients[0];
+  // 含有量が最も多い成分を選択（マルチビタミン対応）
+  const highestAmount = ingredients.reduce(
+    (max, ing) =>
+      (ing.amountMgPerServing || 0) > (max.amountMgPerServing || 0) ? ing : max,
+    ingredients[0],
+  );
+
+  return highestAmount;
 }
 
 /**

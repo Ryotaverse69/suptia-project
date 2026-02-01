@@ -114,6 +114,9 @@ jobs:
           SANITY_API_VERSION=2024-01-01
           EOF
 
+      - name: Post-sync validation (成分リンク・ゼロ含有量修正)
+        run: node scripts/post-sync-validation.mjs --fix --quick
+
       - name: Calculate tier ranks
         run: node scripts/auto-calculate-tier-ranks.mjs --fix
 

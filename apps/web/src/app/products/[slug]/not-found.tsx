@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <div className="container mx-auto px-4 py-16 text-center">
@@ -7,12 +9,12 @@ export default function NotFound() {
       <p className="text-gray-600 mb-8">
         お探しの商品は存在しないか、削除された可能性があります。
       </p>
-      <a
+      <Link
         href="/"
         className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         ホームに戻る
-      </a>
+      </Link>
     </div>
   );
 }

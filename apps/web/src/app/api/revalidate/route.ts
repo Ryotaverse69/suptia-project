@@ -33,10 +33,15 @@ const SANITY_TYPE_TO_PATHS: Record<string, string[]> = {
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-revalidate-secret");
 
-  if (
-    secret !== process.env.REVALIDATE_SECRET &&
-    secret !== "suptia-revalidate-2024"
-  ) {
+  if (!process.env.REVALIDATE_SECRET) {
+    console.error("[Revalidate API] REVALIDATE_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
+  }
+
+  if (secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 
@@ -114,10 +119,15 @@ export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get("path");
   const tag = request.nextUrl.searchParams.get("tag");
 
-  if (
-    secret !== process.env.REVALIDATE_SECRET &&
-    secret !== "suptia-revalidate-2024"
-  ) {
+  if (!process.env.REVALIDATE_SECRET) {
+    console.error("[Revalidate API] REVALIDATE_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
+  }
+
+  if (secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 

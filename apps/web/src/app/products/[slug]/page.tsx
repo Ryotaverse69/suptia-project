@@ -1276,18 +1276,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       1日の推奨摂取量に対する充足率
                     </p>
                     <div className="space-y-2">
-                      {product.ingredients?.slice(0, 3).map((ing, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="text-slate-600">
-                            {ing.ingredient?.name}
-                          </span>
-                          <span className="font-mono font-bold text-slate-900">
-                            {ing.amountMgPerServing *
-                              (product.servingsPerDay || 1)}
-                            mg/日
-                          </span>
-                        </div>
-                      ))}
+                      {product.ingredients?.slice(0, 3).map((ing, i) => {
+                        const dailyAmount =
+                          ing.amountMgPerServing *
+                          (product.servingsPerDay || 1);
+                        // 小数点以下の桁数を適切に表示（0.001未満はμg表示）
+                        const displayAmount =
+                          dailyAmount >= 1
+                            ? dailyAmount.toLocaleString()
+                            : dailyAmount >= 0.001
+                              ? dailyAmount.toFixed(3)
+                              : `${(dailyAmount * 1000).toFixed(1)}μg`.replace(
+                                  "mg/日",
+                                  "",
+                                );
+                        return (
+                          <div key={i} className="flex justify-between text-sm">
+                            <span className="text-slate-600">
+                              {ing.ingredient?.name}
+                            </span>
+                            <span className="font-mono font-bold text-slate-900">
+                              {displayAmount}
+                              {dailyAmount >= 0.001 ? "mg" : ""}/日
+                            </span>
+                          </div>
+                        );
+                      })}
                       {(product.ingredients?.length || 0) > 3 && (
                         <div className="text-xs text-slate-400 text-center pt-2">
                           他 {product.ingredients!.length - 3} 成分

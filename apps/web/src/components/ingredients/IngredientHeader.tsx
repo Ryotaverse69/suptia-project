@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Award, Shield, Beaker, Calendar } from "lucide-react";
 import {
   systemColors,
@@ -79,23 +80,23 @@ export function IngredientHeader({
       >
         <ol className="flex items-center gap-2">
           <li>
-            <a
+            <Link
               href="/"
               className="hover:opacity-70 transition-opacity"
               style={{ color: appleWebColors.blue }}
             >
               ホーム
-            </a>
+            </Link>
           </li>
           <li>/</li>
           <li>
-            <a
+            <Link
               href="/ingredients"
               className="hover:opacity-70 transition-opacity"
               style={{ color: appleWebColors.blue }}
             >
               成分ガイド
-            </a>
+            </Link>
           </li>
           <li>/</li>
           <li
