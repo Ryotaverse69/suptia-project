@@ -408,6 +408,10 @@ export default function SitemapPage() {
               <div className="ml-8">
                 ├─ 📄 /guide/dangerous-ingredients (危険成分ガイド)
               </div>
+              <div className="ml-8">├─ 📄 /guide/additives (添加物ガイド)</div>
+              <div className="ml-8">
+                ├─ 📄 /guide/supplement-forms (形状ガイド)
+              </div>
               <div className="ml-8">
                 ├─ 📄 /guide/supplement-safety (サプリメント安全ガイド)
               </div>

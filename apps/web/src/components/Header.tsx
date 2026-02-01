@@ -16,6 +16,8 @@ import {
   MessageCircle,
   BookOpen,
   Shield,
+  Beaker,
+  Pill,
   Target,
   Users,
   Wrench,
@@ -369,6 +371,32 @@ export function Header() {
                                 aria-hidden="true"
                               />
                               危険成分ガイド
+                            </Link>
+                            <Link
+                              href="/guide/additives"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Beaker
+                                size={18}
+                                style={{ color: systemColors.purple }}
+                                aria-hidden="true"
+                              />
+                              添加物ガイド
+                            </Link>
+                            <Link
+                              href="/guide/supplement-forms"
+                              onClick={() => setDesktopMenuOpen(false)}
+                              className={`${menuItemClasses} pl-6`}
+                              style={{ color: appleWebColors.textPrimary }}
+                            >
+                              <Pill
+                                size={18}
+                                style={{ color: systemColors.cyan }}
+                                aria-hidden="true"
+                              />
+                              形状ガイド
                             </Link>
                             <Link
                               href="/guide/purposes"
@@ -862,6 +890,32 @@ export function Header() {
                           aria-hidden="true"
                         />
                         危険成分ガイド
+                      </Link>
+                      <Link
+                        href="/guide/additives"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Beaker
+                          size={20}
+                          style={{ color: systemColors.purple }}
+                          aria-hidden="true"
+                        />
+                        添加物ガイド
+                      </Link>
+                      <Link
+                        href="/guide/supplement-forms"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`${menuItemClasses} pl-6`}
+                        style={{ color: appleWebColors.textPrimary }}
+                      >
+                        <Pill
+                          size={20}
+                          style={{ color: systemColors.cyan }}
+                          aria-hidden="true"
+                        />
+                        形状ガイド
                       </Link>
                       <Link
                         href="/guide/purposes"
