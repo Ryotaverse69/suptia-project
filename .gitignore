@@ -118,3 +118,9 @@ claude_desktop_config.json
 
 # Generated Instagram images (local only)
 apps/web/public/instagram/
+
+# Stripe/有料会員機能（開発中）
+apps/web/src/app/api/stripe/
+apps/web/src/app/api/webhooks/stripe/
+apps/web/src/components/subscription/
+apps/web/src/lib/stripe/
