@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ScoreExplanationTooltip } from "./ScoreExplanationTooltip";
 import type {
   ProductSummary,
   RecommendationWeights,
@@ -115,30 +116,35 @@ export function RecommendationCard({
               label="価格"
               score={scores.price}
               weight={weights?.price}
+              pillar="price"
             />
             <ScoreBar
               icon="📊"
               label="成分量"
               score={scores.amount}
               weight={weights?.amount}
+              pillar="amount"
             />
             <ScoreBar
               icon="💡"
               label="コスパ"
               score={scores.costPerformance}
               weight={weights?.costPerformance}
+              pillar="costPerformance"
             />
             <ScoreBar
               icon="🔬"
               label="エビデンス"
               score={scores.evidence}
               weight={weights?.evidence}
+              pillar="evidence"
             />
             <ScoreBar
               icon="🛡️"
               label="安全性"
               score={scores.safety}
               weight={weights?.safety}
+              pillar="safety"
             />
           </div>
 
@@ -192,11 +198,13 @@ function ScoreBar({
   label,
   score,
   weight,
+  pillar,
 }: {
   icon: string;
   label: string;
   score: number;
   weight?: number;
+  pillar?: "price" | "amount" | "costPerformance" | "evidence" | "safety";
 }) {
   const isHighlighted = weight && weight > 1.2;
 
@@ -232,6 +240,14 @@ function ScoreBar({
       <span className="w-8 text-right text-xs font-medium text-gray-700 dark:text-gray-300">
         {score}
       </span>
+      {/* スコア説明ツールチップ */}
+      {pillar && (
+        <ScoreExplanationTooltip
+          pillar={pillar}
+          score={score}
+          weight={weight}
+        />
+      )}
     </div>
   );
 }

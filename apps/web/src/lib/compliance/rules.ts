@@ -462,12 +462,14 @@ const PHARMACEUTICAL_RULES: ComplianceRule[] = [
 // ============================================
 const HEALTH_PROMOTION_RULES: ComplianceRule[] = [
   // 1. 誇大広告・虚偽表示（第65条）
+  // 注: 「必ず」「絶対」は文脈によっては安全上重要な表現（例：「必ず医師に相談」）のため、
+  // 効果に関する保証表現のみをチェックするよう限定的なパターンに変更
   {
-    pattern: "必ず|絶対|確実に|間違いなく",
+    pattern: "必ず効く|絶対に効く|確実に効果|間違いなく効果",
     category: "guarantee",
     severity: "critical",
-    suggest: "〜の可能性がある",
-    description: "保証表現は健康増進法第65条違反です",
+    suggest: "効果が期待できる",
+    description: "効果を保証する表現は健康増進法第65条違反です",
     law: "health_promotion",
     lawArticle: "第65条（誇大表示の禁止）",
   },

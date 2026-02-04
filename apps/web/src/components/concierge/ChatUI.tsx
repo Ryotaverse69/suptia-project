@@ -373,7 +373,8 @@ export function ChatUI({ className }: ChatUIProps) {
                           maxWidth: "85%",
                         }}
                       >
-                        <div className="flex items-center gap-3">
+                        {/* キャラクター名 */}
+                        <div className="flex items-center gap-2 mb-3">
                           <div
                             className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden"
                             style={{
@@ -396,28 +397,44 @@ export function ChatUI({ className }: ChatUIProps) {
                               </span>
                             )}
                           </div>
+                          <span
+                            className="text-[14px] font-semibold"
+                            style={{ color: appleWebColors.textPrimary }}
+                          >
+                            {character.name}
+                          </span>
+                        </div>
+
+                        {/* ローディングアニメーション + テキスト */}
+                        <div className="flex items-center gap-3">
                           <div className="flex gap-1.5">
                             <div
                               className="w-2 h-2 rounded-full animate-bounce"
                               style={{
-                                backgroundColor: systemColors.gray[4],
+                                backgroundColor: systemColors.blue,
                               }}
                             />
                             <div
                               className="w-2 h-2 rounded-full animate-bounce"
                               style={{
-                                backgroundColor: systemColors.gray[4],
+                                backgroundColor: systemColors.blue,
                                 animationDelay: "0.15s",
                               }}
                             />
                             <div
                               className="w-2 h-2 rounded-full animate-bounce"
                               style={{
-                                backgroundColor: systemColors.gray[4],
+                                backgroundColor: systemColors.blue,
                                 animationDelay: "0.3s",
                               }}
                             />
                           </div>
+                          <span
+                            className="text-[13px] animate-pulse"
+                            style={{ color: appleWebColors.textSecondary }}
+                          >
+                            回答を生成中...
+                          </span>
                         </div>
                       </div>
                     </div>

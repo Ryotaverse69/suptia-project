@@ -15,3 +15,7 @@ export {
   WeightVisualization,
   WeightVisualizationCompact,
 } from "./WeightVisualization";
+export { WeightsVisualization } from "./WeightsVisualization";
+export { ScoreExplanationTooltip } from "./ScoreExplanationTooltip";
+export { PriceHistoryChart } from "./PriceHistoryChart";
+export { CustomWeightsEditor } from "./CustomWeightsEditor";

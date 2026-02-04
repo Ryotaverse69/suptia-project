@@ -185,6 +185,14 @@ export default function MyPage() {
       badge: "Safety準備",
     },
     {
+      label: "AIコンシェルジュ設定",
+      description: "カスタム重み付けでパーソナライズ",
+      icon: Sparkles,
+      href: "/mypage/concierge-settings",
+      gradient: `linear-gradient(135deg, ${systemColors.purple} 0%, ${systemColors.blue} 100%)`,
+      badge: "Pro+Safety",
+    },
+    {
       label: "お気に入り商品",
       description: "保存した商品を確認・比較",
       icon: Heart,

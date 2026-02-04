@@ -9,6 +9,7 @@
 import { systemColors, appleWebColors } from "@/lib/design-system";
 import type { CharacterId } from "@/lib/concierge/types";
 import { calculateWeightPercentages } from "@/lib/concierge/characters";
+import { ScoreExplanationTooltip } from "./ScoreExplanationTooltip";
 
 interface WeightsVisualizationProps {
   characterId: CharacterId;
@@ -115,6 +116,18 @@ export function WeightsVisualization({
             >
               {value}%
             </span>
+            {/* スコア説明ツールチップ */}
+            <ScoreExplanationTooltip
+              pillar={
+                key as
+                  | "price"
+                  | "amount"
+                  | "costPerformance"
+                  | "evidence"
+                  | "safety"
+              }
+              weight={value / 20} // 20%基準なので、値を5で割って重みに変換
+            />
           </div>
         ))}
       </div>

@@ -524,9 +524,32 @@ function buildSystemPrompt(
   healthInfo?: UserHealthInfo | null,
   priceHistoryDays?: number | null,
   safetyResult?: SafetyCheckResult | null,
+  customWeights?: {
+    price: number;
+    amount: number;
+    costPerformance: number;
+    evidence: number;
+    safety: number;
+  } | null,
 ): string {
   const character = getCharacter(characterId);
-  const weights = CHARACTER_WEIGHTS[characterId];
+
+  // カスタム重み付けがある場合はそれを使用、なければキャラクターのデフォルト重み付け
+  const baseWeights = CHARACTER_WEIGHTS[characterId];
+  const weights = customWeights
+    ? {
+        price: customWeights.price / 20, // パーセンテージを5段階に変換（20% = 1.0）
+        amount: customWeights.amount / 20,
+        costPerformance: customWeights.costPerformance / 20,
+        evidence: customWeights.evidence / 20,
+        safety: customWeights.safety / 20,
+      }
+    : baseWeights;
+
+  // デバッグ: 重み付けをログ出力
+  if (customWeights) {
+    console.log("[System Prompt] カスタム重み付けを使用:", weights);
+  }
 
   // キャラクター別の詳細プロンプト
   const characterPrompts: Record<CharacterId, string> = {
@@ -614,7 +637,8 @@ ${characterPrompts[characterId]}
 【推薦スタイル】
 ${character.recommendationStyleLabel}
 
-【5つの柱の重み付け】
+【5つの柱の重み付け${customWeights ? "（カスタム設定）" : ""}】
+${customWeights ? "※ ユーザーのカスタム重み付けを使用しています" : ""}
 - 価格: ${Math.round((weights.price / 5) * 100)}%
 - 成分量: ${Math.round((weights.amount / 5) * 100)}%
 - コスパ: ${Math.round((weights.costPerformance / 5) * 100)}%
@@ -647,6 +671,13 @@ ${character.recommendationStyleLabel}
 - 重要な部分は**太字**にする
 - リストは箇条書きで整理する
 - 適度に絵文字を使って視認性を高める（💰📊💡🔬🛡️など）
+
+【絶対禁止: マークダウンテーブル】
+- マークダウンテーブル（| 項目 | 詳細 | のような形式）は絶対に使用しないこと
+- 商品比較も必ず箇条書きで表現する
+- 例: ❌ | DHC マカ | ¥4,860 | 90日 |
+- 例: ⭕ DHC マカ 徳用90日分: ¥4,860（90日分、1日あたり¥54）
+- どんな場合でもテーブルは使わず、箇条書きまたは段落形式で記述すること
 
 【重要: サプティア専用AIコンシェルジュ】
 あなたはサプティア（Suptia）専用のAIコンシェルジュです。
@@ -992,10 +1023,19 @@ export async function POST(request: NextRequest) {
       medications: string[];
     } | null = null;
 
+    // カスタム重み付け
+    let customWeights: {
+      price: number;
+      amount: number;
+      costPerformance: number;
+      evidence: number;
+      safety: number;
+    } | null = null;
+
     if (user) {
       const { data: profile } = await supabase
         .from("user_profiles")
-        .select("plan, conditions, allergies, medications")
+        .select("plan, conditions, allergies, medications, custom_weights")
         .eq("user_id", user.id)
         .single();
 
@@ -1013,6 +1053,27 @@ export async function POST(request: NextRequest) {
           allergies: profile.allergies || [],
           medications: profile.medications || [],
         };
+      }
+
+      // カスタム重み付けを取得（Pro+Safety / Admin限定）
+      if (
+        (userPlan === "pro_safety" || userPlan === "admin") &&
+        profile?.custom_weights
+      ) {
+        customWeights = profile.custom_weights as {
+          price: number;
+          amount: number;
+          costPerformance: number;
+          evidence: number;
+          safety: number;
+        };
+        console.log("[Concierge API] カスタム重み付けを適用:", customWeights);
+      } else {
+        console.log(
+          "[Concierge API] カスタム重み付けなし (プラン:",
+          userPlan,
+          ")",
+        );
       }
     }
 
@@ -1345,6 +1406,7 @@ export async function POST(request: NextRequest) {
       userHealthInfo,
       priceHistoryDays,
       safetyResult,
+      customWeights,
     );
 
     const messages: Anthropic.MessageParam[] = [
@@ -1357,7 +1419,7 @@ export async function POST(request: NextRequest) {
 
     const response = await anthropic.messages.create({
       model: anthropicModel,
-      max_tokens: 1024,
+      max_tokens: 4096, // 長い推薦説明に対応（約6,000-8,000文字）
       system: systemPrompt,
       messages,
     });

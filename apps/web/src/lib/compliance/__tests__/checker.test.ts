@@ -83,7 +83,7 @@ describe("4法対応コンプライアンスチェッカー", () => {
   // ============================================
   describe("健康増進法チェック", () => {
     it("保証表現を検出する", () => {
-      const result = checkHealthPromotion("必ず痩せます");
+      const result = checkHealthPromotion("必ず効く");
       expect(result.hasViolations).toBe(true);
       expect(result.violations.some((v) => v.category === "guarantee")).toBe(
         true,
@@ -427,7 +427,7 @@ describe("4法対応コンプライアンスチェッカー", () => {
 
     it("NG例: ダイエット誇大広告", () => {
       const result = checkCompliance(
-        "飲むだけで必ず10kg痩せる！即効性があり、楽して痩せられます。",
+        "飲むだけで必ず効く！即効性があり、楽して痩せられます。",
       );
       expect(result.hasViolations).toBe(true);
       expect(result.summary.critical).toBeGreaterThan(0);

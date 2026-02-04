@@ -131,7 +131,12 @@ export function UserProfileProvider({
    * プロフィールを取得（存在しない場合は作成）
    */
   const fetchOrCreateProfile = useCallback(async () => {
-    if (authLoading) return;
+    // authLoadingがtrueの間は処理を待機
+    if (authLoading) {
+      // authLoadingの間はisLoadingをtrueのままにする（適切なローディング状態を維持）
+      setIsLoading(true);
+      return;
+    }
 
     if (!user) {
       setProfile(null);
