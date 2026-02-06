@@ -9,6 +9,7 @@ import {
   createContext,
   useContext,
 } from "react";
+import { createPortal } from "react-dom";
 import { liquidGlassClasses } from "@/lib/design-system";
 
 interface SeamlessModalContextType {
@@ -100,10 +101,10 @@ export function SeamlessModalContent({
 }: SeamlessModalContentProps) {
   const { isOpen, close, layoutId } = useSeamlessModal();
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -134,6 +135,7 @@ export function SeamlessModalContent({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
