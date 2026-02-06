@@ -1325,6 +1325,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </SeamlessModalContent>
               </SeamlessModal>
 
+              {/* Related Ingredients - 成分ガイドへの双方向リンク（SEO内部リンク強化） */}
+              <div className="mt-8">
+                <RelatedIngredients ingredients={product.ingredients || []} />
+              </div>
+
               {/* FAQ Section for SEO/AI Search Optimization */}
               <div className="mt-8">
                 <ProductFAQ
@@ -1336,11 +1341,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   evidenceLevel={evidenceLevel}
                   sideEffects={product.warnings?.join("。")}
                 />
-              </div>
-
-              {/* Related Ingredients (Moved to Bottom) */}
-              <div className="mt-8">
-                <RelatedIngredients ingredients={product.ingredients || []} />
               </div>
             </div>
           </div>

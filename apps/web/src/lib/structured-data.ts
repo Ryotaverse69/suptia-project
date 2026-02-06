@@ -620,6 +620,7 @@ export function generateHowToStructuredData(params: {
 
 /**
  * schema.org/MedicalWebPage（成分ガイド用）
+ * AI検索エンジンが医療コンテンツを正確に分類・引用するためのスキーマ
  */
 export interface MedicalWebPageStructuredData {
   "@context": "https://schema.org";
@@ -646,6 +647,20 @@ export interface MedicalWebPageStructuredData {
   };
   datePublished: string;
   dateModified: string;
+  lastReviewed?: string;
+  medicalAudience?: {
+    "@type": "MedicalAudience";
+    audienceType: string;
+  };
+  about?: {
+    "@type": "MedicalCondition" | "DietarySupplement";
+    name: string;
+    description?: string;
+  };
+  specialty?: {
+    "@type": "MedicalSpecialty";
+    name: string;
+  };
   citation?: Array<{
     "@type": "CreativeWork";
     name: string;
@@ -668,6 +683,34 @@ export interface DrugStructuredData {
   dosageForm?: string;
   warning?: string;
   mechanismOfAction?: string;
+  interactingDrug?: Array<{
+    "@type": "Drug";
+    name: string;
+  }>;
+}
+
+/**
+ * 成分カテゴリから医学専門分野へのマッピング
+ */
+function categoryToSpecialty(category?: string): string {
+  const map: Record<string, string> = {
+    ビタミン: "Nutrition",
+    ミネラル: "Nutrition",
+    アミノ酸: "Nutrition",
+    ハーブ: "PharmacologicalTreatment",
+    プロバイオティクス: "Gastroenterology",
+    オメガ3: "Cardiovascular",
+    抗酸化物質: "Nutrition",
+    関節: "Rheumatology",
+    美容: "Dermatology",
+    ダイエット: "Nutrition",
+    睡眠: "Neurology",
+    メンタル: "Psychiatry",
+    免疫: "Immunology",
+    男性向け: "Urology",
+    女性向け: "Gynecology",
+  };
+  return map[category || ""] || "Nutrition";
 }
 
 /**
@@ -692,6 +735,7 @@ export function generateIngredientStructuredData(params: {
   datePublished?: string;
   dateModified?: string;
   siteUrl?: string;
+  interactions?: string[];
 }): [MedicalWebPageStructuredData, DrugStructuredData] {
   const siteUrl = params.siteUrl || "https://suptia.com";
   const pageUrl = `${siteUrl}/ingredients/${params.slug}`;
@@ -734,6 +778,22 @@ export function generateIngredientStructuredData(params: {
     datePublished:
       params.datePublished || new Date().toISOString().split("T")[0],
     dateModified: params.dateModified || new Date().toISOString().split("T")[0],
+    lastReviewed: params.dateModified || new Date().toISOString().split("T")[0],
+    medicalAudience: {
+      "@type": "MedicalAudience",
+      audienceType: "Patient",
+    },
+    about: {
+      "@type": "DietarySupplement",
+      name: params.name,
+      description:
+        params.description ||
+        `${params.name}は${params.category || "栄養素"}の一種で、サプリメントとして利用されています。`,
+    },
+    specialty: {
+      "@type": "MedicalSpecialty",
+      name: categoryToSpecialty(params.category),
+    },
   };
 
   // 参考文献を追加
@@ -779,6 +839,16 @@ export function generateIngredientStructuredData(params: {
   // 効果・効能
   if (params.benefits && params.benefits.length > 0) {
     drugSchema.mechanismOfAction = params.benefits.slice(0, 5).join("。");
+  }
+
+  // 相互作用
+  if (params.interactions && params.interactions.length > 0) {
+    drugSchema.interactingDrug = params.interactions
+      .slice(0, 10)
+      .map((name) => ({
+        "@type": "Drug",
+        name,
+      }));
   }
 
   return [medicalWebPage, drugSchema];

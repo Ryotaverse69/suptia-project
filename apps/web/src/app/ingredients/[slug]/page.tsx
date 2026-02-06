@@ -207,6 +207,11 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
     datePublished: ingredient._createdAt?.split("T")[0],
     dateModified: ingredient._updatedAt?.split("T")[0],
     siteUrl,
+    interactions: Array.isArray(ingredient.interactions)
+      ? ingredient.interactions.map((i: string | { name: string }) =>
+          typeof i === "string" ? i : i.name,
+        )
+      : undefined,
   });
 
   // FAQスキーマ（FAQがある場合のみ）
@@ -629,3 +634,6 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
     </>
   );
 }
+
+// ISR: 30分ごとにキャッシュ再生成（AI検索クローラー負荷軽減 + データ鮮度のバランス）
+export const revalidate = 1800;
