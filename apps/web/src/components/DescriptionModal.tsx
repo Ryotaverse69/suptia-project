@@ -1,8 +1,9 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Info, FileText } from "lucide-react";
+import { X, FileText } from "lucide-react";
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { liquidGlassClasses } from "@/lib/design-system";
 
 interface DescriptionModalProps {
@@ -30,7 +31,7 @@ export function DescriptionModal({
     };
   }, [isOpen]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -40,7 +41,7 @@ export function DescriptionModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
           >
             {/* Modal Card */}
             <motion.div
@@ -88,6 +89,7 @@ export function DescriptionModal({
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
