@@ -132,11 +132,13 @@ export async function POST(request: NextRequest) {
     if (revalidateSecret) {
       try {
         const revalidateUrl = new URL("/api/revalidate", request.url);
-        revalidateUrl.searchParams.set("secret", revalidateSecret);
 
         await fetch(revalidateUrl.toString(), {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-revalidate-secret": revalidateSecret,
+          },
           body: JSON.stringify({
             path: "/products",
           }),

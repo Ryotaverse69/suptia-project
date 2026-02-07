@@ -7,8 +7,8 @@ import type { ProductIdentifier } from "@/lib/adapters/types";
 export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 
 /**
- * オプショナルAPI認証を検証
- * SYNC_API_SECRET が設定されている場合のみ認証を要求
+ * API認証を検証
+ * 本番環境ではSYNC_API_SECRETが必須
  */
 function verifyApiAuth(request: NextRequest): {
   authorized: boolean;
@@ -16,14 +16,18 @@ function verifyApiAuth(request: NextRequest): {
 } {
   const syncApiSecret = process.env.SYNC_API_SECRET;
 
-  // シークレットが未設定の場合は認証スキップ
-  if (!syncApiSecret) {
-    return { authorized: true };
+  // 本番環境ではSYNC_API_SECRET必須
+  if (!syncApiSecret && process.env.NODE_ENV === "production") {
+    console.error("[Price Sync API] SYNC_API_SECRET is not configured");
+    return { authorized: false, error: "Server configuration error" };
   }
 
-  const authHeader = request.headers.get("authorization");
-  if (!authHeader || authHeader !== `Bearer ${syncApiSecret}`) {
-    return { authorized: false, error: "認証が必要です" };
+  // シークレットが設定されている場合は認証チェック
+  if (syncApiSecret) {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || authHeader !== `Bearer ${syncApiSecret}`) {
+      return { authorized: false, error: "認証が必要です" };
+    }
   }
 
   return { authorized: true };
@@ -142,10 +146,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[Price Sync API] Error:", error);
     return NextResponse.json(
-      {
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }

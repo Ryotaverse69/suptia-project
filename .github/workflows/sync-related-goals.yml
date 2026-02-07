@@ -63,8 +63,9 @@ jobs:
         if: github.event.inputs.dry_run != 'true'
         continue-on-error: true
         run: |
-          curl -X POST "https://suptia.com/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
+          curl -X POST "https://suptia.com/api/revalidate" \
             -H "Content-Type: application/json" \
+            -H "x-revalidate-secret: ${{ secrets.REVALIDATE_SECRET }}" \
             -d '{"path": "/ingredients"}'
 
       - name: Summary

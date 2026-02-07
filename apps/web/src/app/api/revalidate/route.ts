@@ -4,6 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 /**
  * キャッシュ再検証API
  *
+ * 認証: x-revalidate-secret ヘッダーを使用（推奨）
+ *       後方互換のためクエリパラメータ ?secret= も受け付ける
+ *
  * 使用例:
  * - パス指定: POST /api/revalidate { "path": "/products" }
  * - タグ指定: POST /api/revalidate { "tag": "concierge-products" }
@@ -13,6 +16,16 @@ import { NextRequest, NextResponse } from "next/server";
  * - concierge-products: AIコンシェルジュの商品キャッシュ
  * - concierge-ingredients: AIコンシェルジュの成分キャッシュ
  */
+
+/**
+ * リクエストからシークレットを取得（ヘッダー優先、クエリパラメータにフォールバック）
+ */
+function getSecretFromRequest(request: NextRequest): string | null {
+  return (
+    request.headers.get("x-revalidate-secret") ||
+    request.nextUrl.searchParams.get("secret")
+  );
+}
 
 // Sanityドキュメントタイプとキャッシュタグのマッピング
 const SANITY_TYPE_TO_TAGS: Record<string, string[]> = {
@@ -31,7 +44,7 @@ const SANITY_TYPE_TO_PATHS: Record<string, string[]> = {
 };
 
 export async function POST(request: NextRequest) {
-  const secret = request.headers.get("x-revalidate-secret");
+  const secret = getSecretFromRequest(request);
 
   if (!process.env.REVALIDATE_SECRET) {
     console.error("[Revalidate API] REVALIDATE_SECRET is not configured");
@@ -115,7 +128,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get("secret");
+  const secret = getSecretFromRequest(request);
   const path = request.nextUrl.searchParams.get("path");
   const tag = request.nextUrl.searchParams.get("tag");
 

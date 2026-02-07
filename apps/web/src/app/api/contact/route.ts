@@ -4,6 +4,35 @@ import { sanitizeHTML } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic"; // 動的レンダリングを強制
 
+// IPベースのレート制限（インメモリ）
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1分
+const RATE_LIMIT_MAX_REQUESTS = 3; // 1分あたり3回まで
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  // 古いエントリを定期的にクリーンアップ（100エントリ超えたら）
+  if (rateLimitMap.size > 100) {
+    for (const [key, val] of rateLimitMap) {
+      if (val.resetAt < now) rateLimitMap.delete(key);
+    }
+  }
+
+  if (!entry || entry.resetAt < now) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
 // Resendクライアントの遅延初期化（ビルド時ではなく実行時に初期化）
 function getResendClient() {
   if (!process.env.RESEND_API_KEY) {
@@ -77,6 +106,22 @@ function getCategoryName(category: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // レート制限チェック
+  const clientIp =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+  if (!checkRateLimit(clientIp)) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          "送信回数の上限に達しました。しばらくしてから再度お試しください。",
+      },
+      { status: 429 },
+    );
+  }
+
   try {
     // リクエストボディの取得
     const body: ContactFormData = await request.json();

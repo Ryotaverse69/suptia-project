@@ -77,8 +77,9 @@ jobs:
         run: |
           if [ -n "$REVALIDATE_SECRET" ] && [ -n "$VERCEL_DEPLOY_URL" ]; then
             echo "🔄 Triggering ISR revalidation for product pages..."
-            curl -X POST "${VERCEL_DEPLOY_URL}/api/revalidate?secret=${REVALIDATE_SECRET}" \
+            curl -X POST "${VERCEL_DEPLOY_URL}/api/revalidate" \
               -H "Content-Type: application/json" \
+              -H "x-revalidate-secret: ${REVALIDATE_SECRET}" \
               -d '{"path": "/products"}' \
               --silent --show-error || echo "ISR revalidation request sent (may fail if URL not reachable)"
             echo "✅ ISR revalidation triggered"
