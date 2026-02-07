@@ -119,6 +119,8 @@ const ConciergeContext = createContext<ConciergeContextType | undefined>(
 export function ConciergeProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { profile } = useUserProfile();
+  // user.id（文字列）に依存することで、トークンリフレッシュによる不要な再取得を防止
+  const userId = user?.id ?? null;
 
   // Supabaseクライアント
   const supabase = useMemo(() => {
@@ -151,7 +153,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
   // プラン設定
   const userPlan: UserPlan = profile?.plan ?? "free";
   const planConfig = PLAN_CONFIGS[userPlan] ?? PLAN_CONFIGS.free;
-  const isGuest = !user;
+  const isGuest = !userId;
 
   // キャラクター（ゲストはcoreのみ）
   const currentCharacter = getCharacter(characterId);
@@ -167,7 +169,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
    * セッション一覧を取得
    */
   const refreshSessions = useCallback(async () => {
-    if (!user || !supabase) {
+    if (!userId || !supabase) {
       setSessions([]);
       return;
     }
@@ -177,7 +179,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       const { data, error: fetchError } = await supabase
         .from("chat_sessions")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })
         .limit(planConfig.maxSessions ?? 100);
@@ -216,13 +218,13 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoadingSessions(false);
     }
-  }, [user, supabase, planConfig.maxSessions]);
+  }, [userId, supabase, planConfig.maxSessions]);
 
   /**
    * 新規セッションを作成
    */
   const createSession = useCallback(async (): Promise<ChatSession | null> => {
-    if (!user || !supabase) {
+    if (!userId || !supabase) {
       // ゲスト用のローカルセッション
       const guestSession: ChatSession = {
         id: `guest-${Date.now()}`,
@@ -244,7 +246,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       const { data, error: insertError } = await supabase
         .from("chat_sessions")
         .insert({
-          user_id: user.id,
+          user_id: userId,
           character_id: characterId,
         })
         .select()
@@ -278,14 +280,14 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       setError("セッションの作成に失敗しました");
       return null;
     }
-  }, [user, supabase, characterId]);
+  }, [userId, supabase, characterId]);
 
   /**
    * セッションを読み込み
    */
   const loadSession = useCallback(
     async (sessionId: string) => {
-      if (!user || !supabase) return;
+      if (!userId || !supabase) return;
 
       setIsLoadingMessages(true);
       try {
@@ -294,7 +296,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
           .from("chat_sessions")
           .select("*")
           .eq("id", sessionId)
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .single();
 
         if (sessionError || !sessionData) {
@@ -357,7 +359,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
         setIsLoadingMessages(false);
       }
     },
-    [user, supabase],
+    [userId, supabase],
   );
 
   /**
@@ -365,14 +367,14 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
    */
   const deleteSession = useCallback(
     async (sessionId: string): Promise<boolean> => {
-      if (!user || !supabase) return false;
+      if (!userId || !supabase) return false;
 
       try {
         const { error: deleteError } = await supabase
           .from("chat_sessions")
           .update({ deleted_at: new Date().toISOString() })
           .eq("id", sessionId)
-          .eq("user_id", user.id);
+          .eq("user_id", userId);
 
         if (deleteError) {
           console.error(
@@ -397,7 +399,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
         return false;
       }
     },
-    [user, supabase, currentSession],
+    [userId, supabase, currentSession],
   );
 
   // ============================================
@@ -603,11 +605,11 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       setCharacterId(newCharacterId);
 
       // ログインユーザーの場合はDBに保存
-      if (user && supabase) {
+      if (userId && supabase) {
         try {
           await supabase.from("user_characters").upsert(
             {
-              user_id: user.id,
+              user_id: userId,
               character_id: newCharacterId,
               last_changed_at: new Date().toISOString(),
             },
@@ -620,7 +622,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
 
       return true;
     },
-    [user, supabase, userPlan],
+    [userId, supabase, userPlan],
   );
 
   // ============================================
@@ -658,7 +660,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
 
   // ユーザー変更時にセッション・キャラクターを読み込み
   useEffect(() => {
-    if (user) {
+    if (userId) {
       refreshSessions();
       refreshUsage();
 
@@ -667,7 +669,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
         supabase
           .from("user_characters")
           .select("character_id")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .single()
           .then(({ data }: { data: { character_id: string } | null }) => {
             if (data?.character_id) {
@@ -683,7 +685,7 @@ export function ConciergeProvider({ children }: { children: ReactNode }) {
       setCharacterId("core");
       setUsage(null);
     }
-  }, [user, supabase, refreshSessions, refreshUsage]);
+  }, [userId, supabase, refreshSessions, refreshUsage]);
 
   // ============================================
   // コンテキスト値

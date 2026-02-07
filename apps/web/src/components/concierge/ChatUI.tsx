@@ -37,9 +37,14 @@ import { ChatInput } from "./ChatInput";
 import { CharacterSelector } from "./CharacterSelector";
 import { UsageBadge } from "./UsageBadge";
 import { WeightsVisualization } from "./WeightsVisualization";
-import { CHARACTERS, getCharacter } from "@/lib/concierge/characters";
+import {
+  CHARACTERS,
+  getCharacter,
+  calculateWeightPercentages,
+} from "@/lib/concierge/characters";
 import { GUEST_CONFIG } from "@/lib/concierge/types";
 import { useCharacterAvatars } from "@/lib/concierge/useCharacterAvatars";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 
 interface ChatUIProps {
   className?: string;
@@ -68,6 +73,7 @@ export function ChatUI({ className }: ChatUIProps) {
     deleteSession,
   } = useConcierge();
 
+  const { profile } = useUserProfile();
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -264,6 +270,40 @@ export function ChatUI({ className }: ChatUIProps) {
         </div>
       </header>
 
+      {/* モバイル用：推薦ロジック可視化（Pro以上） */}
+      {(userPlan === "pro" ||
+        userPlan === "pro_safety" ||
+        userPlan === "admin") && (
+        <div
+          className="lg:hidden px-4 py-2 border-b flex items-center gap-3"
+          style={{
+            backgroundColor: appleWebColors.sectionBackground,
+            borderColor: appleWebColors.borderSubtle,
+          }}
+        >
+          <span
+            className="text-[11px] font-medium flex-shrink-0"
+            style={{ color: appleWebColors.textSecondary }}
+          >
+            {profile?.customWeights ? "カスタム" : character.name}
+          </span>
+          <WeightsVisualization
+            characterId={characterId}
+            customWeights={profile?.customWeights}
+            compact
+          />
+          {(userPlan === "pro_safety" || userPlan === "admin") && (
+            <Link
+              href="/mypage/concierge-settings"
+              className="flex-shrink-0 p-1 rounded-full hover:bg-black/5 transition-colors"
+              title="重み付けをカスタマイズ"
+            >
+              <Sparkles size={14} style={{ color: systemColors.purple }} />
+            </Link>
+          )}
+        </div>
+      )}
+
       {/* メインエリア（履歴 + チャット + アバター） */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
         {/* 左サイドバー - 会話履歴（デスクトップのみ・常にスペース確保） */}
@@ -358,6 +398,10 @@ export function ChatUI({ className }: ChatUIProps) {
                           showFeedback={message.role === "assistant"}
                           characterName={msgCharacterName}
                           characterId={msgCharacterId}
+                          weights={
+                            profile?.customWeights ??
+                            calculateWeightPercentages(characterId)
+                          }
                         />
                       </div>
                     );
@@ -476,7 +520,7 @@ export function ChatUI({ className }: ChatUIProps) {
 
         {/* 右サイドバー - 大きなアバター表示（デスクトップのみ） */}
         <aside
-          className="hidden lg:flex flex-col items-center justify-center w-72 flex-shrink-0 border-l p-6"
+          className="hidden lg:flex flex-col items-center w-72 flex-shrink-0 border-l px-4 py-4 overflow-y-auto"
           style={{
             backgroundColor: appleWebColors.sectionBackground,
             borderColor: appleWebColors.borderSubtle,
@@ -485,7 +529,7 @@ export function ChatUI({ className }: ChatUIProps) {
           {/* アバター（タップで拡大表示）4:5比率 */}
           <button
             onClick={() => avatarUrl && setShowAvatarModal(true)}
-            className="w-52 h-[260px] rounded-3xl flex items-center justify-center overflow-hidden shadow-xl mb-6 transition-transform hover:scale-105 active:scale-100 cursor-pointer"
+            className="w-52 h-[260px] rounded-3xl flex items-center justify-center overflow-hidden shadow-xl mb-3 transition-transform hover:scale-105 active:scale-100 cursor-pointer flex-shrink-0"
             style={{
               background: avatarUrl
                 ? undefined
@@ -508,13 +552,13 @@ export function ChatUI({ className }: ChatUIProps) {
 
           {/* キャラクター名 */}
           <h2
-            className="text-xl font-bold mb-0.5"
+            className="text-lg font-bold mb-0"
             style={{ color: appleWebColors.textPrimary }}
           >
             {character.name}
           </h2>
           <p
-            className="text-[13px] mb-4"
+            className="text-[12px] mb-2"
             style={{ color: appleWebColors.textTertiary }}
           >
             {character.nameEn}
@@ -522,11 +566,11 @@ export function ChatUI({ className }: ChatUIProps) {
 
           {/* 性格 */}
           <div
-            className="w-full px-3 py-2.5 rounded-xl mb-3"
+            className="w-full px-3 py-2 rounded-xl mb-2"
             style={{ backgroundColor: appleWebColors.sectionBackground }}
           >
             <p
-              className="text-[13px] text-center font-medium leading-relaxed"
+              className="text-[12px] text-center font-medium leading-relaxed"
               style={{ color: appleWebColors.textPrimary }}
             >
               {character.personality}
@@ -535,7 +579,7 @@ export function ChatUI({ className }: ChatUIProps) {
 
           {/* 挨拶（キャラクターの口調を見せる） */}
           <p
-            className="text-[12px] text-center leading-relaxed mb-3 italic"
+            className="text-[11px] text-center leading-relaxed mb-1.5 italic"
             style={{ color: appleWebColors.textSecondary }}
           >
             「{character.greeting}」
@@ -543,7 +587,7 @@ export function ChatUI({ className }: ChatUIProps) {
 
           {/* 推薦スタイル */}
           <p
-            className="text-[12px] text-center leading-relaxed mb-4"
+            className="text-[11px] text-center leading-relaxed mb-2"
             style={{ color: appleWebColors.textTertiary }}
           >
             {character.recommendationStyleLabel}
@@ -553,8 +597,26 @@ export function ChatUI({ className }: ChatUIProps) {
           {(userPlan === "pro" ||
             userPlan === "pro_safety" ||
             userPlan === "admin") && (
-            <div className="w-full mb-4">
-              <WeightsVisualization characterId={characterId} />
+            <div className="w-full mb-3">
+              <WeightsVisualization
+                characterId={characterId}
+                customWeights={profile?.customWeights}
+                compact={false}
+              />
+              {/* カスタマイズリンク（Pro+Safety/Admin限定） */}
+              {(userPlan === "pro_safety" || userPlan === "admin") && (
+                <Link
+                  href="/mypage/concierge-settings"
+                  className="mt-2 flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[12px] font-medium transition-all hover:opacity-80 active:scale-[0.98]"
+                  style={{
+                    color: systemColors.purple,
+                    backgroundColor: `${systemColors.purple}10`,
+                  }}
+                >
+                  <Sparkles size={12} />
+                  重み付けをカスタマイズ
+                </Link>
+              )}
             </div>
           )}
 

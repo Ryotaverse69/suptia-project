@@ -38,9 +38,12 @@ import {
 import type {
   ChatMessage as ChatMessageType,
   PillarsData,
+  ProductSummary,
+  RecommendationWeights,
   CharacterId,
 } from "@/lib/concierge/types";
 import { useCharacterAvatars } from "@/lib/concierge/useCharacterAvatars";
+import { RecommendationCard } from "./RecommendationCard";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -51,6 +54,7 @@ interface ChatMessageProps {
   showFeedback?: boolean;
   characterName?: string;
   characterId?: CharacterId;
+  weights?: RecommendationWeights;
 }
 
 export function ChatMessage({
@@ -59,6 +63,7 @@ export function ChatMessage({
   showFeedback = true,
   characterName = "AI",
   characterId = "core",
+  weights,
 }: ChatMessageProps) {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<
@@ -71,6 +76,13 @@ export function ChatMessage({
   // 推薦理由の5つの柱データ（メタデータから取得）
   const pillarsData = message.metadata?.pillars as PillarsData | undefined;
   const hasPillars = pillarsData && Object.keys(pillarsData).length > 0;
+
+  // 推薦商品データ（メタデータから取得）
+  const recommendedProducts = message.metadata?.recommendedProducts as
+    | ProductSummary[]
+    | undefined;
+  const hasRecommendedProducts =
+    recommendedProducts && recommendedProducts.length > 0;
 
   const isUser = message.role === "user";
 
@@ -321,6 +333,29 @@ export function ChatMessage({
                 </div>
               )}
             </div>
+
+            {/* 推薦商品カード（スコア付き） */}
+            {hasRecommendedProducts && (
+              <div className="mt-3 space-y-2">
+                <span
+                  className="text-[12px] font-medium px-1"
+                  style={{ color: appleWebColors.textTertiary }}
+                >
+                  推薦商品の5つの柱スコア
+                </span>
+                <div className="space-y-2">
+                  {recommendedProducts.map((product, index) => (
+                    <RecommendationCard
+                      key={product.id}
+                      product={product}
+                      weights={weights}
+                      rank={index + 1}
+                      className="text-sm"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* フィードバックボタン */}
             {showFeedback && onFeedback && (

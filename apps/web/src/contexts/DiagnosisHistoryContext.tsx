@@ -79,15 +79,18 @@ export function DiagnosisHistoryProvider({
   const [isLoading, setIsLoading] = useState(true);
 
   const { user, isLoading: authLoading } = useAuth();
+  // user.id（文字列）に依存することで、トークンリフレッシュによるuserオブジェクト参照変更での
+  // 不要な再取得を防止する
+  const userId = user?.id ?? null;
   const supabase = useMemo(() => createClient(), []);
 
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!userId;
 
   /**
    * 診断履歴を取得
    */
   const fetchHistory = useCallback(async () => {
-    if (!user) {
+    if (!userId) {
       setHistory([]);
       setIsLoading(false);
       return;
@@ -99,7 +102,7 @@ export function DiagnosisHistoryProvider({
       const { data, error } = await supabase
         .from("diagnosis_history")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -129,7 +132,7 @@ export function DiagnosisHistoryProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [user, supabase]);
+  }, [userId, supabase]);
 
   // ユーザーがログインしたら履歴を取得
   useEffect(() => {
@@ -142,13 +145,13 @@ export function DiagnosisHistoryProvider({
    */
   const saveDiagnosis = useCallback(
     async (data: Omit<DiagnosisHistoryItem, "id" | "createdAt">) => {
-      if (!user) return;
+      if (!userId) return;
 
       try {
         const { data: insertedData, error } = await supabase
           .from("diagnosis_history")
           .insert({
-            user_id: user.id,
+            user_id: userId,
             diagnosis_data: data,
           })
           .select();
@@ -176,7 +179,7 @@ export function DiagnosisHistoryProvider({
         );
       }
     },
-    [user, supabase],
+    [userId, supabase],
   );
 
   /**
@@ -184,7 +187,7 @@ export function DiagnosisHistoryProvider({
    */
   const deleteDiagnosis = useCallback(
     async (id: string) => {
-      if (!user) return;
+      if (!userId) return;
 
       // 楽観的更新
       const previousHistory = history;
@@ -195,7 +198,7 @@ export function DiagnosisHistoryProvider({
           .from("diagnosis_history")
           .delete()
           .eq("id", id)
-          .eq("user_id", user.id);
+          .eq("user_id", userId);
 
         if (error) {
           console.error(
@@ -212,7 +215,7 @@ export function DiagnosisHistoryProvider({
         setHistory(previousHistory);
       }
     },
-    [user, supabase, history],
+    [userId, supabase, history],
   );
 
   return (

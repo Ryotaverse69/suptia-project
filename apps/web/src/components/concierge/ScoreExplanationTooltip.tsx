@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appleWebColors, systemColors } from "@/lib/design-system";
@@ -103,14 +103,33 @@ export function ScoreExplanationTooltip({
   className,
 }: ScoreExplanationTooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const explanation = PILLAR_EXPLANATIONS[pillar];
+
+  const openTooltip = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const tooltipW = 256;
+      // ツールチップを上に表示、右端がボタンの右端に揃うよう配置
+      let left = rect.right - tooltipW;
+      // 画面左端からはみ出す場合は補正
+      if (left < 8) left = 8;
+      // 画面右端からはみ出す場合も補正
+      if (left + tooltipW > window.innerWidth - 8)
+        left = window.innerWidth - tooltipW - 8;
+      setTooltipPos({ top: rect.top - 8, left });
+    }
+    setIsOpen(true);
+  }, []);
 
   return (
     <div className={cn("relative inline-block", className)}>
       {/* トリガーボタン */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => setIsOpen(true)}
+        ref={buttonRef}
+        onClick={() => (isOpen ? setIsOpen(false) : openTooltip())}
+        onMouseEnter={openTooltip}
         onMouseLeave={() => setIsOpen(false)}
         className="p-1 rounded-full hover:bg-black/5 transition-colors"
         title={`${explanation.label}の説明`}
@@ -118,15 +137,16 @@ export function ScoreExplanationTooltip({
         <Info className="w-3.5 h-3.5" style={{ color: systemColors.gray[4] }} />
       </button>
 
-      {/* ツールチップ */}
+      {/* ツールチップ（fixed配置で親のoverflow影響を回避） */}
       {isOpen && (
         <div
-          className="absolute z-50 w-72 p-4 rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+          className="fixed z-[100] w-64 p-4 rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200"
           style={{
             backgroundColor: appleWebColors.sectionBackground,
             border: `1px solid ${appleWebColors.borderSubtle}`,
-            bottom: "calc(100% + 8px)",
-            right: "0",
+            top: tooltipPos.top,
+            left: tooltipPos.left,
+            transform: "translateY(-100%)",
           }}
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
@@ -265,7 +285,7 @@ export function ScoreExplanationTooltip({
               borderTop: "none",
               borderLeft: "none",
               bottom: "-6px",
-              right: "12px",
+              right: "16px",
             }}
           />
         </div>

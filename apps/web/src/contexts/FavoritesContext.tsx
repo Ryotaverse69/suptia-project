@@ -35,16 +35,19 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const { user, isLoading: authLoading } = useAuth();
+  // user.id（文字列）に依存することで、トークンリフレッシュによるuserオブジェクト参照変更での
+  // 不要な再取得を防止する
+  const userId = user?.id ?? null;
   const supabase = createClient();
 
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!userId;
 
   // ユーザーがログインしたらお気に入りを取得
   useEffect(() => {
     const fetchFavorites = async () => {
       if (authLoading) return;
 
-      if (!user) {
+      if (!userId) {
         setFavorites([]);
         setIsLoading(false);
         return;
@@ -56,7 +59,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         const { data, error } = await supabase
           .from("favorites")
           .select("product_id")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -76,14 +79,14 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     };
 
     fetchFavorites();
-  }, [user, authLoading, supabase]);
+  }, [userId, authLoading, supabase]);
 
   /**
    * お気に入りに追加
    */
   const addFavorite = useCallback(
     async (productId: string) => {
-      if (!user) {
+      if (!userId) {
         console.warn("[FavoritesContext] User not logged in");
         return;
       }
@@ -96,7 +99,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const { error } = await supabase.from("favorites").insert({
-          user_id: user.id,
+          user_id: userId,
           product_id: productId,
         });
 
@@ -110,7 +113,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         setFavorites((prev) => prev.filter((id) => id !== productId));
       }
     },
-    [user, supabase],
+    [userId, supabase],
   );
 
   /**
@@ -118,7 +121,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
    */
   const removeFavorite = useCallback(
     async (productId: string) => {
-      if (!user) {
+      if (!userId) {
         console.warn("[FavoritesContext] User not logged in");
         return;
       }
@@ -131,7 +134,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         const { error } = await supabase
           .from("favorites")
           .delete()
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("product_id", productId);
 
         if (error) {
@@ -144,7 +147,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         setFavorites(previousFavorites);
       }
     },
-    [user, supabase, favorites],
+    [userId, supabase, favorites],
   );
 
   /**

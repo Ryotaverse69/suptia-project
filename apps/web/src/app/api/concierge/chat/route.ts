@@ -298,6 +298,15 @@ interface PriceHistoryEntry {
   recordedAt: string;
 }
 
+interface TierRatings {
+  priceRank?: string;
+  costEffectivenessRank?: string;
+  contentRank?: string;
+  evidenceRank?: string;
+  safetyRank?: string;
+  overallRank?: string;
+}
+
 interface SuptiaProduct {
   name: string;
   slug: string;
@@ -305,6 +314,8 @@ interface SuptiaProduct {
   priceJPY: number;
   ingredientNames: string[];
   priceHistory?: PriceHistoryEntry[];
+  tierRatings?: TierRatings;
+  imageUrl?: string;
 }
 
 interface SuptiaIngredient {
@@ -368,7 +379,9 @@ const fetchPopularProducts = unstable_cache(
         "brandName": brand->name,
         priceJPY,
         "ingredientNames": ingredients[].ingredient->name,
-        priceHistory
+        priceHistory,
+        tierRatings,
+        "imageUrl": images[0].asset->url
       }`;
 
       const products = await sanityServer.fetch(query);
@@ -409,7 +422,9 @@ async function searchSuptiaProducts(
       "brandName": brand->name,
       priceJPY,
       "ingredientNames": ingredients[].ingredient->name,
-      priceHistory
+      priceHistory,
+      tierRatings,
+      "imageUrl": images[0].asset->url
     }`;
 
     const products = await sanityServer.fetch(query);
@@ -674,10 +689,9 @@ ${customWeights ? "※ ユーザーのカスタム重み付けを使用してい
 
 【絶対禁止: マークダウンテーブル】
 - マークダウンテーブル（| 項目 | 詳細 | のような形式）は絶対に使用しないこと
-- 商品比較も必ず箇条書きで表現する
-- 例: ❌ | DHC マカ | ¥4,860 | 90日 |
+- パイプ記号「|」を区切りとして使ったテーブル形式の出力は一切禁止
+- 「テーブルは使用しません」等の断り文句も不要。最初から箇条書きで書くこと
 - 例: ⭕ DHC マカ 徳用90日分: ¥4,860（90日分、1日あたり¥54）
-- どんな場合でもテーブルは使わず、箇条書きまたは段落形式で記述すること
 
 【重要: サプティア専用AIコンシェルジュ】
 あなたはサプティア（Suptia）専用のAIコンシェルジュです。
@@ -960,6 +974,85 @@ function extractRecommendedProducts(
   }
 
   return matches;
+}
+
+/**
+ * ランク文字列（S/A/B/C/D）を0-100のスコアに変換
+ */
+function rankToScore(rank?: string): number {
+  switch (rank) {
+    case "S+":
+      return 98;
+    case "S":
+      return 92;
+    case "A":
+      return 78;
+    case "B":
+      return 62;
+    case "C":
+      return 45;
+    case "D":
+      return 25;
+    default:
+      return 50;
+  }
+}
+
+/**
+ * 推薦商品のProductSummary配列を構築（フロントエンド表示用）
+ */
+function buildRecommendedProductSummaries(
+  recommendedProducts: Array<{
+    productId: string;
+    productName: string;
+    rank: number;
+  }>,
+  availableProducts: SuptiaProduct[],
+): Array<{
+  id: string;
+  name: string;
+  imageUrl?: string;
+  price?: number;
+  source?: string;
+  scores?: {
+    price: number;
+    amount: number;
+    costPerformance: number;
+    evidence: number;
+    safety: number;
+    total: number;
+  };
+}> {
+  return recommendedProducts.map((rec) => {
+    const product = availableProducts.find((p) => p.slug === rec.productId);
+    const tier = product?.tierRatings;
+    const scores = tier
+      ? {
+          price: rankToScore(tier.priceRank),
+          amount: rankToScore(tier.contentRank),
+          costPerformance: rankToScore(tier.costEffectivenessRank),
+          evidence: rankToScore(tier.evidenceRank),
+          safety: rankToScore(tier.safetyRank),
+          total: Math.round(
+            (rankToScore(tier.priceRank) +
+              rankToScore(tier.contentRank) +
+              rankToScore(tier.costEffectivenessRank) +
+              rankToScore(tier.evidenceRank) +
+              rankToScore(tier.safetyRank)) /
+              5,
+          ),
+        }
+      : undefined;
+
+    return {
+      id: rec.productId,
+      name: rec.productName,
+      imageUrl: product?.imageUrl,
+      price: product?.priceJPY,
+      source: product?.brandName,
+      scores,
+    };
+  });
 }
 
 /**
@@ -1438,6 +1531,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 推薦商品を抽出（メタデータ・診断履歴の両方で使用）
+    const extractedProducts = extractRecommendedProducts(
+      assistantContent,
+      suptiaProducts,
+    );
+    const productSummaries = buildRecommendedProductSummaries(
+      extractedProducts,
+      suptiaProducts,
+    );
+
     // アシスタントメッセージを保存
     let assistantMessageId: string | undefined;
 
@@ -1449,6 +1552,11 @@ export async function POST(request: NextRequest) {
         model,
         tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
       };
+
+      // 推薦商品のスコア情報を追加
+      if (productSummaries.length > 0) {
+        metadata.recommendedProducts = productSummaries;
+      }
 
       // Safety情報があればメタデータに追加
       if (safetyResult && safetyResult.blockedIngredients.length > 0) {
@@ -1481,10 +1589,7 @@ export async function POST(request: NextRequest) {
       }
 
       // 推薦商品があれば診断履歴に自動保存
-      const recommendedProducts = extractRecommendedProducts(
-        assistantContent,
-        suptiaProducts,
-      );
+      const recommendedProducts = extractedProducts;
 
       if (recommendedProducts.length > 0) {
         const diagnosisData = {
@@ -1546,17 +1651,22 @@ export async function POST(request: NextRequest) {
     }
 
     // レスポンス
+    const responseMetadata: Record<string, unknown> = {
+      characterId,
+      characterName: character.name,
+      recommendationStyle: character.recommendationStyle,
+      model,
+    };
+    if (productSummaries.length > 0) {
+      responseMetadata.recommendedProducts = productSummaries;
+    }
+
     const chatResponse: ChatResponse = {
       message: {
         id: assistantMessageId || `temp-${Date.now()}`,
         role: "assistant",
         content: assistantContent,
-        metadata: {
-          characterId,
-          characterName: character.name,
-          recommendationStyle: character.recommendationStyle,
-          model,
-        },
+        metadata: responseMetadata,
       },
       userMessageId,
       session: {

@@ -54,7 +54,10 @@ function sleep(ms: number): Promise<void> {
 }
 
 // 1枚の画像を生成（リトライ付き）
-async function generateImage(prompt: string, maxRetries = 3): Promise<string> {
+async function generateImage(
+  prompt: string,
+  maxRetries = 3,
+): Promise<{ data: string; mimeType: string }> {
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -105,8 +108,11 @@ async function generateImage(prompt: string, maxRetries = 3): Promise<string> {
         throw new Error("画像が生成されませんでした");
       }
 
-      console.log(`[note] Image generated successfully on attempt ${attempt}`);
-      return imagePart.inlineData.data;
+      const mimeType = imagePart.inlineData.mimeType || "image/jpeg";
+      console.log(
+        `[note] Image generated successfully on attempt ${attempt} (${mimeType})`,
+      );
+      return { data: imagePart.inlineData.data, mimeType };
     } catch (error) {
       lastError = error as Error;
       if (attempt < maxRetries) {
@@ -165,7 +171,10 @@ export async function POST(request: NextRequest) {
 IMPORTANT: Output image at exactly ${size.width}x${size.height} pixels.`;
 
     console.log(`[note] Generating ${imageType} image for: ${articleTitle}`);
-    const imageBase64 = await generateImage(fullPrompt);
+    const { data: imageBase64, mimeType } = await generateImage(fullPrompt);
+
+    // MIMEタイプに合った拡張子を決定
+    const ext = mimeType === "image/png" ? "png" : "jpg";
 
     // ファイル名を生成
     const timestamp = Date.now();
@@ -173,11 +182,11 @@ IMPORTANT: Output image at exactly ${size.width}x${size.height} pixels.`;
       .replace(/[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g, "")
       .replace(/\s+/g, "_")
       .slice(0, 30);
-    const filename = `note_${imageType}_${sanitizedTitle}_${timestamp}.png`;
+    const filename = `note_${imageType}_${sanitizedTitle}_${timestamp}.${ext}`;
 
-    // Base64データURLとして返す
-    const dataUrl = `data:image/png;base64,${imageBase64}`;
-    console.log(`[note] ${imageType} generated successfully`);
+    // Base64データURLとして返す（実際のMIMEタイプを使用）
+    const dataUrl = `data:${mimeType};base64,${imageBase64}`;
+    console.log(`[note] ${imageType} generated successfully (${mimeType})`);
 
     return NextResponse.json({
       success: true,

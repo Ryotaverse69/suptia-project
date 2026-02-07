@@ -158,8 +158,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     );
 
+    // タブ復帰時にセッションを強制リフレッシュ
+    // refreshSession()はonAuthStateChange(TOKEN_REFRESHED)を内部的に発火するため、
+    // 成功時はそちらに状態更新を任せる（直接setStateすると二重更新でprofile再取得が走る）
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible") {
+        try {
+          const { error: refreshError } = await supabase.auth.refreshSession();
+
+          if (refreshError) {
+            console.error("[AuthContext] Session refresh error:", refreshError);
+            // リフレッシュトークンも期限切れの場合、ログアウト状態にする
+            setState((prev) => ({
+              ...prev,
+              user: null,
+              session: null,
+              isLoading: false,
+              error: null,
+            }));
+          }
+          // 成功時: onAuthStateChangeが処理するのでここでは何もしない
+        } catch (err) {
+          console.error("[AuthContext] Visibility refresh error:", err);
+          setState((prev) => ({ ...prev, isLoading: false }));
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [supabase]);
 

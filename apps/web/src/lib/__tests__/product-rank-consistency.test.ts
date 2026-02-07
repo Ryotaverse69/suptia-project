@@ -10,14 +10,20 @@
  */
 
 import { describe, it, expect, beforeAll } from "vitest";
-import { createClient } from "@sanity/client";
+import { createClient, type SanityClient } from "@sanity/client";
 
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: "2024-01-01",
-  useCdn: false,
-});
+// 統合テスト: Sanity環境変数が設定されている場合のみ実行
+const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const hasSanityConfig = !!SANITY_PROJECT_ID;
+
+const client: SanityClient | null = hasSanityConfig
+  ? createClient({
+      projectId: SANITY_PROJECT_ID!,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+      apiVersion: "2024-01-01",
+      useCdn: false,
+    })
+  : null;
 
 interface TierRatings {
   priceRank?: string;
@@ -41,12 +47,15 @@ interface Product {
 
 const VALID_RANKS = ["S+", "S", "A", "B", "C", "D"];
 
-describe("商品ランク整合性テスト", () => {
+// Sanity環境変数がない場合はスキップ
+const describeIfSanity = hasSanityConfig ? describe : describe.skip;
+
+describeIfSanity("商品ランク整合性テスト", () => {
   let products: Product[] = [];
 
   beforeAll(async () => {
     // テスト用に10商品をサンプリング
-    products = await client.fetch(`
+    products = await client!.fetch(`
       *[_type == "product" && availability == "in-stock" && defined(tierRatings)] [0...10] {
         _id,
         name,
@@ -136,7 +145,7 @@ describe("商品ランク整合性テスト", () => {
   });
 
   it("DHC ビタミンC商品のランクが修正されている（コスパS、含有量D）", async () => {
-    const dhcProduct = await client.fetch(`
+    const dhcProduct = await client!.fetch(`
       *[_type == "product" && slug.current == "p-18-dhc-c-90-c-b2-dhc-c-b2-90-vc-well"][0] {
         _id,
         name,
@@ -167,12 +176,12 @@ describe("商品ランク整合性テスト", () => {
   });
 });
 
-describe("バッジシステムの整合性", () => {
+describeIfSanity("バッジシステムの整合性", () => {
   it("バッジによるランク格上げが無効化されている", async () => {
     // このテストは、page.tsx内のバッジ格上げロジックがコメントアウトされていることを確認
     // 実際のコードレビューで確認済みのため、ここでは概念的な確認
 
-    const testProduct = await client.fetch(`
+    const testProduct = await client!.fetch(`
       *[_type == "product" && defined(tierRatings)] [0] {
         _id,
         tierRatings
@@ -199,9 +208,9 @@ describe("バッジシステムの整合性", () => {
   });
 });
 
-describe("統計情報の妥当性", () => {
+describeIfSanity("統計情報の妥当性", () => {
   it("全商品の90%以上がtierRatingsを持っている", async () => {
-    const allProducts = await client.fetch<
+    const allProducts = await client!.fetch<
       Array<{ _id: string; tierRatings?: TierRatings }>
     >(`
       *[_type == "product" && availability == "in-stock"] {
@@ -217,7 +226,7 @@ describe("統計情報の妥当性", () => {
   });
 
   it("Sランクの商品が全体の10%以下である（パーセンタイル基準）", async () => {
-    const allProducts = await client.fetch<
+    const allProducts = await client!.fetch<
       Array<{ _id: string; tierRatings: TierRatings }>
     >(`
       *[_type == "product" && availability == "in-stock" && defined(tierRatings)] {

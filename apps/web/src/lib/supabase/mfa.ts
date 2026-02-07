@@ -267,24 +267,51 @@ export async function needsMFAVerification(): Promise<{
 }> {
   const supabase = createClient();
 
-  const { data, error } =
-    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  // タイムアウト付きでAALレベルを取得（5秒）
+  const aalPromise = supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error("MFA AAL check timed out after 5s")),
+      5000,
+    ),
+  );
 
-  if (error) {
-    console.error("[MFA] Failed to check MFA requirement:", error);
+  let data;
+  try {
+    const result = await Promise.race([aalPromise, timeoutPromise]);
+    if ("error" in result && result.error) {
+      console.error("[MFA] Failed to check MFA requirement:", result.error);
+      return { required: false };
+    }
+    data = (result as { data: { currentLevel: string; nextLevel: string } })
+      .data;
+  } catch (err) {
+    console.error("[MFA] AAL check failed or timed out:", err);
     return { required: false };
   }
 
   // nextLevel が aal2 で currentLevel が aal1 の場合、MFA検証が必要
   if (data.nextLevel === "aal2" && data.currentLevel === "aal1") {
-    // 検証済みの factor を取得
-    const { factors } = await getMFAStatus();
-    const verifiedFactor = factors.find((f) => f.status === "verified");
+    // 検証済みの factor を取得（タイムアウト付き）
+    try {
+      const factorsPromise = getMFAStatus();
+      const factorsTimeout = new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("MFA listFactors timed out after 5s")),
+          5000,
+        ),
+      );
+      const { factors } = await Promise.race([factorsPromise, factorsTimeout]);
+      const verifiedFactor = factors.find((f) => f.status === "verified");
 
-    return {
-      required: true,
-      factorId: verifiedFactor?.id,
-    };
+      return {
+        required: true,
+        factorId: verifiedFactor?.id,
+      };
+    } catch (err) {
+      console.error("[MFA] Factor list failed or timed out:", err);
+      return { required: false };
+    }
   }
 
   return { required: false };

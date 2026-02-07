@@ -55,16 +55,19 @@ export function PriceAlertsProvider({
   const [isLoading, setIsLoading] = useState(true);
 
   const { user, isLoading: authLoading } = useAuth();
+  // user.id（文字列）に依存することで、トークンリフレッシュによるuserオブジェクト参照変更での
+  // 不要な再取得を防止する
+  const userId = user?.id ?? null;
   const supabase = createClient();
 
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!userId;
 
   // ユーザーがログインしたらアラートを取得
   useEffect(() => {
     const fetchAlerts = async () => {
       if (authLoading) return;
 
-      if (!user) {
+      if (!userId) {
         setAlerts([]);
         setIsLoading(false);
         return;
@@ -76,12 +79,17 @@ export function PriceAlertsProvider({
         const { data, error } = await supabase
           .from("price_alerts")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("is_active", true)
           .order("created_at", { ascending: false });
 
         if (error) {
-          console.error("[PriceAlertsContext] Failed to fetch alerts:", error);
+          console.error(
+            "[PriceAlertsContext] Failed to fetch alerts:",
+            error.message,
+            error.code,
+            error.details,
+          );
           setAlerts([]);
         } else {
           interface PriceAlertRow {
@@ -116,7 +124,7 @@ export function PriceAlertsProvider({
     };
 
     fetchAlerts();
-  }, [user, authLoading, supabase]);
+  }, [userId, authLoading, supabase]);
 
   /**
    * アラートを追加
@@ -128,7 +136,7 @@ export function PriceAlertsProvider({
       targetPrice: number,
       currentPrice: number,
     ) => {
-      if (!user) {
+      if (!userId) {
         console.warn("[PriceAlertsContext] User not logged in");
         return;
       }
@@ -154,7 +162,7 @@ export function PriceAlertsProvider({
         const { data: existing } = await supabase
           .from("price_alerts")
           .select("id")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("product_id", productId)
           .single();
 
@@ -174,7 +182,7 @@ export function PriceAlertsProvider({
         } else {
           // 新規アラートを作成
           const { error } = await supabase.from("price_alerts").insert({
-            user_id: user.id,
+            user_id: userId,
             product_id: productId,
             product_name: productName,
             target_price: targetPrice,
@@ -189,7 +197,7 @@ export function PriceAlertsProvider({
         const { data: refreshed } = await supabase
           .from("price_alerts")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("product_id", productId)
           .single();
 
@@ -218,7 +226,7 @@ export function PriceAlertsProvider({
         setAlerts((prev) => prev.filter((a) => a.productId !== productId));
       }
     },
-    [user, supabase],
+    [userId, supabase],
   );
 
   /**
@@ -226,7 +234,7 @@ export function PriceAlertsProvider({
    */
   const removeAlert = useCallback(
     async (productId: string) => {
-      if (!user) {
+      if (!userId) {
         console.warn("[PriceAlertsContext] User not logged in");
         return;
       }
@@ -239,7 +247,7 @@ export function PriceAlertsProvider({
         const { error } = await supabase
           .from("price_alerts")
           .update({ is_active: false })
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("product_id", productId);
 
         if (error) {
@@ -251,7 +259,7 @@ export function PriceAlertsProvider({
         setAlerts(previousAlerts);
       }
     },
-    [user, supabase, alerts],
+    [userId, supabase, alerts],
   );
 
   /**
@@ -259,7 +267,7 @@ export function PriceAlertsProvider({
    */
   const updateAlert = useCallback(
     async (productId: string, targetPrice: number) => {
-      if (!user) {
+      if (!userId) {
         console.warn("[PriceAlertsContext] User not logged in");
         return;
       }
@@ -279,7 +287,7 @@ export function PriceAlertsProvider({
             target_price: targetPrice,
             updated_at: new Date().toISOString(),
           })
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .eq("product_id", productId);
 
         if (error) {
@@ -291,7 +299,7 @@ export function PriceAlertsProvider({
         setAlerts(previousAlerts);
       }
     },
-    [user, supabase, alerts],
+    [userId, supabase, alerts],
   );
 
   /**

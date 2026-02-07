@@ -174,6 +174,8 @@ export function RecommendationCard({
       <div className="px-4 pb-4">
         <Link
           href={`/products/${product.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className={cn(
             "flex items-center justify-center gap-2 w-full py-2 rounded-lg",
             "bg-gray-100 dark:bg-gray-700",

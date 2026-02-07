@@ -7,7 +7,7 @@
  * MFA検証が完了するまで管理者ページへのアクセスをブロック
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { needsMFAVerification } from "@/lib/supabase/mfa";
 import { MFAVerifyModal } from "./MFAVerifyModal";
@@ -19,32 +19,66 @@ interface AdminMFAGuardProps {
 }
 
 export function AdminMFAGuard({ children }: AdminMFAGuardProps) {
-  const { user, signOut } = useAuth();
+  const { user, isLoading: authLoading, signOut } = useAuth();
+  // user.id（文字列）に依存することで、トークンリフレッシュによるuserオブジェクト参照変更での
+  // 不要なMFA再チェックを防止する
+  const userId = user?.id ?? null;
   const [isChecking, setIsChecking] = useState(true);
   const [mfaRequired, setMfaRequired] = useState(false);
   const [factorId, setFactorId] = useState<string | null>(null);
+  const hasCheckedRef = useRef(false);
 
   useEffect(() => {
-    const checkMFA = async () => {
-      if (!user) {
-        setIsChecking(false);
-        return;
-      }
+    // 認証読み込み中は待機（isCheckingはtrueのまま）
+    if (authLoading) return;
 
+    // ユーザーなし → チェック不要
+    if (!userId) {
+      setIsChecking(false);
+      return;
+    }
+
+    // 既にチェック済みなら再チェックしない（タブ復帰時の不要な再実行を防止）
+    if (hasCheckedRef.current) return;
+
+    let cancelled = false;
+
+    const checkMFA = async () => {
       try {
         const result = await needsMFAVerification();
-        if (result.required && result.factorId) {
-          setMfaRequired(true);
-          setFactorId(result.factorId);
+        if (!cancelled) {
+          hasCheckedRef.current = true;
+          if (result.required && result.factorId) {
+            setMfaRequired(true);
+            setFactorId(result.factorId);
+          }
+          setIsChecking(false);
         }
       } catch (error) {
         console.error("[AdminMFAGuard] MFA check error:", error);
+        if (!cancelled) {
+          hasCheckedRef.current = true;
+          setIsChecking(false);
+        }
       }
-      setIsChecking(false);
     };
 
+    // フォールバック: 10秒後に強制的にチェック完了とする
+    const fallbackTimer = setTimeout(() => {
+      if (!cancelled && !hasCheckedRef.current) {
+        console.warn("[AdminMFAGuard] MFA check timed out, allowing access");
+        hasCheckedRef.current = true;
+        setIsChecking(false);
+      }
+    }, 10000);
+
     checkMFA();
-  }, [user]);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(fallbackTimer);
+    };
+  }, [authLoading, userId]);
 
   // ローディング中
   if (isChecking) {

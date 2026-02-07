@@ -42,6 +42,13 @@ export interface UserProfile {
   concerns: string[];
   plan: UserPlan;
   is_admin: boolean; // 管理者フラグ
+  customWeights: {
+    price: number;
+    amount: number;
+    costPerformance: number;
+    evidence: number;
+    safety: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -96,6 +103,7 @@ function mapDbToProfile(row: Record<string, unknown>): UserProfile {
     concerns: (row.concerns as string[]) || [],
     plan: ((row.plan as string) || "free").toLowerCase() as UserPlan,
     is_admin: (row.is_admin as boolean) || false,
+    customWeights: (row.custom_weights as UserProfile["customWeights"]) || null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -112,6 +120,9 @@ export function UserProfileProvider({
   const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
   const { user, isLoading: authLoading } = useAuth();
+  // user.id（文字列）に依存することで、トークンリフレッシュによるuserオブジェクト参照変更での
+  // 不要なプロフィール再取得を防止する
+  const userId = user?.id ?? null;
 
   // Supabaseクライアントを安全に作成
   const supabase = React.useMemo(() => {
@@ -125,7 +136,7 @@ export function UserProfileProvider({
     }
   }, []);
 
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!userId;
 
   /**
    * プロフィールを取得（存在しない場合は作成）
@@ -138,7 +149,7 @@ export function UserProfileProvider({
       return;
     }
 
-    if (!user) {
+    if (!userId) {
       setProfile(null);
       setIsLoading(false);
       return;
@@ -159,7 +170,7 @@ export function UserProfileProvider({
       const { data, error: fetchError } = await supabase
         .from("user_profiles")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .single();
 
       if (fetchError && fetchError.code !== "PGRST116") {
@@ -173,7 +184,7 @@ export function UserProfileProvider({
         // エラーでもデフォルトプロフィールを設定（UIが壊れないように）
         setProfile({
           id: "",
-          userId: user.id,
+          userId,
           displayName: null,
           ageRange: null,
           gender: null,
@@ -187,6 +198,7 @@ export function UserProfileProvider({
           concerns: [],
           plan: "free",
           is_admin: false,
+          customWeights: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
@@ -202,7 +214,7 @@ export function UserProfileProvider({
         const { data: newData, error: insertError } = await supabase
           .from("user_profiles")
           .insert({
-            user_id: user.id,
+            user_id: userId,
             avatar_type: "initial",
             avatar_icon: null,
             avatar_url: null,
@@ -231,7 +243,7 @@ export function UserProfileProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [user, authLoading, supabase, supabaseError]);
+  }, [userId, authLoading, supabase, supabaseError]);
 
   // ユーザーがログインしたらプロフィールを取得
   useEffect(() => {
@@ -243,7 +255,7 @@ export function UserProfileProvider({
    */
   const updateProfile = useCallback(
     async (data: ProfileUpdateData): Promise<boolean> => {
-      if (!user || !profile) {
+      if (!userId || !profile) {
         console.warn("[UserProfileContext] User not logged in or no profile");
         return false;
       }
@@ -303,7 +315,7 @@ export function UserProfileProvider({
         const { error: updateError } = await supabase
           .from("user_profiles")
           .update(updateData)
-          .eq("user_id", user.id);
+          .eq("user_id", userId);
 
         if (updateError) {
           console.error("[UserProfileContext] Update error:", updateError);
@@ -321,7 +333,7 @@ export function UserProfileProvider({
         return false;
       }
     },
-    [user, profile, supabase],
+    [userId, profile, supabase],
   );
 
   /**
