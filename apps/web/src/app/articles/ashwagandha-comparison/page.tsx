@@ -105,7 +105,7 @@ const RELATED_INGREDIENTS = [
 
 const ARTICLE_DATA = {
   title:
-    "【2025年最新】アシュワガンダサプリおすすめ比較｜KSM-66・Sensorilの違い",
+    "【2026年最新】アシュワガンダサプリおすすめ比較｜KSM-66・Sensorilの違い",
   description:
     "アシュワガンダサプリをKSM-66・Sensoril・一般抽出物で徹底比較。ストレス・睡眠・筋力への効果と、ウィザノライド含有量による選び方を解説。",
   publishedAt: "2025-01-19",
@@ -128,7 +128,7 @@ export const metadata: Metadata = {
     "サプリメント",
     "おすすめ",
     "比較",
-    "2025",
+    "2026",
     "KSM-66",
     "Sensoril",
     "ストレス",

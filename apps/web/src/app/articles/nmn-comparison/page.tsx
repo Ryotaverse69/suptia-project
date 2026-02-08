@@ -99,7 +99,7 @@ const RELATED_INGREDIENTS = [
 ];
 
 const ARTICLE_DATA = {
-  title: "【2025年最新】NMNサプリおすすめ比較｜純度・価格・効果で徹底分析",
+  title: "【2026年最新】NMNサプリおすすめ比較｜純度・価格・効果で徹底分析",
   description:
     "NMN（ニコチンアミドモノヌクレオチド）サプリを純度・価格・形態で徹底比較。若返り・アンチエイジング成分として注目のNMNの選び方を解説。",
   publishedAt: "2025-01-19",
@@ -122,7 +122,7 @@ export const metadata: Metadata = {
     "サプリメント",
     "おすすめ",
     "比較",
-    "2025",
+    "2026",
     "アンチエイジング",
     "NAD+",
     "若返り",

@@ -75,7 +75,7 @@ CRITICAL STYLE REQUIREMENTS:
 - Clean, minimal design suitable for OGP/social media preview
 - Aspect ratio: ${OGP_SIZE.ratio} (${OGP_SIZE.width}x${OGP_SIZE.height} pixels)
 - Professional quality, social media ready
-- Leave space on the left or bottom for text overlay
+- Fill the entire canvas with the illustration, no empty space
 - Brand colors: mint green, light blue, cream white`;
 
   let lastError: Error | null = null;
@@ -158,6 +158,7 @@ async function uploadToCloudinary(
     public_id: publicId,
     resource_type: "image",
     overwrite: true,
+    invalidate: true,
     transformation: [
       { width: OGP_SIZE.width, height: OGP_SIZE.height, crop: "fill" },
       { quality: "auto:good" },
@@ -201,10 +202,8 @@ ${baseStyle}
 Requirements:
 - Central visual element representing ${data.nameEn || data.name}
 - Abstract/symbolic representation (not literal pills/capsules)
-- MUST include text "${data.name}" prominently displayed in the image
-- Text should be in white or light color with good contrast
-- Text position: bottom-left area with semi-transparent dark overlay behind it
-- Also include small subtitle "サプティア成分ガイド" below the main title
+- DO NOT include any text, titles, or labels in the image
+- Image should be purely illustrative with no typography
 - Clean, professional health/wellness aesthetic
 - サプティア brand feel (modern, trustworthy, scientific)`;
 
@@ -219,9 +218,8 @@ ${baseStyle}
 Requirements:
 - Visual elements suggesting comparison/ranking
 - Abstract representation of supplements being compared
-- MUST include the title text "${data.name}" prominently in the image
-- Text should be in white or light color with good contrast
-- Text position: bottom-left or center with semi-transparent dark overlay
+- DO NOT include any text, titles, or labels in the image
+- Image should be purely illustrative with no typography
 - Professional, editorial feel`;
 
     case "tool":
@@ -234,10 +232,8 @@ ${baseStyle}
 
 Requirements:
 - Visual elements suggesting calculation/analysis
-- MUST include the tool name "${data.name}" prominently in the image
-- Include small subtitle "無料ツール | サプティア"
-- Text should be in white or light color with good contrast
-- Text position: bottom-left or center with semi-transparent dark overlay
+- DO NOT include any text, titles, or labels in the image
+- Image should be purely illustrative with no typography
 - Abstract icons representing the tool's function
 - Modern, utility-focused design`;
 
@@ -262,6 +258,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
+      action, // "preview" | "save" (default: legacy = generate+upload)
       type, // "ingredient" | "article" | "tool"
       slug,
       name,
@@ -269,8 +266,50 @@ export async function POST(request: NextRequest) {
       category,
       description,
       style = "flat-minimal",
+      imageBase64: providedBase64, // save時にbase64データを受け取る
     } = body;
 
+    // save モード: base64データをCloudinaryにアップロード
+    if (action === "save") {
+      if (!type || !slug || !providedBase64) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Missing required fields: type, slug, imageBase64",
+          },
+          { status: 400 },
+        );
+      }
+
+      const folderMap: Record<string, string> = {
+        ingredient: "ingredients",
+        article: "articles",
+        tool: "tools",
+      };
+      const folder = folderMap[type] || "misc";
+
+      const { url, publicId } = await uploadToCloudinary(
+        providedBase64,
+        folder,
+        slug,
+      );
+
+      console.log(`OGP saved: ${url}`);
+
+      return NextResponse.json({
+        success: true,
+        ogImage: {
+          url,
+          publicId,
+          type,
+          slug,
+          width: OGP_SIZE.width,
+          height: OGP_SIZE.height,
+        },
+      });
+    }
+
+    // preview / legacy モード: 画像を生成
     if (!type || !slug || !name) {
       return NextResponse.json(
         { success: false, error: "Missing required fields: type, slug, name" },
@@ -290,7 +329,21 @@ export async function POST(request: NextRequest) {
     // 画像生成
     const imageBase64 = await generateOGPImage(prompt);
 
-    // Cloudinaryにアップロード
+    // preview モード: base64データを返す（アップロードしない）
+    if (action === "preview") {
+      return NextResponse.json({
+        success: true,
+        preview: {
+          base64: imageBase64,
+          type,
+          slug,
+          width: OGP_SIZE.width,
+          height: OGP_SIZE.height,
+        },
+      });
+    }
+
+    // legacy モード（actionなし）: 生成してそのままアップロード
     const folderMap: Record<string, string> = {
       ingredient: "ingredients",
       article: "articles",
@@ -339,14 +392,26 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 一括生成用エンドポイント（GET: ステータス確認用）
+// ステータス確認用エンドポイント
 export async function GET() {
   return NextResponse.json({
     endpoint: "/api/og/generate",
     methods: ["POST"],
     description: "Generate OGP images for ingredients, articles, and tools",
+    actions: {
+      preview: "Generate image and return base64 preview (no upload)",
+      save: "Upload provided base64 image to Cloudinary",
+      default: "Legacy: generate and upload in one step",
+    },
     requiredFields: ["type", "slug", "name"],
-    optionalFields: ["nameEn", "category", "description", "style"],
+    optionalFields: [
+      "nameEn",
+      "category",
+      "description",
+      "style",
+      "action",
+      "imageBase64",
+    ],
     types: ["ingredient", "article", "tool"],
     styles: Object.keys(OGP_STYLES),
     outputSize: OGP_SIZE,

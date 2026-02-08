@@ -42,7 +42,7 @@ export const revalidate = 86400;
 
 const ARTICLE_DATA = {
   title:
-    "【2025年最新】マグネシウムサプリおすすめ比較｜形態別の吸収率で徹底分析",
+    "【2026年最新】マグネシウムサプリおすすめ比較｜形態別の吸収率で徹底分析",
   description:
     "マグネシウムサプリを形態（グリシン酸・クエン酸・酸化物）別に比較。吸収率・目的別の選び方・副作用を解説。",
   publishedAt: "2025-01-19",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     "吸収率",
     "睡眠",
     "筋肉",
-    "2025",
+    "2026",
   ],
   openGraph: {
     title: ARTICLE_DATA.title,

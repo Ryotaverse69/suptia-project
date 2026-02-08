@@ -38,7 +38,7 @@ import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 export const revalidate = 86400;
 
 const ARTICLE_DATA = {
-  title: "【2025年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
+  title: "【2026年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
   description:
     "ビタミンDサプリメントをD2/D3の違い・吸収率・安全性・コスパで徹底比較。日本人の8割が不足と言われるビタミンD、最適な選び方を解説。",
   publishedAt: "2025-01-18",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     "比較",
     "D3",
     "コレカルシフェロール",
-    "2025",
+    "2026",
     "ランキング",
     "骨",
     "免疫",

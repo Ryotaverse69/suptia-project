@@ -1,8 +1,9 @@
 /**
  * OGP画像管理ユーティリティ
  *
- * 画像はAI生成時にテキスト（タイトル・サブタイトル）を含めて生成されます。
- * Cloudinaryは画像ホスティングと最適化のみに使用。
+ * 画像はAI生成によるイラストのみ（テキストなし）。
+ * タイトル等のテキストはOGPメタタグで表示されます。
+ * Cloudinaryは画像ホスティングと最適化に使用。
  */
 
 // CloudinaryのOGP画像ベースURL
@@ -22,7 +23,6 @@ export const DEFAULT_OG_IMAGE = "/og-image.png";
 
 /**
  * 成分ページのOGP画像URLを取得
- * タイトルはAI生成時に画像内に含まれています
  */
 export function getIngredientOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
@@ -31,7 +31,6 @@ export function getIngredientOGImage(slug: string): string {
 
 /**
  * 記事ページのOGP画像URLを取得
- * タイトルはAI生成時に画像内に含まれています
  */
 export function getArticleOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
@@ -40,7 +39,6 @@ export function getArticleOGImage(slug: string): string {
 
 /**
  * ツールページのOGP画像URLを取得
- * タイトルはAI生成時に画像内に含まれています
  */
 export function getToolOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;

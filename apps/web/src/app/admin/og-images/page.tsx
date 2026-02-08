@@ -23,6 +23,8 @@ import {
   Search,
   Beaker,
   FileText,
+  Save,
+  X,
 } from "lucide-react";
 
 // スタイル定義
@@ -85,7 +87,7 @@ const ARTICLES: ArticleItem[] = [
   {
     _id: "article-vitamin-c-comparison",
     slug: "vitamin-c-comparison",
-    title: "【2025年最新】ビタミンCサプリおすすめ比較｜コスパ・品質で徹底分析",
+    title: "【2026年最新】ビタミンCサプリおすすめ比較｜コスパ・品質で徹底分析",
     description:
       "ビタミンCサプリメントを価格・成分量・コスパ・安全性で徹底比較。",
     category: "ビタミン",
@@ -94,7 +96,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-vitamin-d-comparison",
     slug: "vitamin-d-comparison",
     title:
-      "【2025年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
+      "【2026年最新】ビタミンDサプリおすすめ比較｜吸収率・安全性で徹底分析",
     description:
       "ビタミンDサプリをD2/D3の違い・吸収率・安全性・コスパで徹底比較。",
     category: "ビタミン",
@@ -103,7 +105,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-protein-comparison",
     slug: "protein-comparison",
     title:
-      "【2025年最新】プロテインおすすめ比較｜種類・コスパ・目的別で徹底分析",
+      "【2026年最新】プロテインおすすめ比較｜種類・コスパ・目的別で徹底分析",
     description:
       "プロテインをホエイ・カゼイン・ソイなど種類別に比較。WPC/WPI/WPHの違いを解説。",
     category: "アミノ酸・タンパク質",
@@ -112,7 +114,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-omega3-comparison",
     slug: "omega3-comparison",
     title:
-      "【2025年最新】オメガ3（フィッシュオイル）おすすめ比較｜EPA・DHA含有量で徹底分析",
+      "【2026年最新】オメガ3（フィッシュオイル）おすすめ比較｜EPA・DHA含有量で徹底分析",
     description: "オメガ3サプリをEPA/DHA比率・純度・酸化防止で徹底比較。",
     category: "脂肪酸",
   },
@@ -120,7 +122,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-magnesium-comparison",
     slug: "magnesium-comparison",
     title:
-      "【2025年最新】マグネシウムサプリおすすめ比較｜形態別の吸収率で徹底分析",
+      "【2026年最新】マグネシウムサプリおすすめ比較｜形態別の吸収率で徹底分析",
     description:
       "マグネシウムサプリを形態（グリシン酸・クエン酸・酸化物）別に比較。",
     category: "ミネラル",
@@ -129,7 +131,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-iron-comparison",
     slug: "iron-comparison",
     title:
-      "【2025年最新】鉄分サプリおすすめ比較｜ヘム鉄・非ヘム鉄・キレート鉄の違い",
+      "【2026年最新】鉄分サプリおすすめ比較｜ヘム鉄・非ヘム鉄・キレート鉄の違い",
     description:
       "鉄分サプリをヘム鉄・非ヘム鉄・キレート鉄で比較。吸収率・副作用を分析。",
     category: "ミネラル",
@@ -138,7 +140,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-zinc-comparison",
     slug: "zinc-comparison",
     title:
-      "【2025年最新】亜鉛サプリおすすめ比較｜形態別の吸収率・効果で徹底分析",
+      "【2026年最新】亜鉛サプリおすすめ比較｜形態別の吸収率・効果で徹底分析",
     description:
       "亜鉛サプリをピコリン酸・グルコン酸・クエン酸など形態別に比較。",
     category: "ミネラル",
@@ -147,7 +149,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-vitamin-b-comparison",
     slug: "vitamin-b-comparison",
     title:
-      "【2025年最新】ビタミンB群サプリおすすめ比較｜8種のBビタミンを徹底分析",
+      "【2026年最新】ビタミンB群サプリおすすめ比較｜8種のBビタミンを徹底分析",
     description:
       "ビタミンB群サプリをB1・B2・B6・B12・葉酸など8種の含有量で比較。",
     category: "ビタミン",
@@ -156,7 +158,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-collagen-comparison",
     slug: "collagen-comparison",
     title:
-      "【2025年最新】コラーゲンサプリおすすめ比較｜種類・原料・吸収率で徹底分析",
+      "【2026年最新】コラーゲンサプリおすすめ比較｜種類・原料・吸収率で徹底分析",
     description:
       "コラーゲンサプリをI型・II型・III型、魚由来・豚由来・ペプチドで比較。",
     category: "アミノ酸・タンパク質",
@@ -165,7 +167,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-probiotics-comparison",
     slug: "probiotics-comparison",
     title:
-      "【2025年最新】乳酸菌・プロバイオティクスおすすめ比較｜菌株・CFU数で徹底分析",
+      "【2026年最新】乳酸菌・プロバイオティクスおすすめ比較｜菌株・CFU数で徹底分析",
     description: "乳酸菌サプリをラクトバチルス・ビフィズス菌など菌株別に比較。",
     category: "プロバイオティクス",
   },
@@ -173,7 +175,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-nmn-comparison",
     slug: "nmn-comparison",
     title:
-      "【2025年最新】NMNサプリおすすめ比較｜純度・吸収率・コスパで徹底分析",
+      "【2026年最新】NMNサプリおすすめ比較｜純度・吸収率・コスパで徹底分析",
     description:
       "NMNサプリを純度・製法・吸収率・コスパで徹底比較。エイジングケア効果を解説。",
     category: "エイジングケア",
@@ -182,7 +184,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-ashwagandha-comparison",
     slug: "ashwagandha-comparison",
     title:
-      "【2025年最新】アシュワガンダおすすめ比較｜KSM-66・Sensoril等の規格で徹底分析",
+      "【2026年最新】アシュワガンダおすすめ比較｜KSM-66・Sensoril等の規格で徹底分析",
     description:
       "アシュワガンダをKSM-66®・Sensoril®・Shoden®など規格別に比較。",
     category: "ハーブ・アダプトゲン",
@@ -190,7 +192,7 @@ const ARTICLES: ArticleItem[] = [
   {
     _id: "article-creatine-comparison",
     slug: "creatine-comparison",
-    title: "【2025年最新】クレアチンおすすめ比較｜形態・純度・コスパで徹底分析",
+    title: "【2026年最新】クレアチンおすすめ比較｜形態・純度・コスパで徹底分析",
     description:
       "クレアチンをモノハイドレート・HCl・バッファードなど形態別に比較。",
     category: "スポーツ",
@@ -199,7 +201,7 @@ const ARTICLES: ArticleItem[] = [
     _id: "article-mct-oil-comparison",
     slug: "mct-oil-comparison",
     title:
-      "【2025年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
+      "【2026年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
     description:
       "MCTオイルをC8/C10比率・原料・品質で徹底比較。ケトジェニック向け選び方を解説。",
     category: "脂肪酸",
@@ -207,13 +209,26 @@ const ARTICLES: ArticleItem[] = [
 ];
 
 interface GenerationStatus {
-  [slug: string]: "pending" | "generating" | "success" | "error" | "exists";
+  [slug: string]:
+    | "pending"
+    | "generating"
+    | "preview"
+    | "saving"
+    | "success"
+    | "error"
+    | "exists";
 }
 
 interface GeneratedImage {
   slug: string;
   url: string;
   type: string;
+}
+
+interface PendingPreview {
+  base64: string;
+  type: string;
+  slug: string;
 }
 
 export default function OGImagesAdminPage() {
@@ -230,6 +245,9 @@ export default function OGImagesAdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<StyleKey>("flat-minimal");
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [pendingPreviews, setPendingPreviews] = useState<{
+    [slug: string]: PendingPreview;
+  }>({});
 
   // 生成中止用のref
   const cancelRef = useRef(false);
@@ -361,7 +379,7 @@ export default function OGImagesAdminPage() {
     cancelRef.current = true;
   }, []);
 
-  // 単一画像生成（成分）
+  // 単一画像生成（成分）→ プレビューモード
   const generateIngredientOG = async (ingredient: IngredientItem) => {
     if (!token) return;
 
@@ -376,6 +394,7 @@ export default function OGImagesAdminPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          action: "preview",
           type: "ingredient",
           slug,
           name: ingredient.name,
@@ -387,12 +406,12 @@ export default function OGImagesAdminPage() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setStatus((prev) => ({ ...prev, [slug]: "success" }));
-        setGeneratedImages((prev) => [
+      if (data.success && data.preview) {
+        setStatus((prev) => ({ ...prev, [slug]: "preview" }));
+        setPendingPreviews((prev) => ({
           ...prev,
-          { slug, url: data.ogImage.url, type: "ingredient" },
-        ]);
+          [slug]: { base64: data.preview.base64, type: "ingredient", slug },
+        }));
       } else {
         setStatus((prev) => ({ ...prev, [slug]: "error" }));
         console.error(`Failed to generate OG for ${slug}:`, data.error);
@@ -403,7 +422,7 @@ export default function OGImagesAdminPage() {
     }
   };
 
-  // 単一画像生成（記事）
+  // 単一画像生成（記事）→ プレビューモード
   const generateArticleOG = async (article: ArticleItem) => {
     if (!token) return;
 
@@ -418,6 +437,7 @@ export default function OGImagesAdminPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          action: "preview",
           type: "article",
           slug,
           name: article.title,
@@ -429,12 +449,12 @@ export default function OGImagesAdminPage() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setStatus((prev) => ({ ...prev, [slug]: "success" }));
-        setGeneratedImages((prev) => [
+      if (data.success && data.preview) {
+        setStatus((prev) => ({ ...prev, [slug]: "preview" }));
+        setPendingPreviews((prev) => ({
           ...prev,
-          { slug, url: data.ogImage.url, type: "article" },
-        ]);
+          [slug]: { base64: data.preview.base64, type: "article", slug },
+        }));
       } else {
         setStatus((prev) => ({ ...prev, [slug]: "error" }));
         console.error(`Failed to generate OG for ${slug}:`, data.error);
@@ -443,6 +463,67 @@ export default function OGImagesAdminPage() {
       setStatus((prev) => ({ ...prev, [slug]: "error" }));
       console.error(`Error generating OG for ${slug}:`, err);
     }
+  };
+
+  // プレビュー画像を保存（Cloudinaryにアップロード）
+  const savePreview = async (slug: string) => {
+    if (!token) return;
+
+    const preview = pendingPreviews[slug];
+    if (!preview) return;
+
+    setStatus((prev) => ({ ...prev, [slug]: "saving" }));
+
+    try {
+      const response = await fetch("/api/og/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          action: "save",
+          type: preview.type,
+          slug,
+          imageBase64: preview.base64,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus((prev) => ({ ...prev, [slug]: "success" }));
+        setGeneratedImages((prev) => [
+          ...prev.filter((img) => img.slug !== slug),
+          { slug, url: data.ogImage.url, type: preview.type },
+        ]);
+        setPendingPreviews((prev) => {
+          const next = { ...prev };
+          delete next[slug];
+          return next;
+        });
+      } else {
+        setStatus((prev) => ({ ...prev, [slug]: "error" }));
+        console.error(`Failed to save OG for ${slug}:`, data.error);
+      }
+    } catch (err) {
+      setStatus((prev) => ({ ...prev, [slug]: "error" }));
+      console.error(`Error saving OG for ${slug}:`, err);
+    }
+  };
+
+  // プレビュー画像を破棄
+  const discardPreview = (slug: string) => {
+    setStatus((prev) => {
+      const next = { ...prev };
+      delete next[slug];
+      return next;
+    });
+    setPendingPreviews((prev) => {
+      const next = { ...prev };
+      delete next[slug];
+      return next;
+    });
   };
 
   // 選択項目の一括生成
@@ -735,11 +816,70 @@ export default function OGImagesAdminPage() {
           )}
         </div>
 
+        {/* プレビュー画像（保存待ち） */}
+        {Object.keys(pendingPreviews).length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl shadow-sm p-6 mb-6">
+            <h2 className="text-lg font-bold text-amber-900 mb-2">
+              プレビュー（未保存） ({Object.keys(pendingPreviews).length})
+            </h2>
+            <p className="text-sm text-amber-700 mb-4">
+              気に入った画像は「保存」、やり直す場合は「破棄」してください。
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(pendingPreviews).map(([slug, preview]) => (
+                <div
+                  key={slug}
+                  className="bg-white rounded-lg overflow-hidden border border-amber-200"
+                >
+                  <div className="relative aspect-[1.91/1]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`data:image/png;base64,${preview.base64}`}
+                      alt={slug}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2">
+                      {slug}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 p-3">
+                    <button
+                      onClick={() => savePreview(slug)}
+                      disabled={status[slug] === "saving"}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 disabled:opacity-50 transition"
+                    >
+                      {status[slug] === "saving" ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          保存中...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          保存
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => discardPreview(slug)}
+                      disabled={status[slug] === "saving"}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition"
+                    >
+                      <X className="w-4 h-4" />
+                      破棄
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 生成済み画像プレビュー */}
         {generatedImages.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              生成済み画像 ({generatedImages.length})
+              保存済み画像 ({generatedImages.length})
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {generatedImages.map((img) => (
@@ -837,10 +977,22 @@ export default function OGImagesAdminPage() {
                                 生成中
                               </span>
                             )}
+                            {itemStatus === "preview" && (
+                              <span className="inline-flex items-center gap-1 text-amber-600 text-sm">
+                                <ImageIcon className="w-4 h-4" />
+                                プレビュー
+                              </span>
+                            )}
+                            {itemStatus === "saving" && (
+                              <span className="inline-flex items-center gap-1 text-purple-600 text-sm">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                保存中
+                              </span>
+                            )}
                             {itemStatus === "success" && (
                               <span className="inline-flex items-center gap-1 text-green-600 text-sm">
                                 <Check className="w-4 h-4" />
-                                完了
+                                保存済み
                               </span>
                             )}
                             {itemStatus === "exists" && (
@@ -862,21 +1014,42 @@ export default function OGImagesAdminPage() {
                             )}
                           </td>
                           <td className="px-4 py-3">
-                            <button
-                              onClick={() => generateIngredientOG(ingredient)}
-                              disabled={itemStatus === "generating" || !token}
-                              className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
-                                itemStatus === "exists" ||
+                            {itemStatus === "preview" ? (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => savePreview(slug)}
+                                  className="px-3 py-1 text-xs font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
+                                >
+                                  保存
+                                </button>
+                                <button
+                                  onClick={() => discardPreview(slug)}
+                                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                                >
+                                  破棄
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => generateIngredientOG(ingredient)}
+                                disabled={
+                                  itemStatus === "generating" ||
+                                  itemStatus === "saving" ||
+                                  !token
+                                }
+                                className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                                  itemStatus === "exists" ||
+                                  itemStatus === "success"
+                                    ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                                    : "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                                }`}
+                              >
+                                {itemStatus === "exists" ||
                                 itemStatus === "success"
-                                  ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
-                                  : "text-blue-600 bg-blue-50 hover:bg-blue-100"
-                              }`}
-                            >
-                              {itemStatus === "exists" ||
-                              itemStatus === "success"
-                                ? "再生成"
-                                : "生成"}
-                            </button>
+                                  ? "再生成"
+                                  : "生成"}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );
@@ -921,10 +1094,22 @@ export default function OGImagesAdminPage() {
                                 生成中
                               </span>
                             )}
+                            {itemStatus === "preview" && (
+                              <span className="inline-flex items-center gap-1 text-amber-600 text-sm">
+                                <ImageIcon className="w-4 h-4" />
+                                プレビュー
+                              </span>
+                            )}
+                            {itemStatus === "saving" && (
+                              <span className="inline-flex items-center gap-1 text-purple-600 text-sm">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                保存中
+                              </span>
+                            )}
                             {itemStatus === "success" && (
                               <span className="inline-flex items-center gap-1 text-green-600 text-sm">
                                 <Check className="w-4 h-4" />
-                                完了
+                                保存済み
                               </span>
                             )}
                             {itemStatus === "exists" && (
@@ -946,21 +1131,42 @@ export default function OGImagesAdminPage() {
                             )}
                           </td>
                           <td className="px-4 py-3">
-                            <button
-                              onClick={() => generateArticleOG(article)}
-                              disabled={itemStatus === "generating" || !token}
-                              className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
-                                itemStatus === "exists" ||
+                            {itemStatus === "preview" ? (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => savePreview(slug)}
+                                  className="px-3 py-1 text-xs font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
+                                >
+                                  保存
+                                </button>
+                                <button
+                                  onClick={() => discardPreview(slug)}
+                                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                                >
+                                  破棄
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => generateArticleOG(article)}
+                                disabled={
+                                  itemStatus === "generating" ||
+                                  itemStatus === "saving" ||
+                                  !token
+                                }
+                                className={`px-3 py-1 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                                  itemStatus === "exists" ||
+                                  itemStatus === "success"
+                                    ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                                    : "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                                }`}
+                              >
+                                {itemStatus === "exists" ||
                                 itemStatus === "success"
-                                  ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
-                                  : "text-blue-600 bg-blue-50 hover:bg-blue-100"
-                              }`}
-                            >
-                              {itemStatus === "exists" ||
-                              itemStatus === "success"
-                                ? "再生成"
-                                : "生成"}
-                            </button>
+                                  ? "再生成"
+                                  : "生成"}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );
@@ -975,16 +1181,21 @@ export default function OGImagesAdminPage() {
           <h3 className="font-bold text-blue-900 mb-2">使い方</h3>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>1. 「既存画像をチェック」で生成済み画像を確認</li>
-            <li>2. 生成したい成分を選択（複数可）</li>
-            <li>3. 「選択項目を生成」ボタンをクリック</li>
-            <li>4. 途中で止めたい場合は「中止」ボタンで停止</li>
-            <li>5. 画像はCloudinaryに自動アップロード</li>
-            <li>6. 成分ページのOGP/アイキャッチに自動適用</li>
+            <li>2. 生成したい成分/記事を選択（複数可）</li>
+            <li>
+              3. 「選択項目を生成」ボタンまたは個別の「生成」ボタンをクリック
+            </li>
+            <li>4. 生成後、プレビューが表示されます</li>
+            <li>5. 気に入った画像は「保存」、やり直す場合は「破棄」</li>
+            <li>
+              6. 保存するとCloudinaryにアップロードされ、サイトに反映されます
+            </li>
           </ul>
           <p className="text-xs text-blue-600 mt-3">
             ※
             生成には1件あたり約10-20秒かかります。APIレート制限のため、連続生成時は2秒間隔で処理されます。
-            <br />※ 「再生成」を押すと既存の画像が上書きされます。
+            <br />※
+            保存するまで画像は反映されません。気に入らなければ何度でも再生成できます。
           </p>
         </div>
       </div>

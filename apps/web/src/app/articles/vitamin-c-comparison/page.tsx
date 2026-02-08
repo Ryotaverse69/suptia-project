@@ -38,7 +38,7 @@ import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 export const revalidate = 86400; // 24時間キャッシュ
 
 const ARTICLE_DATA = {
-  title: "【2025年最新】ビタミンCサプリおすすめ比較｜コスパ・品質で徹底分析",
+  title: "【2026年最新】ビタミンCサプリおすすめ比較｜コスパ・品質で徹底分析",
   description:
     "ビタミンCサプリメントを価格・成分量・コスパ・安全性で徹底比較。mg単価から見た本当のコスパランキングと、目的別おすすめ商品を紹介。",
   publishedAt: "2025-01-15",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     "おすすめ",
     "比較",
     "コスパ",
-    "2025",
+    "2026",
     "ランキング",
     "mg単価",
     "アスコルビン酸",

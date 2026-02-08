@@ -37,7 +37,7 @@ import { ArticleEyecatch } from "@/components/articles/ArticleEyecatch";
 export const revalidate = 86400;
 
 const ARTICLE_DATA = {
-  title: "【2025年最新】プロテインおすすめ比較｜種類・コスパ・目的別で徹底分析",
+  title: "【2026年最新】プロテインおすすめ比較｜種類・コスパ・目的別で徹底分析",
   description:
     "プロテインをホエイ・カゼイン・ソイなど種類別に比較。WPC/WPI/WPHの違い、目的別の選び方、コスパランキングを解説。",
   publishedAt: "2025-01-19",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     "ソイ",
     "WPC",
     "WPI",
-    "2025",
+    "2026",
     "ランキング",
     "筋トレ",
     "ダイエット",

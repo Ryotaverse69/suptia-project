@@ -39,7 +39,7 @@ export const revalidate = 86400;
 
 const ARTICLE_DATA = {
   title:
-    "【2025年最新】オメガ3（フィッシュオイル）おすすめ比較｜EPA・DHA含有量で徹底分析",
+    "【2026年最新】オメガ3（フィッシュオイル）おすすめ比較｜EPA・DHA含有量で徹底分析",
   description:
     "オメガ3サプリをEPA/DHA比率・純度・酸化防止で徹底比較。魚油・クリルオイル・藻類由来の違い、効果的な選び方を解説。",
   publishedAt: "2025-01-19",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     "クリルオイル",
     "サプリメント",
     "比較",
-    "2025",
+    "2026",
     "おすすめ",
   ],
   openGraph: {

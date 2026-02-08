@@ -39,7 +39,7 @@ export const revalidate = 86400;
 
 const ARTICLE_DATA = {
   title:
-    "【2025年最新】鉄分サプリおすすめ比較｜ヘム鉄・非ヘム鉄・キレート鉄の違い",
+    "【2026年最新】鉄分サプリおすすめ比較｜ヘム鉄・非ヘム鉄・キレート鉄の違い",
   description:
     "鉄分サプリをヘム鉄・非ヘム鉄・キレート鉄で比較。吸収率・副作用・コスパを徹底分析。女性・妊婦・アスリート向けの選び方。",
   publishedAt: "2025-01-19",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     "女性",
     "妊娠",
     "吸収率",
-    "2025",
+    "2026",
   ],
   openGraph: {
     title: ARTICLE_DATA.title,

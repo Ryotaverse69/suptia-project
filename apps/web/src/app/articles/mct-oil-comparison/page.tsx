@@ -106,7 +106,7 @@ const RELATED_INGREDIENTS = [
 
 const ARTICLE_DATA = {
   title:
-    "【2025年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
+    "【2026年最新】MCTオイルおすすめ比較｜C8・C10比率とケトン体生成効率で徹底分析",
   description:
     "MCTオイルをC8/C10比率・原料・品質で徹底比較。ケトジェニックダイエット、認知機能、エネルギー補給に最適な選び方を解説。",
   publishedAt: "2025-01-19",
