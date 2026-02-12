@@ -308,7 +308,8 @@ export default function OGImagesAdminPage() {
         clearTimeout(timeout);
         resolve(false);
       };
-      img.src = url;
+      // キャッシュバスティング: ブラウザキャッシュを回避して最新画像を取得
+      img.src = `${url}?t=${Date.now()}`;
     });
   };
 
@@ -346,7 +347,8 @@ export default function OGImagesAdminPage() {
               : getArticleOGImage(slug);
 
           const exists = await checkImageExists(ogUrl);
-          return { slug, exists, url: ogUrl };
+          // プレビュー表示用にもキャッシュバスティングを付与
+          return { slug, exists, url: `${ogUrl}?t=${Date.now()}` };
         }),
       );
 
