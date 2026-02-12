@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   title: "ログイン | サプティア",
   description:
     "サプティアにログインして、パーソナライズされたサプリメント推奨を受け取りましょう。",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default function LoginPage() {

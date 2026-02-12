@@ -26,7 +26,7 @@ import {
 import { generateFAQStructuredData } from "@/lib/structured-data";
 import { ProductFAQ } from "@/components/ProductFAQ";
 import { generateProductFAQs } from "@/lib/product-faq";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { isValidSlug } from "@/lib/sanitize";
 import { headers } from "next/headers";
@@ -444,7 +444,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const product = await getProduct(slug);
 
-  if (!product) notFound();
+  if (!product) permanentRedirect("/products");
 
   const allIngredients = await getAllIngredients();
 

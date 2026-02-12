@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Sanityから商品と成分のslugを取得
   const [productsRaw, ingredientsRaw] = await Promise.all([
     sanity.fetch<ProductSlug[]>(`
-      *[_type == "product" && defined(slug.current) && slug.current != ""]{
+      *[_type == "product" && defined(slug.current) && slug.current != "" && availability != "discontinued"]{
         slug,
         _updatedAt
       }
