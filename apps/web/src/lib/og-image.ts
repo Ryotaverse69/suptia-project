@@ -21,12 +21,15 @@ export const OG_IMAGE_PATHS = {
 // デフォルトOGP画像
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 
+// OGP画像バージョン（画像更新時にインクリメントしてVercelキャッシュを無効化）
+const OG_IMAGE_VERSION = 2;
+
 /**
  * 成分ページのOGP画像URLを取得
  */
 export function getIngredientOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.ingredients}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.ingredients}/${slug}?v=${OG_IMAGE_VERSION}`;
 }
 
 /**
@@ -34,7 +37,7 @@ export function getIngredientOGImage(slug: string): string {
  */
 export function getArticleOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.articles}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.articles}/${slug}?v=${OG_IMAGE_VERSION}`;
 }
 
 /**
@@ -42,7 +45,7 @@ export function getArticleOGImage(slug: string): string {
  */
 export function getToolOGImage(slug: string): string {
   if (!CLOUDINARY_BASE) return DEFAULT_OG_IMAGE;
-  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.tools}/${slug}`;
+  return `${CLOUDINARY_BASE}/f_auto,q_90,w_1200,h_630,c_fill/${OG_IMAGE_PATHS.tools}/${slug}?v=${OG_IMAGE_VERSION}`;
 }
 
 /**
