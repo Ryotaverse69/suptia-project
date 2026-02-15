@@ -36,6 +36,7 @@ interface ProductListItemProps {
     imageUrl?: string;
     externalImageUrl?: string;
     badges?: BadgeType[];
+    form?: string;
   };
 }
 
@@ -52,6 +53,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
     imageUrl,
     externalImageUrl,
     badges,
+    form,
   } = product;
 
   const safePriceJPY = priceJPY ?? 0;
@@ -88,6 +90,16 @@ export function ProductListItem({ product }: ProductListItemProps) {
 
   // 主成分名を取得
   const mainIngredient = ingredients?.[0]?.ingredient?.name;
+
+  // 剤形ラベル
+  const formLabel: Record<string, string> = {
+    capsule: "カプセル",
+    tablet: "タブレット",
+    softgel: "ソフトジェル",
+    powder: "パウダー",
+    liquid: "リキッド",
+    gummy: "グミ",
+  };
 
   return (
     <Link href={`/products/${productSlug}`}>
@@ -195,18 +207,31 @@ export function ProductListItem({ product }: ProductListItemProps) {
             </h3>
 
             <div className="mt-auto">
-              {/* 成分タグ */}
-              {mainIngredient && (
-                <div className="mb-2">
-                  <span
-                    className="inline-block px-2.5 py-1 rounded-full text-[12px] font-semibold"
-                    style={{
-                      backgroundColor: `${systemColors.blue}15`,
-                      color: systemColors.blue,
-                    }}
-                  >
-                    {mainIngredient}
-                  </span>
+              {/* 成分タグ・剤形タグ */}
+              {(mainIngredient || form) && (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {mainIngredient && (
+                    <span
+                      className="inline-block px-2.5 py-1 rounded-full text-[12px] font-semibold"
+                      style={{
+                        backgroundColor: `${systemColors.blue}15`,
+                        color: systemColors.blue,
+                      }}
+                    >
+                      {mainIngredient}
+                    </span>
+                  )}
+                  {form && formLabel[form] && (
+                    <span
+                      className="inline-block px-2.5 py-1 rounded-full text-[12px] font-medium"
+                      style={{
+                        backgroundColor: "rgba(142, 142, 147, 0.1)",
+                        color: appleWebColors.textSecondary,
+                      }}
+                    >
+                      {formLabel[form]}
+                    </span>
+                  )}
                 </div>
               )}
 

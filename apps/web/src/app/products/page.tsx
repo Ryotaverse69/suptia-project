@@ -65,6 +65,7 @@ interface Product {
   servingsPerDay: number;
   externalImageUrl?: string;
   source?: string;
+  form?: string;
   slug: {
     current: string;
   };
@@ -96,6 +97,7 @@ async function getAllProducts(): Promise<Product[]> {
     servingsPerDay,
     externalImageUrl,
     source,
+    form,
     slug,
     priceData[]{
       source,

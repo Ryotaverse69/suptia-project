@@ -29,6 +29,17 @@ const badgeOptions = [
   { label: "高安全性", value: "high-safety" },
 ];
 
+// 剤形（形状）定義
+const formOptions = [
+  { label: "カプセル", value: "capsule" },
+  { label: "タブレット", value: "tablet" },
+  { label: "ソフトジェル", value: "softgel" },
+  { label: "パウダー", value: "powder" },
+  { label: "リキッド", value: "liquid" },
+  { label: "グミ", value: "gummy" },
+  { label: "形状不明", value: "unknown" },
+];
+
 interface FilterSection {
   title: string;
   filterKey:
@@ -36,7 +47,8 @@ interface FilterSection {
     | "evidenceLevel"
     | "ecSite"
     | "badges"
-    | "ingredient";
+    | "ingredient"
+    | "formType";
   options: { label: string; value: string; count?: number }[];
 }
 
@@ -48,6 +60,7 @@ interface FilterSidebarProps {
     ecSite?: string | null;
     badges?: string[];
     ingredient?: string | null;
+    formType?: string | null;
   }) => void;
   onClearFilters?: () => void;
   activeFilters?: {
@@ -57,12 +70,14 @@ interface FilterSidebarProps {
     ecSite?: string | null;
     badges?: string[];
     ingredient?: string | null;
+    formType?: string | null;
   };
   filterCounts?: {
     ingredients: Record<string, number>;
     sources: Record<string, number>;
     priceRanges: Record<string, number>;
     tiers: Record<string, number>;
+    forms: Record<string, number>;
   };
 }
 
@@ -126,6 +141,14 @@ export function FilterSidebar({
       ],
     },
     {
+      title: "剤形",
+      filterKey: "formType",
+      options: formOptions.map((form) => ({
+        ...form,
+        count: filterCounts?.forms[form.value],
+      })),
+    },
+    {
       title: "購入サイト",
       filterKey: "ecSite",
       options: [
@@ -171,7 +194,8 @@ export function FilterSidebar({
       | "evidenceLevel"
       | "ecSite"
       | "badges"
-      | "ingredient",
+      | "ingredient"
+      | "formType",
     value: string,
   ) => {
     if (!onFilterChange) return;
@@ -383,8 +407,10 @@ export function FilterSidebar({
                               )
                             : section.filterKey === "ingredient"
                               ? activeFilters.ingredient === option.value
-                              : activeFilters[section.filterKey] ===
-                                option.value;
+                              : section.filterKey === "formType"
+                                ? activeFilters.formType === option.value
+                                : activeFilters[section.filterKey] ===
+                                  option.value;
 
                         const hasProducts =
                           section.filterKey === "badges" ||
