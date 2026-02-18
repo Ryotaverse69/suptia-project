@@ -166,17 +166,19 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 
 ## 詳細ドキュメント
 
-| トピック             | ファイル                                                                           |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| ヒーロー×AI設計      | [docs/HERO_AI_DESIGN.md](docs/HERO_AI_DESIGN.md)                                   |
-| AIコンシェルジュ仕様 | [docs/AI_CONCIERGE_SPEC.md](docs/AI_CONCIERGE_SPEC.md)                             |
-| AI検索共存戦略       | [docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt](docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt) |
-| EC統合ロードマップ   | [docs/ROADMAP_EC_INTEGRATION.md](docs/ROADMAP_EC_INTEGRATION.md)                   |
-| マルチビタミンコスパ | [docs/MULTIVITAMIN_COST_LOGIC.md](docs/MULTIVITAMIN_COST_LOGIC.md)                 |
-| アフィリエイトAPI    | [docs/AFFILIATE_API_GUIDE.md](docs/AFFILIATE_API_GUIDE.md)                         |
-| iHerb統合            | [docs/IHERB_INTEGRATION_SUMMARY.md](docs/IHERB_INTEGRATION_SUMMARY.md)             |
-| 記事作成ガイド       | [docs/ARTICLE_GUIDELINES.md](docs/ARTICLE_GUIDELINES.md)                           |
-| MCP設定              | [.mcp/README.md](.mcp/README.md)                                                   |
+| トピック               | ファイル                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| ヒーロー×AI設計        | [docs/HERO_AI_DESIGN.md](docs/HERO_AI_DESIGN.md)                                     |
+| AIコンシェルジュ仕様   | [docs/AI_CONCIERGE_SPEC.md](docs/AI_CONCIERGE_SPEC.md)                               |
+| AI検索共存戦略         | [docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt](docs/AI_SEARCH_COEXISTENCE_STRATEGY.txt)   |
+| EC統合ロードマップ     | [docs/ROADMAP_EC_INTEGRATION.md](docs/ROADMAP_EC_INTEGRATION.md)                     |
+| マルチビタミンコスパ   | [docs/MULTIVITAMIN_COST_LOGIC.md](docs/MULTIVITAMIN_COST_LOGIC.md)                   |
+| アフィリエイトAPI      | [docs/AFFILIATE_API_GUIDE.md](docs/AFFILIATE_API_GUIDE.md)                           |
+| iHerb統合              | [docs/IHERB_INTEGRATION_SUMMARY.md](docs/IHERB_INTEGRATION_SUMMARY.md)               |
+| 記事作成ガイド         | [docs/ARTICLE_GUIDELINES.md](docs/ARTICLE_GUIDELINES.md)                             |
+| マルチエージェント監修 | [docs/MULTI_AGENT_SUPERVISION.md](docs/MULTI_AGENT_SUPERVISION.md)                   |
+| 新機能6本柱計画        | [.claude/plans/squishy-inventing-cloud.md](.claude/plans/squishy-inventing-cloud.md) |
+| MCP設定                | [.mcp/README.md](.mcp/README.md)                                                     |
 
 ---
 
@@ -194,7 +196,7 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 ### 2026年1月
 
 - AIコンシェルジュ Phase 1（チャットUI、プラン別制限）
-- 有料会員機能（Free / Pro ¥490 / Pro+Safety ¥980）
+- 有料会員機能（Free / Pro ¥980 / Pro+Safety ¥1,980）
 - **GPT Actions準備**（公開API設計、OpenAPI仕様書作成、llms.txt v3.0強化）
 
 ### 2026年2月
@@ -202,16 +204,73 @@ AMAZON_ASSOCIATE_TAG=suptia6902-22
 - AIコンシェルジュ Phase 2（価格履歴統合、推薦ロジック可視化）
 - Amazon PA-API統合
 - **GPT Actions公開**（GPT Store登録、ChatGPT Health対応）
+- **形状フィルター**（商品一覧に剤形フィルター追加）
 
 ### 2026年3月
 
 - AIコンシェルジュ Phase 3（相互作用チェッカー、Safety機能）
 - iHerb CJ再申請
+- **AIマルチエージェント監修 Phase 1**（薬剤師AI + 法令AI基盤 + レビューモデレーション + 商品情報チェック）
+- **口コミ・レビュー Phase 1**（投稿・表示・基本評価）
 
-### 2026年4月〜
+### 2026年4月
 
+- **相互作用チェッカー Phase 1**（サプリ-サプリ相互作用DB + 専用UI）
 - 英語版リリース準備
 - GPT Actions改善（利用データ分析、機能拡充）
+
+### 2026年5月
+
+- **マイノート Phase 1**（服用記録・カレンダー・効果追跡）
+- **口コミ・レビュー Phase 2**（5軸サブ評価・AIモデレーション統合）
+
+### 2026年6月
+
+- **AIマルチエージェント監修 Phase 2**（全5エージェント + 成分ガイド・比較記事全チェック + バッジUI + `/about/ai-supervision` 解説ページ公開）
+
+### 2026年7月
+
+- **相互作用チェッカー Phase 2**（マトリクスビジュアル・マイノート連携）
+- **PHRデータ連携 Phase 1**（手動入力・ダッシュボード）
+
+### 2026年8-9月
+
+- **マイノート Phase 2**（コンシェルジュ統合・エクスポート）
+- **PHRデータ連携 Phase 2**（Google Fit連携）
+- **AIマルチエージェント監修 Phase 3**（コンシェルジュQA + 診断結果チェック + note記事公開 + バッチ再監修Cron）
+
+---
+
+## AIマルチエージェント監修システム
+
+サプティア独自の信頼性基盤。5つのAI専門家がすべてのコンテンツを多角的に監修。
+
+### 5エージェント
+
+| エージェント    | 専門領域                            | モデル       |
+| --------------- | ----------------------------------- | ------------ |
+| 💊 薬剤師AI     | 薬物相互作用・用量安全性・禁忌      | Sonnet       |
+| 🥗 管理栄養士AI | 栄養学的正確性・食品-サプリ相互作用 | Haiku        |
+| 🔬 臨床研究者AI | エビデンス評価・研究結果の信頼性    | Sonnet       |
+| ⚖️ 薬機法AI     | 4法令コンプライアンス               | Haiku+ルール |
+| 🛡️ 消費者保護AI | 価格適正性・公正な表現              | Haiku        |
+
+### 適用対象（7領域）
+
+1. 成分ガイド記事 — `/ingredients/[slug]`
+2. 比較記事 — `/articles/[comparison]`
+3. 商品情報ページ — `/products/[slug]`
+4. ユーザーレビュー — 投稿時自動モデレーション
+5. AIコンシェルジュ応答 — 回答品質QA
+6. 診断結果 — 推薦の妥当性チェック
+7. 安全性情報 — 相互作用チェッカー結果
+
+### 詳細ドキュメント
+
+| トピック           | ファイル                                                           |
+| ------------------ | ------------------------------------------------------------------ |
+| 実装計画           | [docs/MULTI_AGENT_SUPERVISION.md](docs/MULTI_AGENT_SUPERVISION.md) |
+| AI監修プロセス解説 | `/about/ai-supervision` ページ                                     |
 
 ---
 

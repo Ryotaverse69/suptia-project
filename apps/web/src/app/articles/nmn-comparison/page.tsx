@@ -1025,8 +1025,8 @@ export default async function NMNComparisonPage() {
             NMNは目的に応じて摂取量を調整できます。まずは少量から始めて、体調を見ながら増量するのがおすすめです。
           </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-[14px]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[480px] text-[14px]">
               <thead>
                 <tr
                   className="border-b"

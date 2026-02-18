@@ -1017,8 +1017,8 @@ export default async function ZincComparisonPage() {
             亜鉛は過剰摂取による副作用もあるため、目的に応じた適切な量を守ることが大切です。
           </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-[14px]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[480px] text-[14px]">
               <thead>
                 <tr
                   className="border-b"

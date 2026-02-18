@@ -908,7 +908,7 @@ export default function AboutPage() {
                   </div>
                   <ul className="space-y-3">
                     {[
-                      "新規質問 週5回",
+                      "新規質問 週3回",
                       "4キャラクター選択",
                       "価格履歴 30日間",
                       "高速応答モデル (Haiku)",
@@ -970,7 +970,7 @@ export default function AboutPage() {
                       className="text-[34px] font-bold"
                       style={{ color: appleWebColors.textPrimary }}
                     >
-                      ¥590
+                      ¥980
                       <span
                         className="text-[15px] font-normal ml-1"
                         style={{ color: appleWebColors.textSecondary }}
@@ -1034,7 +1034,7 @@ export default function AboutPage() {
                       className="text-[34px] font-bold"
                       style={{ color: appleWebColors.textPrimary }}
                     >
-                      ¥1,280
+                      ¥1,980
                       <span
                         className="text-[15px] font-normal ml-1"
                         style={{ color: appleWebColors.textSecondary }}
@@ -1045,8 +1045,8 @@ export default function AboutPage() {
                   </div>
                   <ul className="space-y-3">
                     {[
-                      "新規質問 無制限",
-                      "追加質問（深掘り） 無制限",
+                      "新規質問 週50回",
+                      "追加質問（深掘り） 5回/会話",
                       "価格履歴 全期間",
                       "最高精度モデル (Sonnet+Opus)",
                     ].map((item, i) => (

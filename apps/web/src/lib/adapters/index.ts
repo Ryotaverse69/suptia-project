@@ -99,21 +99,20 @@ export function createAdaptersFromEnv(): ProductPriceAdapter[] {
     );
   }
 
-  // Amazon PA-API（オプション - 売上発生後に有効化）
-  // ⚠️ 注意: 過去30日以内に3件以上の売上が必要
+  // Amazon Creators API（アソシエイトプログラム承認後に有効化）
   // ENABLE_AMAZON_API=true の場合のみ有効化
   if (
     process.env.ENABLE_AMAZON_API === "true" &&
-    process.env.AMAZON_ACCESS_KEY_ID &&
-    process.env.AMAZON_SECRET_ACCESS_KEY &&
+    process.env.AMAZON_CREDENTIAL_ID &&
+    process.env.AMAZON_CREDENTIAL_SECRET &&
     process.env.AMAZON_ASSOCIATE_TAG
   ) {
     adapters.push(
       createAdapter("amazon", {
-        accessKeyId: process.env.AMAZON_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AMAZON_SECRET_ACCESS_KEY,
+        credentialId: process.env.AMAZON_CREDENTIAL_ID,
+        credentialSecret: process.env.AMAZON_CREDENTIAL_SECRET,
         associateTag: process.env.AMAZON_ASSOCIATE_TAG,
-        region: process.env.AMAZON_REGION || "us-west-2",
+        version: process.env.AMAZON_API_VERSION || "2.3",
         marketplace: process.env.AMAZON_MARKETPLACE || "www.amazon.co.jp",
       }),
     );

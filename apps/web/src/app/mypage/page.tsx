@@ -1092,7 +1092,7 @@ export default function MyPage() {
                               className="flex-shrink-0"
                               style={{ color: systemColors.green }}
                             />
-                            <span>新規質問 週5回</span>
+                            <span>新規質問 週3回</span>
                           </li>
                           <li
                             className="flex items-center gap-2"
@@ -1155,7 +1155,7 @@ export default function MyPage() {
                               className="flex-shrink-0"
                               style={{ color: systemColors.green }}
                             />
-                            <span>会話履歴 3日間保存</span>
+                            <span>会話履歴 1日間保存</span>
                           </li>
                           <li
                             className="flex items-center gap-2"
@@ -1231,7 +1231,7 @@ export default function MyPage() {
                           className="text-[28px] font-bold"
                           style={{ color: appleWebColors.textPrimary }}
                         >
-                          ¥590
+                          ¥980
                           <span
                             className="text-[13px] font-normal ml-1"
                             style={{ color: appleWebColors.textSecondary }}
@@ -1414,7 +1414,7 @@ export default function MyPage() {
                           className="text-[28px] font-bold"
                           style={{ color: appleWebColors.textPrimary }}
                         >
-                          ¥1,280
+                          ¥1,980
                           <span
                             className="text-[13px] font-normal ml-1"
                             style={{ color: appleWebColors.textSecondary }}
@@ -1443,7 +1443,7 @@ export default function MyPage() {
                               style={{ color: systemColors.green }}
                             />
                             <span>
-                              新規質問 <strong>無制限</strong>
+                              新規質問 <strong>週50回</strong>
                             </span>
                           </li>
                           <li
@@ -1456,7 +1456,7 @@ export default function MyPage() {
                               style={{ color: systemColors.green }}
                             />
                             <span>
-                              追加質問（深掘り） <strong>無制限</strong>
+                              追加質問（深掘り） <strong>5回/会話</strong>
                             </span>
                           </li>
                           <li
@@ -1601,7 +1601,7 @@ export default function MyPage() {
                               className="flex-shrink-0"
                               style={{ color: systemColors.green }}
                             />
-                            <span>複雑ケースはOpus 4.5昇格</span>
+                            <span>複雑ケースは最新Opus昇格</span>
                           </li>
                         </ul>
                       </div>
@@ -1662,7 +1662,7 @@ export default function MyPage() {
                             className="text-center p-3"
                             style={{ color: appleWebColors.textSecondary }}
                           >
-                            5回
+                            3回
                           </td>
                           <td
                             className="text-center p-3 font-medium"
@@ -1674,7 +1674,7 @@ export default function MyPage() {
                             className="text-center p-3 font-bold"
                             style={{ color: systemColors.green }}
                           >
-                            無制限
+                            50回
                           </td>
                         </tr>
                         <tr
@@ -1704,7 +1704,7 @@ export default function MyPage() {
                             className="text-center p-3 font-bold"
                             style={{ color: systemColors.green }}
                           >
-                            無制限
+                            5回/会話
                           </td>
                         </tr>
                         <tr
@@ -1856,7 +1856,7 @@ export default function MyPage() {
                         }}
                       >
                         <Crown size={18} />
-                        Proにアップグレード - ¥590/月（準備中）
+                        Proにアップグレード - ¥980/月（準備中）
                       </button>
                       <button
                         disabled
@@ -1866,7 +1866,7 @@ export default function MyPage() {
                         }}
                       >
                         <Shield size={18} />
-                        Pro+Safetyにアップグレード - ¥1,280/月（準備中）
+                        Pro+Safetyにアップグレード - ¥1,980/月（準備中）
                       </button>
                     </div>
                   )}
@@ -1880,7 +1880,7 @@ export default function MyPage() {
                         }}
                       >
                         <Shield size={18} />
-                        Pro+Safetyにアップグレード - ¥1,280/月（準備中）
+                        Pro+Safetyにアップグレード - ¥1,980/月（準備中）
                       </button>
                     </div>
                   )}

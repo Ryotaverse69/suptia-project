@@ -438,7 +438,7 @@ export function generateLocalBusinessJsonLd() {
     url: siteUrl,
     logo: `${siteUrl}/logo.png`,
     image: `${siteUrl}/og-image.png`,
-    priceRange: "無料〜¥980/月",
+    priceRange: "無料〜¥1,980/月",
     currenciesAccepted: "JPY",
     paymentAccepted: "クレジットカード",
     areaServed: {
@@ -470,7 +470,7 @@ export function generateLocalBusinessJsonLd() {
             name: "Proプラン",
             description: "詳細な成分分析と価格アラート機能",
           },
-          price: "490",
+          price: "980",
           priceCurrency: "JPY",
         },
         {
@@ -480,7 +480,7 @@ export function generateLocalBusinessJsonLd() {
             name: "Pro+Safetyプラン",
             description: "相互作用チェックと安全性レポート",
           },
-          price: "980",
+          price: "1980",
           priceCurrency: "JPY",
         },
       ],

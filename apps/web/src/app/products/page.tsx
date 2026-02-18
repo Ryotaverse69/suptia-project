@@ -237,10 +237,12 @@ export default async function ProductsPage() {
               borderColor: appleWebColors.borderSubtle,
             }}
           >
-            <div className="flex items-center gap-3">
-              <ComplianceBadge variant="compact" />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="shrink-0">
+                <ComplianceBadge variant="compact" />
+              </div>
               <p
-                className="text-[14px]"
+                className="text-[13px] sm:text-[14px] min-w-0"
                 style={{ color: appleWebColors.textSecondary }}
               >
                 すべての商品情報は薬機法に準拠して表示されています

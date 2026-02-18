@@ -1051,8 +1051,8 @@ export default async function CreatineComparisonPage() {
             クレアチンは毎日継続摂取することで体内レベルが飽和し、効果を発揮します。
           </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-[14px]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[480px] text-[14px]">
               <thead>
                 <tr
                   className="border-b"

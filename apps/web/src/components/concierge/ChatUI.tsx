@@ -1016,7 +1016,7 @@ function HistorySidebar({
           style={{ color: appleWebColors.textTertiary }}
         >
           {userPlan === "free"
-            ? "無料プラン: 3日間保存"
+            ? "無料プラン: 1日間保存"
             : userPlan === "pro"
               ? "Proプラン: 30日間保存"
               : "Pro+Safety: 無制限保存"}
@@ -1305,7 +1305,7 @@ function HistoryPanel({
               style={{ color: appleWebColors.textTertiary }}
             >
               {userPlan === "free"
-                ? "無料プラン: 3日間保存"
+                ? "無料プラン: 1日間保存"
                 : userPlan === "pro"
                   ? "Proプラン: 30日間保存"
                   : "Pro+Safety: 無制限保存"}

@@ -1198,7 +1198,7 @@ export async function POST(request: NextRequest) {
       // 仕様書準拠のアップグレードメッセージ
       const upgradeMessage =
         userPlan === "guest"
-          ? "ログインすると週5回まで質問できます。"
+          ? "ログインすると週3回まで質問できます。"
           : userPlan === "free"
             ? "Proプランにアップグレードすると週25回まで質問できます。"
             : "";

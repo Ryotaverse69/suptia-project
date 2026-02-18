@@ -20,7 +20,7 @@ export class RakutenAdapter {
         applicationId: process.env.RAKUTEN_APPLICATION_ID,
         affiliateId: process.env.RAKUTEN_AFFILIATE_ID,
       },
-      endpoint: 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706',
+      endpoint: 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601',
     };
   }
 

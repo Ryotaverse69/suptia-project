@@ -78,29 +78,29 @@ export function IngredientHeader({
         className="text-[14px] mb-4"
         style={{ color: appleWebColors.textSecondary }}
       >
-        <ol className="flex items-center gap-2">
-          <li>
+        <ol className="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0">
+          <li className="shrink-0">
             <Link
               href="/"
-              className="hover:opacity-70 transition-opacity"
+              className="hover:opacity-70 transition-opacity whitespace-nowrap"
               style={{ color: appleWebColors.blue }}
             >
               ホーム
             </Link>
           </li>
-          <li>/</li>
-          <li>
+          <li className="shrink-0">/</li>
+          <li className="shrink-0">
             <Link
               href="/ingredients"
-              className="hover:opacity-70 transition-opacity"
+              className="hover:opacity-70 transition-opacity whitespace-nowrap"
               style={{ color: appleWebColors.blue }}
             >
               成分ガイド
             </Link>
           </li>
-          <li>/</li>
+          <li className="shrink-0">/</li>
           <li
-            className="font-medium truncate"
+            className="font-medium truncate min-w-0"
             style={{ color: appleWebColors.textPrimary }}
           >
             {name}

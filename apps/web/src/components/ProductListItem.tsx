@@ -109,9 +109,9 @@ export function ProductListItem({ product }: ProductListItemProps) {
           fontFamily: fontStack,
         }}
       >
-        <div className="flex h-[180px] sm:h-[200px]">
+        <div className="flex h-[160px] sm:h-[200px]">
           {/* 左: 画像 */}
-          <div className="relative w-[180px] sm:w-[200px] flex-shrink-0 overflow-hidden rounded-l-[16px]">
+          <div className="relative w-[100px] sm:w-[200px] flex-shrink-0 overflow-hidden rounded-l-[16px]">
             {displayImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -197,10 +197,10 @@ export function ProductListItem({ product }: ProductListItemProps) {
           </div>
 
           {/* 中央: 商品情報 */}
-          <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+          <div className="flex-1 p-3 sm:p-5 flex flex-col justify-between min-w-0">
             {/* 商品名 */}
             <h3
-              className={`${typography.headline} line-clamp-3 group-hover:opacity-80 transition-opacity leading-tight`}
+              className={`text-[13px] sm:text-[17px] font-semibold leading-tight tracking-[-0.41px] line-clamp-3 group-hover:opacity-80 transition-opacity`}
               style={{ color: appleWebColors.textPrimary }}
             >
               {name}
@@ -209,7 +209,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
             <div className="mt-auto">
               {/* 成分タグ・剤形タグ */}
               {(mainIngredient || form) && (
-                <div className="mb-2 flex flex-wrap gap-1.5">
+                <div className="mb-2 hidden sm:flex flex-wrap gap-1.5">
                   {mainIngredient && (
                     <span
                       className="inline-block px-2.5 py-1 rounded-full text-[12px] font-semibold"
@@ -249,7 +249,7 @@ export function ProductListItem({ product }: ProductListItemProps) {
 
           {/* 右: 価格 */}
           <div
-            className="w-[130px] sm:w-[150px] flex-shrink-0 p-4 sm:p-5 flex flex-col justify-center items-end border-l"
+            className="w-[90px] sm:w-[150px] flex-shrink-0 p-2 sm:p-5 flex flex-col justify-center items-end border-l"
             style={{
               borderColor: appleWebColors.borderSubtle,
               backgroundColor: appleWebColors.sectionBackground,
@@ -264,21 +264,21 @@ export function ProductListItem({ product }: ProductListItemProps) {
                   価格
                 </p>
                 <div
-                  className="text-[17px] font-semibold"
+                  className="text-[14px] sm:text-[17px] font-semibold"
                   style={{ color: appleWebColors.textPrimary }}
                 >
                   {formatCostJPY(safePriceJPY)}
                 </div>
                 {effectiveCostPerDay && effectiveCostPerDay > 0 && (
-                  <div className="mt-2">
+                  <div className="mt-1 sm:mt-2">
                     <p
-                      className="text-[11px] font-medium uppercase tracking-wider mb-0.5"
+                      className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider mb-0.5"
                       style={{ color: appleWebColors.textTertiary }}
                     >
                       1日あたり
                     </p>
                     <span
-                      className="text-[20px] font-bold"
+                      className="text-[16px] sm:text-[20px] font-bold"
                       style={{ color: systemColors.green }}
                     >
                       {formatCostJPY(effectiveCostPerDay)}

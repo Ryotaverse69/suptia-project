@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+// Gemini画像生成は時間がかかるため、Vercelの関数タイムアウトを延長
+export const maxDuration = 120; // 2分
+
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY;
 
 /**
@@ -53,10 +56,13 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// 1回のAPI呼び出しのタイムアウト（90秒）
+const PER_ATTEMPT_TIMEOUT_MS = 90_000;
+
 // 1枚の画像を生成（リトライ付き）
 async function generateImage(
   prompt: string,
-  maxRetries = 3,
+  maxRetries = 2,
 ): Promise<{ data: string; mimeType: string }> {
   let lastError: Error | null = null;
 
@@ -73,8 +79,9 @@ async function generateImage(
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseModalities: ["IMAGE", "TEXT"] },
+            generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
           }),
+          signal: AbortSignal.timeout(PER_ATTEMPT_TIMEOUT_MS),
         },
       );
 
@@ -84,18 +91,26 @@ async function generateImage(
         try {
           errorJson = JSON.parse(errorText);
         } catch {
-          throw new Error(`API error: ${errorText}`);
+          throw new Error(
+            `API error (${response.status}): ${errorText.slice(0, 200)}`,
+          );
         }
 
-        // 503 (overloaded) の場合はリトライ
-        if (errorJson.error?.code === 503) {
-          console.log(`[note] Model overloaded, waiting before retry...`);
-          await sleep(3000 * attempt);
-          lastError = new Error("モデルが過負荷状態です。リトライ中...");
+        // 503 (overloaded) or 429 (rate limit) の場合はリトライ
+        if (errorJson.error?.code === 503 || errorJson.error?.code === 429) {
+          console.log(
+            `[note] Model overloaded/rate-limited (${errorJson.error.code}), waiting before retry...`,
+          );
+          await sleep(5000 * attempt);
+          lastError = new Error(
+            `モデルが過負荷状態です (${errorJson.error.code})。リトライ中...`,
+          );
           continue;
         }
 
-        throw new Error(`API error: ${errorText}`);
+        throw new Error(
+          `API error (${errorJson.error?.code}): ${errorJson.error?.message || errorText.slice(0, 200)}`,
+        );
       }
 
       const data = await response.json();
@@ -105,7 +120,15 @@ async function generateImage(
       );
 
       if (!imagePart?.inlineData?.data) {
-        throw new Error("画像が生成されませんでした");
+        // テキストのみ返された場合のエラーメッセージ改善
+        const textParts = parts.filter((p: { text?: string }) => p.text);
+        const textResponse = textParts
+          .map((p: { text: string }) => p.text)
+          .join(" ")
+          .slice(0, 100);
+        throw new Error(
+          `画像が生成されませんでした。${textResponse ? `モデル応答: ${textResponse}` : "レスポンスに画像データがありません"}`,
+        );
       }
 
       const mimeType = imagePart.inlineData.mimeType || "image/jpeg";
@@ -115,11 +138,19 @@ async function generateImage(
       return { data: imagePart.inlineData.data, mimeType };
     } catch (error) {
       lastError = error as Error;
+      const isTimeout =
+        lastError.name === "TimeoutError" ||
+        lastError.message.includes("timed out");
+      if (isTimeout) {
+        lastError = new Error(
+          `画像生成がタイムアウトしました（${PER_ATTEMPT_TIMEOUT_MS / 1000}秒）。再試行してください。`,
+        );
+      }
       if (attempt < maxRetries) {
         console.log(
-          `[note] Attempt ${attempt} failed, retrying in ${3 * attempt}s...`,
+          `[note] Attempt ${attempt} failed (${lastError.message}), retrying in ${5 * attempt}s...`,
         );
-        await sleep(3000 * attempt);
+        await sleep(5000 * attempt);
       }
     }
   }

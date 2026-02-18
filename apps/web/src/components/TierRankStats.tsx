@@ -98,7 +98,7 @@ export function TierRankStats({
             </div>
           </div>
           <div
-            className="px-3 py-1.5 rounded-full text-[13px] font-medium"
+            className="px-3 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap shrink-0"
             style={{
               backgroundColor: appleWebColors.sectionBackground,
               color: appleWebColors.textSecondary,

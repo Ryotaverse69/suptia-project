@@ -317,16 +317,18 @@ export default async function IngredientsPage() {
         >
           <div className="mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-4 max-w-[1200px]">
             <div
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[16px] p-4 border"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-[16px] p-4 border"
               style={{
                 backgroundColor: `${systemColors.green}08`,
                 borderColor: `${systemColors.green}20`,
               }}
             >
-              <div className="flex items-center gap-3">
-                <ComplianceBadge variant="compact" />
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="shrink-0">
+                  <ComplianceBadge variant="compact" />
+                </div>
                 <p
-                  className="text-[14px]"
+                  className="text-[13px] sm:text-[14px] min-w-0"
                   style={{ color: appleWebColors.textSecondary }}
                 >
                   すべての成分情報は薬機法に準拠して解説されています

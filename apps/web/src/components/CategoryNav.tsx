@@ -85,21 +85,21 @@ export function CategoryNav({ categories }: CategoryNavProps) {
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center justify-between gap-4"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-lg">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-2 bg-white/20 rounded-lg shrink-0">
               <Layers className="w-5 h-5 text-white" />
             </div>
-            <div className="text-left">
-              <div className="text-white font-bold text-lg">
+            <div className="text-left min-w-0">
+              <div className="text-white font-bold text-base sm:text-lg truncate">
                 カテゴリーから探す
               </div>
-              <div className="text-white/70 text-sm">
+              <div className="text-white/70 text-xs sm:text-sm">
                 {categories.length}カテゴリー・{totalCount}成分
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-colors">
-            <span className="text-white text-sm font-medium">
+          <div className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 sm:px-4 py-2 rounded-full transition-colors shrink-0">
+            <span className="text-white text-xs sm:text-sm font-medium whitespace-nowrap">
               {isOpen ? "閉じる" : "一覧を表示"}
             </span>
             {isOpen ? (

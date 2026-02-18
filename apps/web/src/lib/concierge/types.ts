@@ -191,9 +191,9 @@ export interface PlanConfig {
 export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
   free: {
     plan: "free",
-    chatLimit: 5, // 仕様書: 5回/週
+    chatLimit: 3, // 週3回（転換率向上のため5→3に削減）
     followupLimit: 0,
-    historyRetentionDays: 3,
+    historyRetentionDays: 1, // 1日（3→1に短縮）
     maxSessions: 5,
     contextMessages: 4,
     availableCharacters: ["core", "mint", "repha", "haku"],
@@ -217,8 +217,8 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanConfig> = {
   },
   pro_safety: {
     plan: "pro_safety",
-    chatLimit: Infinity,
-    followupLimit: Infinity,
+    chatLimit: 50, // 週50回（コストリスク排除のためInfinity→50）
+    followupLimit: 5, // 1会話5回（Infinity→5）
     historyRetentionDays: null,
     maxSessions: null,
     contextMessages: 20,
