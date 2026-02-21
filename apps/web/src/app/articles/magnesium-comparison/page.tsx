@@ -434,6 +434,16 @@ const FAQS = [
     answer:
       "スレオン酸マグネシウム（Magtein）は、MITの研究者が開発した形態で、血液脳関門を通過できることが研究で示されています。脳内のマグネシウム濃度を効率的に高め、認知機能や記憶力をサポートする可能性があります。ただし、他の形態より高価です。",
   },
+  {
+    question: "マグネシウムサプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のマグネシウムサプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "マグネシウムサプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mg）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 // 関連成分
@@ -580,10 +590,28 @@ export default async function MagnesiumComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

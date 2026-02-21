@@ -394,6 +394,21 @@ export function PriceComparison({
             送料は各ショップ・配送先により異なります。購入前に各サイトで送料をご確認ください。
           </p>
         </div>
+        {lastUpdated && (
+          <div className="flex items-center justify-center gap-1.5 mt-2 pt-2 border-t border-amber-200/50">
+            <Clock className="w-3 h-3 text-amber-500" />
+            <p className="text-[11px] text-amber-600">
+              価格最終確認:{" "}
+              {new Date(lastUpdated).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

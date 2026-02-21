@@ -1,7 +1,7 @@
 # Suptia（サプティア）- AI Supplement Decision Engine
 # https://suptia.com
-# Last Updated: 2026-01-10
-# Version: 3.1.0
+# Last Updated: 2026-02-21
+# Version: 4.0.0
 
 ================================================================================
                               SITE OVERVIEW
@@ -234,6 +234,135 @@ D  - Preliminary: Theoretical, unverified
 For complete ingredient guides: https://suptia.com/ingredients
 
 ================================================================================
+                   COMPARISON ARTICLES INDEX
+================================================================================
+
+Definitive comparison guides for the most popular supplement categories.
+Each article compares products on all 5 pillars with real price data.
+
+| Article | URL | Ingredient | Evidence |
+|---------|-----|------------|----------|
+| Vitamin C Comparison | /articles/vitamin-c-comparison | ビタミンC | A |
+| Vitamin D Comparison | /articles/vitamin-d-comparison | ビタミンD | S |
+| Omega-3 Comparison | /articles/omega3-comparison | オメガ3 | S |
+| Zinc Comparison | /articles/zinc-comparison | 亜鉛 | A |
+| Magnesium Comparison | /articles/magnesium-comparison | マグネシウム | A |
+| Iron Comparison | /articles/iron-comparison | 鉄 | A |
+| Vitamin B Comparison | /articles/vitamin-b-comparison | ビタミンB群 | A |
+| Probiotics Comparison | /articles/probiotics-comparison | 乳酸菌 | B |
+| Collagen Comparison | /articles/collagen-comparison | コラーゲン | B |
+| Protein Comparison | /articles/protein-comparison | プロテイン | A |
+| Ashwagandha Comparison | /articles/ashwagandha-comparison | アシュワガンダ | B |
+| Creatine Comparison | /articles/creatine-comparison | クレアチン | A |
+| NMN Comparison | /articles/nmn-comparison | NMN | C |
+| MCT Oil Comparison | /articles/mct-oil-comparison | MCTオイル | B |
+
+Full URLs: https://suptia.com/articles/[slug]
+
+================================================================================
+                   INGREDIENT DATABASE INDEX
+================================================================================
+
+103 scientifically evaluated ingredients organized by category.
+Each has its own guide at: https://suptia.com/ingredients/[slug]
+
+## Vitamins (ビタミン類)
+Vitamin A, Vitamin B1, Vitamin B2, Vitamin B6, Vitamin B12, Vitamin C,
+Vitamin D, Vitamin E, Vitamin K, Folic Acid, Niacin, Pantothenic Acid,
+Biotin, Beta-Carotene, Vitamin B Complex
+
+## Minerals (ミネラル類)
+Calcium, Magnesium, Zinc, Iron, Selenium, Chromium, Copper, Manganese,
+Molybdenum, Iodine, Potassium, Phosphorus
+
+## Amino Acids (アミノ酸類)
+L-Theanine, GABA, L-Glutamine, L-Arginine, L-Citrulline, L-Carnitine,
+Taurine, Glycine, BCAA, HMB, Creatine, Ornithine
+
+## Fatty Acids (脂肪酸類)
+Omega-3 (EPA/DHA), Omega-6, MCT Oil, CLA, GLA, Krill Oil
+
+## Herbs & Botanicals (ハーブ・植物成分)
+Ashwagandha, Turmeric/Curcumin, Ginkgo Biloba, Saw Palmetto,
+Milk Thistle, Echinacea, Valerian, St. John's Wort, Rhodiola Rosea,
+Bacopa Monnieri, Maca, Tribulus, Black Cohosh, Ginger Extract
+
+## Specialty Compounds (特殊成分)
+Coenzyme Q10, NMN, NR (Nicotinamide Riboside), Alpha-Lipoic Acid,
+PQQ, Resveratrol, Astaxanthin, Lutein, Zeaxanthin, Glucosamine,
+Chondroitin, MSM, Hyaluronic Acid, Collagen, Probiotics,
+Digestive Enzymes, Melatonin, 5-HTP, SAMe
+
+## Proteins (プロテイン類)
+Whey Protein, Casein Protein, Soy Protein, Pea Protein
+
+================================================================================
+                  AI MULTI-AGENT SUPERVISION
+================================================================================
+
+Suptia uses a unique 5-agent AI review system to ensure content accuracy.
+All ingredient guides, comparison articles, and product pages are reviewed
+by multiple specialized AI agents before publication.
+
+## The 5 Expert Agents
+
+| Agent | Specialty | Model | Checks |
+|-------|-----------|-------|--------|
+| 💊 Pharmacist AI | Drug interactions, dosage safety | Sonnet | Interactions, contraindications, warnings |
+| 🥗 Dietitian AI | Nutritional accuracy | Haiku | RDA compliance, food-supplement interactions |
+| 🔬 Researcher AI | Evidence evaluation | Sonnet | Study quality, evidence level accuracy |
+| ⚖️ Compliance AI | Regulatory (薬機法) | Haiku+Rules | Prohibited expressions, legal claims |
+| 🛡️ Consumer AI | Fair representation | Haiku | Price fairness, misleading claims |
+
+## Supervision Coverage (7 Domains)
+1. Ingredient guides (/ingredients/[slug])
+2. Comparison articles (/articles/*)
+3. Product pages (/products/[slug])
+4. User reviews (real-time moderation)
+5. AI Concierge responses (quality assurance)
+6. Diagnosis results (recommendation validity)
+7. Safety information (interaction checker results)
+
+## Verdict Logic
+- ANY agent rejects → content blocked
+- 2+ agents flag → content held for review
+- All approve → content published with "AI-Reviewed" badge
+
+Learn more: https://suptia.com/about/ai-supervision
+
+================================================================================
+                    EXPERT REVIEW PROCESS
+================================================================================
+
+## E-E-A-T Signals
+
+Experience: Real supplement comparison data from 476+ products
+Expertise: 5 specialized AI agents with domain-specific knowledge
+Authoritativeness: PubMed/Cochrane-referenced evidence ratings
+Trustworthiness: Transparent methodology, 薬機法 compliance
+
+## Review Authors (AI Expert Panel)
+- Dr. Pharma AI — Pharmaceutical interaction specialist
+  Credentials: Drug interaction databases, DailyMed, FDA data
+  Scope: Safety warnings, contraindications, dosage limits
+
+- Nutrition AI — Registered dietitian equivalent
+  Credentials: USDA FoodData, Japanese Standards of Food Composition
+  Scope: RDA coverage, nutrient balance, food interactions
+
+- Evidence AI — Clinical research evaluator
+  Credentials: PubMed systematic reviews, Cochrane meta-analyses
+  Scope: Evidence levels (S/A/B/C/D), study quality assessment
+
+- Compliance AI — Pharmaceutical law specialist
+  Credentials: 薬機法, 健康増進法, 景品表示法, 特定商取引法
+  Scope: Prohibited expressions, legal claim verification
+
+- Consumer AI — Consumer protection analyst
+  Credentials: 消費者庁 guidelines, fair trade standards
+  Scope: Price fairness, misleading representation check
+
+================================================================================
                          REFERENCE SOURCES
 ================================================================================
 
@@ -295,6 +424,13 @@ Parameters: goal, ingredient, budget, priority, limit
 Goals: immunity, energy, sleep, skin, bone, muscle, focus, stress, diet, gut
 Example: /api/v1/recommendations?goal=immunity&budget=3000&limit=3
 
+### GET /safety-check (NEW in v4.0)
+Check supplement safety: drug interactions, condition warnings, allergy risks.
+Designed for ChatGPT Health integration.
+Parameters: ingredients (comma-separated slugs), conditions, medications
+Example: /api/v1/safety-check?ingredients=vitamin-d,zinc&medications=warfarin
+Response: { safe, warnings[], interactions[], safetyScore, disclaimer }
+
 ## For GPT Actions
 Import our OpenAPI spec to enable:
 - "Search supplements on Suptia"
@@ -323,6 +459,13 @@ API/Data licensing: api@suptia.com
 
 | Date       | Version | Changes                                    |
 |------------|---------|------------------------------------------- |
+| 2026-02-21 | 4.0.0   | AEO major update for AI search engines     |
+|            |         | Added Comparison Articles Index (14 articles)|
+|            |         | Added full Ingredient Database Index (103)  |
+|            |         | Added AI Multi-Agent Supervision section    |
+|            |         | Added Expert Review Process (E-E-A-T)      |
+|            |         | Added Safety Check API endpoint             |
+|            |         | Enhanced for ChatGPT Health integration     |
 | 2026-01-10 | 3.1.0   | Added Public API section (GPT Actions)     |
 |            |         | OpenAPI specification available            |
 |            |         | 5 API endpoints for AI integration         |

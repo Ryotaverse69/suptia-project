@@ -31,6 +31,7 @@
     "@sanity/vision": "^4.10.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.2",
+    "@vercel/og": "^0.8.6",
     "chalk": "^5.6.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

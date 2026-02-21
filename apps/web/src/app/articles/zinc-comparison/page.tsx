@@ -411,6 +411,16 @@ const FAQS = [
     answer:
       "亜鉛はいくつかの研究で炎症性ニキビに対する効果が示されています。亜鉛は皮脂の分泌調整、抗炎症作用、傷の治癒促進に関与します。1日30mg程度を2〜3ヶ月継続することで改善が見られることがあります。ただし、重度のニキビには皮膚科医の診察が必要です。外用の亜鉛製剤と内服を併用するとより効果的な場合があります。",
   },
+  {
+    question: "亜鉛サプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数の亜鉛サプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "亜鉛サプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mg）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 export default async function ZincComparisonPage() {
@@ -530,10 +540,28 @@ export default async function ZincComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

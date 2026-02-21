@@ -464,6 +464,16 @@ const FAQS = [
     answer:
       "直射日光を避け、常温で保存してください。冷蔵保存は不要ですが、開封後は早めに使い切ることをおすすめします。遮光瓶入りの製品は酸化しにくいです。",
   },
+  {
+    question: "MCTオイルはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のMCTオイルが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "MCTオイルで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mL）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 export default async function MCTOilComparisonPage() {
@@ -571,10 +581,28 @@ export default async function MCTOilComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

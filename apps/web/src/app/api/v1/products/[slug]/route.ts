@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityServer } from "@/lib/sanityServer";
 import { isValidSlug } from "@/lib/sanitize";
+import { withGptFields } from "@/lib/api-helpers";
 
 // CORS headers for GPT Actions
 const corsHeaders = {
@@ -200,10 +201,24 @@ export async function GET(
         self: `https://suptia.com/api/v1/products/${slug}`,
         web: `https://suptia.com/products/${slug}`,
         search: "https://suptia.com/api/v1/products/search",
+        docs: "https://suptia.com/openapi.yaml",
       },
     };
 
-    return NextResponse.json(response, {
+    const tierDesc = product.tierRatings?.overallRank
+      ? ` Overall tier: ${product.tierRatings.overallRank}.`
+      : "";
+    const priceDesc = ` ¥${product.priceJPY} (¥${pricePerDay}/day, ${daysSupply}-day supply).`;
+    const lowestDesc = lowestPriceData
+      ? ` Lowest price: ¥${lowestPriceData.amount} at ${lowestPriceData.source}.`
+      : "";
+
+    const gptResponse = withGptFields(response, {
+      summary: `${product.name}.${tierDesc}${priceDesc}${lowestDesc}`,
+      citationPath: `/products/${slug}`,
+    });
+
+    return NextResponse.json(gptResponse, {
       headers: {
         ...corsHeaders,
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

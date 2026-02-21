@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Suptia Supplement Advisor",
+  "name_for_model": "suptia_supplement_advisor",
+  "description_for_human": "Compare supplements across price, ingredients, cost-effectiveness, evidence, and safety. Get personalized recommendations and safety checks.",
+  "description_for_model": "Suptia is a Japanese supplement comparison and recommendation engine. It evaluates 476+ supplement products across five pillars: (1) Price Comparison across Rakuten, Amazon, Yahoo Shopping, (2) Ingredient Content normalized to mg/day, (3) Cost-Effectiveness as JPY/mg, (4) Scientific Evidence rated S/A/B/C/D based on systematic reviews and RCTs, (5) Safety Score 0-100 with drug interaction and contraindication warnings.\n\nAvailable operations:\n- listIngredients: Browse all 103 supplement ingredients by category (vitamin, mineral, amino-acid, fatty-acid, probiotic, herb). Use when user asks about available supplements or ingredient categories.\n- getIngredient: Get detailed info on a specific ingredient including dosage, benefits, side effects, interactions, and top products. Use when user asks about a specific nutrient like vitamin D or omega-3.\n- searchProducts: Search 476+ products by keyword, ingredient, or category. Sort by tier rank, price, or cost-effectiveness. Use when user wants to find specific products or compare options.\n- getProduct: Get comprehensive product details including cross-platform price comparison, ingredient breakdown, tier ratings. Use when user asks about a specific supplement product.\n- getRecommendations: Get personalized recommendations based on health goals (immunity, energy, sleep, skin, bone, muscle, focus, stress, diet, gut), budget, and priority. Use when user describes their health needs.\n- checkSafety: Check safety of ingredient combinations with user's conditions, medications, and allergies. Returns safety score, warnings, and interactions. ALWAYS use this when user mentions taking medications or has health conditions.\n\nImportant: All prices are in JPY. Always include the disclaimer that this is reference information, not medical advice. Recommend consulting healthcare professionals for personalized guidance.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://suptia.com/openapi.yaml"
+  },
+  "logo_url": "https://suptia.com/icons/icon-512x512.png",
+  "contact_email": "support@suptia.com",
+  "legal_info_url": "https://suptia.com/legal/terms"
+}

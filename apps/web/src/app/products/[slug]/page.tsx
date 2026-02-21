@@ -890,6 +890,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 <PriceComparison
                   priceData={mergedPriceData}
                   priceRank={product.tierRatings?.priceRank}
+                  lastUpdated={product._updatedAt}
                 />
                 {/* 価格アラートボタン */}
                 <div className="mt-4 pt-4 border-t border-slate-100">

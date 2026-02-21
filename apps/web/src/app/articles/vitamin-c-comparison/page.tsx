@@ -433,6 +433,16 @@ const FAQS = [
     answer:
       "水溶性なので基本的に過剰分は尿として排泄されますが、2000mg/日を超えると下痢、腹痛、吐き気、胸やけなどの消化器症状が出ることがあります。長期的な高用量摂取は腎臓結石のリスクを高める可能性も指摘されています。健康な成人なら1000mg/日程度までが安心です。",
   },
+  {
+    question: "ビタミンCサプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のビタミンCサプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "ビタミンCサプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mg）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 // 関連成分
@@ -581,10 +591,28 @@ export default async function VitaminCComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

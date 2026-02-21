@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityServer } from "@/lib/sanityServer";
+import { withGptFields } from "@/lib/api-helpers";
 
 // GROQクエリ用のサニタイズ関数
 function sanitizeForGroq(str: string): string {
@@ -248,11 +249,21 @@ export async function GET(request: NextRequest) {
       })),
       _links: {
         self: `https://suptia.com/api/v1/products/search?${searchParams.toString()}`,
-        docs: "https://suptia.com/api/docs",
+        docs: "https://suptia.com/openapi.yaml",
       },
     };
 
-    return NextResponse.json(response, {
+    const topProduct = products[0];
+    const topDesc = topProduct
+      ? ` Top result: ${topProduct.name} (${topProduct.tierRatings?.overallRank || "unrated"}, ¥${Math.round(topProduct.priceJPY / Math.floor(topProduct.servingsPerContainer / topProduct.servingsPerDay))}/day).`
+      : "";
+
+    const gptResponse = withGptFields(response, {
+      summary: `Found ${products.length} supplement product(s)${q ? ` for "${q}"` : ""}${ingredient ? ` containing ${ingredient}` : ""}.${topDesc}`,
+      citationPath: "/about/methodology",
+    });
+
+    return NextResponse.json(gptResponse, {
       headers: {
         ...corsHeaders,
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

@@ -1,7 +1,8 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { ProductComparisonTable } from "@/components/ProductComparisonTable";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { ShareButtons } from "@/components/diagnosis/ShareButtons";
+import { ShareCardPreview } from "@/components/diagnosis/ShareCardPreview";
 import { DiagnosisConditionEditor } from "@/components/diagnosis/DiagnosisConditionEditor";
 import { RecommendedIngredients } from "@/components/diagnosis/RecommendedIngredients";
 import { DiagnosisHistorySaver } from "@/components/diagnosis/DiagnosisHistorySaver";
@@ -65,7 +66,77 @@ const CONDITION_LABELS: Record<ContraindicationTag, string> = {
   "nut-allergy": "ナッツアレルギー",
 };
 
-// Sanityから商品データを取得するようになりました
+// スコア(0-100)をTierランク(S/A/B/C/D)に変換
+function scoreToTier(score: number): string {
+  if (score >= 90) return "S";
+  if (score >= 75) return "A";
+  if (score >= 55) return "B";
+  if (score >= 35) return "C";
+  return "D";
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const goalsParam = (params.goals as string) || "";
+  const goals = goalsParam.split(",").filter(Boolean);
+
+  const goalLabels: Record<string, string> = {
+    immunity: "免疫力",
+    energy: "エネルギー",
+    sleep: "睡眠",
+    skin: "美容",
+    bone: "骨",
+    muscle: "筋肉",
+    focus: "集中力",
+    stress: "ストレス",
+    diet: "ダイエット",
+    gut: "腸内環境",
+  };
+
+  const goalText = goals
+    .map((g) => goalLabels[g] || g)
+    .slice(0, 3)
+    .join("・");
+  const title = goalText
+    ? `${goalText}のサプリメント診断結果 | サプティア`
+    : "サプリメント診断結果 | サプティア";
+
+  // OGP画像URL（診断カード）
+  const ogParams = new URLSearchParams();
+  ogParams.set("goals", goalsParam);
+  ogParams.set("format", "ogp");
+  const ogImageUrl = `https://suptia.com/api/og/diagnosis?${ogParams.toString()}`;
+
+  return {
+    title,
+    description:
+      "あなたの目的・体質に最適なサプリメントを5つの柱（価格・成分量・コスパ・エビデンス・安全性）で科学的に評価。",
+    openGraph: {
+      title,
+      description:
+        "5つの柱でサプリを科学的に比較。あなたにぴったりのサプリメントが見つかります。",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: "サプティア サプリメント診断結果",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description:
+        "5つの柱でサプリを科学的に比較。あなたにぴったりのサプリメントが見つかります。",
+      images: [ogImageUrl],
+    },
+  };
+}
 
 export default async function DiagnosisResultsPage({
   searchParams,
@@ -219,10 +290,28 @@ export default async function DiagnosisResultsPage({
               </h1>
             </div>
 
-            {/* シェアボタン */}
-            <div className="mb-6">
-              <ShareButtons />
-            </div>
+            {/* シェアカード */}
+            {topThree.length > 0 && (
+              <div className="mb-6">
+                <ShareCardPreview
+                  goals={goals}
+                  topProduct={topThree[0].product.name}
+                  tierRank={topThree[0].grade}
+                  pricePerDay={Math.round(
+                    topThree[0].scores.costDetails.costPerDayJPY,
+                  )}
+                  scores={{
+                    price: scoreToTier(topThree[0].scores.costScore),
+                    content: scoreToTier(topThree[0].scores.effectivenessScore),
+                    costEffectiveness: scoreToTier(
+                      topThree[0].scores.costScore,
+                    ),
+                    evidence: scoreToTier(topThree[0].scores.evidenceScore),
+                    safety: scoreToTier(topThree[0].scores.safetyScore),
+                  }}
+                />
+              </div>
+            )}
 
             {/* 診断条件エディター */}
             <DiagnosisConditionEditor

@@ -433,6 +433,16 @@ const FAQS = [
     answer:
       "DHAは子どもの脳発達にも重要です。子ども向けのグミタイプや低用量製品が販売されています。大人向けの高用量製品は避け、年齢に応じた製品を選んでください。気になる場合は小児科医に相談を。",
   },
+  {
+    question: "オメガ3脂肪酸サプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のオメガ3脂肪酸サプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "オメガ3脂肪酸サプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mg）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 // 関連成分
@@ -583,10 +593,28 @@ export default async function Omega3ComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

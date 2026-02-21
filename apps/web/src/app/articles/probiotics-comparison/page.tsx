@@ -432,6 +432,16 @@ const FAQS = [
     answer:
       "製品によります。多くの乳酸菌・ビフィズス菌製品は要冷蔵（2〜8度C）で、高温や湿気で菌が死滅します。一方、芽胞形成菌（バチルス属）や特殊な乾燥技術・コーティングを施した製品は常温保存可能です。旅行時や持ち運びには常温保存可能な製品が便利。購入時と保存時の温度管理が効果に直結するため、保存方法は必ず確認してください。",
   },
+  {
+    question: "プロバイオティクスサプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のプロバイオティクスサプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "プロバイオティクスサプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「成分量あたりの価格（¥/mg）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 // 関連成分
@@ -567,10 +577,28 @@ export default async function ProbioticsComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 

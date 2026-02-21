@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityServer } from "@/lib/sanityServer";
 import { isValidSlug } from "@/lib/sanitize";
+import { withGptFields } from "@/lib/api-helpers";
 
 // CORS headers for GPT Actions
 const corsHeaders = {
@@ -141,10 +142,27 @@ export async function GET(
         self: `https://suptia.com/api/v1/ingredients/${slug}`,
         web: `https://suptia.com/ingredients/${slug}`,
         allProducts: `https://suptia.com/api/v1/products/search?ingredient=${encodeURIComponent(ingredient.name)}`,
+        docs: "https://suptia.com/openapi.yaml",
       },
     };
 
-    return NextResponse.json(response, {
+    const evidenceDesc = ingredient.evidenceLevel
+      ? ` Evidence level: ${ingredient.evidenceLevel}.`
+      : "";
+    const safetyDesc = ingredient.safetyScore
+      ? ` Safety score: ${ingredient.safetyScore}/100.`
+      : "";
+    const productDesc =
+      ingredient.totalProductCount > 0
+        ? ` ${ingredient.totalProductCount} products available.`
+        : "";
+
+    const gptResponse = withGptFields(response, {
+      summary: `${ingredient.nameEn || ingredient.name} (${ingredient.category}).${evidenceDesc}${safetyDesc}${productDesc}`,
+      citationPath: `/ingredients/${slug}`,
+    });
+
+    return NextResponse.json(gptResponse, {
       headers: {
         ...corsHeaders,
         "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200",

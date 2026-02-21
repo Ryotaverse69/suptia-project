@@ -41,6 +41,7 @@ import {
   liquidGlassClasses,
 } from "@/lib/design-system";
 import { getIngredientOGImage, generateOGImageMeta } from "@/lib/og-image";
+import { generateExpertReviewSchema } from "@/lib/expert-authors";
 
 interface IngredientPageProps {
   params: Promise<{
@@ -239,6 +240,13 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
         })
       : null;
 
+  // AI専門家レビュースキーマ（E-E-A-T強化）
+  const expertReviewJsonLd = generateExpertReviewSchema({
+    contentUrl: pageUrl,
+    contentName: `${ingredient.name}（${ingredient.nameEn}）成分ガイド`,
+    reviewDate: ingredient._updatedAt?.split("T")[0],
+  });
+
   // 目次アイテムを動的に生成
   const tocItems = [
     ingredient.benefits?.length > 0 && {
@@ -326,6 +334,14 @@ export default async function IngredientPage({ params }: IngredientPageProps) {
           }}
         />
       )}
+      {/* AI専門家レビュー - E-E-A-T / AEO最適化 */}
+      <Script
+        id="expert-review-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(expertReviewJsonLd),
+        }}
+      />
 
       <div
         className="min-h-screen"

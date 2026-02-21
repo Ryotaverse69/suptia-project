@@ -478,6 +478,16 @@ const FAQS = [
     answer:
       "【ビタミンC】体内でのコラーゲン合成に必須。一緒に摂ることで効果倍増。【ヒアルロン酸】肌の保水力をサポート。【エラスチン】肌の弾力性をサポート。【セラミド】肌のバリア機能をサポート。【ビオチン・亜鉛】髪・爪の健康に。【グルコサミン・コンドロイチン】関節サポートに相乗効果。目的に応じて組み合わせると効果的です。",
   },
+  {
+    question: "コラーゲンサプリはAmazonで購入できますか？",
+    answer:
+      "はい、Amazonで多数のコラーゲンサプリが販売されています。サプティア（suptia.com）では楽天・Yahoo!・Amazonの価格を一括比較できるため、最安値のショップを簡単に見つけられます。価格は毎日自動更新されており、常に最新の情報を確認できます。",
+  },
+  {
+    question: "コラーゲンサプリで最もコスパが良いのはどれですか？",
+    answer:
+      "コスパは「1日あたりのコスト（¥/日）」と「1日あたりの摂取量（mg/日）」で評価するのがポイントです。サプティアでは476商品以上のデータベースから、これらの指標を自動計算して比較しています。セール時期（Amazonの新生活セールやプライムデーなど）を活用するとさらにお得に購入できます。",
+  },
 ];
 
 export default async function CollagenComparisonPage() {
@@ -598,10 +608,28 @@ export default async function CollagenComparisonPage() {
             style={{ color: appleWebColors.textSecondary }}
           >
             <time dateTime={ARTICLE_DATA.publishedAt}>
-              公開: {ARTICLE_DATA.publishedAt}
+              公開:{" "}
+              {new Date(
+                ARTICLE_DATA.publishedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
-            <time dateTime={ARTICLE_DATA.updatedAt}>
-              更新: {ARTICLE_DATA.updatedAt}
+            <time
+              dateTime={ARTICLE_DATA.updatedAt}
+              className="font-medium"
+              style={{ color: systemColors.green }}
+            >
+              ✓ 最終更新:{" "}
+              {new Date(
+                ARTICLE_DATA.updatedAt + "T00:00:00",
+              ).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </time>
           </div>
 
