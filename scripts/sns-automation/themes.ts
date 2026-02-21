@@ -1,11 +1,11 @@
-// テーマ設定（重み付きランダム方式）
+// テーマ設定（フォロワー増加×ブランディング特化）
 export type ThemeType =
-  | 'ingredient' // 成分紹介
-  | 'product' // 商品紹介
-  | 'cospa' // コスパ比較
-  | 'versus' // 成分 vs 成分
-  | 'ranking' // ランキング
-  | 'caution'; // 飲み合わせ注意
+  | 'ingredient' // ホットテイク（成分データで業界を斬る）
+  | 'product' // 商品紹介（レガシー、自動では使わない）
+  | 'cospa' // データで暴く（コスパの衝撃事実）
+  | 'versus' // どっち派？（参加型エンゲージメント）
+  | 'ranking' // サプティアの裏側（AI×データの舞台裏）
+  | 'caution'; // 知らないとヤバい（業界が言わない真実）
 
 export interface ThemeConfig {
   type: ThemeType;
@@ -15,14 +15,14 @@ export interface ThemeConfig {
   weight: number; // 出現確率（合計100）
 }
 
-// テーマ定義（重み付き）
+// テーマ定義（フォロワー増加・ブランド構築に最適化）
+// 「商品紹介」は宣伝臭が強くフォロワー増加に逆効果のため除外
 export const THEMES: ThemeConfig[] = [
-  { type: 'ingredient', label: '成分紹介', emoji: '💊', description: '成分の基礎知識', weight: 25 },
-  { type: 'product', label: '商品紹介', emoji: '🛒', description: '注目商品を紹介', weight: 20 },
-  { type: 'cospa', label: 'コスパ比較', emoji: '💰', description: 'お得な商品を紹介', weight: 15 },
-  { type: 'ranking', label: 'ランキング', emoji: '🏆', description: 'TOP3を発表', weight: 20 },
-  { type: 'versus', label: '成分バトル', emoji: '🆚', description: '2つの成分を比較', weight: 15 },
-  { type: 'caution', label: '注意喚起', emoji: '⚠️', description: '飲み合わせ・副作用', weight: 5 },
+  { type: 'ingredient', label: 'ホットテイク', emoji: '🔥', description: '業界の常識をぶった斬る', weight: 30 },
+  { type: 'versus', label: 'どっち派？', emoji: '💬', description: 'フォロワー参加型の比較', weight: 25 },
+  { type: 'cospa', label: 'データで暴く', emoji: '📊', description: '476商品分析の衝撃事実', weight: 20 },
+  { type: 'caution', label: '知らないとヤバい', emoji: '⚠️', description: '業界が言わない不都合な真実', weight: 15 },
+  { type: 'ranking', label: 'サプティアの裏側', emoji: '🔬', description: 'AI×データ分析の舞台裏', weight: 10 },
 ];
 
 // 重み付きランダムでテーマを選択
